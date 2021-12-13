@@ -6,6 +6,7 @@ Xamarin.AndroidX.Annotation.Experimental.dll
 Xamarin.AndroidX.Arch.Core.Common.dll
 Xamarin.AndroidX.Arch.Core.Runtime.dll
 Xamarin.AndroidX.AsyncLayoutInflater.dll
+Xamarin.AndroidX.Browser.dll
 Xamarin.AndroidX.Collection.dll
 Xamarin.AndroidX.Concurrent.Futures.dll
 Xamarin.AndroidX.CoordinatorLayout.dll
@@ -37,6 +38,7 @@ Xamarin.AndroidX.Tracing.Tracing.dll
 Xamarin.AndroidX.VersionedParcelable.dll
 Xamarin.AndroidX.ViewPager.dll
 Xamarin.AndroidX.Wear.dll
+Xamarin.Essentials.dll
 Xamarin.Google.Guava.ListenableFuture.dll
 Xamarin.Jetbrains.Annotations.dll
 Xamarin.Kotlin.StdLib.dll
@@ -45,6 +47,7 @@ androidx.arch.core.core-runtime.aar
 androidx.lifecycle.lifecycle-runtime.aar
 androidx.annotation.annotation-experimental.aar
 androidx.core.core.aar
+androidx.browser.browser.aar
 androidx.customview.customview.aar
 androidx.viewpager.viewpager.aar
 androidx.tracing.tracing.aar

@@ -7,10 +7,23 @@
     android:padding="@dimen/box_inset_layout_padding"
     
     tools:deviceIds="wear">
-    <Button  
-    android:id="@+id/MyButton"
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="Hello"
-    />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/pauseBtnAcc"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="AccSend"/>
+                <Button
+            android:id="@+id/pauseBtnGyro"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="GyroSend"/>
+
+    </LinearLayout>
+
+
 </androidx.wear.widget.BoxInsetLayout>

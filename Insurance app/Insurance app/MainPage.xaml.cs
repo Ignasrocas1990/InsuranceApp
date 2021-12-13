@@ -67,14 +67,15 @@ namespace Insurance_app
                  }
                  if (chara != null)
                  {
+                     chara.ValueUpdated += (se, values) =>
+                     {
+                         read(values.Characteristic);
+                     };
                      Console.WriteLine("-----------Got charasterstic");
 
                      read(chara);
                  }
-                 else
-                 {
-                     alert("error", "error to get charasteristic", "close");
-                 }
+
              };
             readCompleted += (s, e) =>
             {

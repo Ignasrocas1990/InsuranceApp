@@ -27,6 +27,7 @@ namespace watch
         private BluetoothGattCharacteristic bltCharac;
         private BluetoothLeAdvertiser bltAdvertiser;
         private const string defaultUUID = "a3bb5442-5b61-11ec-bf63-0242ac130002";
+        public string dataToSend = "empty";
 
 
         public BleServer(Context context,string uuid)
@@ -53,9 +54,11 @@ namespace watch
             bltAdvertiser = bltAdapter.BluetoothLeAdvertiser;
             startAdvertising();
         }
-        void sendData(object s, BleEventArgs e)
+        public void sendData(object s, BleEventArgs e)
         {
-                e.Characteristic.SetValue("SERVER_TEST_DATA");
+               // SensorManager sensorManager = new SensorManager();
+                
+                e.Characteristic.SetValue(dataToSend);
                 bltServer.SendResponse(e.Device, e.RequestId, GattStatus.Success, e.Offset,e.Characteristic.GetValue());
                 bltServer.NotifyCharacteristicChanged(e.Device, e.Characteristic, false);
                 Log.Info(TAG, "---------------> Data sent");

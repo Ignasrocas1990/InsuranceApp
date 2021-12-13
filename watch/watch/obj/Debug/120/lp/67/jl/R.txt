@@ -9,7 +9,17 @@ int attr fontProviderQuery 0x7f040008
 int attr fontStyle 0x7f040009
 int attr fontVariationSettings 0x7f04000a
 int attr fontWeight 0x7f04000b
-int attr ttcIndex 0x7f04000c
+int attr layout_aspectRatio 0x7f04000c
+int attr layout_heightPercent 0x7f04000d
+int attr layout_marginBottomPercent 0x7f04000e
+int attr layout_marginEndPercent 0x7f04000f
+int attr layout_marginLeftPercent 0x7f040010
+int attr layout_marginPercent 0x7f040011
+int attr layout_marginRightPercent 0x7f040012
+int attr layout_marginStartPercent 0x7f040013
+int attr layout_marginTopPercent 0x7f040014
+int attr layout_widthPercent 0x7f040015
+int attr ttcIndex 0x7f040016
 int color notification_action_color_filter 0x7f060001
 int color notification_icon_bg_color 0x7f060002
 int color ripple_material_light 0x7f060003
@@ -102,7 +112,7 @@ int styleable FontFamily_fontProviderFetchStrategy 2
 int styleable FontFamily_fontProviderFetchTimeout 3
 int styleable FontFamily_fontProviderPackage 4
 int styleable FontFamily_fontProviderQuery 5
-int[] styleable FontFamilyFont { 0x1010532, 0x101053f, 0x1010570, 0x1010533, 0x101056f, 0x7f040002, 0x7f040009, 0x7f04000a, 0x7f04000b, 0x7f04000c }
+int[] styleable FontFamilyFont { 0x1010532, 0x101053f, 0x1010570, 0x1010533, 0x101056f, 0x7f040002, 0x7f040009, 0x7f04000a, 0x7f04000b, 0x7f040016 }
 int styleable FontFamilyFont_android_font 0
 int styleable FontFamilyFont_android_fontStyle 1
 int styleable FontFamilyFont_android_fontVariationSettings 2
@@ -129,3 +139,14 @@ int styleable GradientColor_android_type 11
 int[] styleable GradientColorItem { 0x10101a5, 0x1010514 }
 int styleable GradientColorItem_android_color 0
 int styleable GradientColorItem_android_offset 1
+int[] styleable PercentLayout_Layout { 0x7f04000c, 0x7f04000d, 0x7f04000e, 0x7f04000f, 0x7f040010, 0x7f040011, 0x7f040012, 0x7f040013, 0x7f040014, 0x7f040015 }
+int styleable PercentLayout_Layout_layout_aspectRatio 0
+int styleable PercentLayout_Layout_layout_heightPercent 1
+int styleable PercentLayout_Layout_layout_marginBottomPercent 2
+int styleable PercentLayout_Layout_layout_marginEndPercent 3
+int styleable PercentLayout_Layout_layout_marginLeftPercent 4
+int styleable PercentLayout_Layout_layout_marginPercent 5
+int styleable PercentLayout_Layout_layout_marginRightPercent 6
+int styleable PercentLayout_Layout_layout_marginStartPercent 7
+int styleable PercentLayout_Layout_layout_marginTopPercent 8
+int styleable PercentLayout_Layout_layout_widthPercent 9

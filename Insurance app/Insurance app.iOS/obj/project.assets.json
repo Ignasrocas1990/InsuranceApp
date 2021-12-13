@@ -1329,11 +1329,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Ignas\\Desktop\\New folder\\InsuranceApp\\Insurance app\\Insurance app.iOS\\Insurance app.iOS.csproj",
+      "projectUniqueName": "C:\\Users\\Ignas\\Desktop\\VStudio\\InsuranceApp\\Insurance app\\Insurance app.iOS\\Insurance app.iOS.csproj",
       "projectName": "Insurance app.iOS",
-      "projectPath": "C:\\Users\\Ignas\\Desktop\\New folder\\InsuranceApp\\Insurance app\\Insurance app.iOS\\Insurance app.iOS.csproj",
+      "projectPath": "C:\\Users\\Ignas\\Desktop\\VStudio\\InsuranceApp\\Insurance app\\Insurance app.iOS\\Insurance app.iOS.csproj",
       "packagesPath": "C:\\Users\\Ignas\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Ignas\\Desktop\\New folder\\InsuranceApp\\Insurance app\\Insurance app.iOS\\obj\\",
+      "outputPath": "C:\\Users\\Ignas\\Desktop\\VStudio\\InsuranceApp\\Insurance app\\Insurance app.iOS\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "fallbackFolders": [
@@ -1354,8 +1354,8 @@
       "frameworks": {
         "xamarinios10": {
           "projectReferences": {
-            "C:\\Users\\Ignas\\Desktop\\New folder\\InsuranceApp\\Insurance app\\Insurance app\\Insurance app.csproj": {
-              "projectPath": "C:\\Users\\Ignas\\Desktop\\New folder\\InsuranceApp\\Insurance app\\Insurance app\\Insurance app.csproj"
+            "C:\\Users\\Ignas\\Desktop\\VStudio\\InsuranceApp\\Insurance app\\Insurance app\\Insurance app.csproj": {
+              "projectPath": "C:\\Users\\Ignas\\Desktop\\VStudio\\InsuranceApp\\Insurance app\\Insurance app\\Insurance app.csproj"
             }
           }
         }

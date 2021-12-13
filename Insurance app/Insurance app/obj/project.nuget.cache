@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "++ZSe5XeNpWcPC65C3oco9w/AgJezsJ3kdpx4ONUaVh8BVWxUVEVnmuerfQVHUTeCOi04dj4U7gwr6J2tQ5C0Q==",
+  "dgSpecHash": "6BsKwaA20pVoULSL+aFZCmaOCEEI7LkDZnU/3q9nJk83NRTwg2mGBi37PoiaTwejGZC2E1hm82IxD7X6IERFdw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Ignas\\Desktop\\New folder\\InsuranceApp\\Insurance app\\Insurance app\\Insurance app.csproj",
+  "projectFilePath": "C:\\Users\\Ignas\\Desktop\\VStudio\\InsuranceApp\\Insurance app\\Insurance app\\Insurance app.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Ignas\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.1\\microsoft.netcore.platforms.1.1.1.nupkg.sha512",
     "C:\\Users\\Ignas\\.nuget\\packages\\microsoft.netcore.targets\\1.1.3\\microsoft.netcore.targets.1.1.3.nupkg.sha512",
