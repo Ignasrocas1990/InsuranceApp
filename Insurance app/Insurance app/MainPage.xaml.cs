@@ -15,17 +15,7 @@ using Java.Util;
 using Plugin.BLE.Abstractions.EventArgs;
 
 namespace Insurance_app
-{        /*
-        private IReadOnlyList<IDevice> list;
-        private ConnectParameters cancellationToken;
-        private ICharacteristic crst;
-        private EventHandler<IReadOnlyList<IService>> serviceHandler;
-        private EventHandler<IReadOnlyList<ICharacteristic>> crstHandler;
-        private EventHandler startCrst;
-        private IReadOnlyList<IService> service;
-        private EventHandler<Byte> readData;
-        //cancellationToken = new ConnectParameters(true, false);
-        */
+{        
     public partial class MainPage : ContentPage
     {
         private string TAG = "BleClient";
@@ -71,16 +61,25 @@ namespace Insurance_app
 
                      chara = await service.GetCharacteristicAsync(SERVER_GUID);
                  }
+                 else
+                 {
+                     alert("error", "error to get service", "close");
+                 }
                  if (chara != null)
                  {
                      Console.WriteLine("-----------Got charasterstic");
 
                      read(chara);
                  }
+                 else
+                 {
+                     alert("error", "error to get charasteristic", "close");
+                 }
              };
             readCompleted += (s, e) =>
             {
                 string str = Encoding.Default.GetString(bytes);
+                alert("message", str, "close");
                 Console.WriteLine("--------------------- read complete, values are : >"+str);
             };
         }
@@ -92,7 +91,6 @@ namespace Insurance_app
                 IReadOnlyList<IDevice> list = adapter.GetSystemConnectedOrPairedDevices(temp);
                 await adapter.ConnectToDeviceAsync(list[0]);
                    
-                //deviceHandler?.Invoke(this, device);
             }
             catch (DeviceConnectionException err)
             {

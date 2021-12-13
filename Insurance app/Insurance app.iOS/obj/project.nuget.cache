@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "jkxGbHJqCbCSHNvXgkpfodDgeL8/vLDoqLKdBzerwQJRzn6pSlIGUJrk+aFSXt6P4bbB359T/lHJ70nRcTyguw==",
+  "dgSpecHash": "PztnDQZ454bmWvG9ueSp8x5Z2IPEpvROLQJ6QQiUxrYOc4bmBPBQJIFQGY10wyjwS9LqOqy/lIXMuzvGtcg1/Q==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Ignas\\Desktop\\VStudio\\Insurance app\\Insurance app\\Insurance app.iOS\\Insurance app.iOS.csproj",
+  "projectFilePath": "C:\\Users\\Ignas\\Desktop\\New folder\\InsuranceApp\\Insurance app\\Insurance app.iOS\\Insurance app.iOS.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Ignas\\.nuget\\packages\\plugin.ble\\2.1.2\\plugin.ble.2.1.2.nupkg.sha512",
     "C:\\Users\\Ignas\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",

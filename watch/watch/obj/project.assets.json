@@ -2445,11 +2445,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Ignas\\Desktop\\VStudio\\Insurance app\\watch\\watch\\watch.csproj",
+      "projectUniqueName": "C:\\Users\\Ignas\\Desktop\\New folder\\InsuranceApp\\watch\\watch\\watch.csproj",
       "projectName": "watch",
-      "projectPath": "C:\\Users\\Ignas\\Desktop\\VStudio\\Insurance app\\watch\\watch\\watch.csproj",
+      "projectPath": "C:\\Users\\Ignas\\Desktop\\New folder\\InsuranceApp\\watch\\watch\\watch.csproj",
       "packagesPath": "C:\\Users\\Ignas\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Ignas\\Desktop\\VStudio\\Insurance app\\watch\\watch\\obj\\",
+      "outputPath": "C:\\Users\\Ignas\\Desktop\\New folder\\InsuranceApp\\watch\\watch\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "fallbackFolders": [
