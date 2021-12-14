@@ -45,38 +45,12 @@ namespace Insurance_app
             {
                 alert("erro","type of bluetooth not available","close");
             }
-            else
-            {
 
-            }
-            adapter.DeviceConnected += async (s, e) =>
-             {
-                 var d = e.Device;
-                 ICharacteristic chara = null;
-                 Console.WriteLine("-----------------------deviceHander : "+ d.Name);
-                 var service = await d.GetServiceAsync(SERVER_GUID);
-                 if (service != null)
-                 {
-                     Console.WriteLine("-----------Got service");
+            bleCheck();
+            ble.StateChanged += Ble_StateChanged;
 
-                     chara = await service.GetCharacteristicAsync(SERVER_GUID);
-                 }
-                 else
-                 {
-                     alert("error", "error to get service", "close");
-                 }
-                 if (chara != null)
-                 {
-                     chara.ValueUpdated += (se, values) =>
-                     {
-                         read(values.Characteristic);
-                     };
-                     Console.WriteLine("-----------Got charasterstic");
 
-                     read(chara);
-                 }
 
-             };
             readCompleted += (s, e) =>
             {
                 string str = Encoding.Default.GetString(bytes);
@@ -84,8 +58,53 @@ namespace Insurance_app
                 Console.WriteLine("--------------------- read complete, values are : >"+str);
             };
         }
+
+        private void Ble_StateChanged(object sender, BluetoothStateChangedArgs e)
+        {
+            Console.WriteLine("State changed -----"+e.NewState);
+            bleCheck();
+
+
+        }
+
+        public async void connect()
+        {
+            adapter.DeviceConnected += async (s, e) =>
+            {
+                var d = e.Device;
+                ICharacteristic chara = null;
+                Console.WriteLine("-----------------------deviceHander : " + d.Name);
+                var service = await d.GetServiceAsync(SERVER_GUID);
+                if (service != null)
+                {
+                    Console.WriteLine("-----------Got service");
+
+                    chara = await service.GetCharacteristicAsync(SERVER_GUID);
+                }
+                else
+                {
+                    alert("error", "error to get service", "close");
+                }
+                if (chara != null)
+                {
+                    chara.ValueUpdated += (se, values) =>
+                    {
+                        read(values.Characteristic);
+                    };
+                    Console.WriteLine("-----------Got charasterstic");
+
+                    read(chara);
+                }
+
+            };
+        }
         public async void connectToKnow(object sender, EventArgs e)
         {
+            if (!await getPremissionsAsync())
+            {
+                alert("notice","Premissions needed","close");
+                return;
+            }
             try
             {
                 Guid[] temp = { SERVER_GUID };
@@ -100,35 +119,57 @@ namespace Insurance_app
             }
 
         }
+
+        
+
+
+
         private async void read(ICharacteristic chara)
         {
             bytes = await chara.ReadAsync();
             readCompleted?.Invoke(this, EventArgs.Empty);
         }
 
+        //------------------------------------------------------------------------ bluetooth on
 
-
-
-
-
-
-
+        public void bleCheck()
+        {
+            if (!ble.IsAvailable)
+            {
+                 alert("Error", "Bluetooth LE is not available", "close");
+                ConnectBtn.IsEnabled = false;
+            }
+            else if (!ble.IsOn && ble.State != BluetoothState.TurningOn && ble.State != BluetoothState.TurningOff)
+            {
+                 alert("Error", "Please turn on the Bluetooth", "close");
+                 ConnectBtn.IsEnabled = false;
+            }
+            else
+            {
+                ConnectBtn.IsEnabled = true;
+            }
+        }
 
         //-----------------------------------------------------------------------support methods
         private async Task<bool> getPremissionsAsync()
         {
             var locationPermissionStatus = await Permissions.CheckStatusAsync<Permissions.LocationAlways>();
 
-            if (locationPermissionStatus != PermissionStatus.Granted)
+            var sensorsPermission =  await Permissions.CheckStatusAsync<Permissions.Sensors>();
+            var granted = PermissionStatus.Denied;
+            if (locationPermissionStatus != granted || sensorsPermission != granted)
             {
-                var status = await Permissions.RequestAsync<Permissions.LocationAlways>();
-                return status == PermissionStatus.Granted;
+                var locStatus = await Permissions.RequestAsync<Permissions.LocationAlways>();
+                var sensorStatus =await Permissions.RequestAsync<Permissions.Sensors>();
+                return (locStatus != granted && sensorStatus != granted);
             }
+
+            
             return true;
         }
         private void alert(string title,string msg, string btn)
         {
-            MainThread.BeginInvokeOnMainThread(() => this.DisplayAlert(title, msg, btn));
+            MainThread.BeginInvokeOnMainThread(() => DisplayAlert(title, msg, btn));
 
         }
         private Guid Getguid(string uuid) => Guid.Parse(uuid);
