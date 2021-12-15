@@ -9,6 +9,8 @@ using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
 using Xamarin.Essentials;
 using System.Diagnostics;
+using System.Threading;
+using Android.Bluetooth;
 using Plugin.BLE.Abstractions.Exceptions;
 using Plugin.BLE.Abstractions;
 using Java.Util;
@@ -19,18 +21,22 @@ namespace Insurance_app
     public partial class MainPage : ContentPage
     {
         private string TAG = "BleClient";
-        private Guid SERVER_GUID;
+        private readonly Guid SERVER_GUID;
         private const string uuidString = "a3bb5442-5b61-11ec-bf63-0242ac130002";
 
-        private IBluetoothLE ble;
-        private IAdapter adapter;
+        private readonly IBluetoothLE ble;
+        private readonly IAdapter adapter;
 
 
         event EventHandler<IDevice> deviceHandler;
         IReadOnlyList<IDevice> list;
-        private IDevice device;
+        private IDevice device = null;
         private byte[] bytes;
-        private EventHandler readCompleted;
+        private readonly EventHandler readCompleted;
+        private ICharacteristic chara = null;
+        private bool canRead = false;
+        private CancellationToken cancelT;
+        private readonly Action readCanceledCallback = delegate { };
 
         public MainPage()
         {
@@ -39,14 +45,19 @@ namespace Insurance_app
             
             ble = CrossBluetoothLE.Current;
             adapter = CrossBluetoothLE.Current.Adapter;
-
+            cancelT = new CancellationToken(false);
+            cancelT.Register(readCanceledCallback);
+            readCanceledCallback += () =>
+            {
+                Console.WriteLine("------------------------------------ read Cancellation token called");
+            };
             //check if bluetooth is on
             if (ble.IsAvailable == false)
             {
-                alert("erro","type of bluetooth not available","close");
+                Alert("error","type of bluetooth not available","close");
             }
 
-            bleCheck();
+            BleCheck();
             ble.StateChanged += Ble_StateChanged;
 
 
@@ -54,27 +65,37 @@ namespace Insurance_app
             readCompleted += (s, e) =>
             {
                 string str = Encoding.Default.GetString(bytes);
-                alert("message", str, "close");
-                Console.WriteLine("--------------------- read complete, values are : >"+str);
+                Alert("message", str, "close");
+                Console.WriteLine("--------------------- Read complete, values are : >"+str);
             };
+            if (adapter != null)
+            {
+                Connect();
+            }
+        }
+
+        private void Chara_ValueUpdated(object sender, CharacteristicUpdatedEventArgs e)
+        {
+            Console.WriteLine("Value has been updated ---------------------------");
+            Read(e.Characteristic);
         }
 
         private void Ble_StateChanged(object sender, BluetoothStateChangedArgs e)
         {
             Console.WriteLine("State changed -----"+e.NewState);
-            bleCheck();
+            BleCheck();
 
 
         }
 
-        public async void connect()
+        public void Connect()
         {
             adapter.DeviceConnected += async (s, e) =>
             {
-                var d = e.Device;
-                ICharacteristic chara = null;
-                Console.WriteLine("-----------------------deviceHander : " + d.Name);
-                var service = await d.GetServiceAsync(SERVER_GUID);
+                device = e.Device;
+                
+                Console.WriteLine("-----------------------deviceHander : " + device.Name);
+                var service = await device.GetServiceAsync(SERVER_GUID);
                 if (service != null)
                 {
                     Console.WriteLine("-----------Got service");
@@ -83,26 +104,23 @@ namespace Insurance_app
                 }
                 else
                 {
-                    alert("error", "error to get service", "close");
+                    Alert("error", "error to get service", "close");
                 }
                 if (chara != null)
                 {
-                    chara.ValueUpdated += (se, values) =>
-                    {
-                        read(values.Characteristic);
-                    };
-                    Console.WriteLine("-----------Got charasterstic");
-
-                    read(chara);
+                    Console.WriteLine("-----------Got characteristic");
+                    canRead = chara.CanRead;
+                    Read(chara);
                 }
 
             };
         }
-        public async void connectToKnow(object sender, EventArgs e)
+
+        public async void ConnectToKnow(object sender, EventArgs e)
         {
             if (!await getPremissionsAsync())
             {
-                alert("notice","Premissions needed","close");
+                Alert("notice","Permissions needed","close");
                 return;
             }
             try
@@ -124,24 +142,38 @@ namespace Insurance_app
 
 
 
-        private async void read(ICharacteristic chara)
+        private async void Read(ICharacteristic chara)
         {
-            bytes = await chara.ReadAsync();
-            readCompleted?.Invoke(this, EventArgs.Empty);
+            try
+            {
+                while (canRead)
+                {
+                    bytes = await chara.ReadAsync(cancelT);
+                    Thread.Sleep(1000);
+                    readCompleted?.Invoke(this, EventArgs.Empty);
+                }
+            }
+            catch (Exception e)
+            {
+                canRead = false;
+                Console.WriteLine("------------------------------read fail : "+e.Message);
+              
+            }
+            
         }
 
-        //------------------------------------------------------------------------ bluetooth on
+        //------------------------------------------------------------------------ blue-tooth on
 
-        public void bleCheck()
+        public void BleCheck()
         {
             if (!ble.IsAvailable)
             {
-                 alert("Error", "Bluetooth LE is not available", "close");
+                 Alert("Error", "Bluetooth LE is not available", "close");
                 ConnectBtn.IsEnabled = false;
             }
             else if (!ble.IsOn && ble.State != BluetoothState.TurningOn && ble.State != BluetoothState.TurningOff)
             {
-                 alert("Error", "Please turn on the Bluetooth", "close");
+                 Alert("Error", "Please turn on the Bluetooth", "close");
                  ConnectBtn.IsEnabled = false;
             }
             else
@@ -156,18 +188,17 @@ namespace Insurance_app
             var locationPermissionStatus = await Permissions.CheckStatusAsync<Permissions.LocationAlways>();
 
             var sensorsPermission =  await Permissions.CheckStatusAsync<Permissions.Sensors>();
-            var granted = PermissionStatus.Denied;
-            if (locationPermissionStatus != granted || sensorsPermission != granted)
-            {
-                var locStatus = await Permissions.RequestAsync<Permissions.LocationAlways>();
-                var sensorStatus =await Permissions.RequestAsync<Permissions.Sensors>();
-                return (locStatus != granted && sensorStatus != granted);
-            }
-
+            var granted = PermissionStatus.Granted;
+            if (locationPermissionStatus == granted && sensorsPermission == granted) return true;
             
-            return true;
+            var locStatus = await Permissions.RequestAsync<Permissions.LocationAlways>();
+            var sensorStatus =await Permissions.RequestAsync<Permissions.Sensors>();
+            return (locStatus == granted && sensorStatus == granted);
+
+
+
         }
-        private void alert(string title,string msg, string btn)
+        private void Alert(string title,string msg, string btn)
         {
             MainThread.BeginInvokeOnMainThread(() => DisplayAlert(title, msg, btn));
 

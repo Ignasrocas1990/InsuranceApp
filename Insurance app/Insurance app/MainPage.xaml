@@ -5,7 +5,7 @@
 
     <StackLayout>
         <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
-            <Button x:Name="ConnectBtn" IsEnabled="True" Clicked="connectToKnow" Text="connect" />
+            <Button x:Name="ConnectBtn" IsEnabled="True" Clicked="ConnectToKnow" Text="Connect" />
         </Frame>
     </StackLayout>
 

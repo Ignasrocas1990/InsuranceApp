@@ -53,12 +53,12 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SensorManager.cs" />
-    <Compile Include="BleServerCallback.cs" />
     <Compile Include="BleServer.cs" />
+    <Compile Include="BleServerCallback.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SensorManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
