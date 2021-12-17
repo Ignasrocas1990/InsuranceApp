@@ -16,53 +16,50 @@ namespace watch
     public class SensorManager
     {
 
-        public event EventHandler<SensorArgs> accEventHandler;
-        public event EventHandler<SensorArgs> gyroEventHandler;
+        public event EventHandler<AccArgs> AccEventHandler;
+        public event EventHandler<GyroArgs> GyroEventHandler;
+        
+        GyroArgs gyroArgs;
+        AccArgs accArgs;
+        private string gyroTemp;
+        private string accTemp;
 
-        static Queue<String> queue = new Queue<String>();  
-
-        SensorArgs sensorArgs;
         SensorSpeed speed = SensorSpeed.UI;
 
         public SensorManager(){
             Accelerometer.ReadingChanged += AcceReadingChanged;
             Gyroscope.ReadingChanged += GyroReadingChanged;
+            gyroArgs = new GyroArgs();
+            gyroArgs.Full = "n";
+            accArgs = new AccArgs();
+            accArgs.Full = "n";
+
 
         }
 
         private void GyroReadingChanged(object s, GyroscopeChangedEventArgs args)
         {
-            var gData = args.Reading;
-            string data = "G" + (gData.AngularVelocity.X).ToString() 
-                + "," + (gData.AngularVelocity.Y).ToString() + "," + (gData.AngularVelocity.Z).ToString();
-            ToggleGyro();
-            sensorArgs = new SensorArgs();
-            sensorArgs.full = data;
-            gyroEventHandler?.Invoke(this, sensorArgs);
+            var g = args.Reading;
+            
+            gyroTemp = "G" + (g.AngularVelocity.X).ToString() 
+                              + "," + (g.AngularVelocity.Y).ToString() + "," + (g.AngularVelocity.Z).ToString();
+            if (gyroTemp.Contains(gyroArgs.Full)) return;
+
+            gyroArgs.Full = gyroTemp;
+            GyroEventHandler?.Invoke(this, gyroArgs);
         }
 
         void AcceReadingChanged(object s, AccelerometerChangedEventArgs args)
         {
             var accData = args.Reading;
-            string data = "A"+(accData.Acceleration.X).ToString() +","
+            accTemp = "A"+(accData.Acceleration.X).ToString() +","
                 +(accData.Acceleration.Y).ToString()+","+(accData.Acceleration.Z).ToString();
-           // queue.Enqueue(temp);
-            ToggleAcce();
-
-            sensorArgs = new SensorArgs();
-            sensorArgs.full = data;
-            accEventHandler?.Invoke(this, sensorArgs);
+            
+            if (accTemp.Contains(accArgs.Full)) return;
+            accArgs.Full = accTemp;
+            AccEventHandler?.Invoke(this, accArgs);
         }
-
-
-        public static string getSensorData()
-        {
-            if (queue.Count !=0)
-            {
-                return queue.Dequeue();
-            }
-            return null;
-        }
+        
         public void ToggleAcce()
         {
             try
@@ -81,6 +78,8 @@ namespace watch
             {
                 Console.WriteLine("--------------------- other error ? " + oe.Message);
             }
+            
+            
         }
         public void ToggleGyro()
         {
@@ -101,7 +100,7 @@ namespace watch
 
             }
         }
-        public void unsubscribeSensors()
+        public void UnsubscribeSensors()
         {
             Accelerometer.ReadingChanged -= AcceReadingChanged;
             Gyroscope.ReadingChanged -= GyroReadingChanged;
@@ -109,7 +108,10 @@ namespace watch
 
         }
     }
-    public class SensorArgs:EventArgs{
-        public string full { get; set; }
+    public class GyroArgs:EventArgs{
+        public string Full { get; set; }
+    }
+    public class AccArgs:EventArgs{
+        public string Full { get; set; }
     }
 }

@@ -1,38 +1,39 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Linq;
-
+using System.Collections.Concurrent;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
 using Android.Content;
-using Android.Util;
+using Java.Lang;
 using Java.Util;
-using Random = System.Random;
+using String = System.String;
 
 namespace watch
 {
     public class BleServer
     {
 
-        private readonly string TAG = "BleServer";
         private readonly UUID SERVER_UUID;
-
-
+        
 
         //private Context context;
         private BluetoothManager bltManager;
         private BluetoothAdapter bltAdapter;
-        private BleServerCallback bltCallback;
+        public BleServerCallback BltCallback;
         private BluetoothGattServer bltServer;
         private BluetoothGattCharacteristic bltCharac;
-        private BluetoothLeAdvertiser bltAdvertiser;
+        private readonly BluetoothLeAdvertiser bltAdvertiser;
         private const string defaultUUID = "a3bb5442-5b61-11ec-bf63-0242ac130002";
-        public string dataToSend = "empty";
+        public readonly ConcurrentQueue<String> SensorData;
         private bool dataRecieved = true;
+        private string dequeValue;
+        public bool IsConnected=false;
+        public event EventHandler ToggleSensorsEventHandler;
+
 
 
         public BleServer(Context context,string uuid)
         {
+            SensorData = new ConcurrentQueue<String>();
             if (uuid == "")
             {
                 SERVER_UUID = GetUUID(defaultUUID);
@@ -43,29 +44,43 @@ namespace watch
             }
 
             CreateServer(context);
-
-            //Use notificationHandler to see if data recieved before sending different one (after recieve turn off service)
-            bltCallback.dataRecievedNotifier += (s,e) =>
+            //data recieved
+            BltCallback.dataRecievedNotifier += (s,e) =>
             {
-                Log.Debug(TAG,e.GattStatus.ToString()+" data recieved , device:  "+e.Device.Name);
                 dataRecieved = true;
 
             };
-            bltCallback.readHandler += SendData;
-
+            BltCallback.readHandler += SendData;
+            
             bltAdvertiser = bltAdapter.BluetoothLeAdvertiser;
             StartAdvertising();
         }
         public void SendData(object s, BleEventArgs e)
         {
+            if (!IsConnected)
+            {
+                ToggleSensorsEventHandler?.Invoke(this,EventArgs.Empty);
+                IsConnected = true;
+                Thread.Sleep(100);
+            }
+            
             if (!dataRecieved) return;
+            
+             bool dequeued  = SensorData.TryDequeue(out dequeValue);
+             if (dequeued)
+             {
+                 Console.WriteLine("sensor count : "+SensorData.Count);
+                 dataRecieved = false;
+                 e.Characteristic.SetValue(dequeValue);
+                 bltServer.SendResponse(e.Device, e.RequestId, GattStatus.Success, e.Offset, e.Characteristic.GetValue() ?? throw new InvalidOperationException());
+                 bltServer.NotifyCharacteristicChanged(e.Device, e.Characteristic, false);
+             }
+             else
+             {
+                 Console.WriteLine("######################error############- size of queue : "+SensorData.Count);
+             }
 
-            dataRecieved = false;
-            e.Characteristic.SetValue(dataToSend);
-            bltServer.SendResponse(e.Device, e.RequestId, GattStatus.Success, e.Offset, e.Characteristic.GetValue() ?? throw new InvalidOperationException());
-            bltServer.NotifyCharacteristicChanged(e.Device, e.Characteristic, false);
-            Log.Info(TAG, "---------------> Data sent");
-            dataToSend = "empty";
+           
 
         }
         private void CreateServer(Context context)
@@ -75,8 +90,8 @@ namespace watch
             {
                 bltAdapter = bltManager.Adapter;
 
-                bltCallback = new BleServerCallback();
-                bltServer = bltManager.OpenGattServer(context, bltCallback);
+                BltCallback = new BleServerCallback();
+                bltServer = bltManager.OpenGattServer(context, BltCallback);
             }
 
             var service = new BluetoothGattService(SERVER_UUID, GattServiceType.Primary);

@@ -1,26 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
 using Xamarin.Essentials;
-using System.Diagnostics;
 using System.Threading;
-using Android.Bluetooth;
 using Plugin.BLE.Abstractions.Exceptions;
-using Plugin.BLE.Abstractions;
-using Java.Util;
+
 using Plugin.BLE.Abstractions.EventArgs;
+using Exception = System.Exception;
+using String = System.String;
+using Thread = System.Threading.Thread;
 
 namespace Insurance_app
 {        
     public partial class MainPage : ContentPage
     {
-        private string TAG = "BleClient";
         private readonly Guid SERVER_GUID;
         private const string uuidString = "a3bb5442-5b61-11ec-bf63-0242ac130002";
 
@@ -28,12 +26,13 @@ namespace Insurance_app
         private readonly IAdapter adapter;
 
 
-        event EventHandler<IDevice> deviceHandler;
-        IReadOnlyList<IDevice> list;
-        private IDevice device = null;
-        private byte[] bytes;
-        private readonly EventHandler readCompleted;
-        private ICharacteristic chara = null;
+        //event EventHandler<IDevice> deviceHandler;
+        //IReadOnlyList<IDevice> list;
+        //private IDevice device = null;
+        private Queue<String> recievedData;
+       // private byte[] bytes;
+        private readonly EventHandler<byte[]> readCompleted;
+        //private ICharacteristic chara = null;
         private bool canRead = false;
         private CancellationToken cancelT;
         private readonly Action readCanceledCallback = delegate { };
@@ -64,8 +63,7 @@ namespace Insurance_app
 
             readCompleted += (s, e) =>
             {
-                string str = Encoding.Default.GetString(bytes);
-                Alert("message", str, "close");
+                string str = Encoding.Default.GetString(e);
                 Console.WriteLine("--------------------- Read complete, values are : >"+str);
             };
             if (adapter != null)
@@ -73,26 +71,20 @@ namespace Insurance_app
                 Connect();
             }
         }
-
-        private void Chara_ValueUpdated(object sender, CharacteristicUpdatedEventArgs e)
-        {
-            Console.WriteLine("Value has been updated ---------------------------");
-            Read(e.Characteristic);
-        }
+        
 
         private void Ble_StateChanged(object sender, BluetoothStateChangedArgs e)
         {
             Console.WriteLine("State changed -----"+e.NewState);
             BleCheck();
-
-
         }
 
         public void Connect()
         {
             adapter.DeviceConnected += async (s, e) =>
             {
-                device = e.Device;
+                ICharacteristic chara = null;
+                var device = e.Device;
                 
                 Console.WriteLine("-----------------------deviceHander : " + device.Name);
                 var service = await device.GetServiceAsync(SERVER_GUID);
@@ -104,11 +96,12 @@ namespace Insurance_app
                 }
                 else
                 {
-                    Alert("error", "error to get service", "close");
+                    Console.WriteLine("error cant read Charactersitic (because the watch app is not on)");
+                    Alert("error", "Please run watch application, and try again", "close");
                 }
                 if (chara != null)
                 {
-                    Console.WriteLine("-----------Got characteristic");
+                    Console.WriteLine("Got characteristic");
                     canRead = chara.CanRead;
                     Read(chara);
                 }
@@ -118,7 +111,7 @@ namespace Insurance_app
 
         public async void ConnectToKnow(object sender, EventArgs e)
         {
-            if (!await getPremissionsAsync())
+            if (!await GetPremissionsAsync())
             {
                 Alert("notice","Permissions needed","close");
                 return;
@@ -144,13 +137,15 @@ namespace Insurance_app
 
         private async void Read(ICharacteristic chara)
         {
+            // here  i if it tries to read and fails wait number of seconds before trying again.
+            byte[] bytes = null;
             try
             {
                 while (canRead)
                 {
                     bytes = await chara.ReadAsync(cancelT);
-                    Thread.Sleep(1000);
-                    readCompleted?.Invoke(this, EventArgs.Empty);
+                    //Thread.Sleep(100);
+                    readCompleted?.Invoke(this, bytes);
                 }
             }
             catch (Exception e)
@@ -183,7 +178,7 @@ namespace Insurance_app
         }
 
         //-----------------------------------------------------------------------support methods
-        private async Task<bool> getPremissionsAsync()
+        private async Task<bool> GetPremissionsAsync()
         {
             var locationPermissionStatus = await Permissions.CheckStatusAsync<Permissions.LocationAlways>();
 

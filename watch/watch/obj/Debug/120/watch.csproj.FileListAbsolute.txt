@@ -863,15 +863,7 @@ C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\android\as
 C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\android\assets\Xamarin.Jetbrains.Annotations.dll
 C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\android\assets\Xamarin.Kotlin.StdLib.Common.dll
 C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\android\assets\Xamarin.Kotlin.StdLib.dll
-C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\androidx\jl\2f23b651-4112-48ef-b696-4a01c93dfa6b.jar
-C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\androidx\jl\514d7211-24df-4056-816c-47ea62eaf1c8.jar
-C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\androidx\jl\6f8a461f-cbd8-443f-9813-24258feea148.jar
-C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\androidx\jl\fa00172c-f86d-4f3b-a11c-c750cf684c4d.jar
 C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\stamp\_AndroidXJetifyJavaLibraryRules.stamp
-C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\androidx\proguard\1e5759e5-c1e8-4164-ad18-06c3d008d596.txt
-C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\androidx\proguard\2fc689d5-4bf1-489b-a6e6-7fcfc95217b2.txt
-C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\androidx\proguard\8ccc6780-bed8-4d42-a390-ab2a2472409c.txt
-C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\androidx\proguard\c2c6d360-99f3-495e-91ea-f9203a802546.txt
 C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\stamp\_AndroidXJetifyProguardRules.stamp
 C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\androidx\_AndroidXJetifyProguardRules.jetify
 C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\stamp\_AndroidXCecilfy.stamp
@@ -937,7 +929,6 @@ C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\android\sr
 C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\android\src\crc64a0e0a82d0db9a07d\WebAuthenticatorCallbackActivity.java
 C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\android\src\crc64a0e0a82d0db9a07d\WebAuthenticatorIntermediateActivity.java
 C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\android\src\crc64eb275ac2bf54f939\BleAdvertiseCallback.java
-C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\android\src\crc64eb275ac2bf54f939\BleGattServerCallback.java
 C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\android\src\crc64eb275ac2bf54f939\MainActivity.java
 C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\android\src\mono\androidx\activity\contextaware\OnContextAvailableListenerImplementor.java
 C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\android\src\mono\androidx\asynclayoutinflater\view\AsyncLayoutInflater_OnInflateFinishedListenerImplementor.java
@@ -1035,3 +1026,11 @@ C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\stamp\_Gen
 C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\stamp\_GeneratePackageManagerJava.stamp
 C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\stamp\_ResolveLibraryProjectImports.stamp
 C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\android\src\crc64eb275ac2bf54f939\BleServerCallback.java
+C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\androidx\jl\4f56262c-0505-4323-a82e-c4c7a62935d3.jar
+C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\androidx\jl\73fb9d64-6f26-481c-a99d-62b3c19cfc4f.jar
+C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\androidx\jl\eb5a7a26-539f-404b-99a7-37c4fa2082fc.jar
+C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\androidx\jl\f5c5a894-3227-4fa1-a63a-c279573c9a9e.jar
+C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\androidx\proguard\702bc75b-4d8b-461c-9546-8990d7e32a9c.txt
+C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\androidx\proguard\85a978bc-352b-4a47-9b54-15030197546d.txt
+C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\androidx\proguard\d8d2cda4-6d3c-4f33-8870-c5ccad28786d.txt
+C:\Users\Ignas\Desktop\VStudio\InsuranceApp\watch\watch\obj\Debug\120\androidx\proguard\f0a81ddc-e167-4f69-a615-196c4b4a1b87.txt

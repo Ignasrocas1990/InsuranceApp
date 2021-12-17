@@ -19,6 +19,7 @@ namespace watch
 
         public event EventHandler<BleEventArgs> dataRecievedNotifier;
         public event EventHandler<BleEventArgs> readHandler;
+        public EventHandler DisconectedHandler;
 
         public BleServerCallback() { }
 
@@ -27,20 +28,21 @@ namespace watch
             BluetoothGattCharacteristic chara)
         {
             base.OnCharacteristicReadRequest(device, requestId, offset, chara);
-
-            Console.WriteLine("Read request from {0}", device.Name);
-
-            if (readHandler != null)
-            {
-                
+            
+            if (readHandler != null) 
                 readHandler(this, createArgs(device, chara, requestId, offset));
-            }
         }
 
         public override void OnConnectionStateChange(BluetoothDevice device, ProfileState status, ProfileState newState)
         {
             base.OnConnectionStateChange(device, status, newState);
-            Console.WriteLine("State changed to {0}", newState);
+            if (newState == ProfileState.Disconnected)
+            {
+                // stop sensor data from queuing
+                DisconectedHandler?.Invoke(this,EventArgs.Empty);
+            }
+            Console.WriteLine($"State changed to : {newState}");
+            
 
         }
 
