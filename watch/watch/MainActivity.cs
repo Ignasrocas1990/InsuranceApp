@@ -15,6 +15,7 @@ namespace watch
         int count = 1;
         private BleServer bleServer;
         private SensorManager sensorManager;
+        private int totalCount = 0;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -42,15 +43,21 @@ namespace watch
         }
         public void SubscribeToSensor()
         {
-            sensorManager.AccEventHandler += (s, e) =>
+            
+             sensorManager.AccEventHandler += (s, e) =>
             {
                 //Console.WriteLine("Acc enqueued "+e.Full);
+                totalCount++;
                 bleServer.SensorData.Enqueue(e.Full);
+                Console.WriteLine(totalCount);
             };
+            
             sensorManager.GyroEventHandler += (s, e) =>
             {
                 //Console.WriteLine("Gyro enqueued " + e.Full);
+                totalCount++;
                 bleServer.SensorData.Enqueue(e.Full);
+                
             };
             bleServer.ToggleSensorsEventHandler += (s,e) =>
             {
@@ -63,7 +70,7 @@ namespace watch
                 {
                     sensorManager.ToggleAcce();
                     sensorManager.ToggleGyro();
-                    bleServer.IsConnected = false;
+                    bleServer.dataRecieved = true;
                 };
             }
         }
@@ -78,6 +85,7 @@ namespace watch
         {
             base.OnDestroy();
             sensorManager.UnsubscribeSensors();
+            bleServer.StopAdvertising();
         }
     }
 }

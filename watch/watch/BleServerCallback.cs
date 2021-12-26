@@ -36,7 +36,8 @@ namespace watch
         public override void OnConnectionStateChange(BluetoothDevice device, ProfileState status, ProfileState newState)
         {
             base.OnConnectionStateChange(device, status, newState);
-            if (newState == ProfileState.Disconnected)
+            
+            if (newState == ProfileState.Disconnected || newState == ProfileState.Connected)
             {
                 // stop sensor data from queuing
                 DisconectedHandler?.Invoke(this,EventArgs.Empty);

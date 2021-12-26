@@ -24,10 +24,11 @@ namespace watch
         private readonly BluetoothLeAdvertiser bltAdvertiser;
         private const string defaultUUID = "a3bb5442-5b61-11ec-bf63-0242ac130002";
         public readonly ConcurrentQueue<String> SensorData;
-        private bool dataRecieved = true;
+        public bool dataRecieved = true;
         private string dequeValue;
-        public bool IsConnected=false;
+        //public bool IsConnected=false;
         public event EventHandler ToggleSensorsEventHandler;
+        BleAdvertiseCallback bltAdvertiserCallback;
 
 
 
@@ -51,37 +52,34 @@ namespace watch
 
             };
             BltCallback.readHandler += SendData;
+
             
+            bltAdvertiserCallback = new BleAdvertiseCallback();
             bltAdvertiser = bltAdapter.BluetoothLeAdvertiser;
             StartAdvertising();
         }
         public void SendData(object s, BleEventArgs e)
         {
+            dequeValue = "empty";
+            
+            /*
             if (!IsConnected)
             {
-                ToggleSensorsEventHandler?.Invoke(this,EventArgs.Empty);
+                //ToggleSensorsEventHandler?.Invoke(this,EventArgs.Empty);
                 IsConnected = true;
                 Thread.Sleep(100);
             }
+            */
             
             if (!dataRecieved) return;
-            
-             bool dequeued  = SensorData.TryDequeue(out dequeValue);
-             if (dequeued)
-             {
-                 Console.WriteLine("sensor count : "+SensorData.Count);
-                 dataRecieved = false;
-                 e.Characteristic.SetValue(dequeValue);
-                 bltServer.SendResponse(e.Device, e.RequestId, GattStatus.Success, e.Offset, e.Characteristic.GetValue() ?? throw new InvalidOperationException());
-                 bltServer.NotifyCharacteristicChanged(e.Device, e.Characteristic, false);
-             }
-             else
-             {
-                 Console.WriteLine("######################error############- size of queue : "+SensorData.Count);
-             }
-
-           
-
+            if (!SensorData.IsEmpty)
+            {
+                SensorData.TryDequeue(out dequeValue);
+                e.Characteristic.SetValue(dequeValue);
+                bltServer.SendResponse(e.Device, e.RequestId, GattStatus.Success, e.Offset, e.Characteristic.GetValue() ?? throw new InvalidOperationException());
+                bltServer.NotifyCharacteristicChanged(e.Device, e.Characteristic, false);
+            }
+            dataRecieved = false;
         }
         private void CreateServer(Context context)
         {
@@ -117,10 +115,16 @@ namespace watch
             ?.SetIncludeTxPowerLevel(true);
 
             if (builder != null && dataBuilder != null)
-                bltAdvertiser.StartAdvertising(builder.Build(), dataBuilder.Build(), new BleAdvertiseCallback());
+                bltAdvertiser.StartAdvertising(builder.Build(), dataBuilder.Build(), bltAdvertiserCallback);
         }
         private UUID GetUUID(string uuid) => UUID.FromString(uuid);
-
+        public void StopAdvertising()
+        {
+            if (bltAdvertiser != null)
+            {
+                bltAdvertiser.StopAdvertising(bltAdvertiserCallback);
+            }
+        }
     }
     public class BleAdvertiseCallback : AdvertiseCallback
     {
@@ -135,5 +139,6 @@ namespace watch
             Console.WriteLine("Adevertise start success {0}", settingsInEffect.Mode);
             base.OnStartSuccess(settingsInEffect);
         }
+        
     }
 }

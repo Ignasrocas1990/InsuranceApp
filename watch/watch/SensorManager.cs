@@ -20,6 +20,9 @@ namespace watch
         public event EventHandler<GyroArgs> GyroEventHandler;
         
         GyroArgs gyroArgs;
+        private GyroscopeData oldGyroData = new GyroscopeData(0.0, 0.0, 0.0);
+        private AccelerometerData oldAccData = new AccelerometerData(0.0, 0.0, 0.0);
+
         AccArgs accArgs;
         private string gyroTemp;
         private string accTemp;
@@ -29,34 +32,42 @@ namespace watch
         public SensorManager(){
             Accelerometer.ReadingChanged += AcceReadingChanged;
             Gyroscope.ReadingChanged += GyroReadingChanged;
-            gyroArgs = new GyroArgs();
-            gyroArgs.Full = "n";
-            accArgs = new AccArgs();
-            accArgs.Full = "n";
-
-
+            
+            
+            gyroArgs = new GyroArgs {Full = "n"};
+            accArgs = new AccArgs {Full = "n"};
+            
         }
 
         private void GyroReadingChanged(object s, GyroscopeChangedEventArgs args)
         {
             var g = args.Reading;
+            if (g.Equals(oldGyroData))
+            {
+                return;
+            }
+            oldGyroData = g;
             
-            gyroTemp = "G" + (g.AngularVelocity.X).ToString() 
-                              + "," + (g.AngularVelocity.Y).ToString() + "," + (g.AngularVelocity.Z).ToString();
-            if (gyroTemp.Contains(gyroArgs.Full)) return;
-
-            gyroArgs.Full = gyroTemp;
+            gyroArgs.Full= "G" + (g.AngularVelocity.X).ToString() 
+                               + "," + (g.AngularVelocity.Y).ToString() + "," + (g.AngularVelocity.Z).ToString();
+            
             GyroEventHandler?.Invoke(this, gyroArgs);
+            
+            
+          
         }
 
         void AcceReadingChanged(object s, AccelerometerChangedEventArgs args)
         {
-            var accData = args.Reading;
-            accTemp = "A"+(accData.Acceleration.X).ToString() +","
-                +(accData.Acceleration.Y).ToString()+","+(accData.Acceleration.Z).ToString();
-            
-            if (accTemp.Contains(accArgs.Full)) return;
-            accArgs.Full = accTemp;
+            var currentReading = args.Reading;
+            if (currentReading.Equals(oldAccData))
+            {
+                return;
+            }
+            oldAccData = currentReading;
+            accArgs.Full = "A"+(currentReading.Acceleration.X).ToString() +","
+                           +(oldAccData.Acceleration.Y).ToString()+","+(currentReading.Acceleration.Z).ToString();
+
             AccEventHandler?.Invoke(this, accArgs);
         }
         

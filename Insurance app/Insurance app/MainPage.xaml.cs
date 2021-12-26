@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -14,6 +14,9 @@ using Plugin.BLE.Abstractions.EventArgs;
 using Exception = System.Exception;
 using String = System.String;
 using Thread = System.Threading.Thread;
+using Google.Cloud.AIPlatform;
+using Google.Cloud.AIPlatform.V1;
+using Google.Protobuf;
 
 namespace Insurance_app
 {        
@@ -36,6 +39,7 @@ namespace Insurance_app
         private bool canRead = false;
         private CancellationToken cancelT;
         private readonly Action readCanceledCallback = delegate { };
+        int i = 0;
 
         public MainPage()
         {
@@ -46,30 +50,31 @@ namespace Insurance_app
             adapter = CrossBluetoothLE.Current.Adapter;
             cancelT = new CancellationToken(false);
             cancelT.Register(readCanceledCallback);
-            readCanceledCallback += () =>
-            {
-                Console.WriteLine("------------------------------------ read Cancellation token called");
-            };
+            
             //check if bluetooth is on
             if (ble.IsAvailable == false)
             {
                 Alert("error","type of bluetooth not available","close");
             }
-
             BleCheck();
             ble.StateChanged += Ble_StateChanged;
 
 
 
+
+            
+            if (adapter != null)
+            {
+                Connect();
+            }
+            
+            
+            
             readCompleted += (s, e) =>
             {
                 string str = Encoding.Default.GetString(e);
                 Console.WriteLine("--------------------- Read complete, values are : >"+str);
             };
-            if (adapter != null)
-            {
-                Connect();
-            }
         }
         
 
@@ -86,30 +91,34 @@ namespace Insurance_app
                 ICharacteristic chara = null;
                 var device = e.Device;
                 
-                Console.WriteLine("-----------------------deviceHander : " + device.Name);
+                Console.WriteLine("-----------------------device Found : " + device.Name);
                 var service = await device.GetServiceAsync(SERVER_GUID);
                 if (service != null)
                 {
                     Console.WriteLine("-----------Got service");
 
                     chara = await service.GetCharacteristicAsync(SERVER_GUID);
+                    if (chara != null)
+                    {
+                        Console.WriteLine("Got characteristic");
+                        canRead = true;
+                        ReadAsync(chara);
+                    }
+                    else
+                    {
+                        Console.WriteLine("error, characteristic not found");
+                    }
                 }
                 else
                 {
-                    Console.WriteLine("error cant read Charactersitic (because the watch app is not on)");
-                    Alert("error", "Please run watch application, and try again", "close");
+                    Console.WriteLine("error, Service not found since Watch app is not on.");
                 }
-                if (chara != null)
-                {
-                    Console.WriteLine("Got characteristic");
-                    canRead = chara.CanRead;
-                    Read(chara);
-                }
+               
 
             };
         }
 
-        public async void ConnectToKnow(object sender, EventArgs e)
+        public async void ConnectToKnow()
         {
             if (!await GetPremissionsAsync())
             {
@@ -126,7 +135,7 @@ namespace Insurance_app
             catch (DeviceConnectionException err)
             {
 
-                Console.WriteLine("----------------error connecting device :"+err.Message);
+                Console.WriteLine($" error, Cant connect to device {err.Message}");
             }
 
         }
@@ -135,7 +144,7 @@ namespace Insurance_app
 
 
 
-        private async void Read(ICharacteristic chara)
+        private async void ReadAsync(ICharacteristic chara)
         {
             // here  i if it tries to read and fails wait number of seconds before trying again.
             byte[] bytes = null;
@@ -143,6 +152,7 @@ namespace Insurance_app
             {
                 while (canRead)
                 {
+                    
                     bytes = await chara.ReadAsync(cancelT);
                     //Thread.Sleep(100);
                     readCompleted?.Invoke(this, bytes);
@@ -150,8 +160,10 @@ namespace Insurance_app
             }
             catch (Exception e)
             {
+                Thread.Sleep(5000);
                 canRead = false;
-                Console.WriteLine("------------------------------read fail : "+e.Message);
+                BleCheck();
+                Console.WriteLine("read fail : "+e.Message);
               
             }
             
@@ -164,18 +176,22 @@ namespace Insurance_app
             if (!ble.IsAvailable)
             {
                  Alert("Error", "Bluetooth LE is not available", "close");
-                ConnectBtn.IsEnabled = false;
+               // ConnectBtn.IsEnabled = false;
             }
             else if (!ble.IsOn && ble.State != BluetoothState.TurningOn && ble.State != BluetoothState.TurningOff)
             {
                  Alert("Error", "Please turn on the Bluetooth", "close");
-                 ConnectBtn.IsEnabled = false;
+                 //ConnectBtn.IsEnabled = false;
             }
             else
             {
-                ConnectBtn.IsEnabled = true;
+                ConnectToKnow();
+                //ConnectBtn.IsEnabled = true;
+                
             }
         }
+
+
 
         //-----------------------------------------------------------------------support methods
         private async Task<bool> GetPremissionsAsync()
@@ -189,9 +205,6 @@ namespace Insurance_app
             var locStatus = await Permissions.RequestAsync<Permissions.LocationAlways>();
             var sensorStatus =await Permissions.RequestAsync<Permissions.Sensors>();
             return (locStatus == granted && sensorStatus == granted);
-
-
-
         }
         private void Alert(string title,string msg, string btn)
         {
@@ -199,5 +212,19 @@ namespace Insurance_app
 
         }
         private Guid Getguid(string uuid) => Guid.Parse(uuid);
+
+        private void Button_OnClicked(object sender, EventArgs e)
+        {
+            
+            // ReSharper disable once HeapView.BoxingAllocation
+            Button.Text = $"Click {i++}";
+            ConnectToKnow();
+            
+        }
+
+        private void test(object sender, EventArgs e)
+        {
+            testBtn.Text = $"{i++}";
+        }
     }
 }
