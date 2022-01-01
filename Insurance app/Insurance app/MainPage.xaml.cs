@@ -14,9 +14,6 @@ using Plugin.BLE.Abstractions.EventArgs;
 using Exception = System.Exception;
 using String = System.String;
 using Thread = System.Threading.Thread;
-using Google.Cloud.AIPlatform;
-using Google.Cloud.AIPlatform.V1;
-using Google.Protobuf;
 
 namespace Insurance_app
 {        
@@ -36,10 +33,11 @@ namespace Insurance_app
        // private byte[] bytes;
         private readonly EventHandler<byte[]> readCompleted;
         private bool canRead = false;
-        private CancellationToken cancelT;
         int i = 0;
         private ICharacteristic chara=null;
         private int serviceDelay = 0;
+        private int readingDelay = 0;
+        
 
         public MainPage()
         {
@@ -74,15 +72,17 @@ namespace Insurance_app
                 str = Encoding.Default.GetString(e);
                 if (str.Equals(" "))
                 {
-                    Console.WriteLine("reading empty : wait 3sec > read again");
+                    readingDelay += 3000;
+                    Console.WriteLine($"reading empty : wait {readingDelay/1000}sec > try again");
                     Task t = Task.Run(async () =>
                     {
-                        await Task.Delay(3000);
+                        await Task.Delay(readingDelay);
                         ReadAsync();
                     });
                 }
                 else
                 {
+                    readingDelay = 0;
                     Console.WriteLine("Read complete, values are : >"+str);
                     ReadAsync();
                 }
@@ -94,10 +94,10 @@ namespace Insurance_app
             byte[] bytes = null;
             try
             {
-                if (!(chara is null))
+                if (chara != null)
                 {
                     Console.WriteLine("Reading ...");
-                    bytes = await chara.ReadAsync(cancelT);
+                    bytes = await chara.ReadAsync();
                     readCompleted?.Invoke(this, bytes);
                 }
                 else

@@ -2,24 +2,27 @@
 using Android.Util;
 using Xamarin.Essentials;
 
+
 namespace watch
 {
 
     public class SensorManager
     {
-
+        private const string TAG = "mono-stdout";
+        
         public event EventHandler<SensorArgs> AccEventHandler;
         public event EventHandler<SensorArgs> GyroEventHandler;
         
         private int nOfAcc;
         private int nOfGyro;
-        private MaFilter filter;
+        private BleMaFilter filter;
 
         SensorSpeed speed = SensorSpeed.UI;
+        
 
         public SensorManager()
         {
-            filter = new MaFilter();
+            filter = new BleMaFilter();
             Accelerometer.ReadingChanged += AcceReadingChanged;
             Gyroscope.ReadingChanged += GyroReadingChanged;
             nOfAcc = 0;
@@ -37,8 +40,6 @@ namespace watch
                 GyroEventHandler?.Invoke(this, new SensorArgs(){Data = filter.GetGyro()});
                 filter.ClearGyro();
             }
-
-            
         }
 
         void AcceReadingChanged(object s, AccelerometerChangedEventArgs args)
@@ -74,17 +75,17 @@ namespace watch
             }
             catch (FeatureNotSupportedException fe)
             {
-                Log.Verbose("mon-stdout",fe.Message);
+                Log.Verbose(TAG,fe.Message);
             }
             catch (Exception ex)
             {
-                Log.Verbose("mon-stdout",ex.Message);
+                Log.Verbose(TAG,ex.Message);
 
             }
         }
         public void UnsubscribeSensors()
         {
-            Console.WriteLine("UnsubscribeSensors><");
+            Log.Verbose(TAG, "SensorManager : unsubscribed");
             Accelerometer.ReadingChanged -= AcceReadingChanged;
             Gyroscope.ReadingChanged -= GyroReadingChanged;
         }

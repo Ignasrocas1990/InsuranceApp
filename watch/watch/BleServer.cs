@@ -4,7 +4,6 @@ using Android.Bluetooth;
 using Android.Bluetooth.LE;
 using Android.Content;
 using Android.Util;
-using Java.Lang;
 using Java.Util;
 using String = System.String;
 
@@ -12,36 +11,35 @@ namespace watch
 {
     public class BleServer
     {
-
+        private const string DefaultUuid = "a3bb5442-5b61-11ec-bf63-0242ac130002";
+        public const string TAG = "mono-stdout";
         private readonly UUID SERVER_UUID;
-        
-
-        //private Context context;
-        private BluetoothManager bltManager;
-        private BluetoothAdapter bltAdapter;
+        private BluetoothManager _bltManager;
+        private BluetoothAdapter _bltAdapter;
         public BleServerCallback BltCallback;
-        private BluetoothGattServer bltServer;
-        private BluetoothGattCharacteristic bltCharac;
-        private readonly BluetoothLeAdvertiser bltAdvertiser;
-        private const string defaultUUID = "a3bb5442-5b61-11ec-bf63-0242ac130002";
-        public readonly Queue<String> SensorData;
+        private BluetoothGattServer _bltServer;
+        private BluetoothGattCharacteristic _bltCharac;
+        private readonly BluetoothLeAdvertiser _bltAdvertiser;
+        public Queue<String> SensorData;
+
+        private SensorManager _sensorManager;
         
-        public event EventHandler ToggleSensorsEventHandler;
-        BleAdvertiseCallback bltAdvertiserCallback;
+        //public event EventHandler ToggleSensorsEventHandler;
+        private readonly BleAdvertiseCallback _bltAdvertiserCallback;
         
         public BleServer(Context context )
         {
             SensorData = new Queue<String>();
-            SERVER_UUID = GetUUID(defaultUUID);
+            SERVER_UUID = GetUUID(DefaultUuid);
             CreateServer(context);
             //BltCallback.dataRecievedNotifier += (s,e) => { dataRecieved = true; };
-            BltCallback.readHandler += SendData;
-            
-
-            
-            bltAdvertiserCallback = new BleAdvertiseCallback();
-            bltAdvertiser = bltAdapter.BluetoothLeAdvertiser;
+            BltCallback.ReadHandler += SendData;
+            _bltAdvertiserCallback = new BleAdvertiseCallback();
+            _bltAdvertiser = _bltAdapter.BluetoothLeAdvertiser;
             StartAdvertising();
+
+
+            _sensorManager = new SensorManager();
         }
         public void SendData(object s, BleEventArgs e)
         {
@@ -51,29 +49,29 @@ namespace watch
                 stringValue =  SensorData.Dequeue()+" "+SensorData.Dequeue(); 
             }
             e.Characteristic.SetValue(stringValue);
-            bltServer.SendResponse(e.Device, e.RequestId, GattStatus.Success, e.Offset, e.Characteristic.GetValue() ?? throw new InvalidOperationException());
-            bltServer.NotifyCharacteristicChanged(e.Device, e.Characteristic, false);
+            _bltServer.SendResponse(e.Device, e.RequestId, GattStatus.Success, e.Offset, e.Characteristic.GetValue() ?? throw new InvalidOperationException());
+            _bltServer.NotifyCharacteristicChanged(e.Device, e.Characteristic, false);
         }
         private void CreateServer(Context context)
         {
-            bltManager = (BluetoothManager)context.GetSystemService(Context.BluetoothService);
-            if (bltManager != null)
+            _bltManager = (BluetoothManager)context.GetSystemService(Context.BluetoothService);
+            if (_bltManager != null)
             {
-                bltAdapter = bltManager.Adapter;
+                _bltAdapter = _bltManager.Adapter;
 
                 BltCallback = new BleServerCallback();
-                bltServer = bltManager.OpenGattServer(context, BltCallback);
+                _bltServer = _bltManager.OpenGattServer(context, BltCallback);
             }
 
             var service = new BluetoothGattService(SERVER_UUID, GattServiceType.Primary);
-            bltCharac = new BluetoothGattCharacteristic(SERVER_UUID, GattProperty.Read| GattProperty.Write | GattProperty.Notify ,
+            _bltCharac = new BluetoothGattCharacteristic(SERVER_UUID, GattProperty.Read| GattProperty.Write | GattProperty.Notify ,
                 GattPermission.Read | GattPermission.Write);
             var descriptor = new BluetoothGattDescriptor(SERVER_UUID, GattDescriptorPermission.Read | GattDescriptorPermission.Write);
-            bltCharac.AddDescriptor(descriptor);
+            _bltCharac.AddDescriptor(descriptor);
 
-            service.AddCharacteristic(bltCharac);
+            service.AddCharacteristic(_bltCharac);
 
-            if (bltServer != null) bltServer.AddService(service);
+            if (_bltServer != null) _bltServer.AddService(service);
         }
         private void StartAdvertising()
         {
@@ -87,14 +85,14 @@ namespace watch
             ?.SetIncludeTxPowerLevel(true);
 
             if (builder != null && dataBuilder != null)
-                bltAdvertiser.StartAdvertising(builder.Build(), dataBuilder.Build(), bltAdvertiserCallback);
+                _bltAdvertiser.StartAdvertising(builder.Build(), dataBuilder.Build(), _bltAdvertiserCallback);
         }
         private UUID GetUUID(string uuid) => UUID.FromString(uuid);
         public void StopAdvertising()
         {
-            if (bltAdvertiser != null)
+            if (_bltAdvertiser != null)
             {
-                bltAdvertiser.StopAdvertising(bltAdvertiserCallback);
+                _bltAdvertiser.StopAdvertising(_bltAdvertiserCallback);
             }
         }
     }
@@ -102,13 +100,15 @@ namespace watch
     {
         public override void OnStartFailure(AdvertiseFailure errorCode)
         {
-            Console.WriteLine("Adevertise start failure {0}", errorCode);
+            Log.Verbose(BleServer.TAG, $"advertise err : {errorCode}");
+
             base.OnStartFailure(errorCode);
         }
 
         public override void OnStartSuccess(AdvertiseSettings settingsInEffect)
         {
-            Console.WriteLine("Adevertise start success {0}", settingsInEffect.Mode);
+            Log.Verbose(BleServer.TAG, "Advertise started ");
+
             base.OnStartSuccess(settingsInEffect);
         }
         
