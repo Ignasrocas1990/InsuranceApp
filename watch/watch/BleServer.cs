@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
 using Android.Content;
+using Android.Util;
 using Java.Lang;
 using Java.Util;
 using String = System.String;
@@ -23,35 +24,19 @@ namespace watch
         private BluetoothGattCharacteristic bltCharac;
         private readonly BluetoothLeAdvertiser bltAdvertiser;
         private const string defaultUUID = "a3bb5442-5b61-11ec-bf63-0242ac130002";
-        public readonly ConcurrentQueue<String> SensorData;
-        public bool dataRecieved = true;
-        private string dequeValue;
-        //public bool IsConnected=false;
+        public readonly Queue<String> SensorData;
+        
         public event EventHandler ToggleSensorsEventHandler;
         BleAdvertiseCallback bltAdvertiserCallback;
-
-
-
-        public BleServer(Context context,string uuid)
+        
+        public BleServer(Context context )
         {
-            SensorData = new ConcurrentQueue<String>();
-            if (uuid == "")
-            {
-                SERVER_UUID = GetUUID(defaultUUID);
-            }
-            else
-            {
-                SERVER_UUID = GetUUID(uuid);
-            }
-
+            SensorData = new Queue<String>();
+            SERVER_UUID = GetUUID(defaultUUID);
             CreateServer(context);
-            //data recieved
-            BltCallback.dataRecievedNotifier += (s,e) =>
-            {
-                dataRecieved = true;
-
-            };
+            //BltCallback.dataRecievedNotifier += (s,e) => { dataRecieved = true; };
             BltCallback.readHandler += SendData;
+            
 
             
             bltAdvertiserCallback = new BleAdvertiseCallback();
@@ -60,26 +45,14 @@ namespace watch
         }
         public void SendData(object s, BleEventArgs e)
         {
-            dequeValue = "empty";
-            
-            /*
-            if (!IsConnected)
+            var stringValue = " ";
+            if (SensorData.Count>2)
             {
-                //ToggleSensorsEventHandler?.Invoke(this,EventArgs.Empty);
-                IsConnected = true;
-                Thread.Sleep(100);
+                stringValue =  SensorData.Dequeue()+" "+SensorData.Dequeue(); 
             }
-            */
-            
-            if (!dataRecieved) return;
-            if (!SensorData.IsEmpty)
-            {
-                SensorData.TryDequeue(out dequeValue);
-                e.Characteristic.SetValue(dequeValue);
-                bltServer.SendResponse(e.Device, e.RequestId, GattStatus.Success, e.Offset, e.Characteristic.GetValue() ?? throw new InvalidOperationException());
-                bltServer.NotifyCharacteristicChanged(e.Device, e.Characteristic, false);
-            }
-            dataRecieved = false;
+            e.Characteristic.SetValue(stringValue);
+            bltServer.SendResponse(e.Device, e.RequestId, GattStatus.Success, e.Offset, e.Characteristic.GetValue() ?? throw new InvalidOperationException());
+            bltServer.NotifyCharacteristicChanged(e.Device, e.Characteristic, false);
         }
         private void CreateServer(Context context)
         {
@@ -107,7 +80,6 @@ namespace watch
             var builder = new AdvertiseSettings.Builder()
             .SetAdvertiseMode(AdvertiseMode.LowLatency)
             ?.SetConnectable(true)
-            //.SetTimeout(0)
             ?.SetTxPowerLevel(AdvertiseTx.PowerHigh);
 
             AdvertiseData.Builder dataBuilder = new AdvertiseData.Builder()

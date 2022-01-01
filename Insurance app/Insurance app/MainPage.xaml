@@ -5,10 +5,13 @@
 
     <StackLayout>
         <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
-            <Button x:Name="Button" Clicked="Button_OnClicked" Text="test"/>
+            <Button x:Name="Button" Clicked="Button_OnClicked" Text="connect"/>
         </Frame>
         <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
-            <Button x:Name="testBtn" Clicked="test" Text="test"/>
+            <Button x:Name="testBtn" Clicked="test" Text="fun"/>
+        </Frame>
+        <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
+            <Button x:Name="stopBtn" Clicked="StopBtn_OnClicked" Text="stop"/>
         </Frame>
     </StackLayout>
 

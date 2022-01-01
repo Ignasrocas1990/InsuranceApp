@@ -18,9 +18,10 @@ namespace watch
     {
 
         public event EventHandler<BleEventArgs> dataRecievedNotifier;
+        public EventHandler<BleEventArgs> dataWriteHandler;
+
         public event EventHandler<BleEventArgs> readHandler;
         public EventHandler DisconectedHandler;
-
         public BleServerCallback() { }
 
 
@@ -28,9 +29,14 @@ namespace watch
             BluetoothGattCharacteristic chara)
         {
             base.OnCharacteristicReadRequest(device, requestId, offset, chara);
-            
-            if (readHandler != null) 
-                readHandler(this, createArgs(device, chara, requestId, offset));
+            readHandler?.Invoke(this, createArgs(device, chara, requestId, offset));
+        }
+
+        public override void OnCharacteristicWriteRequest(BluetoothDevice? device, int requestId, BluetoothGattCharacteristic? characteristic,
+            bool preparedWrite, bool responseNeeded, int offset, byte[]? value)
+        {
+            base.OnCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
+            dataWriteHandler?.Invoke(this, new BleEventArgs() { Device = device, Characteristic = characteristic, Value = value, RequestId = requestId, Offset = offset });
         }
 
         public override void OnConnectionStateChange(BluetoothDevice device, ProfileState status, ProfileState newState)
@@ -39,10 +45,9 @@ namespace watch
             
             if (newState == ProfileState.Disconnected || newState == ProfileState.Connected)
             {
-                // stop sensor data from queuing
+                Console.WriteLine($"State changed to : {newState}");
                 DisconectedHandler?.Invoke(this,EventArgs.Empty);
             }
-            Console.WriteLine($"State changed to : {newState}");
             
 
         }

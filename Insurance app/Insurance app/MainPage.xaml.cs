@@ -32,14 +32,14 @@ namespace Insurance_app
         //event EventHandler<IDevice> deviceHandler;
         //IReadOnlyList<IDevice> list;
         //private IDevice device = null;
-        private Queue<String> recievedData;
+        //private Queue<String> recievedData;
        // private byte[] bytes;
         private readonly EventHandler<byte[]> readCompleted;
-        //private ICharacteristic chara = null;
         private bool canRead = false;
         private CancellationToken cancelT;
-        private readonly Action readCanceledCallback = delegate { };
         int i = 0;
+        private ICharacteristic chara=null;
+        private int serviceDelay = 0;
 
         public MainPage()
         {
@@ -48,9 +48,7 @@ namespace Insurance_app
             
             ble = CrossBluetoothLE.Current;
             adapter = CrossBluetoothLE.Current.Adapter;
-            cancelT = new CancellationToken(false);
-            cancelT.Register(readCanceledCallback);
-            
+
             //check if bluetooth is on
             if (ble.IsAvailable == false)
             {
@@ -72,52 +70,58 @@ namespace Insurance_app
             
             readCompleted += (s, e) =>
             {
-                string str = Encoding.Default.GetString(e);
-                Console.WriteLine("--------------------- Read complete, values are : >"+str);
-            };
-        }
-        
-
-        private void Ble_StateChanged(object sender, BluetoothStateChangedArgs e)
-        {
-            Console.WriteLine("State changed -----"+e.NewState);
-            BleCheck();
-        }
-
-        public void Connect()
-        {
-            adapter.DeviceConnected += async (s, e) =>
-            {
-                ICharacteristic chara = null;
-                var device = e.Device;
-                
-                Console.WriteLine("-----------------------device Found : " + device.Name);
-                var service = await device.GetServiceAsync(SERVER_GUID);
-                if (service != null)
+                string str = " ";
+                str = Encoding.Default.GetString(e);
+                if (str.Equals(" "))
                 {
-                    Console.WriteLine("-----------Got service");
-
-                    chara = await service.GetCharacteristicAsync(SERVER_GUID);
-                    if (chara != null)
+                    Console.WriteLine("reading empty : wait 3sec > read again");
+                    Task t = Task.Run(async () =>
                     {
-                        Console.WriteLine("Got characteristic");
-                        canRead = true;
-                        ReadAsync(chara);
-                    }
-                    else
-                    {
-                        Console.WriteLine("error, characteristic not found");
-                    }
+                        await Task.Delay(3000);
+                        ReadAsync();
+                    });
                 }
                 else
                 {
-                    Console.WriteLine("error, Service not found since Watch app is not on.");
+                    Console.WriteLine("Read complete, values are : >"+str);
+                    ReadAsync();
                 }
-               
-
+                
             };
         }
-
+        private async void ReadAsync()
+        {
+            byte[] bytes = null;
+            try
+            {
+                if (!(chara is null))
+                {
+                    Console.WriteLine("Reading ...");
+                    bytes = await chara.ReadAsync(cancelT);
+                    readCompleted?.Invoke(this, bytes);
+                }
+                else
+                {
+                    Console.WriteLine("characteristic is null, wait 3sec : retry to connect");
+                    Task t = Task.Run(async () =>
+                    {
+                        await Task.Delay(3000);
+                        ConnectToKnow();
+                    });
+                }
+                
+            }
+            catch (Exception e)
+            {
+                
+                Console.WriteLine("[read fail] we wait 3s: "+e.Message);
+                Thread.Sleep(2000);
+                canRead = false;
+                BleCheck();
+              
+            }
+            
+        }
         public async void ConnectToKnow()
         {
             if (!await GetPremissionsAsync())
@@ -139,40 +143,63 @@ namespace Insurance_app
             }
 
         }
-
-        
-
-
-
-        private async void ReadAsync(ICharacteristic chara)
+        private void Ble_StateChanged(object sender, BluetoothStateChangedArgs e)
         {
-            // here  i if it tries to read and fails wait number of seconds before trying again.
-            byte[] bytes = null;
-            try
-            {
-                while (canRead)
-                {
-                    
-                    bytes = await chara.ReadAsync(cancelT);
-                    //Thread.Sleep(100);
-                    readCompleted?.Invoke(this, bytes);
-                }
-            }
-            catch (Exception e)
-            {
-                Thread.Sleep(5000);
-                canRead = false;
-                BleCheck();
-                Console.WriteLine("read fail : "+e.Message);
-              
-            }
-            
+            Console.WriteLine("State changed -----"+e.NewState);
+            BleCheck();
         }
 
+        public void Connect()
+        {
+            adapter.DeviceConnected += async (s, e) =>
+            {
+                //ICharacteristic chara = null;
+                var device = e.Device;
+                
+                Console.WriteLine("-----------------------device Found : " + device.Name);
+                var service = await device.GetServiceAsync(SERVER_GUID);
+                if (service != null)
+                {
+                    serviceDelay = 0;
+                    Console.WriteLine(" service found ");
+
+                    chara = await service.GetCharacteristicAsync(SERVER_GUID);
+                    if (chara != null)
+                    {
+                        serviceDelay = 0;
+                        ReadAsync();
+                    }
+                    else
+                    {
+                        Console.WriteLine("chara null, Waiting 3s: Reconnect");
+                        Task t = Task.Run(async () =>
+                        {
+                            
+                            await Task.Delay(3000);
+                            ConnectToKnow();
+                        });
+                    }
+
+                }
+                else
+                {
+                    serviceDelay += 3000;
+                    Console.WriteLine($"Service not found,Wait {serviceDelay/1000} ms : reconnect ");
+                    Task t = Task.Run(async () =>
+                    {
+                        await Task.Delay(serviceDelay);
+                        ConnectToKnow();
+                    });
+                }
+               
+
+            };
+        }
         //------------------------------------------------------------------------ blue-tooth on
 
         public void BleCheck()
         {
+            Console.WriteLine("Checking Ble...");
             if (!ble.IsAvailable)
             {
                  Alert("Error", "Bluetooth LE is not available", "close");
@@ -225,6 +252,14 @@ namespace Insurance_app
         private void test(object sender, EventArgs e)
         {
             testBtn.Text = $"{i++}";
+        }
+
+        private async void StopBtn_OnClicked(object sender, EventArgs e)
+        {
+            if (chara!=null)
+            {
+                 await chara.WriteAsync(Encoding.Default.GetBytes("stop"));
+            }
         }
     }
 }

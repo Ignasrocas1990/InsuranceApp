@@ -1,13 +1,5 @@
-﻿using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
+using Android.Util;
 using Xamarin.Essentials;
 
 namespace watch
@@ -16,113 +8,91 @@ namespace watch
     public class SensorManager
     {
 
-        public event EventHandler<AccArgs> AccEventHandler;
-        public event EventHandler<GyroArgs> GyroEventHandler;
+        public event EventHandler<SensorArgs> AccEventHandler;
+        public event EventHandler<SensorArgs> GyroEventHandler;
         
-        GyroArgs gyroArgs;
-        private GyroscopeData oldGyroData = new GyroscopeData(0.0, 0.0, 0.0);
-        private AccelerometerData oldAccData = new AccelerometerData(0.0, 0.0, 0.0);
-
-        AccArgs accArgs;
-        private string gyroTemp;
-        private string accTemp;
+        private int nOfAcc;
+        private int nOfGyro;
+        private MaFilter filter;
 
         SensorSpeed speed = SensorSpeed.UI;
 
-        public SensorManager(){
+        public SensorManager()
+        {
+            filter = new MaFilter();
             Accelerometer.ReadingChanged += AcceReadingChanged;
             Gyroscope.ReadingChanged += GyroReadingChanged;
-            
-            
-            gyroArgs = new GyroArgs {Full = "n"};
-            accArgs = new AccArgs {Full = "n"};
-            
+            nOfAcc = 0;
+            nOfGyro = 0;
         }
 
         private void GyroReadingChanged(object s, GyroscopeChangedEventArgs args)
         {
-            var g = args.Reading;
-            if (g.Equals(oldGyroData))
+            var reading = args.Reading;
+            filter.AddGyro(reading.AngularVelocity);
+            nOfGyro++;
+            if (nOfGyro > 2)
             {
-                return;
+                nOfGyro = 0;
+                GyroEventHandler?.Invoke(this, new SensorArgs(){Data = filter.GetGyro()});
+                filter.ClearGyro();
             }
-            oldGyroData = g;
+
             
-            gyroArgs.Full= "G" + (g.AngularVelocity.X).ToString() 
-                               + "," + (g.AngularVelocity.Y).ToString() + "," + (g.AngularVelocity.Z).ToString();
-            
-            GyroEventHandler?.Invoke(this, gyroArgs);
-            
-            
-          
         }
 
         void AcceReadingChanged(object s, AccelerometerChangedEventArgs args)
         {
-            var currentReading = args.Reading;
-            if (currentReading.Equals(oldAccData))
+            var reading = args.Reading;
+            filter.AddAcc(reading.Acceleration);
+            nOfAcc++;
+            if (nOfAcc > 2)
             {
-                return;
+                nOfAcc = 0;
+                AccEventHandler?.Invoke(this, new SensorArgs(){ Data = filter.GetAcc()});
+                filter.ClearAcc();
             }
-            oldAccData = currentReading;
-            accArgs.Full = "A"+(currentReading.Acceleration.X).ToString() +","
-                           +(oldAccData.Acceleration.Y).ToString()+","+(currentReading.Acceleration.Z).ToString();
-
-            AccEventHandler?.Invoke(this, accArgs);
         }
-        
-        public void ToggleAcce()
+        public void ToggleSensors()
         {
             try
             {
-                if (Accelerometer.IsMonitoring)
-
+                if (Accelerometer.IsMonitoring || Gyroscope.IsMonitoring)
+                {
                     Accelerometer.Stop();
-                else
-                    Accelerometer.Start(speed);
-            }
-            catch (FeatureNotSupportedException fe)
-            {
-                Console.WriteLine(" Feature not supported on device--------------" + fe.Message);
-            }
-            catch (Exception oe)
-            {
-                Console.WriteLine("--------------------- other error ? " + oe.Message);
-            }
-            
-            
-        }
-        public void ToggleGyro()
-        {
-            try
-            {
-                if (Gyroscope.IsMonitoring)
                     Gyroscope.Stop();
+                    filter.ClearAcc();
+                    filter.ClearGyro();
+                    nOfAcc = 0;
+                    nOfGyro = 0;
+                }
                 else
+                {
+                    Accelerometer.Start(speed);
                     Gyroscope.Start(speed);
+                }
             }
             catch (FeatureNotSupportedException fe)
             {
-                Console.WriteLine(" - - - - -- ------------- Feature not supported on device");
+                Log.Verbose("mon-stdout",fe.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(" - - - - -- ------------- Other error has occurred.");
+                Log.Verbose("mon-stdout",ex.Message);
 
             }
         }
         public void UnsubscribeSensors()
         {
+            Console.WriteLine("UnsubscribeSensors><");
             Accelerometer.ReadingChanged -= AcceReadingChanged;
             Gyroscope.ReadingChanged -= GyroReadingChanged;
-
-
         }
+        public  bool isM() => Gyroscope.IsMonitoring;
+
     }
-    public class GyroArgs:EventArgs{
-        public string Full { get; set; }
+    public class SensorArgs:EventArgs{
+        public string Data { get; set; }
     }
-    public class AccArgs:EventArgs{
-        public string Full { get; set; }
-    }
+    
 }

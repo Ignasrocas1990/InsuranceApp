@@ -5,6 +5,7 @@ using Android.Widget;
 using Android.OS;
 using Android.Support.Wearable.Activity;
 using Java.Lang;
+using Thread = System.Threading.Thread;
 
 namespace watch
 {
@@ -12,10 +13,8 @@ namespace watch
     public class MainActivity : WearableActivity
     {
         //static event EventHandler<AccArgs> accEventHandler;
-        int count = 1;
         private BleServer bleServer;
         private SensorManager sensorManager;
-        private int totalCount = 0;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -26,51 +25,43 @@ namespace watch
 
             SetAmbientEnabled();
             
-            Button pauseAcc = FindViewById<Button>(Resource.Id.pauseBtnAcc);
-            Button pauseGyro = FindViewById<Button>(Resource.Id.pauseBtnGyro);
             sensorManager = new SensorManager();
             int i = 0;
-            pauseAcc.Click += (sender, args) => pauseAcc.Text = "click : " + Integer.ToString(i++);
-            pauseGyro.Click += (sender, args) => pauseGyro.Text = "click : " + Integer.ToString(i++);
 
-            bleServer = new BleServer(ApplicationContext,"");
-
-        
-
-
+            bleServer = new BleServer(ApplicationContext);
             SubscribeToSensor(); //-------------call this to start monitor data
             
         }
         public void SubscribeToSensor()
         {
+            bleServer.BltCallback.dataWriteHandler += (s, e) =>
+            {
+                sensorManager.ToggleSensors();
+                sensorManager.UnsubscribeSensors();
+                
+            };
             
              sensorManager.AccEventHandler += (s, e) =>
             {
-                //Console.WriteLine("Acc enqueued "+e.Full);
-                totalCount++;
-                bleServer.SensorData.Enqueue(e.Full);
-                Console.WriteLine(totalCount);
+                bleServer.SensorData.Enqueue(e.Data);
+                Console.WriteLine($"enqued:{e.Data}");
+
             };
             
             sensorManager.GyroEventHandler += (s, e) =>
             {
-                //Console.WriteLine("Gyro enqueued " + e.Full);
-                totalCount++;
-                bleServer.SensorData.Enqueue(e.Full);
+                bleServer.SensorData.Enqueue(e.Data);
                 
             };
             bleServer.ToggleSensorsEventHandler += (s,e) =>
             {
-                sensorManager.ToggleAcce();
-                sensorManager.ToggleGyro();
+                sensorManager.ToggleSensors();
             };
             if (bleServer.BltCallback != null)
             {
                 bleServer.BltCallback.DisconectedHandler += (s, e) =>
                 {
-                    sensorManager.ToggleAcce();
-                    sensorManager.ToggleGyro();
-                    bleServer.dataRecieved = true;
+                    sensorManager.ToggleSensors();
                 };
             }
         }
@@ -81,11 +72,27 @@ namespace watch
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            Console.WriteLine($"onStop : is monitoring : {sensorManager.isM()}");
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+            Console.WriteLine($"onPause : is monitoring : {sensorManager.isM()}");
+
+        }
+
         protected override void OnDestroy()
         {
-            base.OnDestroy();
+            Console.WriteLine("unsubscribed");
             sensorManager.UnsubscribeSensors();
             bleServer.StopAdvertising();
+            base.OnDestroy();
+
         }
     }
 }
