@@ -56,11 +56,14 @@ namespace watch
                 
                 bleServer.BltCallback.DataWriteHandler += (s, e) =>
                 {
+                    bleServer.StopAdvertising();
                     sensorManager.ToggleSensors();
                     sensorManager.UnsubscribeSensors();
                     StopForeground(true);
                     StopSelf();
-                
+                    OnDestroy();
+                    
+                    
                 };
             }
             
@@ -109,6 +112,11 @@ namespace watch
         public override IBinder OnBind(Intent intent)
         {
             return null;
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
         }
     }
     

@@ -9,8 +9,8 @@ namespace watch
     public class BleMaFilter
     {
         private const String TAG = "mono-stdout";
-        private float[] _accArr;
-        private float[] _gyroArr;
+        private float[] accArr;
+        private float[] gyroArr;
         private const int NumberOfSamples = 3;
 
         public BleMaFilter()
@@ -21,23 +21,23 @@ namespace watch
         
         public void AddAcc( Vector3 aVector3)
         {
-            _accArr[0] += aVector3.X;
-            _accArr[1] += aVector3.Y;
-            _accArr[2] += aVector3.Z;
+            accArr[0] += aVector3.X;
+            accArr[1] += aVector3.Y;
+            accArr[2] += aVector3.Z;
         }
 
         public void AddGyro(Vector3 gVector3)
         {
-            _gyroArr[0] += gVector3.X;
-            _gyroArr[1] += gVector3.Y;
-            _gyroArr[2] += gVector3.Z;
+            gyroArr[0] += gVector3.X;
+            gyroArr[1] += gVector3.Y;
+            gyroArr[2] += gVector3.Z;
         }
 
         public String GetAcc()
         {
             try
             {
-                var totalNumber = _accArr.Select(x => x / NumberOfSamples);
+                var totalNumber = accArr.Select(x => x / NumberOfSamples);
                 return "A" + string.Join(",", totalNumber);
             }
             catch (Exception e)
@@ -54,7 +54,7 @@ namespace watch
         {
             try
             {
-                var totalNumber = _gyroArr.Select(x => x / NumberOfSamples);
+                var totalNumber = gyroArr.Select(x => x / NumberOfSamples);
                 return "G" + string.Join(",", totalNumber);
             }
             catch (Exception e)
@@ -69,11 +69,11 @@ namespace watch
 
         public void ClearGyro()
         {
-            _gyroArr = new float[]{0,0,0};
+            gyroArr = new float[]{0,0,0};
         }
         public void ClearAcc()
         {
-            _accArr = new float[]{0,0,0};
+            accArr = new float[]{0,0,0};
         }
         
     }
