@@ -45,5 +45,10 @@
 	<string>Peripheral MESSAGE</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Always CUSTOM MESSAGE</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>
