@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
@@ -10,6 +11,7 @@ namespace Insurance_app.BLE
     
     public class InferenceService
     {
+        
         //private cost String Url = "http://ec2-54-228-141-181.eu-west-1.compute.amazonaws.com/predict";
         private const String Url = "https://testRESTapi.pythonanywhere.com/predict";
         private bool connected = false;
@@ -18,7 +20,7 @@ namespace Insurance_app.BLE
         private Stopwatch w = new Stopwatch();
         private StringContent content=null;
         private Sdata f=null;
-        private int i = 0;
+        Func<String,double>convertToDouble =  x => double.Parse(x, CultureInfo.InvariantCulture);
 
         public InferenceService()
         {
@@ -37,7 +39,7 @@ namespace Insurance_app.BLE
             };
         }
 
-        public async void SubResponseReceived()
+        private void SubResponseReceived()
         {
             finRequest += (s, e) =>
             {
@@ -78,7 +80,31 @@ namespace Insurance_app.BLE
             {
                 return;
             }
-            //var temp = rawData.Split(',');
+            
+            
+            var temp = rawData.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+            if (temp.Length != 6) return;
+            
+
+            try
+            {
+                f = new Sdata()
+                {
+                    Ax = convertToDouble(temp[0]),
+                    Ay = convertToDouble(temp[1]),
+                    Az = convertToDouble(temp[2]),
+                    Gx = convertToDouble(temp[3]),
+                    Gy = convertToDouble(temp[4]),
+                    Gz = convertToDouble(temp[5])
+                };
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"error {e} ");
+                throw;
+            }
+
+            /*
             f = new Sdata()
             {
                 Ax = 7.091625,
@@ -88,10 +114,16 @@ namespace Insurance_app.BLE
                 Gy = -1.0222765,
                 Gz = -0.3099616
             };
-
+            */
+            
             content = new StringContent(JsonConvert.SerializeObject(f),Encoding.UTF8, "application/json");
             Console.WriteLine( await content.ReadAsStringAsync());
-                
+            //SendRequestAsync();
+
+        }
+
+        private async void SendRequestAsync()
+        {
             if (content!=null && connected)
             {
                 try

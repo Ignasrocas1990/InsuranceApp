@@ -4,6 +4,8 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Util;
+using watch.Ble;
+using watch.Sensors;
 
 namespace watch
 {
@@ -35,9 +37,7 @@ namespace watch
             sensorManager.AccEventHandler += (s, e) =>
             {
                 bleServer.SensorData.Enqueue(e.Data);
-                Log.Verbose(TAG,$"enqued:{e.Data}");
-
-
+                //Log.Verbose(TAG,$"enqued:{e.Data}");
             };
             sensorManager.GyroEventHandler += (s, e) =>
             {

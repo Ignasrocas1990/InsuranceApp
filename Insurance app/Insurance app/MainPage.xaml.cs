@@ -17,14 +17,17 @@ namespace Insurance_app
             InitializeComponent();
             bleManager = new BleManager();
             inferenceService = new InferenceService();
-
+            bleManager.InferEvent += (s, e) =>
+            {
+                inferenceService.Predict(e);
+            };
         }
         private void test(object sender, EventArgs e)
         {
             testBtn.Text = $"{i++}";
         }
 
-        private async void StopBtn_OnClicked(object sender, EventArgs e)
+        private void StopBtn_OnClicked(object sender, EventArgs e)
         {
             bleManager.StopDataSend();
         }
@@ -33,5 +36,7 @@ namespace Insurance_app
         {
             inferenceService.Predict("");
         }
+        
     }
+    
 }

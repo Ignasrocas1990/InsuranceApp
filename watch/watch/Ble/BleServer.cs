@@ -5,9 +5,10 @@ using Android.Bluetooth.LE;
 using Android.Content;
 using Android.Util;
 using Java.Util;
+using watch.Sensors;
 using String = System.String;
 
-namespace watch
+namespace watch.Ble
 {
     public class BleServer
     {
@@ -44,13 +45,28 @@ namespace watch
         public void SendData(object s, BleEventArgs e)
         {
             var stringValue = " ";
-            if (SensorData.Count>2)
+            if (SensorData.Count>=2)
             {
-                stringValue =  SensorData.Dequeue()+" "+SensorData.Dequeue(); 
+               
+                stringValue =   PrepareData(SensorData.Dequeue(),SensorData.Dequeue());
+                Log.Verbose(TAG,stringValue);
             }
             e.Characteristic.SetValue(stringValue);
             bltServer.SendResponse(e.Device, e.RequestId, GattStatus.Success, e.Offset, e.Characteristic.GetValue() ?? throw new InvalidOperationException());
             bltServer.NotifyCharacteristicChanged(e.Device, e.Characteristic, false);
+        }
+
+        private String PrepareData(String first,String second)
+        {
+            if (first[0].Equals('A') && second[0].Equals('G'))
+            {
+                return $"{first.Remove(0, 2)}{second.Remove(0, 1)}";
+            }
+            else if (first[0].Equals('G') && second[0].Equals('A'))
+            {
+                return $"{second.Remove(0, 2)}{first.Remove(0, 1)}";
+            }
+            return " "; 
         }
         private void CreateServer(Context context)
         {

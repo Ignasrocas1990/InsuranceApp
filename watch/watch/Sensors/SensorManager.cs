@@ -2,8 +2,7 @@
 using Android.Util;
 using Xamarin.Essentials;
 
-
-namespace watch
+namespace watch.Sensors
 {
 
     public class SensorManager

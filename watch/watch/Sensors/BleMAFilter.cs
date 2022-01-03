@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Linq;
 using System.Numerics;
 using Android.Util;
 
-namespace watch
+namespace watch.Sensors
 {
     public class BleMaFilter
     {
@@ -38,7 +37,7 @@ namespace watch
             try
             {
                 var totalNumber = accArr.Select(x => x / NumberOfSamples);
-                return "A" + string.Join(",", totalNumber);
+                return "A," + string.Join(",", totalNumber);
             }
             catch (Exception e)
             {
@@ -55,7 +54,7 @@ namespace watch
             try
             {
                 var totalNumber = gyroArr.Select(x => x / NumberOfSamples);
-                return "G" + string.Join(",", totalNumber);
+                return "G," + string.Join(",", totalNumber);
             }
             catch (Exception e)
             {

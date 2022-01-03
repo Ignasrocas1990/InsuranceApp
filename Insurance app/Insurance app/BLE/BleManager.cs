@@ -17,13 +17,13 @@ namespace Insurance_app.BLE
         public Ble ble;
 
         private readonly EventHandler<byte[]> readCompleted;
-        private bool canRead = false;
-        int i = 0;
         private ICharacteristic chara=null;
         private int serviceDelay = 0;
         private int readingDelay = 0;
         private int connectionErrDelay = 0;
         private bool bleState = false;
+
+        public EventHandler<string> InferEvent;
 
         public BleManager()
         {
@@ -76,7 +76,8 @@ namespace Insurance_app.BLE
                    return;
                }
                readingDelay = 0;
-               Console.WriteLine("Read complete, values are : >"+str);
+               //Console.WriteLine("Read complete, values are : >"+str);
+               InferEvent?.Invoke(this,str);
                ReadAsync();
                
             }
@@ -185,7 +186,16 @@ namespace Insurance_app.BLE
         {
             if (chara!=null)
             {
-                await chara.WriteAsync(Encoding.Default.GetBytes("stop"));
+                try
+                {
+                    await chara.WriteAsync(Encoding.Default.GetBytes("stop"));
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
             }
         }
     }

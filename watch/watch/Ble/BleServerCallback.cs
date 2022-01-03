@@ -2,7 +2,7 @@
 using Android.Bluetooth;
 using Android.Util;
 
-namespace watch
+namespace watch.Ble
 {
     public class BleServerCallback : BluetoothGattServerCallback
     {
