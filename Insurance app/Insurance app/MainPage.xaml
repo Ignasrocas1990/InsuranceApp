@@ -11,7 +11,10 @@
             <Button x:Name="infBtn" Clicked="InfBtn_OnClicked" Text="inference"/>
         </Frame>
         <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
-            <Button x:Name="stopBtn" Clicked="StopBtn_OnClicked" Text="stop"/>
+            <Button x:Name="stopBtn" Clicked="StopBtn_OnClicked" Text="stopBLE"/>
+        </Frame>
+        <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
+            <Button x:Name="logBtn" Clicked="LogBtn_OnClicked" Text="login"/>
         </Frame>
     </StackLayout>
 
