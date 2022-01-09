@@ -2,20 +2,22 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Insurance_app.MainPage">
-
     <StackLayout>
-        <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
-            <Button x:Name="testBtn" Clicked="test" Text="fun"/>
-        </Frame>
-        <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
-            <Button x:Name="infBtn" Clicked="InfBtn_OnClicked" Text="inference"/>
-        </Frame>
-        <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
-            <Button x:Name="stopBtn" Clicked="StopBtn_OnClicked" Text="stopBLE"/>
-        </Frame>
-        <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
-            <Button x:Name="logBtn" Clicked="LogBtn_OnClicked" Text="login"/>
-        </Frame>
-    </StackLayout>
-
+                <Label x:Name="customerLabel" Text="None"></Label>
+        <Frame BackgroundColor="#2196F3" Padding="1" CornerRadius="0">
+                <Button Text="Logout" HorizontalOptions="End" Clicked="OnLogoutClick"/>
+            </Frame>
+            <Frame BackgroundColor="#2196F3" Padding="5" CornerRadius="0">
+                <Button x:Name="testBtn" Clicked="test" Text="fun"/>
+            </Frame>
+            <Frame BackgroundColor="#2196F3" Padding="5" CornerRadius="0">
+                <Button x:Name="infBtn" Clicked="InfBtn_OnClicked" Text="inference"/>
+            </Frame>
+            <Frame BackgroundColor="#2196F3" Padding="5" CornerRadius="0">
+                <Button x:Name="stopBtn" Clicked="StopBtn_OnClicked" Text="stopBLE"/>
+            </Frame>
+            <Frame BackgroundColor="#2196F3" Padding="5" CornerRadius="0">
+                <Button x:Name="getAll" Clicked="GetAll_OnClicked" Text="getAll"/>
+            </Frame>
+        </StackLayout>
 </ContentPage>
