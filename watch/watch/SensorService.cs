@@ -26,11 +26,7 @@ namespace watch
              sensorManager = new SensorManager();
              SubscribeToSensor();
 
-             sensorManager.stepDetector.stepCounted += (s,e) =>
-             {
-
-                 Log.Verbose(TAG, $"-------------- step counted to : {++stepCount}");
-             };
+            
             
             return StartCommandResult.Sticky;
         }
@@ -41,33 +37,27 @@ namespace watch
          */
         private void SubscribeToSensor()
         {
-            // sensor data transfer to BLE server
-            sensorManager.AccEventHandler += (s, e) =>
+            
+            sensorManager.stepDetector.stepCounted += (s,e) =>
             {
-                //bleServer.SensorData.Enqueue(e.Data);
-                Log.Verbose(TAG,$"enqued:{e.Data}");
+                Log.Verbose(TAG, "counted a step");
+                bleServer.SensorData.Enqueue(1);
             };
-            sensorManager.GyroEventHandler += (s, e) =>
-            {
-                //bleServer.SensorData.Enqueue(e.Data);
-                
-            };
+            
 
             //Server communications
             if (bleServer.BltCallback != null)
             {
-                bleServer.BltCallback.DisconectHandler += (s, e) => //change this to 2 handlers connected & disconnected
+                bleServer.BltCallback.StateHandler += (s, e) => //change this to 2 handlers connected & disconnected
                 {
-                    sensorManager.ToggleSensors();
+                    sensorManager.ToggleSensors(e.State);
                     Log.Verbose(TAG, $" is monitoring ? : {sensorManager.isM()}");
                 };
-                
-                
                 bleServer.BltCallback.DataWriteHandler += (s, e) =>
                 {
                     Log.Verbose(TAG, $" unsubscribing from sensors");
                     bleServer.StopAdvertising();
-                    sensorManager.ToggleSensors();
+                    sensorManager.ToggleSensors("off");
                     sensorManager.UnsubscribeSensors();
                     StopForeground(true);
                     StopSelf();

@@ -11,7 +11,6 @@ namespace watch
     [Activity(Label = "@string/app_name", MainLauncher = true)]
     public class MainActivity : WearableActivity
     {
-
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -23,7 +22,7 @@ namespace watch
             
             Intent intent = new Intent(this, typeof(SensorService));
             StartForegroundService(intent);
-            
+
         }
         
         

@@ -4,8 +4,10 @@ using Android.Bluetooth;
 using Android.Bluetooth.LE;
 using Android.Content;
 using Android.Util;
+using Java.Lang;
 using Java.Util;
 using watch.Sensors;
+using Exception = System.Exception;
 using String = System.String;
 
 namespace watch.Ble
@@ -21,7 +23,7 @@ namespace watch.Ble
         private BluetoothGattServer bltServer;
         private BluetoothGattCharacteristic bltCharac;
         private BluetoothLeAdvertiser bltAdvertiser;
-        public Queue<String> SensorData;
+        public Queue<int> SensorData;
 
         private SensorManager sensorManager;
         
@@ -30,10 +32,9 @@ namespace watch.Ble
         
         public BleServer(Context context )
         {
-            SensorData = new Queue<String>();
+            SensorData = new Queue<int>();
             serverUuid = GetUUID(DefaultUuid);
             CreateServer(context);
-            //BltCallback.dataRecievedNotifier += (s,e) => { dataRecieved = true; };
             BltCallback.ReadHandler += SendData;
             bltAdvertiserCallback = new BleAdvertiseCallback();
             bltAdvertiser = bltAdapter.BluetoothLeAdvertiser;
@@ -44,29 +45,25 @@ namespace watch.Ble
         }
         public void SendData(object s, BleEventArgs e)
         {
-            var stringValue = " ";
-            if (SensorData.Count>=2)
+            int data = 0;
+            if (SensorData.Count > 0)
             {
                
-                stringValue =   PrepareData(SensorData.Dequeue(),SensorData.Dequeue());
-                Log.Verbose(TAG,stringValue);
+                data =  SensorData.Dequeue();
+                Log.Verbose(TAG,Integer.ToString(data));
             }
-            e.Characteristic.SetValue(stringValue);
+            
+            e.Characteristic.SetValue(getBytes(data));
             bltServer.SendResponse(e.Device, e.RequestId, GattStatus.Success, e.Offset, e.Characteristic.GetValue() ?? throw new InvalidOperationException());
-            bltServer.NotifyCharacteristicChanged(e.Device, e.Characteristic, false);
+            bltServer.NotifyCharacteristicChanged(e.Device, e.Characteristic, true);
         }
 
-        private String PrepareData(String first,String second)
+        private byte[] getBytes(int value)
         {
-            if (first[0].Equals('A') && second[0].Equals('G'))
-            {
-                return $"{first.Remove(0, 2)}{second.Remove(0, 1)}";
-            }
-            else if (first[0].Equals('G') && second[0].Equals('A'))
-            {
-                return $"{second.Remove(0, 2)}{first.Remove(0, 1)}";
-            }
-            return " "; 
+            byte[] intBytes = BitConverter.GetBytes(value);
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(intBytes);
+            return intBytes;
         }
         private void CreateServer(Context context)
         {

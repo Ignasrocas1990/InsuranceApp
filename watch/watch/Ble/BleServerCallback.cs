@@ -12,7 +12,8 @@ namespace watch.Ble
         public EventHandler<BleEventArgs> DataWriteHandler;
 
         public event EventHandler<BleEventArgs> ReadHandler;
-        public EventHandler DisconectHandler;
+        public EventHandler<ConnectEventArgs> StateHandler;
+
         public BleServerCallback() { }
 
 
@@ -34,32 +35,31 @@ namespace watch.Ble
         {
             base.OnConnectionStateChange(device, status, newState);
             
-            if (newState == ProfileState.Disconnected || newState == ProfileState.Connected)
+            if (newState == ProfileState.Disconnected)
             {
                 Log.Verbose(TAG, $"State changed to : {newState}");
 
-                DisconectHandler?.Invoke(this,EventArgs.Empty);
+                StateHandler?.Invoke(this,new ConnectEventArgs(){State ="Disconnected"});
+                
+            }else if (newState == ProfileState.Connected)
+            {
+                StateHandler?.Invoke(this,new ConnectEventArgs(){State ="Connected"});
             }
+            
             
 
         }
-/*
-        public override void OnNotificationSent(BluetoothDevice device, GattStatus status)
-        {
-            base.OnNotificationSent(device, status);
-
-            if (DataRecievedNotifier != null)
-            {
-                DataRecievedNotifier(this, new BleEventArgs() { Device = device,GattStatus = status });
-            }
-        }
-*/
         private BleEventArgs createArgs(BluetoothDevice device, BluetoothGattCharacteristic chara, int requestId, int offset)
         {
             return new BleEventArgs() { Device = device, Characteristic = chara, RequestId = requestId, Offset = offset };
         }
 
 
+    }
+
+    public class ConnectEventArgs : EventArgs
+    {
+        public string State { get; set; }
     }
     public class BleEventArgs : EventArgs
     {

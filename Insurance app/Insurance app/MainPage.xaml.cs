@@ -55,14 +55,6 @@ namespace Insurance_app
                 }
                 
                 bleManager = new BleManager();
-                /*
-                inferenceService = new InferenceService();
-                
-                bleManager.InferEvent += (s, e) =>
-                {
-                    //inferenceService.Predict(e);
-                };
-                */
             }
             base.OnAppearing();
         }

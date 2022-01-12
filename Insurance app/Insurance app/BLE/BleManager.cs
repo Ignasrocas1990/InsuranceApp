@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Buffers.Binary;
+using System.ComponentModel;
 using System.Text;
 using System.Threading.Tasks;
 using Plugin.BLE;
@@ -22,6 +24,7 @@ namespace Insurance_app.BLE
         private int readingDelay = 0;
         private int connectionErrDelay = 0;
         private bool bleState = false;
+        private int step = 0;
 
         public EventHandler<string> InferEvent;
 
@@ -32,6 +35,7 @@ namespace Insurance_app.BLE
             RegisterEventHandlers();
             bleState=ble.BleCheck();
             ConnectToDevice();//<-------------------------will be different later
+            
         }
 
         private void RegisterEventHandlers()
@@ -53,7 +57,6 @@ namespace Insurance_app.BLE
                 Console.WriteLine($"device connected : {e.Device.Name}");
                 ConnectToService(e.Device);
             };
-
         }
 
         private async void  ReadAsync()
@@ -63,9 +66,9 @@ namespace Insurance_app.BLE
             {
                 var data =  await chara.ReadAsync();
 
-                string str = " ";
-               str = Encoding.Default.GetString(data);
-               if (str.Equals(" "))
+                int value = 0;
+                value = BinaryPrimitives.ReadInt32LittleEndian(data);
+               if (value==0)
                {
                    readingDelay += 3000;
                    Console.WriteLine($"reading empty : wait {readingDelay/1000}sec > try again");
@@ -77,8 +80,7 @@ namespace Insurance_app.BLE
                    return;
                }
                readingDelay = 0;
-               //Console.WriteLine("Read complete, values are : >"+str);
-               InferEvent?.Invoke(this,str);
+               Console.WriteLine($"Read complete, values are : >{++step}");
                ReadAsync();
                
             }
@@ -105,6 +107,7 @@ namespace Insurance_app.BLE
                 chara = await service.GetCharacteristicAsync(ble.SERVER_GUID);
                 if (chara!=null)
                 {
+                    Console.WriteLine("characteristic found ");
                     ReadAsync();
                 }
                 else
@@ -198,13 +201,12 @@ namespace Insurance_app.BLE
             {
                 try
                 {
-                    await chara.WriteAsync(Encoding.Default.GetBytes("stop"));
+                    await chara.WriteAsync(BitConverter.GetBytes(9));
 
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
-                    throw;
+                    Console.WriteLine($"could not stop advertising {e}");
                 }
             }
         }

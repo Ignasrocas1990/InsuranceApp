@@ -16,17 +16,12 @@
             android:id="@+id/pauseBtnAcc"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="AccSend"/>
+            android:text="other"/>
         <Button
-            android:id="@+id/pauseBtnGyro"
+            android:id="@+id/change"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="GyroSend"/>
-        
-        <TextView android:layout_width="match_parent" 
-                  android:id="@+id/counter"
-                  android:layout_height="wrap_content"
-                  android:text="0"/>
+            android:text="chara change"/>
 
     </LinearLayout>
 
