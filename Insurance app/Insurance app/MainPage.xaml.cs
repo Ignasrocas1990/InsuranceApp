@@ -54,7 +54,7 @@ namespace Insurance_app
                     SaveMoveData();
                 }
                 
-                //bleManager = new BleManager();
+                bleManager = new BleManager();
                 /*
                 inferenceService = new InferenceService();
                 

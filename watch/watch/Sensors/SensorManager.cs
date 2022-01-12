@@ -1,6 +1,9 @@
 ﻿using System;
 using Android.Util;
+using Java.Lang;
 using Xamarin.Essentials;
+using Exception = System.Exception;
+using Math = Java.Lang.Math;
 
 namespace watch.Sensors
 {
@@ -8,6 +11,9 @@ namespace watch.Sensors
     public class SensorManager
     {
         private const string TAG = "mono-stdout";
+        private double prevMessurement = 0.0f;
+        private int counter = 0;
+        private bool Shake = false;
         
         public event EventHandler<SensorArgs> AccEventHandler;
         public event EventHandler<SensorArgs> GyroEventHandler;
@@ -15,7 +21,7 @@ namespace watch.Sensors
         private int nOfAcc;
         private int nOfGyro;
         private BleMaFilter filter;
-
+        public StepDetector stepDetector;
         SensorSpeed speed = SensorSpeed.UI;
         
 
@@ -23,9 +29,16 @@ namespace watch.Sensors
         {
             filter = new BleMaFilter();
             Accelerometer.ReadingChanged += AcceReadingChanged;
-            Gyroscope.ReadingChanged += GyroReadingChanged;
+            Accelerometer.ShakeDetected += (s,e) =>
+            {
+                Log.Verbose(TAG, "device shaked");
+                Shake = true;
+            };
+            stepDetector = new StepDetector();
+            //Gyroscope.ReadingChanged += GyroReadingChanged;
             nOfAcc = 0;
             nOfGyro = 0;
+            
         }
 
         private void GyroReadingChanged(object s, GyroscopeChangedEventArgs args)
@@ -40,10 +53,18 @@ namespace watch.Sensors
                 filter.ClearGyro();
             }
         }
-
+//---------------------------- here------------------------------------------------
         void AcceReadingChanged(object s, AccelerometerChangedEventArgs args)
         {
-            var reading = args.Reading;
+            var vector = args.Reading.Acceleration;
+            long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds() * 1000000;
+            if (!Shake)
+            {
+                stepDetector.updateAccel(timeStamp,vector.X,vector.Y,vector.Z);
+            }
+            Shake = false;
+            
+/*
             filter.AddAcc(reading.Acceleration);
             nOfAcc++;
             if (nOfAcc > 2)
@@ -52,24 +73,28 @@ namespace watch.Sensors
                 AccEventHandler?.Invoke(this, new SensorArgs(){ Data = filter.GetAcc()});
                 filter.ClearAcc();
             }
+*/
         }
         public void ToggleSensors()
         {
             try
             {
-                if (Accelerometer.IsMonitoring || Gyroscope.IsMonitoring)
+                if (Accelerometer.IsMonitoring) //|| Gyroscope.IsMonitoring)
                 {
+                    Log.Verbose(TAG,"acc stop monitoring ");
+
                     Accelerometer.Stop();
-                    Gyroscope.Stop();
-                    filter.ClearAcc();
-                    filter.ClearGyro();
+                    //Gyroscope.Stop();
+                    //filter.ClearAcc();
+                    //filter.ClearGyro();
                     nOfAcc = 0;
                     nOfGyro = 0;
                 }
                 else
                 {
                     Accelerometer.Start(speed);
-                    Gyroscope.Start(speed);
+                    Log.Verbose(TAG,"acc start monitoring ");
+                    //Gyroscope.Start(speed);
                 }
             }
             catch (FeatureNotSupportedException fe)
@@ -84,11 +109,10 @@ namespace watch.Sensors
         }
         public void UnsubscribeSensors()
         {
-            Log.Verbose(TAG, "SensorManager : unsubscribed");
             Accelerometer.ReadingChanged -= AcceReadingChanged;
-            Gyroscope.ReadingChanged -= GyroReadingChanged;
+            //Gyroscope.ReadingChanged -= GyroReadingChanged;
         }
-        public  bool isM() => Gyroscope.IsMonitoring;
+        public  bool isM() => Accelerometer.IsMonitoring;
 
     }
     public class SensorArgs:EventArgs{

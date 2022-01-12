@@ -16,6 +16,8 @@ namespace watch
         private const string TAG = "mono-stdout";
         private BleServer bleServer;
         private SensorManager sensorManager;
+        private int stepCount = 0;
+        public static EventHandler temp = delegate{};
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
@@ -23,6 +25,12 @@ namespace watch
              bleServer =  new BleServer(this);
              sensorManager = new SensorManager();
              SubscribeToSensor();
+
+             sensorManager.stepDetector.stepCounted += (s,e) =>
+             {
+
+                 Log.Verbose(TAG, $"-------------- step counted to : {++stepCount}");
+             };
             
             return StartCommandResult.Sticky;
         }
@@ -36,26 +44,28 @@ namespace watch
             // sensor data transfer to BLE server
             sensorManager.AccEventHandler += (s, e) =>
             {
-                bleServer.SensorData.Enqueue(e.Data);
-                //Log.Verbose(TAG,$"enqued:{e.Data}");
+                //bleServer.SensorData.Enqueue(e.Data);
+                Log.Verbose(TAG,$"enqued:{e.Data}");
             };
             sensorManager.GyroEventHandler += (s, e) =>
             {
-                bleServer.SensorData.Enqueue(e.Data);
+                //bleServer.SensorData.Enqueue(e.Data);
                 
             };
 
             //Server communications
             if (bleServer.BltCallback != null)
             {
-                bleServer.BltCallback.DisconectHandler += (s, e) =>
+                bleServer.BltCallback.DisconectHandler += (s, e) => //change this to 2 handlers connected & disconnected
                 {
                     sensorManager.ToggleSensors();
+                    Log.Verbose(TAG, $" is monitoring ? : {sensorManager.isM()}");
                 };
                 
                 
                 bleServer.BltCallback.DataWriteHandler += (s, e) =>
                 {
+                    Log.Verbose(TAG, $" unsubscribing from sensors");
                     bleServer.StopAdvertising();
                     sensorManager.ToggleSensors();
                     sensorManager.UnsubscribeSensors();

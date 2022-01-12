@@ -62,7 +62,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SensorService.cs" />
     <Compile Include="Sensors\BleMAFilter.cs" />
+    <Compile Include="Sensors\SensorFilter.cs" />
     <Compile Include="Sensors\SensorManager.cs" />
+    <Compile Include="Sensors\StepDetector.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

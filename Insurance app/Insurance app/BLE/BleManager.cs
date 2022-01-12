@@ -61,8 +61,9 @@ namespace Insurance_app.BLE
             Console.WriteLine("Reading...");
             try
             {
-               var data =  await chara.ReadAsync(CancellationToken.None);
-               string str = " ";
+                var data =  await chara.ReadAsync();
+
+                string str = " ";
                str = Encoding.Default.GetString(data);
                if (str.Equals(" "))
                {
@@ -83,6 +84,7 @@ namespace Insurance_app.BLE
             }
             catch (Exception e)
             {
+                Console.WriteLine(e);
                 connectionErrDelay += 3000;
                 Console.WriteLine($"[read exception] wait {connectionErrDelay/1000}s: reconnect to device");
 
@@ -101,7 +103,15 @@ namespace Insurance_app.BLE
             try
             {
                 chara = await service.GetCharacteristicAsync(ble.SERVER_GUID);
-                ReadAsync();
+                if (chara!=null)
+                {
+                    ReadAsync();
+                }
+                else
+                {
+                    ConnectToDevice();
+                }
+
             }
             catch (Exception e)
             {
