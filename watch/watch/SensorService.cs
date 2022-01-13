@@ -16,8 +16,6 @@ namespace watch
         private const string TAG = "mono-stdout";
         private BleServer bleServer;
         private SensorManager sensorManager;
-        private int stepCount = 0;
-        public static EventHandler temp = delegate{};
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
@@ -25,8 +23,6 @@ namespace watch
              bleServer =  new BleServer(this);
              sensorManager = new SensorManager();
              SubscribeToSensor();
-
-            
             
             return StartCommandResult.Sticky;
         }
@@ -37,18 +33,16 @@ namespace watch
          */
         private void SubscribeToSensor()
         {
-            
-            sensorManager.stepDetector.stepCounted += (s,e) =>
+            // sensor data transfer to BLE server
+            sensorManager.AccEventHandler += (s, e) =>
             {
-                Log.Verbose(TAG, "counted a step");
-                bleServer.SensorData.Enqueue(1);
+                bleServer.SensorData.Enqueue(e.Data);
             };
-            
 
             //Server communications
             if (bleServer.BltCallback != null)
             {
-                bleServer.BltCallback.StateHandler += (s, e) => //change this to 2 handlers connected & disconnected
+                bleServer.BltCallback.StateHandler += (s, e) =>
                 {
                     sensorManager.ToggleSensors(e.State);
                     Log.Verbose(TAG, $" is monitoring ? : {sensorManager.isM()}");
@@ -62,8 +56,6 @@ namespace watch
                     StopForeground(true);
                     StopSelf();
                     OnDestroy();
-                    
-                    
                 };
             }
             

@@ -45,9 +45,6 @@ namespace watch.Ble
             {
                 StateHandler?.Invoke(this,new ConnectEventArgs(){State ="Connected"});
             }
-            
-            
-
         }
         private BleEventArgs createArgs(BluetoothDevice device, BluetoothGattCharacteristic chara, int requestId, int offset)
         {

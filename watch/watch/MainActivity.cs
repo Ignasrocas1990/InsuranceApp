@@ -2,6 +2,7 @@
 using Android;
 using Android.App;
 using Android.Content;
+using Android.Hardware;
 using Android.Widget;
 using Android.OS;
 using Android.Support.Wearable.Activity;
@@ -19,7 +20,7 @@ namespace watch
 
             SetAmbientEnabled();
             
-            
+
             Intent intent = new Intent(this, typeof(SensorService));
             StartForegroundService(intent);
 

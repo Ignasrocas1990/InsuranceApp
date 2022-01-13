@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Buffers.Binary;
 using System.ComponentModel;
+using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
 using System.Threading;
 using Plugin.BLE.Abstractions.Exceptions;
+using watch.Sensors;
 using Exception = System.Exception;
 
 namespace Insurance_app.BLE
@@ -24,7 +26,8 @@ namespace Insurance_app.BLE
         private int readingDelay = 0;
         private int connectionErrDelay = 0;
         private bool bleState = false;
-        private int step = 0;
+        private StepDetector stepDetector;
+        Func<String,float>convertToFloat =  x => float.Parse(x, CultureInfo.InvariantCulture.NumberFormat);
 
         public EventHandler<string> InferEvent;
 
@@ -35,7 +38,8 @@ namespace Insurance_app.BLE
             RegisterEventHandlers();
             bleState=ble.BleCheck();
             ConnectToDevice();//<-------------------------will be different later
-            
+            stepDetector = new StepDetector();
+
         }
 
         private void RegisterEventHandlers()
@@ -61,14 +65,14 @@ namespace Insurance_app.BLE
 
         private async void  ReadAsync()
         {
-            Console.WriteLine("Reading...");
+           // Console.WriteLine("Reading...");
             try
             {
                 var data =  await chara.ReadAsync();
 
-                int value = 0;
-                value = BinaryPrimitives.ReadInt32LittleEndian(data);
-               if (value==0)
+                string str = " ";
+                str = Encoding.Default.GetString(data);
+               if (str.Equals(" "))
                {
                    readingDelay += 3000;
                    Console.WriteLine($"reading empty : wait {readingDelay/1000}sec > try again");
@@ -80,9 +84,9 @@ namespace Insurance_app.BLE
                    return;
                }
                readingDelay = 0;
-               Console.WriteLine($"Read complete, values are : >{++step}");
+               Console.WriteLine($"Read complete, values are : > {str}");
+               Infer(str);
                ReadAsync();
-               
             }
             catch (Exception e)
             {
@@ -98,7 +102,26 @@ namespace Insurance_app.BLE
                 });
             }
         }
-        
+
+        private void Infer(string rawData)
+        {
+            try
+            {
+                var splitedData = rawData.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+                long timeStamp = Convert.ToInt64(splitedData[0]);
+                stepDetector.updateAccel(timeStamp,convertToFloat(splitedData[1]),
+                    convertToFloat(splitedData[2]),
+                    convertToFloat(splitedData[3]));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"problem pre-paring data for inferring {e}");
+            }
+            
+
+
+        }
+
 
         private async void GetCharaAsync(IService service)
         {
@@ -201,7 +224,7 @@ namespace Insurance_app.BLE
             {
                 try
                 {
-                    await chara.WriteAsync(BitConverter.GetBytes(9));
+                    await chara.WriteAsync(Encoding.Default.GetBytes("stop"));
 
                 }
                 catch (Exception e)

@@ -6,11 +6,12 @@ namespace watch.Sensors
     public class StepDetector
     {
         public EventHandler stepCounted = delegate { };
-        private static int ACCEL_RING_SIZE = 50;// o - 50
-        private static  int VEL_RING_SIZE = 10;// o - 10
+        private static int ACCEL_RING_SIZE = 50;
+        private static  int VEL_RING_SIZE = 10;
+        private int n = 0;
 
         // change this threshold according to your sensitivity preferences
-        private static  float STEP_THRESHOLD = 1f;// 50f
+        private static  float STEP_THRESHOLD = 0.3f;// 50f
 
         private static  int STEP_DELAY_NS = 150000000;//250000000
 
@@ -53,14 +54,13 @@ namespace watch.Sensors
             velRing[velRingCounter % VEL_RING_SIZE] = currentZ;
 
             float velocityEstimate = SensorFilter.sum(velRing);
-            
             if (velocityEstimate > STEP_THRESHOLD && oldVelocityEstimate <= STEP_THRESHOLD && (timeNs - lastStepTimeNs > STEP_DELAY_NS))
             {
                 stepCounted?.Invoke(this,EventArgs.Empty);
                 //listener.step(timeNs);
+                Console.WriteLine($"counted a step {++n}-#################################--------------------------------");
                 lastStepTimeNs = timeNs;
             }
-
             oldVelocityEstimate = velocityEstimate;
         }
     }

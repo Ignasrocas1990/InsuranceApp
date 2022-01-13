@@ -23,50 +23,39 @@ namespace watch.Ble
         private BluetoothGattServer bltServer;
         private BluetoothGattCharacteristic bltCharac;
         private BluetoothLeAdvertiser bltAdvertiser;
-        public Queue<int> SensorData;
+        public Queue<string> SensorData;
 
-        private SensorManager sensorManager;
         
         //public event EventHandler ToggleSensorsEventHandler;
         private readonly BleAdvertiseCallback bltAdvertiserCallback;
         
         public BleServer(Context context )
         {
-            SensorData = new Queue<int>();
+            
+            SensorData = new Queue<string>();
             serverUuid = GetUUID(DefaultUuid);
             CreateServer(context);
             BltCallback.ReadHandler += SendData;
             bltAdvertiserCallback = new BleAdvertiseCallback();
             bltAdvertiser = bltAdapter.BluetoothLeAdvertiser;
             StartAdvertising();
-
-
-            sensorManager = new SensorManager();
         }
+
         public void SendData(object s, BleEventArgs e)
         {
-            int data = 0;
+            string data = " ";
             if (SensorData.Count > 0)
             {
-               
                 data =  SensorData.Dequeue();
-                Log.Verbose(TAG,Integer.ToString(data));
+                Log.Verbose(TAG,$"data is sending : {data}");
             }
-            
-            e.Characteristic.SetValue(getBytes(data));
+            e.Characteristic.SetValue(data);
             bltServer.SendResponse(e.Device, e.RequestId, GattStatus.Success, e.Offset, e.Characteristic.GetValue() ?? throw new InvalidOperationException());
-            bltServer.NotifyCharacteristicChanged(e.Device, e.Characteristic, true);
-        }
-
-        private byte[] getBytes(int value)
-        {
-            byte[] intBytes = BitConverter.GetBytes(value);
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(intBytes);
-            return intBytes;
+            bltServer.NotifyCharacteristicChanged(e.Device, e.Characteristic, false);
         }
         private void CreateServer(Context context)
         {
+            
             bltManager = (BluetoothManager)context.GetSystemService(Context.BluetoothService);
             if (bltManager != null)
             {
