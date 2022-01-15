@@ -81,7 +81,8 @@ namespace Insurance_app
 
         private void InfBtn_OnClicked(object sender, EventArgs e)
         {
-            
+            InferenceService a = new InferenceService();
+            a.Predict();
         }
         private void GetAll_OnClicked(object sender, EventArgs e)
         {

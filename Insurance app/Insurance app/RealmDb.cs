@@ -49,7 +49,6 @@ namespace Insurance_app
             try
             {
                 var realm = await GetRealm($"Customer ={customerId}");
-                
                 return realm.Find<Customer>(customerId);
                
             }
@@ -66,12 +65,19 @@ namespace Insurance_app
         {
             try
             {
+                var localConfig = new RealmConfiguration("RealmDBFile")
+                {
+                    SchemaVersion = 5
+                    //ShouldDeleteIfMigrationNeeded = true
+                };
                 var config = new SyncConfiguration(partition,App.RealmApp.CurrentUser);
+
                 return await Realm.GetInstanceAsync(config);
             }
             catch (Exception e)
             {
                 Console.WriteLine($"realm instance error return null {e.Message}");
+                Console.WriteLine($" inner exception : {e.InnerException}");
                 return null;
             }
            

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xamarin.Essentials;
 
 namespace Insurance_app.BLE
@@ -12,15 +13,15 @@ namespace Insurance_app.BLE
     public class InferenceService
     {
         
-        //private cost String Url = "http://ec2-54-228-141-181.eu-west-1.compute.amazonaws.com/predict";
+        //private const String Url = "http://ec2-34-251-148-246.eu-west-1.compute.amazonaws.com/predict";
         private const String Url = "https://testRESTapi.pythonanywhere.com/predict";
         private bool connected = false;
         private HttpClient client;
         private EventHandler<HttpResponseMessage> finRequest;
         private Stopwatch w = new Stopwatch();
         private StringContent content=null;
-        private Sdata f=null;
-        Func<String,double>convertToDouble =  x => double.Parse(x, CultureInfo.InvariantCulture);
+        private PolicyInference policyInference=null;
+        //Func<String,double>convertToDouble =  x => double.Parse(x, CultureInfo.InvariantCulture);
 
         public InferenceService()
         {
@@ -74,7 +75,7 @@ namespace Insurance_app.BLE
          * Take raw data from sensor and pass it by http to predict
          * if customer walking
          */
-        public async void Predict(String rawData)
+        public async void Predict()
         {
             if (!connected)
             {
@@ -82,20 +83,20 @@ namespace Insurance_app.BLE
             }
             
             
-            var temp = rawData.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
-            if (temp.Length != 6) return;
+            //var temp = rawData.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+            //if (temp.Length != 6) return;
             
 
             try
             {
-                f = new Sdata()
+                policyInference = new PolicyInference()
                 {
-                    Ax = convertToDouble(temp[0]),
-                    Ay = convertToDouble(temp[1]),
-                    Az = convertToDouble(temp[2]),
-                    Gx = convertToDouble(temp[3]),
-                    Gy = convertToDouble(temp[4]),
-                    Gz = convertToDouble(temp[5])
+                    Hospitals = 0,
+                    Age = 18,
+                    Cover = 0,
+                    Hospital_Excess = 150,
+                    Plan = 0,
+                    Smoker = 0
                 };
             }
             catch (Exception e)
@@ -103,22 +104,9 @@ namespace Insurance_app.BLE
                 Console.WriteLine($"error {e} ");
                 throw;
             }
-
-            /*
-            f = new Sdata()
-            {
-                Ax = 7.091625,
-                Ay = -0.5916671,
-                Az = 8.195502,
-                Gx = 0.3149441,
-                Gy = -1.0222765,
-                Gz = -0.3099616
-            };
-            */
-            
-            content = new StringContent(JsonConvert.SerializeObject(f),Encoding.UTF8, "application/json");
+            content = new StringContent(JsonConvert.SerializeObject(policyInference),Encoding.UTF8, "application/json");
             Console.WriteLine( await content.ReadAsStringAsync());
-            //SendRequestAsync();
+            SendRequestAsync();
 
         }
 
@@ -148,13 +136,13 @@ namespace Insurance_app.BLE
         }
         private bool IsConnected() => (Connectivity.NetworkAccess == NetworkAccess.Internet);
     }
-    class Sdata
+    class PolicyInference
     {
-        public double Ax { get; set; }
-        public double Ay { get; set; }
-        public double Az { get; set; }
-        public double Gx { get; set; }
-        public double Gy { get; set; }
-        public double Gz  { get; set; }
+        public int Hospitals { get; set; }
+        public int Age { get; set; }
+        public int Cover { get; set; }
+        public int Hospital_Excess { get; set; }
+        public int Plan { get; set; }
+        public int Smoker  { get; set; }
     }
 }

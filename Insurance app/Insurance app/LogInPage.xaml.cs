@@ -45,6 +45,7 @@ namespace Insurance_app
                     {
                         RealmDb db = new RealmDb();                     //TODO move
                         await db.AddCustomer(email, password, user.Id);
+                        newCustomer = false;
                     }
                     await Navigation.PushAsync(new MainPage());
                 }

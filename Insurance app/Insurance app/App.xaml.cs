@@ -1,4 +1,5 @@
 ﻿using System;
+using Realms.Sync;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -16,6 +17,7 @@ namespace Insurance_app
         protected override void OnStart()
         {
             RealmApp = Realms.Sync.App.Create(MyRealmAppId);
+    
             if (RealmApp.CurrentUser is null)
             {
                 MainPage = new NavigationPage(new LogInPage());

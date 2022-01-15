@@ -8,33 +8,24 @@ namespace Insurance_app.Models
 {
     public class Customer : RealmObject
     {
-        [PrimaryKey][Required]
-        [MapTo("_id")]
+        [PrimaryKey][MapTo("_id")][Required]
         public string Id { get; set; }
-        
-        [MapTo("_partition")] public string Partition { get; set; }
-        
-        [MapTo("email")] public string Email { get; set; }
-        
-        [MapTo("password")] public string Password { get; set; }
-        
-        [MapTo("age")] public int? Age { get; set; }
-        
-        [MapTo("name")] public string Name { get; set; }
+        public Address Address { get; set; }
+        public int? Age { get; set; }
+        public string Name { get; set; }
 
-        [MapTo("address")] public Address Address { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
         
-        [MapTo("claim")] public Claim Claim { get; set; }
+        public PersonalPolicy Policy { get; set; }
+        public IList<Reward> Rewards { get; }
+        public IList<MovData> MovData { get; }
+        public Claim Claim { get; set; }
         
-        [MapTo("policy")] public Policy Policy { get; set; }
+        public bool? DelFlag { get; set; }
+        [MapTo("_partition")]
+        public string Partition { get; set; }
 
-        [MapTo("movData")] public IList<MovData> MovData { get; } = new List<MovData>();
-        
-
-        [MapTo("rewards")] public IList<Reward> Rewards { get; } = new List<Reward>();
-
-        
-        [MapTo("delFlag")] public bool? DelFlag { get; set; } = false;
 
 
     }
@@ -43,8 +34,8 @@ namespace Insurance_app.Models
         public string City { get; set; }
         public string Country { get; set; }
         public string County { get; set; }
-        [MapTo("House_n")] public int? HouseN { get; set; }
-        [MapTo("Post_Code")] public string PostCode { get; set; }
+        public int? HouseN { get; set; }
+        public string PostCode { get; set; }
         public string Street { get; set; }
     }
 }

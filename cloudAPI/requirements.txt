@@ -1,0 +1,6 @@
+joblib
+Flask
+gunicorn
+certifi
+scikit-learn
+itsdangerous
