@@ -1,34 +1,57 @@
-"""
-    Name : Ignas Rocas
-    Purpose : 4th year project cloud prediction
-"""
-from flask import Flask,request
+
+# A very simple Flask Hello World app for you to get started with...
+
+from flask import Flask, request
 import joblib
+import smtplib
+from email.mime.text import MIMEText
+#from flask_restful import Api, Resource, reqparse
+#import numpy as np
 
-
-model = None
 app = Flask(__name__)
+model = joblib.load('planModel')
 
-#load model
-def load_model():
-    global model
-    model = joblib.load('planModel')
-
-#test app
 @app.route('/')
-def hello_world():
-    return 'Hello from Flask!'
+def home():
+    return "nobody is here"
+
+def send_email_confirm():
+    try:
+    #Create your secure SMTP session
+        smtp = smtplib.SMTP('smtp.gmail.com', 587)
+        smtp.starttls()
+        smtp.login("dinamicinsuranceapp@gmail.com","6714d944a286291a12784df0302e5a0910fd2fe75a09023daceaeb6f54ab6eb1")
+
+        # ------------------- remove
+        price = 1.5
+        name = "Ignas"
+        application = "http://www.aplication.com/insurance app..."
+        #--------------------
+
+        # create email string
+        text =f"\n Hi {name},\n\n Your insurance Quote is : {price} \n\n Please follow link below back to your application \n {application}"
+        msg = MIMEText(text)
+        msg['Subject'] = 'Dinamic Insurance Quote'
+        msg['From'] = 'dinamicinsuranceapp@gmail.com'
+        msg['To'] = 'ignasandholly@gmail.com'           #Change this
+
+        #send email
+        smtp.sendmail("dinamicinsuranceapp@gmail.com", "ignasandholly@gmail.com",msg.as_string()) # ignas@gmail.com  to inputed
+        smtp.quit()
+        print ("Email sent successfully!")
+
+    except Exception as ex:
+        print("Something went wrong....",ex)
 
 
-#prediction
 @app.route('/predict', methods=['POST'])
 def get_prediction():
-    data = request.get_json(force=True)  
-    data = [list(data.values())]        
-    prediction = model.predict(data)  
+    columns = ['Hospitals','Age','Cover','Hospital_Excess','Plan','Smoker']
+    data = request.get_json(force=True)  # Get data posted as a json
+
+    temp =[]
+    for i in columns: temp.append(data[i])
+
+    prediction = model.predict([temp])  # runs globally loaded model on the data
     return str(round(prediction[0],2))
 
-
-if __name__ == '__main__':
-    load_model()  
-    app.run(host='0.0.0.0',port=80)

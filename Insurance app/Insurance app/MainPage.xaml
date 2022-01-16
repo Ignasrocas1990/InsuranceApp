@@ -6,7 +6,7 @@
                 <Label x:Name="customerLabel" Text="None"></Label>
         <Frame BackgroundColor="#2196F3" Padding="1" CornerRadius="0">
                 <Button Text="Logout" HorizontalOptions="End" Clicked="OnLogoutClick"/>
-            </Frame>
+        </Frame>
             <Frame BackgroundColor="#2196F3" Padding="5" CornerRadius="0">
                 <Button x:Name="testBtn" Clicked="test" Text="fun"/>
             </Frame>

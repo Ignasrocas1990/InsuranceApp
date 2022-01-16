@@ -10,6 +10,7 @@
         <Entry Placeholder="Email" TextChanged="Email_Entry_Completed" IsTextPredictionEnabled="True" Keyboard="Plain" />
         <Entry Placeholder="Password" IsPassword="True" TextChanged="Password_Entry_Completed" IsTextPredictionEnabled="True" Keyboard="Plain" />
         <Button Text="Log In" Clicked="Login_Button_Clicked"/>
-        <Button Text="Create New Account" Clicked="Register_Button_CLicked"/>
+        <Button Text="Get a Quote" Clicked="Register_Button_CLicked"/>
+
     </StackLayout>
 </ContentPage>

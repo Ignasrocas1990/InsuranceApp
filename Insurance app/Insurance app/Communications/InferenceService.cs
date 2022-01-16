@@ -20,7 +20,7 @@ namespace Insurance_app.BLE
         private EventHandler<HttpResponseMessage> finRequest;
         private Stopwatch w = new Stopwatch();
         private StringContent content=null;
-        private PolicyInference policyInference=null;
+        private Quote quote=null;
         //Func<String,double>convertToDouble =  x => double.Parse(x, CultureInfo.InvariantCulture);
 
         public InferenceService()
@@ -89,7 +89,7 @@ namespace Insurance_app.BLE
 
             try
             {
-                policyInference = new PolicyInference()
+                quote = new Quote()
                 {
                     Hospitals = 0,
                     Age = 18,
@@ -104,7 +104,7 @@ namespace Insurance_app.BLE
                 Console.WriteLine($"error {e} ");
                 throw;
             }
-            content = new StringContent(JsonConvert.SerializeObject(policyInference),Encoding.UTF8, "application/json");
+            content = new StringContent(JsonConvert.SerializeObject(quote),Encoding.UTF8, "application/json");
             Console.WriteLine( await content.ReadAsStringAsync());
             SendRequestAsync();
 
@@ -136,7 +136,7 @@ namespace Insurance_app.BLE
         }
         private bool IsConnected() => (Connectivity.NetworkAccess == NetworkAccess.Internet);
     }
-    class PolicyInference
+    class Quote
     {
         public int Hospitals { get; set; }
         public int Age { get; set; }
@@ -144,5 +144,6 @@ namespace Insurance_app.BLE
         public int Hospital_Excess { get; set; }
         public int Plan { get; set; }
         public int Smoker  { get; set; }
+        public float Price { get; set; }
     }
 }

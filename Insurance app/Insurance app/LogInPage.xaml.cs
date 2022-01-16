@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Android.OS;
+using Insurance_app.BLE;
 using Insurance_app.Models;
 using Realms;
 using Realms.Sync;
+using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -30,7 +32,12 @@ namespace Insurance_app
 
         private void Register_Button_CLicked(object sender, EventArgs e)
         {
-            Register();
+            
+            //Register();
+            Navigation.ShowPopup(new Quote()
+            {
+                
+            });
         }
 
         private async Task Login()
@@ -79,6 +86,12 @@ namespace Insurance_app
         private void Password_Entry_Completed(object sender, TextChangedEventArgs e)
         {
             password = e.NewTextValue;
+        }
+
+        private void Button_OnClicked(object sender, EventArgs e)
+        {
+            InferenceService inf = new InferenceService();
+            inf.Predict();
         }
     }
 }
