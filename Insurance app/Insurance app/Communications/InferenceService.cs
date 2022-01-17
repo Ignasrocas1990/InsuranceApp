@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xamarin.Essentials;
@@ -17,7 +18,6 @@ namespace Insurance_app.BLE
         private const String Url = "https://testRESTapi.pythonanywhere.com/predict";
         private bool connected = false;
         private HttpClient client;
-        private EventHandler<HttpResponseMessage> finRequest;
         private Stopwatch w = new Stopwatch();
         private StringContent content=null;
         private Quote quote=null;
@@ -28,7 +28,6 @@ namespace Insurance_app.BLE
             client = new HttpClient();
             connected=IsConnected();
             SubNetworkChange();
-            SubResponseReceived();
         }
 
         public void SubNetworkChange()
@@ -39,47 +38,15 @@ namespace Insurance_app.BLE
                 Console.WriteLine($"network connection : : {connected}");
             };
         }
-
-        private void SubResponseReceived()
-        {
-            finRequest += (s, e) =>
-            {
-                w.Stop();
-                Console.WriteLine($"time it took to predict : {w.Elapsed.Milliseconds }");
-                try
-                {
-                   
-                    string jsonContent = e.Content.ReadAsStringAsync().Result;
-                   
-                    Console.WriteLine($"Prediction result is : {jsonContent}");
-                   
-                   
-                   
-                    // use below if response is sent in json 
-                    //JObject json = JObject.Parse(jsonContent);
-                    //Console.WriteLine(json["Prediction"]);
-                }
-                catch (Exception exception)
-                {
-                    Console.WriteLine($"error while reading the content {exception}");
-                   
-                }
-                //DisplayAlert("notice", e.ToString(), "close");
-            };
-        }
-        
-        
-        
-        
         /**
          * Take raw data from sensor and pass it by http to predict
          * if customer walking
          */
-        public async void Predict()
+        public Task<HttpResponseMessage> Predict()
         {
             if (!connected)
             {
-                return;
+                return null;
             }
             
             
@@ -105,20 +72,15 @@ namespace Insurance_app.BLE
                 throw;
             }
             content = new StringContent(JsonConvert.SerializeObject(quote),Encoding.UTF8, "application/json");
-            Console.WriteLine( await content.ReadAsStringAsync());
-            SendRequestAsync();
-
-        }
-
-        private async void SendRequestAsync()
-        {
+            //Console.WriteLine(content);
             if (content!=null && connected)
             {
                 try
                 {
-                    w.Start();
-                    HttpResponseMessage response = await client.PostAsync(Url, content);
-                    finRequest?.Invoke(this,response);
+                    //HttpResponseMessage response = await client.PostAsync(Url, content);
+                    return client.PostAsync(Url, content);
+                    //return Task.FromResult(response);
+                    //finRequest?.Invoke(this,response);
                 }
                 catch (Exception e)
                 {
@@ -131,8 +93,10 @@ namespace Insurance_app.BLE
             else
             {
                 Console.WriteLine("error not connected");
-
             }
+            return null;
+            
+
         }
         private bool IsConnected() => (Connectivity.NetworkAccess == NetworkAccess.Internet);
     }

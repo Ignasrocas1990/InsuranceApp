@@ -24,8 +24,6 @@ namespace Insurance_app.Models
         [MapTo("_partition")]
         public string Partition { get; set; }
         
-        public enum HospitalsEnum { PublicHospitals,MostHospitals,AllHospitals  }
-        public enum TypeEnum { Low, Medium, High }
     }
    
     

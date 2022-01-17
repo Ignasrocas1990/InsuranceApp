@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Insurance_app.QuotePage">
+    <ContentPage.Content>
+        <StackLayout>
+            <StackLayout x:Name="CircularWait"
+                         IsVisible="False"
+                         AbsoluteLayout.LayoutBounds="0,0,1,1"
+                         AbsoluteLayout.LayoutFlags="All"
+                         Opacity="0.5">
+                <ActivityIndicator
+                    x:Name="Waiting"
+                    IsRunning="True"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Start"
+                    Color="Blue" />
+            </StackLayout>
+        <StackLayout>
+            <Button x:Name="GetQuoteBtn" Clicked="GetQuoteBtn_OnClicked"></Button>
+        </StackLayout>
+        
+        </StackLayout>
+
+    </ContentPage.Content>
+</ContentPage>

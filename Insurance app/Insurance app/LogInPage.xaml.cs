@@ -11,6 +11,7 @@ using Realms.Sync;
 using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Quote = Insurance_app.Models.Quote;
 
 namespace Insurance_app
 {
@@ -20,9 +21,11 @@ namespace Insurance_app
         private string email;
         private string password;
         private bool newCustomer = false;
+        private InferenceService inference;
         public LogInPage()
         {
             InitializeComponent();
+            inference = new InferenceService();
         }
 
         private async void Login_Button_Clicked(object sender, EventArgs e)
@@ -30,15 +33,13 @@ namespace Insurance_app
             await Login();
         }
 
-        private void Register_Button_CLicked(object sender, EventArgs e)
+        private async void GetQuote_Button_CLicked(object sender, EventArgs e)
         {
             
-            //Register();
-            Navigation.ShowPopup(new Quote()
-            {
-                
-            });
+            await Navigation.PushAsync(new QuotePage());
+
         }
+        
 
         private async Task Login()
         {
@@ -64,7 +65,7 @@ namespace Insurance_app
             }
         }
 
-        private async void Register()
+        private async Task Register()
         {
             try
             {
@@ -90,8 +91,6 @@ namespace Insurance_app
 
         private void Button_OnClicked(object sender, EventArgs e)
         {
-            InferenceService inf = new InferenceService();
-            inf.Predict();
         }
     }
 }
