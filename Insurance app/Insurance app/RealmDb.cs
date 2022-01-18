@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Insurance_app.Models;
@@ -39,11 +40,10 @@ namespace Insurance_app
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"customer not added : {e}");
+                    Debug.WriteLine($"customer not added : {e}");
                 }
                
             });
-            
         }
         public async Task<Customer> FindCustomer(string customerId)
         {

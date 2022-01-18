@@ -3,11 +3,26 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Insurance_app.RegistrationPage">
+    <StackLayout>
+    <StackLayout x:Name="CircularWait"
+                 IsVisible="False"
+                 AbsoluteLayout.LayoutBounds="0,0,1,1"
+                 AbsoluteLayout.LayoutFlags="All"
+                 Opacity="0.5">
+        <ActivityIndicator
+            x:Name="Waiting"
+            IsRunning="True"
+            HorizontalOptions="Center"
+            VerticalOptions="Start"
+            Color="Blue" />
+    </StackLayout>
     <ContentPage.Content>
         <StackLayout>
             <Entry x:Name="EmailEntry" BackgroundColor="White" TextColor="Black"></Entry>
-            <Entry x:Name="UsernameEntry" BackgroundColor="White" TextColor="Black"></Entry>
-            
+            <Entry x:Name="PassEntry" IsPassword="True" BackgroundColor="White" TextColor="Black"></Entry>
+            <Button Text="Register" BackgroundColor="Accent" TextColor="Black" Clicked="Button_OnClicked"></Button>
         </StackLayout>
+
     </ContentPage.Content>
+    </StackLayout>
 </ContentPage>

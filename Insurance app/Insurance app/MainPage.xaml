@@ -10,10 +10,7 @@
             <Frame BackgroundColor="#2196F3" Padding="5" CornerRadius="0">
                 <Button x:Name="testBtn" Clicked="test" Text="fun"/>
             </Frame>
-            <Frame BackgroundColor="#2196F3" Padding="5" CornerRadius="0">
-                <Button x:Name="infBtn" Clicked="InfBtn_OnClicked" Text="inference"/>
-            </Frame>
-            <Frame BackgroundColor="#2196F3" Padding="5" CornerRadius="0">
+        <Frame BackgroundColor="#2196F3" Padding="5" CornerRadius="0">
                 <Button x:Name="stopBtn" Clicked="StopBtn_OnClicked" Text="stopBLE"/>
             </Frame>
             <Frame BackgroundColor="#2196F3" Padding="5" CornerRadius="0">
