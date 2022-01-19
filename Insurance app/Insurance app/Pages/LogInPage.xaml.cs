@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Android.OS;
 using Insurance_app.BLE;
 using Insurance_app.Models;
+using Insurance_app.ViewModels;
 using Realms;
 using Realms.Sync;
 using Xamarin.CommunityToolkit.Extensions;
+using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Quote = Insurance_app.Models.Quote;
@@ -16,15 +19,16 @@ using Quote = Insurance_app.Models.Quote;
 namespace Insurance_app
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class LogInPage : ContentPage
+    public partial class LogInPage : ContentPage,IPageMethods
     {
-        private string email;
-        private string password;
         public LogInPage()
         {
             InitializeComponent();
+            BindingContext = new LogInViewModel(this);
+            
         }
-
+        
+/*
         private async void Login_Button_Clicked(object sender, EventArgs e)
         {
             await Login();
@@ -36,8 +40,6 @@ namespace Insurance_app
             await Navigation.PushAsync(new QuotePage());
 
         }
-        
-
         public async Task Login()
         {
             try
@@ -55,14 +57,22 @@ namespace Insurance_app
                 await DisplayAlert("Login Failed", ex.Message, "close");
             }
         }
-        private void Email_Entry_Completed(object sender, TextChangedEventArgs e)
+*/
+        public async Task NavigateToMainPage()
         {
-            email = e.NewTextValue;
+            await Navigation.PushAsync(new MainPage());
         }
 
-        private void Password_Entry_Completed(object sender, TextChangedEventArgs e)
+        public async Task NavigateToQuotePage()
         {
-            password = e.NewTextValue;
+            await Navigation.PushAsync(new QuotePage());
+            //return Task.CompletedTask;
+        }
+
+        public async Task Notify(string title, string message, string button)
+        {
+           await DisplayAlert(title, message, button);
+            //return Task.CompletedTask;
         }
     }
 }

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
+             x:DataType="viewModels:LogInViewModel"
+             x:Class="Insurance_app.LogInPage">
+    
+    <!--ContentPage.BindingContext>
+     <viewModels:LogInViewModel/>
+     </ContentPage.BindingContext-->
+    <StackLayout>
+                <Frame BackgroundColor="#2196F3" Padding="14" CornerRadius="0">
+                    <Label Text="Log In" HorizontalTextAlignment="Center" TextColor="White" FontSize="20" FlexLayout.AlignSelf="Start"/>
+                </Frame>
+                <Entry Text="{Binding EmailDisplay }" Placeholder="email@gmail.com"  IsTextPredictionEnabled="True" Keyboard="Plain" />
+                <Entry Text= "{Binding PasswordDisplay}" Placeholder="secret" IsPassword="True" Keyboard="Plain" />
+                <Button Text="Log In" Command="{Binding LogInCommand}" />
+                <Button Text="Get a Quote" Command="{Binding QuoteCommand }" />
+    </StackLayout>
+        
+</ContentPage>

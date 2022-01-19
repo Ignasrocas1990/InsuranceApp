@@ -19,6 +19,20 @@ namespace Insurance_app
             
         }
 
+        public Task<User> Login(String Email, String Password)
+        {
+            try
+            {
+                return App.RealmApp.LogInAsync(
+                    Credentials.EmailPassword(Email, Password));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("could not get");
+                return null;
+            }
+        }
+
         public async Task<MovData> GetMovData(Customer c)
         {
             var realm = await GetRealm($"Customer ={c.Id}");
