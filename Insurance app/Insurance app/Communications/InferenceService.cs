@@ -21,7 +21,6 @@ namespace Insurance_app.BLE
         //private const string EmailUrl = "https://testRESTapi.pythonanywhere.com/email";
         private const string SecretCode = "#F12sd1";
 
-        private bool connected = false;
         private HttpClient client;
         private Stopwatch w = new Stopwatch();
         private StringContent content=null;
@@ -30,28 +29,18 @@ namespace Insurance_app.BLE
         public InferenceService()
         {
             client = new HttpClient();
-            connected=IsConnected();
-            SubNetworkChange();
         }
-
-        public void SubNetworkChange()
-        {
-            Connectivity.ConnectivityChanged += (s,e) =>
-            {
-                connected=IsConnected();
-                Console.WriteLine($"network connection : : {connected}");
-            };
-        }
+        
 
         public Task<HttpResponseMessage> Email(String email)
         {
-            if (!connected)return null;
+            if (!App.Connected)return null;
             
             content = new StringContent(JsonConvert
                 .SerializeObject(new Dictionary<string,string>(){{"email",email},{SecretCode,"#F12sd1"}})
                 ,Encoding.UTF8, "application/json");
             
-            if (content!=null && connected)
+            if (content!=null && App.Connected)
             {
                 try
                 {
@@ -63,7 +52,7 @@ namespace Insurance_app.BLE
                 catch (Exception e)
                 {
                     Console.WriteLine($"fail to send { e }");
-                    connected = false;
+                    App.Connected = false;
                        
                 }
                     
@@ -82,14 +71,14 @@ namespace Insurance_app.BLE
          */
         public Task<HttpResponseMessage> Predict(Dictionary<String,int>quote)
         {
-            if (!connected)
+            if (!App.Connected)
             {
                 return null;
             }
             
             content = new StringContent(JsonConvert.SerializeObject(quote),Encoding.UTF8, "application/json");
             //Console.WriteLine(content);
-            if (content!=null && connected)
+            if (content!=null && App.Connected)
             {
                 try
                 {
@@ -101,7 +90,7 @@ namespace Insurance_app.BLE
                 catch (Exception e)
                 {
                     Console.WriteLine($"fail to send { e }");
-                    connected = false;
+                    App.Connected = false;
                        
                 }
                     
@@ -114,7 +103,6 @@ namespace Insurance_app.BLE
             
 
         }
-        private bool IsConnected() => (Connectivity.NetworkAccess == NetworkAccess.Internet);
     }
     /*
     class Quote

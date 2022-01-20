@@ -39,6 +39,11 @@ namespace Insurance_app.ViewModels
 
        private async Task GetQuote()
        {
+           if (!App.Connected)
+           {
+               await notification.Notify("error", "Network connectivity not available", "close");
+               return;
+           }
            var TempQuote = new Dictionary<string, int>()
            {
                {"Hospitals",0},

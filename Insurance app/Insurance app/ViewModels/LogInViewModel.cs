@@ -42,8 +42,8 @@ namespace Insurance_app.ViewModels
                 await notification.Notify("Login Failed", "ex.Message", "close");
                 return;
             }
-            var loginPage = new LogInPage();
-            await Nav.PushAsync(loginPage);
+            var mainPage = new FlyoutPage1();
+            await Nav.PushAsync(mainPage);
             
             //return Task.CompletedTask;
         }

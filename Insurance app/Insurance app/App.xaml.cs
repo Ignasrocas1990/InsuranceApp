@@ -3,6 +3,7 @@ using Insurance_app.Pages;
 using Realms.Sync;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Xamarin.Essentials;
 
 namespace Insurance_app
 {
@@ -11,6 +12,7 @@ namespace Insurance_app
         private const string MyRealmAppId = "application-0-bvutx";
         public static RealmDb RealmDb;
         public static Realms.Sync.App RealmApp;
+        public static bool Connected;
         public App()
         {
             InitializeComponent();
@@ -20,15 +22,21 @@ namespace Insurance_app
         {
             RealmDb = new RealmDb();
             RealmApp = Realms.Sync.App.Create(MyRealmAppId);
-    
+            Connected=NetConnection();
+
+
             if (RealmApp.CurrentUser is null)
             {
                 MainPage = new NavigationPage(new LogInPage());
             }
             else
             {
-                MainPage = new NavigationPage(new MainPage());
+                MainPage = new NavigationPage(new FlyoutPage1());
             }
+            Connectivity.ConnectivityChanged += (s,e) =>
+            {
+                Connected=NetConnection();
+            };
         }
 
         protected override void OnSleep()
@@ -38,6 +46,8 @@ namespace Insurance_app
         protected override void OnResume()
         {
         }
+        public static bool NetConnection() => (Connectivity.NetworkAccess == NetworkAccess.Internet);
+
     }
     
 }
