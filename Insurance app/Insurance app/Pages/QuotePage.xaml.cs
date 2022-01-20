@@ -1,26 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Insurance_app.BLE;
-using Insurance_app.Models;
+using Insurance_app.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace Insurance_app
+namespace Insurance_app.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class QuotePage : ContentPage
+    public partial class QuotePage : ContentPage,INotification
     {
-        private InferenceService inference;
         public QuotePage()
         {
             InitializeComponent();
-            inference = new InferenceService();
+            BindingContext = new QuoteViewModel(this, Navigation);
+            //inference = new InferenceService();
+
         }
         
-
+        /*
         private async void GetQuoteBtn_OnClicked(object sender, EventArgs e)
         {
             //get data from entries, create a dictionary -> json  (look it up) and pass by predict
@@ -53,6 +52,17 @@ namespace Insurance_app
             }
             Console.WriteLine(action);
         }
+        */
 
+        public async Task Notify(string title, string message, string close)
+        {
+            await DisplayAlert(title, message, close);
+            //return Task.CompletedTask;
+        }
+
+        public async Task<bool> NotifyOption(string title, string message, string accept, string close)
+        {
+           return await DisplayAlert(title, message, accept, close);
+        }
     }
 }

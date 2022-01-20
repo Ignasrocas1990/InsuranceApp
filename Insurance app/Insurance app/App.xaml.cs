@@ -1,4 +1,5 @@
 ﻿using System;
+using Insurance_app.Pages;
 using Realms.Sync;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;

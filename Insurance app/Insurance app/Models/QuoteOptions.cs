@@ -5,16 +5,8 @@ using System.Runtime.Serialization;
 
 namespace Insurance_app.Models
 {
-    public  class Quote
+    public  class QuoteOptions
     {
-        public int Age { get; set; }
-        public int Hospitals {get; set; }
-        public int Cover {get; set; }
-        public int Hospital_Excess {get; set; }
-        public int Plan {get; set; }
-        public int Smoker { get; set;}
-
-
         public enum CoverEnum {Low,Medium,High}
         public enum PlanEnum{ Low,Medium,High}
 
@@ -26,16 +18,5 @@ namespace Insurance_app.Models
         {
             return new List<int>() {300, 150, 0};
         }
-        /*
-        quote = new Quote()
-        {
-            Hospitals = 0,
-            Age = 18,
-            Cover = 0,
-            Hospital_Excess = 150,
-            Plan = 0,
-            Smoker = 0
-        };
-        */
     }
 }

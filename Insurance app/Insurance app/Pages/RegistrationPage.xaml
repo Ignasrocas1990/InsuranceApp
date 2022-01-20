@@ -2,27 +2,28 @@
 
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Insurance_app.RegistrationPage">
-    <StackLayout>
-    <StackLayout x:Name="CircularWait"
-                 IsVisible="False"
-                 AbsoluteLayout.LayoutBounds="0,0,1,1"
-                 AbsoluteLayout.LayoutFlags="All"
-                 Opacity="0.5">
-        <ActivityIndicator
-            x:Name="Waiting"
-            IsRunning="True"
-            HorizontalOptions="Center"
-            VerticalOptions="Start"
-            Color="Blue" />
-    </StackLayout>
+             xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
+             x:DataType="viewModels:RegistrationViewModel"
+             x:Class="Insurance_app.Pages.RegistrationPage">
     <ContentPage.Content>
-        <StackLayout>
-            <Entry x:Name="EmailEntry" BackgroundColor="White" TextColor="Black"></Entry>
-            <Entry x:Name="PassEntry" IsPassword="True" BackgroundColor="White" TextColor="Black"></Entry>
-            <Button Text="Register" BackgroundColor="Accent" TextColor="Black" Clicked="Button_OnClicked"></Button>
-        </StackLayout>
+            <StackLayout>
+                
+                <Entry Text="{Binding EmailDisplay}" 
+                       Placeholder="email@gmail.com" TextColor="Black"/>
+                <Entry Text="{Binding PassDisplay}" 
+                       Placeholder="password" IsPassword="True" TextColor="Black"/>
+                <Entry Text="{Binding FNameDisplay}" 
+                       Placeholder="First name" TextColor="Black"/>
+                <Entry Text="{Binding LNameDisplay}" 
+                       Placeholder="Last name" TextColor="Black"/>
+                <Entry Text="{Binding PhoneNrDisplay}"
+                       Placeholder= "+353852827820" TextColor="Black" />
+                <Button Text="Register" Command="{Binding RegisterCommand}" TextColor="Black" />
+                
+                <ActivityIndicator
+                    IsRunning="{Binding CircularWaitDisplay}"
+                    HorizontalOptions="Center" VerticalOptions="Start" Color="Blue" />
+            </StackLayout>
 
     </ContentPage.Content>
-    </StackLayout>
 </ContentPage>

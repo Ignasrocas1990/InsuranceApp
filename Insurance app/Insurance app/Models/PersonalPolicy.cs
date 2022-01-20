@@ -10,7 +10,7 @@ namespace Insurance_app.Models
         [PrimaryKey] [MapTo("_id")]
         public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
         public float? Price { get; set; }
-        public bool? DelFlag { get; set; }
+        public bool? DelFlag { get; set; } = false;
 
         public int? Cover { get; set; }
         public int? HospitalFee { get; set; }

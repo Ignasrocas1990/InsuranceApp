@@ -8,12 +8,14 @@ namespace Insurance_app.Models
 {
     public class Customer : RealmObject
     {
+        public Customer() { }
         [PrimaryKey][MapTo("_id")][Required]
         public string Id { get; set; }
         public Address Address { get; set; }
         public int? Age { get; set; }
         public string Name { get; set; }
-
+        public string LastName { get; set; }
+        public string PhoneNr { get;set; }
         public string Email { get; set; }
         public string Password { get; set; }
         
@@ -21,13 +23,10 @@ namespace Insurance_app.Models
         public IList<Reward> Rewards { get; }
         public IList<MovData> MovData { get; }
         public Claim Claim { get; set; }
-        
-        public bool? DelFlag { get; set; }
+
+        public bool? DelFlag { get; set; } = false;
         [MapTo("_partition")]
         public string Partition { get; set; }
-
-
-
     }
     public class Address  : EmbeddedObject
     {

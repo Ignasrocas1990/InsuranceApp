@@ -3,74 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Insurance_app.BLE;
+using Insurance_app.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace Insurance_app
+namespace Insurance_app.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class RegistrationPage : ContentPage
+    public partial class RegistrationPage : ContentPage,INotification
     {
-        public RegistrationPage(string price,Dictionary<String,int> quote)
+        public RegistrationPage(float price, Dictionary<string,int> tempQuote)
         {
             InitializeComponent();
-            
+            BindingContext = new RegistrationViewModel(this,Navigation,price,tempQuote);
         }
-        // enter details etc...
         
-        protected override void OnAppearing()
+        public Task Notify(string title, string message, string close)
         {
-            base.OnAppearing();
+            DisplayAlert(title, message, close);
+            return Task.CompletedTask;
         }
-
-        private async void Button_OnClicked(object sender, EventArgs e)
+        public async Task<bool> NotifyOption(string title, string message, string leftBtn, string rightBtn)
         {
-            if (Check())
-            {
-                await Register();
-                /*
-                InferenceService inf = new InferenceService(); 
-                CircularWait.IsVisible=true;
-                var sent = await inf.Email(EmailEntry.Text); 
-                CircularWait.IsVisible=false;
-                if (sent != null)
-                { 
-                    await DisplayAlert("Registration", "Confirmation email sent,\n Please check your email", "close");
-                }
-                */
-            }
-            else
-            {
-                await DisplayAlert("Attention", "Inputs are wrong", "close");
-
-            }
-
-
-        }
-        private async Task Register()
-        {
-            try
-            {
-                Console.WriteLine("customer registration");
-                await App.RealmApp.EmailPasswordAuth.RegisterUserAsync(EmailEntry.Text, PassEntry.Text); 
-                RealmDb db = new RealmDb();
-                await db.AddCustomer(EmailEntry.Text, PassEntry.Text, App.RealmApp.CurrentUser.Id);
-                await DisplayAlert("Notice", "Registration successful", "close");//change
-                await Navigation.PushAsync(new LogInPage());
-
-            }
-            catch (Exception e)
-            {
-                await DisplayAlert("Registration Failed", e.Message, "close");//change
-            }
-        }
-
-        private bool Check()
-        {
-            if (EmailEntry.Text.Length == 0) return false;
-            if (PassEntry.Text.Length < 6) return false;
-            return true;
+            return await DisplayAlert(title, message, leftBtn, rightBtn);
         }
     }
 }

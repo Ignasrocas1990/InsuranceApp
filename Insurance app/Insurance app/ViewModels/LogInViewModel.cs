@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Insurance_app.Pages;
 using Java.Lang;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
@@ -11,43 +12,51 @@ namespace Insurance_app.ViewModels
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public class LogInViewModel : ObservableObject
     {
-        string Email; 
-        string Password;
+        private string Email=""; 
+        private string Password="";
         public ICommand LogInCommand { get; }
         public ICommand QuoteCommand { get; }
 
-        private IPageMethods page;
+        private INotification notification;
+        private INavigation Nav; 
         public LogInViewModel() { }
-        public LogInViewModel(IPageMethods page)
+        public LogInViewModel(INotification notification,INavigation nav)
         {
-            this.page = page;
+            this.notification = notification;
+            this.Nav = nav;
             LogInCommand = new AsyncCommand(LogIn);
-            QuoteCommand = new AsyncCommand(page.NavigateToQuotePage);
+            QuoteCommand = new AsyncCommand(NavigateToQuote);
         }
 
-
+        private async Task NavigateToQuote()
+        {
+            await Nav.PushAsync(new QuotePage());
+            //return Task.CompletedTask;
+        }
 
         private async Task LogIn()
         { 
             var user = await App.RealmDb.Login(Email, Password);
             if (user is null)
             {
-                await page.Notify("Login Failed", "ex.Message", "close");
+                await notification.Notify("Login Failed", "ex.Message", "close");
                 return;
             }
-
-            await page.NavigateToMainPage();
+            var loginPage = new LogInPage();
+            await Nav.PushAsync(loginPage);
+            
+            //return Task.CompletedTask;
         }
 
         public string EmailDisplay
         {
             get => Email;
-            set => SetProperty(ref value, Email);
+            set => SetProperty(ref Email, value);
         }
         public string PasswordDisplay
         {
             get => Password;
-            set => SetProperty(ref value, Password);
+            set => SetProperty(ref Password, value);
         }
         
 

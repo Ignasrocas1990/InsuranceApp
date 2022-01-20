@@ -5,6 +5,7 @@ using Xamarin.Forms;
 using Plugin.BLE.Abstractions.Contracts;
 using Insurance_app.BLE;
 using Insurance_app.Models;
+using Insurance_app.Pages;
 using Realms;
 using Task = System.Threading.Tasks.Task;
 
@@ -30,17 +31,8 @@ namespace Insurance_app
         }
         protected override async void OnAppearing()
         {
-            
-            if (App.RealmApp.CurrentUser is null)
-            {
-                // No user? Go back to the LoginPage
-                await Navigation.PopAsync();
-            }
-            else
-            {
-                db = new RealmDb();
-                
-                currCustomer = await db.FindCustomer(App.RealmApp.CurrentUser.Id);
+
+            //currCustomer = await App.RealmDb.FindCustomer(App.RealmApp.CurrentUser.Id);
                 if (currCustomer is null)
                 {
                     Console.WriteLine("customer not found");
@@ -55,7 +47,7 @@ namespace Insurance_app
                 }
                 
                 bleManager = new BleManager();
-            }
+            
             base.OnAppearing();
         }
 

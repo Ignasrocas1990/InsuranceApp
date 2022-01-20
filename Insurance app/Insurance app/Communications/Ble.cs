@@ -18,9 +18,6 @@ namespace Insurance_app.BLE
             ble = CrossBluetoothLE.Current;
             SERVER_GUID = setGuid(uuidString);
         }
-
-
-        
         public bool BleCheck()
         {
             if (ble.IsOn || ble.State == BluetoothState.TurningOn)
