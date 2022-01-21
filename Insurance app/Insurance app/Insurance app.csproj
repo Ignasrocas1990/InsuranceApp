@@ -45,21 +45,20 @@
       <DependentUpon>QuotePage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Pages\flyoutTest\FlyoutContainerPage.xaml.cs">
+      <DependentUpon>FlyoutPage1.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Pages\flyoutTest\FlyoutContainerList.xaml.cs">
+      <DependentUpon>FlyoutPage1Flyout.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Pages\flyoutTest\FlyoutContainerItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Pages\FlyoutPage1.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Pages\FlyoutPage1Detail.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Pages\FlyoutPage1Flyout.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Pages\flyoutTest\" />
+    <Folder Include="Pages\SidePageNavigation\" />
   </ItemGroup>
 </Project>

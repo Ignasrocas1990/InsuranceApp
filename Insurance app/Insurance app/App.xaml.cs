@@ -1,5 +1,6 @@
 ﻿using System;
 using Insurance_app.Pages;
+using Insurance_app.Pages.SidePageNavigation;
 using Realms.Sync;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -31,7 +32,7 @@ namespace Insurance_app
             }
             else
             {
-                MainPage = new NavigationPage(new FlyoutPage1());
+                MainPage = new NavigationPage(new FlyoutContainerPage());
             }
             Connectivity.ConnectivityChanged += (s,e) =>
             {

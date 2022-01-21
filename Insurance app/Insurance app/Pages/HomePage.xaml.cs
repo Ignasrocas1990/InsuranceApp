@@ -10,9 +10,9 @@ using Xamarin.Forms.Xaml;
 namespace Insurance_app.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class FlyoutPage1Detail : ContentPage
+    public partial class HomePage : ContentPage
     {
-        public FlyoutPage1Detail()
+        public HomePage()
         {
             InitializeComponent();
         }

@@ -29,19 +29,6 @@ namespace Insurance_app
                 return e.Message;
             }
         }
-        public Task<User> Login(String Email, String Password)
-        {
-            try
-            {
-                return App.RealmApp.LogInAsync(
-                    Credentials.EmailPassword(Email, Password));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("could not get");
-                return null;
-            }
-        }
 //------------------------------------- Customer methods ---------------------
         
         public async Task AddCustomer(Customer c)

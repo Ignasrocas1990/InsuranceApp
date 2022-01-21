@@ -2,7 +2,10 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Insurance_app.Pages;
+using Insurance_app.Pages.SidePageNavigation;
 using Java.Lang;
+using Realms.Exceptions;
+using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -12,8 +15,8 @@ namespace Insurance_app.ViewModels
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public class LogInViewModel : ObservableObject
     {
-        private string Email=""; 
-        private string Password="";
+        private string email; 
+        private string password;
         public ICommand LogInCommand { get; }
         public ICommand QuoteCommand { get; }
 
@@ -36,27 +39,33 @@ namespace Insurance_app.ViewModels
 
         private async Task LogIn()
         { 
-            var user = await App.RealmDb.Login(Email, Password);
-            if (user is null)
+            
+            try
             {
-                await notification.Notify("Login Failed", "ex.Message", "close");
-                return;
+                await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
+                var mainPage = new FlyoutContainerPage();
+                await Nav.PushModalAsync(mainPage);
             }
-            var mainPage = new FlyoutPage1();
-            await Nav.PushAsync(mainPage);
+            catch (System.Exception e)
+            {
+                Console.WriteLine(e);
+                await notification.Notify("Login Failed", e.Message, "close");
+
+            }
+
             
             //return Task.CompletedTask;
         }
 
         public string EmailDisplay
         {
-            get => Email;
-            set => SetProperty(ref Email, value);
+            get => email;
+            set => SetProperty(ref email, value);
         }
         public string PasswordDisplay
         {
-            get => Password;
-            set => SetProperty(ref Password, value);
+            get => password;
+            set => SetProperty(ref password, value);
         }
         
 

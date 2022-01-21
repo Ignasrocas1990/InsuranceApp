@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Insurance_app.Models;
+using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
 
@@ -17,7 +18,7 @@ namespace Insurance_app.ViewModels
         private bool wait;
         private readonly float price;
         private string email;
-        private string pass;
+        private string password;
         private string fName;
         private string lName;
         private string phoneNr;
@@ -36,8 +37,8 @@ namespace Insurance_app.ViewModels
         {
             try
             {
-                var registered = await App.RealmDb.Register(email, pass);
-                var user = await App.RealmDb.Login(email, pass);
+                var registered = await App.RealmDb.Register(email, password);
+                var user =  await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
 
                 if (registered == "success")
                 {
@@ -93,8 +94,8 @@ namespace Insurance_app.ViewModels
         }
         public string PassDisplay
         {
-            get => pass;
-            set => SetProperty(ref pass, PassCheck(value));
+            get => password;
+            set => SetProperty(ref password, PassCheck(value));
         }
 
         private string PassCheck(string newValue)

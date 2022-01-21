@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Insurance_app.Pages.SidePageNavigation.FlyoutContainerList"
+             xmlns:local="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
+             xmlns:sidePageNavigation="clr-namespace:Insurance_app.Pages.SidePageNavigation;assembly=Insurance app"
+             Title="Flyout">
+  <StackLayout>
+        <ListView x:Name="ListView" x:FieldModifier="public">
+            <ListView.ItemsSource>
+                <x:Array Type="{x:Type sidePageNavigation:FlyoutContainerItem}">
+                    <sidePageNavigation:FlyoutContainerItem Title="HomePage" IconSource="Home.png" TargetType="{x:Type local:HomePage}"/>
+                    <sidePageNavigation:FlyoutContainerItem Title="AccountPage" IconSource="Info.png" TargetType="{x:Type local:AccountInfoPage}"/>
+                    <sidePageNavigation:FlyoutContainerItem Title="LogOut" IconSource="LogOut.png"/>
+                </x:Array>
+            </ListView.ItemsSource>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid ColumnDefinitions="33,*" >
+                            <Image Source="{Binding IconSource}"/>
+                            <Label Grid.Column="1" Text="{Binding Title}"/>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+      
+  </StackLayout>
+</ContentPage>
