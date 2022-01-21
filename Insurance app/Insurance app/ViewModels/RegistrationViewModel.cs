@@ -3,33 +3,34 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Insurance_app.Models;
+using Newtonsoft.Json;
 using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
-{
+{    [QueryProperty(nameof(PriceDisplay),nameof(PriceDisplay))]
+    [QueryProperty(nameof(TempQuote),nameof(TempQuote))]
     public class RegistrationViewModel : ObservableObject
     {
         private INotification notification;
         INavigation nav;
-        private Dictionary<string, int> tempQuote;
+        private Dictionary<string, int> Quote;
         public ICommand RegisterCommand { get; }
         private bool wait;
-        private readonly float price;
+        private string price;
         private string email;
         private string password;
         private string fName;
         private string lName;
         private string phoneNr;
         private bool inputsValid = false;
+        private string qString;
+
         
-        public RegistrationViewModel(INotification notification, INavigation nav, float price, Dictionary<string, int> tempQuote)
+        public RegistrationViewModel(INotification notification)
         {
             this.notification = notification;
-            this.nav = nav;
-            this.price = price;
-            this.tempQuote = tempQuote;
             RegisterCommand = new AsyncCommand(Register);
         }
 
@@ -38,19 +39,19 @@ namespace Insurance_app.ViewModels
             try
             {
                 var registered = await App.RealmDb.Register(email, password);
-                var user =  await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
-
                 if (registered == "success")
-                {
-                   Customer customer = new Customer()
+                { 
+                    var user =  await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
+                    Customer customer = new Customer()
                    {
-                       Id = user.Id, Age = tempQuote["Age"],
+                       Id = user.Id, Age = Quote["Age"],
                        Name = fName, LastName = lName, PhoneNr = phoneNr, Email=email, Partition = $"Customer ={user.Id}"
                    };
                    customer.Policy = new PersonalPolicy()
                     {
-                        Price = price, Cover = tempQuote["Cover"], HospitalFee = tempQuote["Hospital_Excess"],
-                        Hospitals = tempQuote["Hospitals"], Plan = tempQuote["Plan"], Smoker = tempQuote["Smoker"],
+                        Price = getPrice(),
+                        Cover = Quote["Cover"], HospitalFee = Quote["Hospital_Excess"],
+                        Hospitals = Quote["Hospitals"], Plan = Quote["Plan"], Smoker = Quote["Smoker"],
                         Status = true, StartDate = DateTime.UtcNow
                     };
                    await App.RealmDb.AddCustomer(customer);
@@ -58,12 +59,14 @@ namespace Insurance_app.ViewModels
                 else
                 {
                     await notification.Notify("error", $"{registered}", "close");
+                    return;
                 }
 
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                return;
             }
             await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
             await nav.PopToRootAsync();//go back to log in screen
@@ -73,6 +76,11 @@ namespace Insurance_app.ViewModels
         {
             get => phoneNr;
             set => SetProperty(ref phoneNr, CheckPhoneNr(phoneNr,value));
+        }
+
+        private float getPrice()
+        {
+            return (float) Math.Round(float.Parse(price) * 100f) / 100f;
         }
 
         private string CheckPhoneNr(string oldValue,string newValue)
@@ -118,6 +126,27 @@ namespace Insurance_app.ViewModels
         {
             get => wait;
             set => SetProperty(ref wait, value);
+        }
+
+        public string TempQuote
+        {
+            get => qString;
+            set
+            {
+                var v = Uri.UnescapeDataString(value ?? string.Empty);
+                Quote= JsonConvert.DeserializeObject<Dictionary<string,int>>(v);
+            } 
+        }
+
+        public string PriceDisplay
+        {
+            get => price;
+            set
+            {
+                price = Uri.UnescapeDataString(value ?? string.Empty);
+                
+            } 
+        
         }
     }
 }

@@ -10,12 +10,13 @@ using Xamarin.Forms.Xaml;
 namespace Insurance_app.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
+
     public partial class RegistrationPage : ContentPage,INotification
     {
-        public RegistrationPage(float price, Dictionary<string,int> tempQuote)
+        public RegistrationPage()
         {
             InitializeComponent();
-            BindingContext = new RegistrationViewModel(this,Navigation,price,tempQuote);
+            BindingContext = new RegistrationViewModel(this);
         }
         
         public Task Notify(string title, string message, string close)

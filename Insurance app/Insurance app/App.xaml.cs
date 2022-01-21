@@ -24,20 +24,23 @@ namespace Insurance_app
             RealmDb = new RealmDb();
             RealmApp = Realms.Sync.App.Create(MyRealmAppId);
             Connected=NetConnection();
-
+            MainPage = new AppShell();
 
             if (RealmApp.CurrentUser is null)
             {
-                MainPage = new NavigationPage(new LogInPage());
+                Shell.Current.GoToAsync($"{nameof(LogInPage)}");
+                //MainPage = new NavigationPage(new LogInPage());
             }
             else
             {
-                MainPage = new NavigationPage(new FlyoutContainerPage());
+                //Shell.Current.GoToAsync($"{nameof(Fly)}")
+                //MainPage = new NavigationPage(new FlyoutContainerPage());
             }
             Connectivity.ConnectivityChanged += (s,e) =>
             {
                 Connected=NetConnection();
             };
+
         }
 
         protected override void OnSleep()

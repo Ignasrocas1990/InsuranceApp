@@ -9,6 +9,7 @@ using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Exception = System.Exception;
 
 namespace Insurance_app.ViewModels
 {
@@ -33,7 +34,16 @@ namespace Insurance_app.ViewModels
 
         private async Task NavigateToQuote()
         {
-            await Nav.PushAsync(new QuotePage());
+            try
+            {
+                await Shell.Current.GoToAsync($"//{nameof(QuotePage)}");
+                //var quotePage = new QuotePage();
+                //await Nav.PushAsync(quotePage);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
             //return Task.CompletedTask;
         }
 
@@ -46,7 +56,7 @@ namespace Insurance_app.ViewModels
                 var mainPage = new FlyoutContainerPage();
                 await Nav.PushModalAsync(mainPage);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e);
                 await notification.Notify("Login Failed", e.Message, "close");

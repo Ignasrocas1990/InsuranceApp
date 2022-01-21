@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Insurance_app.BLE;
 using Insurance_app.Models;
 using Insurance_app.Pages;
+using Newtonsoft.Json;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
 
@@ -53,21 +54,22 @@ namespace Insurance_app.ViewModels
                {"Plan",0},
                {"Smoker",0}
            };
-           string priceString = " ";
+           string price = " ";
            CircularWaitDisplay=true;
            var result = await inf.Predict(TempQuote);
-           priceString =  await result.Content.ReadAsStringAsync();
+           price =  await result.Content.ReadAsStringAsync();
            CircularWaitDisplay=false;
            
-           bool action = await notification.NotifyOption("Price",priceString,  "Accept","Deny");
+           bool action = await notification.NotifyOption("Price",price,  "Accept","Deny");
            if (action)
            {
-               float price =0;
-               float.TryParse(priceString, out price);
                try
                {   
-                   var registrationPage = new RegistrationPage(price,TempQuote);
-                   await nav.PushAsync(registrationPage);
+                   //var registrationPage = new RegistrationPage(price,TempQuote);
+                   var jsonQuote = JsonConvert.SerializeObject(TempQuote);
+
+
+                   await Shell.Current.GoToAsync($"//{nameof(RegistrationPage)}?PriceDisplay={price}&TempQuote={jsonQuote}");
                }
                catch (Exception e)
                {
