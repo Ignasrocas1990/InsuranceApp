@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Insurance_app.Pages;
+using Insurance_app.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Essentials;
 
@@ -39,6 +40,10 @@ namespace Insurance_app
                 Connected=NetConnection();
             };
 
+           var sModel = ShellViewModel.GetInstance();
+           sModel.AddViewModel(nameof(HomePageViewModel),new HomePageViewModel());
+           sModel.AddViewModel(nameof(LogInViewModel),new LogInViewModel());
+           sModel.AddViewModel(nameof(QuoteViewModel), new QuoteViewModel());
         }
 
         protected override void OnSleep()
@@ -49,11 +54,6 @@ namespace Insurance_app
         {
         }
         public static bool NetConnection() => (Connectivity.NetworkAccess == NetworkAccess.Internet);
-        protected override void CleanUp()
-        {
-            Console.WriteLine("clean#");
-            base.CleanUp();
-        }
     }
     
 }

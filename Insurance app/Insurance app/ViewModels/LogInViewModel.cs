@@ -18,13 +18,12 @@ namespace Insurance_app.ViewModels
         public ICommand LogInCommand { get; }
         public ICommand QuoteCommand { get; }
 
-        private INotification notification;
-        public LogInViewModel() { }
-        public LogInViewModel(INotification notification)
+        public INotification notification;
+        public LogInViewModel()
         {
-            this.notification = notification;
             LogInCommand = new AsyncCommand(LogIn);
             QuoteCommand = new AsyncCommand(NavigateToQuote);
+
 
         }
 
@@ -49,7 +48,6 @@ namespace Insurance_app.ViewModels
             try
             {
                 await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
-                var mainPage = new HomePage();
                 await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
             }
             catch (Exception e)
@@ -62,6 +60,7 @@ namespace Insurance_app.ViewModels
             
             //return Task.CompletedTask;
         }
+       
 
         public string EmailDisplay
         {

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Insurance_app.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
@@ -12,8 +13,14 @@ namespace Insurance_app.Pages
         public LogInPage()
         {
             InitializeComponent();
-            BindingContext = new LogInViewModel(this);
+            var vModel = ((LogInViewModel) ShellViewModel.GetInstance()
+                .GetViewModel(nameof(LogInViewModel)));
+            vModel.notification = this;
+            BindingContext = vModel;
+
         }
+
+
         public async Task Notify(string title, string message, string button)
         {
            await DisplayAlert(title, message, button);

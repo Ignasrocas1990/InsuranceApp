@@ -15,7 +15,12 @@ namespace Insurance_app.Pages
         public HomePage()
         {
             InitializeComponent();
-            BindingContext = new HomePageViewModel(this);
+            
+             var viewModel = ((HomePageViewModel) ShellViewModel.GetInstance()
+                    .GetViewModel("HomePageViewModel"));
+             viewModel.notification = this;
+             BindingContext = viewModel;
+
         }
 
         public async Task Notify(string title, string message, string close)

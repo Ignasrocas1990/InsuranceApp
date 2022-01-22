@@ -16,8 +16,7 @@ namespace Insurance_app.ViewModels
     {
         private QuoteOptions quoteOptions;
         public ICommand GetQuotCommand { get; }
-        private INotification notification; 
-        private INavigation nav;
+        public INotification notification; 
         private InferenceService inf;
 
         private int hospitals=0;
@@ -28,13 +27,10 @@ namespace Insurance_app.ViewModels
         private int smoker=0;
         private bool wait;
         
-        public QuoteViewModel() { }
-        public QuoteViewModel(INotification notification,INavigation nav)
+        public QuoteViewModel()
        {
            quoteOptions = new QuoteOptions();
            GetQuotCommand = new AsyncCommand(GetQuote);
-           this.notification = notification;
-           this.nav = nav;
            inf = new InferenceService();
        }
 

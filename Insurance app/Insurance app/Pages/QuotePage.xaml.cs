@@ -13,7 +13,10 @@ namespace Insurance_app.Pages
         public QuotePage()
         {
             InitializeComponent();
-            BindingContext = new QuoteViewModel(this, Navigation);
+            var vModel = (QuoteViewModel)ShellViewModel.GetInstance()
+                .GetViewModel(nameof(QuoteViewModel));
+            vModel.notification = this;
+            BindingContext = vModel;
         }
         public async Task Notify(string title, string message, string close)
         {

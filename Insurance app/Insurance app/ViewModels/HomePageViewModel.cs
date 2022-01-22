@@ -8,15 +8,14 @@ namespace Insurance_app.ViewModels
 {
     public class HomePageViewModel : ObservableObject
     {
-        INotification notification;
-        
-        
+        public INotification notification { set; get; }
+
+
         private Timer time = new Timer();
         private bool timerRunning;
         private double _ProgressValue;
-        public HomePageViewModel(INotification notification)
+        public HomePageViewModel()
         {
-            this.notification = notification;
             StartTimer();
         }
         public double ProgressValue

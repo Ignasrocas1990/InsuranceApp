@@ -4,7 +4,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
              xmlns:sys="clr-namespace:System;assembly=netstandard"
-             xmlns:v="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
              BackgroundColor="LightSteelBlue"
              Shell.TabBarIsVisible="False"
              x:Class="Insurance_app.AppShell">
@@ -18,7 +17,10 @@
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
             <ShellContent Title="Home page" Icon="home.png" ContentTemplate="{DataTemplate pages:HomePage}" />
             <ShellContent Title="Profile page" Icon="profile.png" ContentTemplate="{DataTemplate pages:AccountInfoPage}" />
+            <ShellContent Title="Logout" Icon="logout.png" ContentTemplate="{DataTemplate pages:LogInPage}"/>
     </FlyoutItem>
+    <MenuItem Text="logout" Clicked="MenuItem_OnClicked"/>
+    
     
     <Shell.FlyoutFooterTemplate>
             <DataTemplate>

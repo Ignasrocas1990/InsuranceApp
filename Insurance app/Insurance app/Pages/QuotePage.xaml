@@ -5,7 +5,7 @@
              xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
              x:DataType="viewModels:QuoteViewModel"
              Shell.FlyoutBehavior="Disabled"
-             Shell.NavBarIsVisible="False"
+             Shell.NavBarIsVisible="True"
              x:Class="Insurance_app.Pages.QuotePage">
     <ContentPage.Content>
         <StackLayout>
