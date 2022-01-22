@@ -17,6 +17,7 @@ namespace Insurance_app.Pages
         {
             InitializeComponent();
             BindingContext = new RegistrationViewModel(this);
+            
         }
         
         public Task Notify(string title, string message, string close)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Insurance_app.BLE;
+using Insurance_app.Communications;
 using Insurance_app.Models;
 using Insurance_app.Pages;
 using Newtonsoft.Json;
@@ -65,10 +65,7 @@ namespace Insurance_app.ViewModels
            {
                try
                {   
-                   //var registrationPage = new RegistrationPage(price,TempQuote);
                    var jsonQuote = JsonConvert.SerializeObject(TempQuote);
-
-
                    await Shell.Current.GoToAsync($"//{nameof(RegistrationPage)}?PriceDisplay={price}&TempQuote={jsonQuote}");
                }
                catch (Exception e)

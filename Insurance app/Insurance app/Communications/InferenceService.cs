@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Insurance_app.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Xamarin.Essentials;
 
-namespace Insurance_app.BLE
+namespace Insurance_app.Communications
 {
     
     public class InferenceService

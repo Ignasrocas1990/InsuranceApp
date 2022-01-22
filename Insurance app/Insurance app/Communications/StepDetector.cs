@@ -1,7 +1,7 @@
 ﻿using System;
 using Math = Java.Lang.Math;
 
-namespace watch.Sensors
+namespace Insurance_app.Communications
 {
     public class StepDetector
     {

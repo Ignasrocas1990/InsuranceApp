@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Android.Util;
 using Insurance_app.Pages;
 using Xamarin.Forms;
@@ -8,17 +9,18 @@ namespace Insurance_app.ViewModels
 {
     public class LogOut
     {
-        private INavigation nav;
-        public LogOut(INavigation nav)
+        private ICommand LogoutCommand { get; }
+
+        public LogOut( )
         {
-            this.nav = nav;
+            LogoutCommand = new Command(Logout);
         }
 
         public async void Logout()
         {
             try
             {
-                await nav.PushModalAsync(new LogInPage(),false);//go back to log in screen
+                await Shell.Current.GoToAsync($"//{nameof(LogInPage)}");
                 await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
                 
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Insurance_app.Models;
+using Insurance_app.Pages;
 using Newtonsoft.Json;
 using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
@@ -38,9 +39,12 @@ namespace Insurance_app.ViewModels
         {
             try
             {
+                CircularWaitDisplay = true;
                 var registered = await App.RealmDb.Register(email, password);
+                
                 if (registered == "success")
-                { 
+                {
+                    CircularWaitDisplay = true;
                     var user =  await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
                     Customer customer = new Customer()
                    {
@@ -58,6 +62,7 @@ namespace Insurance_app.ViewModels
                 }
                 else
                 {
+                    CircularWaitDisplay = false;
                     await notification.Notify("error", $"{registered}", "close");
                     return;
                 }
@@ -65,11 +70,16 @@ namespace Insurance_app.ViewModels
             }
             catch (Exception e)
             {
+                CircularWaitDisplay = false;
                 Console.WriteLine(e);
                 return;
             }
             await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
-            await nav.PopToRootAsync();//go back to log in screen
+            CircularWaitDisplay = false;
+            await notification.Notify("Notice", "Registration completed successfully", "Close");
+            await Shell.Current.GoToAsync($"//{nameof(LogInPage)}");
+       
+           
         }
         // display properties
         public string PhoneNrDisplay

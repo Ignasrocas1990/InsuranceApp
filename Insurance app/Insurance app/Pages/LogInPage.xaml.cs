@@ -12,10 +12,7 @@ namespace Insurance_app.Pages
         public LogInPage()
         {
             InitializeComponent();
-            NavigationPage.SetHasNavigationBar(this, false);
-            BindingContext = new LogInViewModel(this,Navigation);
-            
-            
+            BindingContext = new LogInViewModel(this);
         }
         public async Task Notify(string title, string message, string button)
         {

@@ -1,6 +1,6 @@
 ﻿using Java.Lang;
 
-namespace watch.Sensors
+namespace Insurance_app.Communications
 {
     public class SensorFilter
     {
@@ -19,7 +19,7 @@ namespace watch.Sensors
             return retval;
         }
 
-        public static float[] cross(float[] arrayA, float[] arrayB)
+        public static float[] Cross(float[] arrayA, float[] arrayB)
         {
             float[] retArray = new float[3];
             retArray[0] = arrayA[1] * arrayB[2] - arrayA[2] * arrayB[1];

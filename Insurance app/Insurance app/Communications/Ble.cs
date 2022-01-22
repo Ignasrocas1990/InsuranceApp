@@ -5,7 +5,7 @@ using Plugin.BLE.Abstractions.Contracts;
 using Xamarin.Essentials;
 using String = System.String;
 
-namespace Insurance_app.BLE
+namespace Insurance_app.Communications
 {
     public class Ble
     {

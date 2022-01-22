@@ -2,9 +2,6 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Insurance_app.Pages;
-using Insurance_app.Pages.SidePageNavigation;
-using Java.Lang;
-using Realms.Exceptions;
 using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
@@ -22,14 +19,13 @@ namespace Insurance_app.ViewModels
         public ICommand QuoteCommand { get; }
 
         private INotification notification;
-        private INavigation Nav; 
         public LogInViewModel() { }
-        public LogInViewModel(INotification notification,INavigation nav)
+        public LogInViewModel(INotification notification)
         {
             this.notification = notification;
-            this.Nav = nav;
             LogInCommand = new AsyncCommand(LogIn);
             QuoteCommand = new AsyncCommand(NavigateToQuote);
+
         }
 
         private async Task NavigateToQuote()
@@ -53,8 +49,8 @@ namespace Insurance_app.ViewModels
             try
             {
                 await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
-                var mainPage = new FlyoutContainerPage();
-                await Nav.PushModalAsync(mainPage);
+                var mainPage = new HomePage();
+                await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
             }
             catch (Exception e)
             {

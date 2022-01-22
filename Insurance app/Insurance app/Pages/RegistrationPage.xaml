@@ -4,6 +4,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
              x:DataType="viewModels:RegistrationViewModel"
+             Shell.FlyoutBehavior="Disabled"
+             Shell.NavBarIsVisible="False"
              x:Class="Insurance_app.Pages.RegistrationPage">
     <ContentPage.Content>
             <StackLayout>
@@ -21,8 +23,9 @@
                 <Button Text="Register" Command="{Binding RegisterCommand}" TextColor="Black" />
                 
                 <ActivityIndicator
-                    IsRunning="{Binding CircularWaitDisplay}"
-                    HorizontalOptions="Center" VerticalOptions="Start" Color="Blue" />
+                       IsRunning="{Binding CircularWaitDisplay}" 
+                       HorizontalOptions="Center" VerticalOptions="Start" Color="Blue" />
+
             </StackLayout>
 
     </ContentPage.Content>

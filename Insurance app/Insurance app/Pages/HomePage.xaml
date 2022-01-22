@@ -2,12 +2,41 @@
 
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:plugin="clr-namespace:ProgressRingControl.Forms.Plugin;assembly=ProgressRing.Forms.Plugin"
+             xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels" 
+             xmlns:insuranceApp1="clr-namespace:Insurance_app"
+             x:DataType="viewModels1:HomePageViewModel"
+             Shell.PresentationMode="Modal"
              x:Class="Insurance_app.Pages.HomePage">
-    <ContentPage.Content>
-        <StackLayout>
-            <Label Text="home page"
-                   VerticalOptions="CenterAndExpand"
-                   HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
-    </ContentPage.Content>
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <insuranceApp1:ValueProgressBarConverter x:Key="ValueProgressBar" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <StackLayout >
+
+        <Grid  VerticalOptions="CenterAndExpand">
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <Label FontSize="30" Text="{Binding ProgressValue, StringFormat='{0}'}" TextColor="Black" />
+            </StackLayout>
+
+
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <plugin:ProgressRing HeightRequest="150" RingProgressColor="Orange" 
+                                      Scale="2" WidthRequest="150" RingThickness="10"  
+                                      Progress="{Binding ProgressValue , 
+                                     Converter={StaticResource ValueProgressBar},Mode=TwoWay}"/>
+            </StackLayout>
+        
+
+    </Grid>
+    </StackLayout>
+       
+
+
+    
+
+
 </ContentPage>

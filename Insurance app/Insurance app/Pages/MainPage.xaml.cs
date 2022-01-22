@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Plugin.BLE.Abstractions.Contracts;
-using Insurance_app.BLE;
+using Insurance_app.Communications;
 using Insurance_app.Models;
 using Insurance_app.Pages;
 using Realms;
@@ -14,7 +14,6 @@ namespace Insurance_app
     public partial class MainPage : ContentPage
     {
         int i = 0;
-        
         private BleManager bleManager;
         private InferenceService inferenceService;
         private RealmDb db = null;
@@ -29,8 +28,9 @@ namespace Insurance_app
         {
             InitializeComponent();
         }
-        protected override async void OnAppearing()
+        protected override  void OnAppearing()
         {
+            /*
 
             //currCustomer = await App.RealmDb.FindCustomer(App.RealmApp.CurrentUser.Id);
                 if (currCustomer is null)
@@ -49,6 +49,7 @@ namespace Insurance_app
                 bleManager = new BleManager();
             
             base.OnAppearing();
+            */
         }
 
         private void GetAllMovData()
@@ -61,33 +62,9 @@ namespace Insurance_app
             //db.addMovData();----------------------------------------
         }
 
-        private void test(object sender, EventArgs e)
-        {
-            testBtn.Text = $"{i++}";
-        }
-
         private void StopBtn_OnClicked(object sender, EventArgs e)
         {
             bleManager.StopDataSend();
-        }
-        private void GetAll_OnClicked(object sender, EventArgs e)
-        {
-        }
-
-        private async void OnLogoutClick(object sender, EventArgs e)
-        {
-            try
-            {
-                if (App.RealmApp.CurrentUser != null)
-                {
-                    await App.RealmApp.CurrentUser.LogOutAsync();
-                    await Navigation.PushAsync(new LogInPage());
-                }
-            }
-            catch (Exception ex)
-            {
-                await DisplayAlert("Error", ex.Message, "Logout Failed");
-            }
         }
     }
     

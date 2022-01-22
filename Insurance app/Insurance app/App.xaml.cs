@@ -1,9 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using Insurance_app.Pages;
-using Insurance_app.Pages.SidePageNavigation;
-using Realms.Sync;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 using Xamarin.Essentials;
 
 namespace Insurance_app
@@ -14,6 +12,7 @@ namespace Insurance_app
         public static RealmDb RealmDb;
         public static Realms.Sync.App RealmApp;
         public static bool Connected;
+
         public App()
         {
             InitializeComponent();
@@ -21,6 +20,7 @@ namespace Insurance_app
 
         protected override void OnStart()
         {
+
             RealmDb = new RealmDb();
             RealmApp = Realms.Sync.App.Create(MyRealmAppId);
             Connected=NetConnection();
@@ -28,13 +28,11 @@ namespace Insurance_app
 
             if (RealmApp.CurrentUser is null)
             {
-                Shell.Current.GoToAsync($"{nameof(LogInPage)}");
-                //MainPage = new NavigationPage(new LogInPage());
+                Shell.Current.GoToAsync($"//{nameof(LogInPage)}");
             }
             else
             {
-                //Shell.Current.GoToAsync($"{nameof(Fly)}")
-                //MainPage = new NavigationPage(new FlyoutContainerPage());
+                Shell.Current.GoToAsync($"//{nameof(HomePage)}");
             }
             Connectivity.ConnectivityChanged += (s,e) =>
             {
@@ -51,7 +49,11 @@ namespace Insurance_app
         {
         }
         public static bool NetConnection() => (Connectivity.NetworkAccess == NetworkAccess.Internet);
-
+        protected override void CleanUp()
+        {
+            Console.WriteLine("clean#");
+            base.CleanUp();
+        }
     }
     
 }

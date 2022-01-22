@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Timers;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -12,10 +13,15 @@ namespace watch
     [Service]
     public class SensorService : Service
     {
-        const int SERVICE_RUNNING_NOTIFICATION_ID = 10000;
         private const string TAG = "mono-stdout";
+        const int ServiceRunningNotificationId = 10000;
+        const int MaxDisconnectionTime = 300;//5min
+        private const int ElapsedTime = 1000;//1sec
+        
+        private int curDisconnectCounter = 0;
         private BleServer bleServer;
         private SensorManager sensorManager;
+        private Timer timer;
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
@@ -23,9 +29,11 @@ namespace watch
              bleServer =  new BleServer(this);
              sensorManager = new SensorManager();
              SubscribeToSensor();
-            
-            return StartCommandResult.Sticky;
+             timer = new Timer(ElapsedTime);
+             timer.Elapsed += DisconnectedCheck;
+             return StartCommandResult.Sticky;
         }
+        
 
         /**
          * Subscribe to sensor and Server
@@ -44,23 +52,30 @@ namespace watch
             {
                 bleServer.BltCallback.StateHandler += (s, e) =>
                 {
+                    if (e.State.Equals("Disconnected"))
+                    {
+                        timer.Start();
+                    }
+                    else
+                    {
+                        timer.Stop();
+                        curDisconnectCounter = 0;
+                    }
                     sensorManager.ToggleSensors(e.State);
                     Log.Verbose(TAG, $" is monitoring ? : {sensorManager.isM()}");
-                };
-                bleServer.BltCallback.DataWriteHandler += (s, e) =>
-                {
-                    Log.Verbose(TAG, $" unsubscribing from sensors");
-                    bleServer.StopAdvertising();
-                    sensorManager.ToggleSensors("off");
-                    sensorManager.UnsubscribeSensors();
-                    StopForeground(true);
-                    StopSelf();
-                    OnDestroy();
+                    
                 };
             }
             
         }
-
+        private void DisconnectedCheck(object sender, ElapsedEventArgs e)
+        {
+            curDisconnectCounter += 1;
+            if (curDisconnectCounter == MaxDisconnectionTime)
+            {
+                OnDestroy();
+            }
+        }
 
         // -------------------------------------- Notification methods ---------------------------------------------------------
         private void StartForegroundNotification()
@@ -73,7 +88,7 @@ namespace watch
                     ?.SetContentText("b")
                     ?.SetOngoing(true)
                     ?.Build();
-                StartForeground(SERVICE_RUNNING_NOTIFICATION_ID, notification);
+                StartForeground(ServiceRunningNotificationId, notification);
             }
             catch (Exception e)
             {
@@ -108,7 +123,13 @@ namespace watch
 
         public override void OnDestroy()
         {
-            base.OnDestroy();
+            bleServer.StopAdvertising();
+            sensorManager.ToggleSensors("off");
+            sensorManager.UnsubscribeSensors();
+            bleServer.Dispose();
+            timer.Dispose();
+            StopForeground(true);
+            StopSelf();
         }
     }
     

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Foundation;
+using ProgressRingControl.Forms.Plugin.iOS;
 using UIKit;
 
 namespace Insurance_app.iOS
@@ -23,9 +24,16 @@ namespace Insurance_app.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             global::Xamarin.Forms.Forms.Init();
+            ProgressRingRenderer.Init();
             LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);
         }
+
+        public override void WillTerminate(UIApplication uiApplication)
+        {
+            base.WillTerminate(uiApplication);
+        }
     }
+    
 }

@@ -3,15 +3,35 @@
 <Shell xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
+             xmlns:sys="clr-namespace:System;assembly=netstandard"
+             xmlns:v="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
+             BackgroundColor="LightSteelBlue"
+             Shell.TabBarIsVisible="False"
              x:Class="Insurance_app.AppShell">
-    
 
-        <ShellContent ContentTemplate="{DataTemplate pages:LogInPage}" Route="LogInPage"/>
+
+    <ShellContent ContentTemplate="{DataTemplate pages:LogInPage}" Route="LogInPage"/>
+    <ShellContent ContentTemplate="{DataTemplate pages:QuotePage}" Route="QuotePage"/>
+    <ShellContent ContentTemplate="{DataTemplate pages:RegistrationPage}" Route="RegistrationPage"/>
+    <ShellContent ContentTemplate="{DataTemplate pages:HomePage}" Route="HomePage"/>
+
+    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
+            <ShellContent Title="Home page" Icon="home.png" ContentTemplate="{DataTemplate pages:HomePage}" />
+            <ShellContent Title="Profile page" Icon="profile.png" ContentTemplate="{DataTemplate pages:AccountInfoPage}" />
+    </FlyoutItem>
+    
+    <Shell.FlyoutFooterTemplate>
+            <DataTemplate>
+                <StackLayout >
+                    <Label Text="Xaminals"
+                           TextColor="Black"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center" />
+                    <Label Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{0:MMMM dd, yyyy}'}"
+                           TextColor="Black"
+                           HorizontalOptions="Center" />
+                </StackLayout>
+            </DataTemplate>
+        </Shell.FlyoutFooterTemplate>
         
-    
-        <ShellContent ContentTemplate="{DataTemplate pages:QuotePage}" Route="QuotePage"/>
-
-        <ShellContent ContentTemplate="{DataTemplate pages:RegistrationPage}" Route="RegistrationPage"/>
-
-    
 </Shell>

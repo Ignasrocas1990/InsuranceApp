@@ -68,7 +68,7 @@ namespace watch.Sensors
             Accelerometer.ReadingChanged -= AcceReadingChanged;
         }
         public  bool isM() => Accelerometer.IsMonitoring;
-
+        
     }
     public class SensorArgs:EventArgs{
         public string Data { get; set; }

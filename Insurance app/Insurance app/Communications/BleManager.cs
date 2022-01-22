@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Buffers.Binary;
-using System.ComponentModel;
 using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
-using System.Threading;
 using Plugin.BLE.Abstractions.Exceptions;
-using watch.Sensors;
 using Exception = System.Exception;
 
-namespace Insurance_app.BLE
+namespace Insurance_app.Communications
 {
     public class BleManager
     {
@@ -24,7 +20,7 @@ namespace Insurance_app.BLE
         private ICharacteristic chara=null;
         private int serviceDelay = 0;
         private int readingDelay = 0;
-        private int connectionErrDelay = 0;
+        private int conErrDelay = 0;
         private bool bleState = false;
         private StepDetector stepDetector;
         Func<String,float>convertToFloat =  x => float.Parse(x, CultureInfo.InvariantCulture.NumberFormat);
@@ -63,7 +59,7 @@ namespace Insurance_app.BLE
             };
         }
 
-        private async void  ReadAsync()
+        private async Task ReadAsync()
         {
            // Console.WriteLine("Reading...");
             try
@@ -79,28 +75,29 @@ namespace Insurance_app.BLE
                    Task t = Task.Run(async () =>
                    {
                        await Task.Delay(readingDelay);
-                       ReadAsync();
+                       await ReadAsync();
                    });
                    return;
                }
                readingDelay = 0;
                Console.WriteLine($"Read complete, values are : > {str}");
                Infer(str);
-               ReadAsync();
+               await ReadAsync();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                connectionErrDelay += 3000;
-                Console.WriteLine($"[read exception] wait {connectionErrDelay/1000}s: reconnect to device");
+                conErrDelay += 3000;
+                Console.WriteLine($"[read exception] wait {conErrDelay/1000}s: reconnect to device");
 
                 Task t = Task.Run(async () =>
                 {
-                    await Task.Delay(connectionErrDelay);
-                    ConnectToDevice();
+                    await Task.Delay(conErrDelay);
+                    await ConnectToDevice();
                     
                 });
             }
+            
         }
 
         private void Infer(string rawData)
@@ -117,13 +114,10 @@ namespace Insurance_app.BLE
             {
                 Console.WriteLine($"problem pre-paring data for inferring {e}");
             }
-            
-
-
         }
 
 
-        private async void GetCharaAsync(IService service)
+        private async Task GetCharaAsync(IService service)
         {
             try
             {
@@ -131,23 +125,23 @@ namespace Insurance_app.BLE
                 if (chara!=null)
                 {
                     Console.WriteLine("characteristic found ");
-                    ReadAsync();
+                    await ReadAsync();
                 }
                 else
                 {
-                    ConnectToDevice();
+                    await ConnectToDevice();
                 }
 
             }
             catch (Exception e)
             {
-                ConnectToDevice();
+                await ConnectToDevice();
                 Console.WriteLine($"GetCharacteristic error : {e}");
             }
-            
         }
+        
 
-        private async void ConnectToService(IDevice device)
+        private async Task ConnectToService(IDevice device)
         {
             
                 try
@@ -157,7 +151,7 @@ namespace Insurance_app.BLE
                     {
                         Console.WriteLine("Service Found");
                         serviceDelay = 0;
-                        GetCharaAsync(service);
+                        await GetCharaAsync(service);
                         return;
                     }
 
@@ -173,12 +167,12 @@ namespace Insurance_app.BLE
                 {
                     serviceDelay = 0;
                     Console.WriteLine($"Service error: {e.Message} ");
-                    ConnectToDevice();
+                    await ConnectToDevice();
                 }
             
         }
         
-        private async void ConnectToDevice()
+        private async Task ConnectToDevice()
         {
             if (!ble.IsAvailable())
             {
@@ -201,17 +195,17 @@ namespace Insurance_app.BLE
                 }
                 catch (DeviceConnectionException err)
                 {
-                    connectionErrDelay += 3000;
-                    Console.WriteLine($" Device Conn Fail : wait {connectionErrDelay/1000}s , Reconnect");
+                    conErrDelay += 3000;
+                    Console.WriteLine($" Device Conn Fail : wait {conErrDelay/1000}s , Reconnect");
                     Task t = Task.Run(async ()=>
                     {
-                        await Task.Delay(connectionErrDelay);
-                        ConnectToDevice();
+                        await Task.Delay(conErrDelay);
+                        await ConnectToDevice();
                     });
                     
                 }
 
-                connectionErrDelay = 0;
+                conErrDelay = 0;
                 return;
             }
             Console.WriteLine("Bluetooth is not connected");

@@ -12,7 +12,7 @@ using String = System.String;
 
 namespace watch.Ble
 {
-    public class BleServer
+    public class BleServer : IDisposable
     {
         private const string DefaultUuid = "a3bb5442-5b61-11ec-bf63-0242ac130002";
         public const string TAG = "mono-stdout";
@@ -108,6 +108,16 @@ namespace watch.Ble
                 }
                 
             }
+        }
+
+        public void Dispose()
+        {
+            bltServer.Dispose();
+            bltAdvertiser.Dispose();
+            BltCallback.Dispose();
+            bltManager.Dispose();
+            bltAdapter.Dispose();
+            bltCharac.Dispose();
         }
     }
     public class BleAdvertiseCallback : AdvertiseCallback
