@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Android.Text.Style;
+using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
 using Plugin.BLE;
 using Plugin.BLE.Abstractions;
@@ -23,8 +24,7 @@ namespace Insurance_app.Communications
         public Ble ble;
         private StepDetector stepDetector;
         private ICharacteristic chara=null;
-        Func<String,float>convertToFloat =  x => float.Parse(x, CultureInfo.InvariantCulture.NumberFormat);
-        public EventHandler<string> InferEvent;
+        public EventHandler<RawDataArgs> InfferEvent = delegate {  };
 
         private int readingDelay = 0;
         private int conErrDelay = 0;
@@ -128,10 +128,18 @@ namespace Insurance_app.Communications
             try
             {
                 var splitedData = rawData.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
-                long timeStamp = Convert.ToInt64(splitedData[0]);
-                stepDetector.updateAccel(timeStamp,convertToFloat(splitedData[1]),
-                    convertToFloat(splitedData[2]),
-                    convertToFloat(splitedData[3]));
+                var timeStamp = Convert.ToInt64(splitedData[0]);
+                var x = Converter.StringToFloat(splitedData[1]);
+                var y = Converter.StringToFloat(splitedData[2]);
+                var z = Converter.StringToFloat(splitedData[1]);
+                
+                var isStep= stepDetector.updateAccel(timeStamp, x, y, z);
+                InfferEvent?.Invoke(this,new RawDataArgs()
+                {
+                    x = x,y = y,z = z,
+                    Type = isStep,
+                    TimeOffset = Converter.ToDTOffset(timeStamp)
+                });
             }
             catch (Exception e)
             {
@@ -262,5 +270,13 @@ namespace Insurance_app.Communications
             
 
         }
+    }
+    public partial class RawDataArgs : EventArgs
+    {
+        public int Type { get; set; }
+        public DateTimeOffset TimeOffset { get; set; }
+        public float x { get; set; }
+        public float y { get; set; }
+        public float z { get; set; }
     }
 }

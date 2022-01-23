@@ -9,11 +9,7 @@ namespace Insurance_app
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            //if 30 sec is your maximum time
-            // return (double)value/30;
-
-            //if 60 sec if your maximum time
-            return (double) value / HomePageViewModel.StepNeeded;
+            return (double) value / HomeViewModel.StepNeeded;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

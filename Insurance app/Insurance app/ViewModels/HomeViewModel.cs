@@ -9,7 +9,7 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
 {
-    public class HomePageViewModel : ObservableObject
+    public class HomeViewModel : ObservableObject
     {
         public static readonly double StepNeeded = 10000;
         
@@ -23,14 +23,18 @@ namespace Insurance_app.ViewModels
         private double max = 0 ;
         private double min = StepNeeded;
         
-
-
-
-        public HomePageViewModel()
+        public HomeViewModel()
         {
             StepCommand = new Command(Step);
             bleManager = BleManager.GetInstance();
+            bleManager.InfferEvent += InferredRawData;
         }
+
+        private void InferredRawData(object sender, RawDataArgs e)
+        {
+            //add to the collection
+        }
+
         public void StartDataReceive(bool newValue)
         {
             if (newValue)
@@ -39,7 +43,7 @@ namespace Insurance_app.ViewModels
                 {
                     bleManager.ToggleMonitoring();
                     Console.WriteLine("started to receive data");
-                    StepDetector.StepCounted += StepDisplayUpdate;
+                    //StepDetector.StepCounted += StepDisplayUpdate;
                 }
                 catch (Exception e)
                 {

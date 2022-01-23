@@ -6,7 +6,7 @@
              xmlns:viewModels="clr-namespace:Insurance_app.ViewModels" 
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              xmlns:insuranceApp1="clr-namespace:Insurance_app"
-             x:DataType="viewModels:HomePageViewModel"
+             x:DataType="viewModels:HomeViewModel"
              Shell.PresentationMode="Modal"
              x:Class="Insurance_app.Pages.HomePage">
     

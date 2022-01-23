@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
@@ -14,7 +15,7 @@ namespace Insurance_app.Pages
         {
             InitializeComponent();
             var vModel = ((LogInViewModel) ShellViewModel.GetInstance()
-                .GetViewModel(nameof(LogInViewModel)));
+                .GetViewModel(Converter.LogInViewModel));
             BindingContext = vModel;
 
         }

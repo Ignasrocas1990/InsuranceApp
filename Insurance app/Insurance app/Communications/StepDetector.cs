@@ -5,7 +5,6 @@ namespace Insurance_app.Communications
 {
     public class StepDetector
     {
-        public static EventHandler StepCounted = delegate { };
         private static int ACCEL_RING_SIZE = 50;
         private static  int VEL_RING_SIZE = 10;
         private int n = 0;
@@ -13,7 +12,7 @@ namespace Insurance_app.Communications
         // change this threshold according to your sensitivity preferences
         private static  float STEP_THRESHOLD = 0.3f;// 50f
 
-        private static  int STEP_DELAY_NS = 100000000;//250000000
+        private static int STEP_DELAY_MS = 200;//000000;//250000000
 
         private int accelRingCounter = 0;
         private float[] accelRingX = new float[ACCEL_RING_SIZE];
@@ -25,7 +24,7 @@ namespace Insurance_app.Communications
         private float oldVelocityEstimate = 0;
 
 
-        public void updateAccel(long timeNs, float x, float y, float z)
+        public int updateAccel(long timeMSec, float x, float y, float z)
         {
             float[] currentAccel = new float[3];
             currentAccel[0] = x;
@@ -54,13 +53,14 @@ namespace Insurance_app.Communications
             velRing[velRingCounter % VEL_RING_SIZE] = currentZ;
 
             float velocityEstimate = SensorFilter.sum(velRing);
-            if (velocityEstimate > STEP_THRESHOLD && oldVelocityEstimate <= STEP_THRESHOLD && (timeNs - lastStepTimeNs > STEP_DELAY_NS))
+            if (velocityEstimate > STEP_THRESHOLD && oldVelocityEstimate <= STEP_THRESHOLD && (timeMSec - lastStepTimeNs > STEP_DELAY_MS))
             {
                 Console.WriteLine("step counted");
-                StepCounted?.Invoke(this,EventArgs.Empty);
-                lastStepTimeNs = timeNs;
+                lastStepTimeNs = timeMSec;
+                return 1;
             }
             oldVelocityEstimate = velocityEstimate;
+            return 0;
         }
     }
 }

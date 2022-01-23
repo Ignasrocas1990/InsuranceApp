@@ -33,7 +33,7 @@ namespace watch.Sensors
             {
                 nOfAcc = 0;
                 string data = "";
-                long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds() * 1000000;
+                long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
                 data = timeStamp + filter.GetAcc();
                 AccEventHandler?.Invoke(this, new SensorArgs(){ Data = data});
                 filter.ClearFilter();

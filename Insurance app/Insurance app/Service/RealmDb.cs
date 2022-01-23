@@ -3,18 +3,19 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Insurance_app.Models;
+using Java.Util;
 using Realms;
 using Realms.Exceptions;
+using Realms.Logging;
 using Realms.Sync;
 
 namespace Insurance_app
 {
     public class RealmDb
     {
+        public User user { set; get; }
 
-        //TODO Register method
-
-        public RealmDb(){}
+        public RealmDb() {}
 //------------------------- app Access Methods ---------------------------------------
         public async Task<string> Register(String Email, String Password)
         {
@@ -89,7 +90,7 @@ namespace Insurance_app
                     ShouldDeleteIfMigrationNeeded = true
                 };
                 */
-                var config = new SyncConfiguration(partition,App.RealmApp.CurrentUser);
+                var config = new SyncConfiguration(partition,user);
                 return await Realm.GetInstanceAsync(config);
             }
             catch (Exception e)
@@ -100,7 +101,25 @@ namespace Insurance_app
             }
            
         }
-
-
+        public async Task<Reward> AddNewReward(Customer c)
+        {
+            var realm  = await GetRealm($"partition={user.Id}");
+            if (realm is null) return null;
+            try
+            {
+                realm.Write(()=>
+                {
+                    var r = new Reward();
+                    c.Reward.Add(r);
+                    return realm.Find<Reward>(r.Id);
+                });
+            }
+            catch (Exception e)
+            {
+                Logger.Console.Log(LogLevel.All,"Fail to add Reward DB");
+                return null;
+            }
+            return null;
+        }
     }
 }

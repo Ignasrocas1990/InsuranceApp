@@ -17,11 +17,9 @@ namespace Insurance_app.Models
         public string LastName { get; set; }
         public string PhoneNr { get;set; }
         public string Email { get; set; }
-        public string Password { get; set; }
         
         public PersonalPolicy Policy { get; set; }
-        public IList<Reward> Rewards { get; }
-        public IList<MovData> MovData { get; }
+        public IList<Reward> Reward { get; }
         public Claim Claim { get; set; }
 
         public bool? DelFlag { get; set; } = false;

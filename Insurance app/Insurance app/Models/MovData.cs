@@ -11,7 +11,7 @@ namespace Insurance_app.Models
         public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
         public Acc AccData { get; set; }
         public bool? DelFlag { get; set; }
-        public long? TimeStamp { get; set; }
+        public DateTimeOffset? DateTimeStamp { get; set; }
         public string Type { get; set; }
         [MapTo("_partition")]
         public string Partition { get; set; }
