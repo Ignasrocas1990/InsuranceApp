@@ -6,13 +6,14 @@ using Android.Content;
 using Android.Util;
 using Java.Lang;
 using Java.Util;
+using Plugin.BLE.Abstractions.Contracts;
 using watch.Sensors;
 using Exception = System.Exception;
 using String = System.String;
 
 namespace watch.Ble
 {
-    public class BleServer : IDisposable
+    public class BleServer
     {
         private const string DefaultUuid = "a3bb5442-5b61-11ec-bf63-0242ac130002";
         public const string TAG = "mono-stdout";
@@ -28,7 +29,9 @@ namespace watch.Ble
         
         //public event EventHandler ToggleSensorsEventHandler;
         private readonly BleAdvertiseCallback bltAdvertiserCallback;
-        
+        private BluetoothGattService service;
+        private BluetoothDevice device = null;
+
         public BleServer(Context context )
         {
             
@@ -43,6 +46,7 @@ namespace watch.Ble
 
         public void SendData(object s, BleEventArgs e)
         {
+            device =  e.Device;
             string data = " ";
             if (SensorData.Count > 0)
             {
@@ -65,7 +69,7 @@ namespace watch.Ble
                 bltServer = bltManager.OpenGattServer(context, BltCallback);
             }
 
-            var service = new BluetoothGattService(serverUuid, GattServiceType.Primary);
+            service = new BluetoothGattService(serverUuid, GattServiceType.Primary);
             bltCharac = new BluetoothGattCharacteristic(serverUuid, GattProperty.Read| GattProperty.Write | GattProperty.Notify ,
                 GattPermission.Read | GattPermission.Write);
             var descriptor = new BluetoothGattDescriptor(serverUuid, GattDescriptorPermission.Read | GattDescriptorPermission.Write);
@@ -96,29 +100,26 @@ namespace watch.Ble
             {
                 try
                 {
-                    bltAdvertiser.StopAdvertising(bltAdvertiserCallback);
                     
-                    bltAdvertiser = null;
-                    bltServer = null;
-
+                    bltAdvertiser.StopAdvertising(bltAdvertiserCallback);
+                    if (service != null)
+                    {
+                        if (service.Characteristics !=null)
+                        {
+                            service.Characteristics.Clear();
+                        }
+                    }
+                    if (bltServer.Services != null) bltServer.Services.Clear();
+                    BltCallback.Dispose();
                 }
                 catch (Exception e)
                 {
-                    Log.Verbose(TAG, "Fail to stop the server...");
+                    Log.Verbose(TAG, $"Fail to stop the server...{e}");
                 }
                 
             }
         }
-
-        public void Dispose()
-        {
-            bltServer.Dispose();
-            bltAdvertiser.Dispose();
-            BltCallback.Dispose();
-            bltManager.Dispose();
-            bltAdapter.Dispose();
-            bltCharac.Dispose();
-        }
+        
     }
     public class BleAdvertiseCallback : AdvertiseCallback
     {
@@ -133,6 +134,7 @@ namespace watch.Ble
             base.OnStartSuccess(settingsInEffect);
             Log.Verbose(BleServer.TAG, "Advertise : Start Success ");
         }
+        
 
     }
 }

@@ -16,7 +16,6 @@ namespace Insurance_app.ViewModels
     {
         private QuoteOptions quoteOptions;
         public ICommand GetQuotCommand { get; }
-        public INotification notification; 
         private InferenceService inf;
 
         private int hospitals=0;
@@ -38,7 +37,7 @@ namespace Insurance_app.ViewModels
        {
            if (!App.Connected)
            {
-               await notification.Notify("error", "Network connectivity not available", "close");
+               await Application.Current.MainPage.DisplayAlert("error", "Network connectivity not available", "close");
                return;
            }
            var TempQuote = new Dictionary<string, int>()
@@ -56,7 +55,7 @@ namespace Insurance_app.ViewModels
            price =  await result.Content.ReadAsStringAsync();
            CircularWaitDisplay=false;
            
-           bool action = await notification.NotifyOption("Price",price,  "Accept","Deny");
+           bool action = await Application.Current.MainPage.DisplayAlert("Price",price,  "Accept","Deny");
            if (action)
            {
                try

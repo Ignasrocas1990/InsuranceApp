@@ -18,9 +18,9 @@ namespace Insurance_app.ViewModels
         public ICommand LogInCommand { get; }
         public ICommand QuoteCommand { get; }
 
-        public INotification notification;
         public LogInViewModel()
         {
+            
             LogInCommand = new AsyncCommand(LogIn);
             QuoteCommand = new AsyncCommand(NavigateToQuote);
 
@@ -53,7 +53,7 @@ namespace Insurance_app.ViewModels
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                await notification.Notify("Login Failed", e.Message, "close");
+                await Application.Current.MainPage.DisplayAlert("Login Failed", e.Message, "close");
 
             }
 

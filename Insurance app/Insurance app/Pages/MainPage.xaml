@@ -4,8 +4,5 @@
              x:Class="Insurance_app.MainPage">
     <StackLayout>
                 <Label x:Name="customerLabel" Text="None"></Label>
-        <Frame BackgroundColor="#2196F3" Padding="5" CornerRadius="0">
-                <Button x:Name="stopBtn" Clicked="StopBtn_OnClicked" Text="stopBLE"/>
-        </Frame>
     </StackLayout>
 </ContentPage>

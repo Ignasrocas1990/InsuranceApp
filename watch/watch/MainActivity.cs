@@ -21,12 +21,11 @@ namespace watch
             SetAmbientEnabled();
             
 
-            Intent intent = new Intent(this, typeof(SensorService));
+            Intent intent = new Intent(this, typeof(WatchService));
             StartForegroundService(intent);
-
         }
-        
-        
+
+
         // Android overridden methods ---------------------------------------------------------------------
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Android.Content.PM.Permission[] grantResults)
         {

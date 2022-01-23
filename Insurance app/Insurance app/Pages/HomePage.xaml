@@ -3,9 +3,10 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:plugin="clr-namespace:ProgressRingControl.Forms.Plugin;assembly=ProgressRing.Forms.Plugin"
-             xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels" 
+             xmlns:viewModels="clr-namespace:Insurance_app.ViewModels" 
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              xmlns:insuranceApp1="clr-namespace:Insurance_app"
-             x:DataType="viewModels1:HomePageViewModel"
+             x:DataType="viewModels:HomePageViewModel"
              Shell.PresentationMode="Modal"
              x:Class="Insurance_app.Pages.HomePage">
     
@@ -14,24 +15,33 @@
             <insuranceApp1:ValueProgressBarConverter x:Key="ValueProgressBar" />
         </ResourceDictionary>
     </ContentPage.Resources>
+    
 
-    <StackLayout >
+    <StackLayout>
+        <StackLayout Padding="20" HorizontalOptions="Center">
+            <Switch x:Name="Switch" ThumbColor="Orange" Scale="1.5" Toggled="Switch_OnToggled" IsToggled="{Binding ToggleStateDisplay,Mode=TwoWay}" />
+            <Label Text="Step Tracker" TextColor="Black"/>
+        </StackLayout>
 
         <Grid  VerticalOptions="CenterAndExpand">
             <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-                <Label FontSize="30" Text="{Binding ProgressValue, StringFormat='{0}'}" TextColor="Black" />
+                <Label FontSize="20"
+                       Text="{Binding StepsDisplay, StringFormat='{0}% Completed'}" TextColor="Black" />
             </StackLayout>
 
 
             <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-                <plugin:ProgressRing HeightRequest="150" RingProgressColor="Orange" 
-                                      Scale="2" WidthRequest="150" RingThickness="10"  
-                                      Progress="{Binding ProgressValue , 
-                                     Converter={StaticResource ValueProgressBar},Mode=TwoWay}"/>
+                <plugin:ProgressRing HeightRequest="150" RingBaseColor="Orange" RingProgressColor="Black" 
+                                      Scale="2" WidthRequest="150"  RingThickness="10"  
+                                      Progress="{Binding ProgressBarDisplay 
+                                      , Converter={StaticResource ValueProgressBar},Mode=TwoWay}"/>
             </StackLayout>
+        </Grid>
+        <StackLayout VerticalOptions="End" HorizontalOptions="Center">
+            <Button FontSize="30" Command="{Binding StepCommand}" 
+                    Text="step" TextColor="Black" />
+        </StackLayout>
         
-
-    </Grid>
     </StackLayout>
        
 

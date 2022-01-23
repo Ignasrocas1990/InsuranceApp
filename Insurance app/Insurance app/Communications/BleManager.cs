@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Globalization;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Android.Text.Style;
+using Insurance_app.ViewModels;
 using Plugin.BLE;
+using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.Exceptions;
+using Xamarin.Essentials;
+using Xamarin.Forms;
 using Exception = System.Exception;
 
 namespace Insurance_app.Communications
@@ -13,33 +19,42 @@ namespace Insurance_app.Communications
     {
 
 
-        private readonly IAdapter adapter;
+        private IAdapter adapter;
         public Ble ble;
-
-        private readonly EventHandler<byte[]> readCompleted;
+        private StepDetector stepDetector;
         private ICharacteristic chara=null;
-        private int serviceDelay = 0;
+        Func<String,float>convertToFloat =  x => float.Parse(x, CultureInfo.InvariantCulture.NumberFormat);
+        public EventHandler<string> InferEvent;
+
         private int readingDelay = 0;
         private int conErrDelay = 0;
         private bool bleState = false;
-        private StepDetector stepDetector;
-        Func<String,float>convertToFloat =  x => float.Parse(x, CultureInfo.InvariantCulture.NumberFormat);
-
-        public EventHandler<string> InferEvent;
-
-        public BleManager()
+        private bool isMonitoring = false;
+        private bool firstSet = true;
+        private static BleManager bleManager =null;
+        
+        private BleManager()
         {
             ble = new Ble();
             adapter = CrossBluetoothLE.Current.Adapter;
             RegisterEventHandlers();
-            bleState=ble.BleCheck();
-            ConnectToDevice();//<-------------------------will be different later
             stepDetector = new StepDetector();
+            bleState=ble.BleCheck();
 
         }
+        public static BleManager GetInstance()
+        {
+            if (bleManager is null)
+            {
+                return new BleManager();
+            }
 
+            return bleManager;
+        }
+        
         private void RegisterEventHandlers()
         {
+            
             ble.ble.StateChanged += (s,e) =>
             {
                 Console.WriteLine($"Ble state changed {e.NewState.ToString()}");
@@ -61,39 +76,47 @@ namespace Insurance_app.Communications
 
         private async Task ReadAsync()
         {
-           // Console.WriteLine("Reading...");
+            if(chara is null || !chara.CanRead) return;
+                //HomePageViewModel.MovDataCommandToggle.Execute(null);
             try
             {
-                var data =  await chara.ReadAsync();
+                var data = await chara.ReadAsync();
 
                 string str = " ";
                 str = Encoding.Default.GetString(data);
-               if (str.Equals(" "))
-               {
-                   readingDelay += 3000;
-                   Console.WriteLine($"reading empty : wait {readingDelay/1000}sec > try again");
-                   Task t = Task.Run(async () =>
-                   {
-                       await Task.Delay(readingDelay);
-                       await ReadAsync();
-                   });
-                   return;
-               }
-               readingDelay = 0;
-               Console.WriteLine($"Read complete, values are : > {str}");
-               Infer(str);
-               await ReadAsync();
+                if (str.Equals(" "))
+                {
+                    if (!isMonitoring) return;
+
+                    readingDelay += 3000;
+                    Console.WriteLine($"reading empty : wait {readingDelay / 1000}sec > try again");
+                    Task t = Task.Run(async () =>
+                    {
+                        await Task.Delay(readingDelay);
+                        ReadAsync();
+                    });
+                    return;
+                }
+
+                readingDelay = 0;
+                //Console.WriteLine($"Read complete, values are : > {str}");
+                Infer(str);
+                await ReadAsync();
+            }
+            catch (CharacteristicReadException readException)
+            {
+                Console.WriteLine("char exception");
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 conErrDelay += 3000;
-                Console.WriteLine($"[read exception] wait {conErrDelay/1000}s: reconnect to device");
+                Console.WriteLine($"[read disturbed] wait {conErrDelay/1000}s: reconnect to device");
 
                 Task t = Task.Run(async () =>
                 {
                     await Task.Delay(conErrDelay);
-                    await ConnectToDevice();
+                   await ConnectToDevice();
                     
                 });
             }
@@ -124,12 +147,20 @@ namespace Insurance_app.Communications
                 chara = await service.GetCharacteristicAsync(ble.SERVER_GUID);
                 if (chara!=null)
                 {
+                    chara.ValueUpdated += (o, e) =>
+                    {
+                        
+                        Console.WriteLine("characteristic changed ----------------------------");
+                    };
+                    await chara.StartUpdatesAsync();
+                    
+                    firstSet = false;
                     Console.WriteLine("characteristic found ");
-                    await ReadAsync();
+                    ReadAsync();
                 }
                 else
                 {
-                    await ConnectToDevice();
+                    ConnectToDevice();
                 }
 
             }
@@ -143,89 +174,93 @@ namespace Insurance_app.Communications
 
         private async Task ConnectToService(IDevice device)
         {
-            
-                try
-                {
-                    var service = await device.GetServiceAsync(ble.SERVER_GUID);
-                    if (service != null)
+            try
+            {
+                var service = await device.GetServiceAsync(ble.SERVER_GUID);
+                    if (service == null && firstSet)
+                    {
+                        MainThread.BeginInvokeOnMainThread( async () =>
+                        {
+                         await Shell.Current.DisplayAlert("Error"
+                             , "Please install & turn on the watch app", "close");
+                        });
+
+                        return;
+                    }
+                    if (service != null)//when app is 
                     {
                         Console.WriteLine("Service Found");
-                        serviceDelay = 0;
                         await GetCharaAsync(service);
                         return;
                     }
-
-                    serviceDelay += 3000;
-                    Console.WriteLine($"[no Service] wait {serviceDelay/1000} s, try again");
-                    Task t = Task.Run( async () =>
-                    {
-                        await Task.Delay(serviceDelay);
-                        ConnectToService(device);
-                    });
-                }
+            }
                 catch (Exception e)
                 {
-                    serviceDelay = 0;
                     Console.WriteLine($"Service error: {e.Message} ");
-                    await ConnectToDevice();
+                    ConnectToDevice();
                 }
-            
         }
         
         private async Task ConnectToDevice()
         {
-            if (!ble.IsAvailable())
+            if (!ble.IsAvailable() || !await ble.GetPremissionsAsync())
             {
-                Console.WriteLine("Bluetooth type needed for app is not available");
+                MainThread.BeginInvokeOnMainThread( async () =>
+                {
+                    await Shell.Current.DisplayAlert("Error",
+                        "Type of Bluetooth not available and app needs your permissions", "close");
+                   
+                });
                 return;
             }
-            if (!await ble.GetPremissionsAsync())
-            {
-                Console.WriteLine("Permissions needed : closed");
-                return;
-            }
-
-            if (bleState)
+            else if (bleState)
             {
                 try
                 {
                     var list = adapter.GetSystemConnectedOrPairedDevices(new Guid[] {ble.SERVER_GUID});
                     await adapter.ConnectToDeviceAsync(list[0]);
-                   
+                    conErrDelay = 0;
                 }
-                catch (DeviceConnectionException err)
+                catch
                 {
+                    //dont need to see an error message, since this is depends connection loss
                     conErrDelay += 3000;
                     Console.WriteLine($" Device Conn Fail : wait {conErrDelay/1000}s , Reconnect");
                     Task t = Task.Run(async ()=>
                     {
                         await Task.Delay(conErrDelay);
-                        await ConnectToDevice();
+                        ConnectToDevice();
                     });
                     
                 }
-
-                conErrDelay = 0;
-                return;
+               
             }
-            Console.WriteLine("Bluetooth is not connected");
-
         }
-
-        public async void StopDataSend()
+        public async Task ToggleMonitoring()
         {
-            if (chara!=null)
+            string monitoringString=" ";
+            if (isMonitoring)
             {
-                try
-                {
-                    await chara.WriteAsync(Encoding.Default.GetBytes("stop"));
-
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"could not stop advertising {e}");
-                }
+                monitoringString = "Disconnected";
+                isMonitoring = false;
             }
+            else
+            {
+                monitoringString = "Connected";
+                isMonitoring = true;
+                await ConnectToDevice();
+            }
+            if (chara is null || !(chara.CanWrite)) return;
+            try
+            {
+                await chara.WriteAsync(Encoding.ASCII.GetBytes(monitoringString));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"stop monitoring sending exception {e}");
+            }
+            
+
         }
     }
 }

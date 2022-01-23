@@ -7,19 +7,33 @@
              BackgroundColor="LightSteelBlue"
              Shell.TabBarIsVisible="False"
              x:Class="Insurance_app.AppShell">
+    
 
 
     <ShellContent ContentTemplate="{DataTemplate pages:LogInPage}" Route="LogInPage"/>
     <ShellContent ContentTemplate="{DataTemplate pages:QuotePage}" Route="QuotePage"/>
     <ShellContent ContentTemplate="{DataTemplate pages:RegistrationPage}" Route="RegistrationPage"/>
     <ShellContent ContentTemplate="{DataTemplate pages:HomePage}" Route="HomePage"/>
-
+    
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
-            <ShellContent Title="Home page" Icon="home.png" ContentTemplate="{DataTemplate pages:HomePage}" />
-            <ShellContent Title="Profile page" Icon="profile.png" ContentTemplate="{DataTemplate pages:AccountInfoPage}" />
-            <ShellContent Title="Logout" Icon="logout.png" ContentTemplate="{DataTemplate pages:LogInPage}"/>
+        <ShellContent Title="Home page" Icon="home.png" ContentTemplate="{DataTemplate pages:HomePage}" />
+        
+        <ShellContent Title="Profile page" Icon="profile.png" ContentTemplate="{DataTemplate pages:AccountInfoPage}" />
     </FlyoutItem>
     <MenuItem Text="logout" Clicked="MenuItem_OnClicked"/>
+    
+    <MenuItem Text="dsdf">
+        <Shell.MenuItemTemplate>
+        <DataTemplate>
+            <StackLayout Padding="10">
+                <RadioButton Content="cat"/>
+            </StackLayout>
+        </DataTemplate>
+    </Shell.MenuItemTemplate>
+    </MenuItem>
+
+
+
     
     
     <Shell.FlyoutFooterTemplate>

@@ -11,23 +11,13 @@ namespace Insurance_app.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
 
-    public partial class RegistrationPage : ContentPage,INotification
+    public partial class RegistrationPage : ContentPage
     {
         public RegistrationPage()
         {
             InitializeComponent();
-            BindingContext = new RegistrationViewModel(this);
+            BindingContext = new RegistrationViewModel();
             
-        }
-        
-        public Task Notify(string title, string message, string close)
-        {
-            DisplayAlert(title, message, close);
-            return Task.CompletedTask;
-        }
-        public async Task<bool> NotifyOption(string title, string message, string leftBtn, string rightBtn)
-        {
-            return await DisplayAlert(title, message, leftBtn, rightBtn);
         }
     }
 }

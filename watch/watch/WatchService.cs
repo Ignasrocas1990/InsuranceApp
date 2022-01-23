@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using Android.App;
@@ -11,11 +12,11 @@ using watch.Sensors;
 namespace watch
 {
     [Service]
-    public class SensorService : Service
+    public class WatchService : Service
     {
         private const string TAG = "mono-stdout";
         const int ServiceRunningNotificationId = 10000;
-        const int MaxDisconnectionTime = 300;//5min
+        const int MaxDisconnectionTime = 10;//10min=600
         private const int ElapsedTime = 1000;//1sec
         
         private int curDisconnectCounter = 0;
@@ -46,6 +47,7 @@ namespace watch
             {
                 bleServer.SensorData.Enqueue(e.Data);
             };
+            
 
             //Server communications
             if (bleServer.BltCallback != null)
@@ -65,12 +67,17 @@ namespace watch
                     Log.Verbose(TAG, $" is monitoring ? : {sensorManager.isM()}");
                     
                 };
+                bleServer.BltCallback.DataWriteHandler += (s, e) =>
+                {
+                    sensorManager.ToggleSensors(Encoding.ASCII.GetString(e.Value));
+                };
             }
             
         }
         private void DisconnectedCheck(object sender, ElapsedEventArgs e)
         {
             curDisconnectCounter += 1;
+            Log.Verbose(TAG,$"{curDisconnectCounter}");
             if (curDisconnectCounter == MaxDisconnectionTime)
             {
                 OnDestroy();
@@ -84,8 +91,8 @@ namespace watch
             try
             {
                 var notification = new Notification.Builder(this,"999")
-                    .SetContentTitle("a")
-                    ?.SetContentText("b")
+                    .SetContentTitle("")
+                    ?.SetContentText("")
                     ?.SetOngoing(true)
                     ?.Build();
                 StartForeground(ServiceRunningNotificationId, notification);
@@ -93,12 +100,8 @@ namespace watch
             catch (Exception e)
             {
                 Log.Verbose(TAG,e.Message);
-                throw;
             }
-            
         }
-
-        
         private void CreateNotificationChannel() {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O) {
                 // Notification channels are new in API 26 (and not a part of the
@@ -126,10 +129,10 @@ namespace watch
             bleServer.StopAdvertising();
             sensorManager.ToggleSensors("off");
             sensorManager.UnsubscribeSensors();
-            bleServer.Dispose();
             timer.Dispose();
             StopForeground(true);
             StopSelf();
+            
         }
     }
     

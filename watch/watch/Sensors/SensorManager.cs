@@ -43,7 +43,7 @@ namespace watch.Sensors
         {
             try
             {
-                if ((Accelerometer.IsMonitoring && state.Equals("Disconnected")) || state.Equals("off"))
+                if (Accelerometer.IsMonitoring && (state.Equals("Disconnected") || state.Equals("off")))
                 {
                     Accelerometer.Stop();
                 }

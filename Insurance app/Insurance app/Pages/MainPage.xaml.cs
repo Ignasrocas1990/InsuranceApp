@@ -61,11 +61,6 @@ namespace Insurance_app
         {
             //db.addMovData();----------------------------------------
         }
-
-        private void StopBtn_OnClicked(object sender, EventArgs e)
-        {
-            bleManager.StopDataSend();
-        }
     }
     
 }

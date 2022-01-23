@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Timers;
+using System.Windows.Input;
+using Insurance_app.Communications;
 using Insurance_app.Pages;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
@@ -8,76 +11,96 @@ namespace Insurance_app.ViewModels
 {
     public class HomePageViewModel : ObservableObject
     {
-        public INotification notification { set; get; }
+        public static readonly double StepNeeded = 10000;
+        
+        public ICommand StepCommand { get; }
+        public bool ToggleState = false;
+        private BleManager bleManager;
 
 
-        private Timer time = new Timer();
-        private bool timerRunning;
-        private double _ProgressValue;
+        private double currentSteps = 0;
+        private double currentProgressBars = StepNeeded;
+        private double max = 0 ;
+        private double min = StepNeeded;
+        
+
+
+
         public HomePageViewModel()
         {
-            StartTimer();
+            StepCommand = new Command(Step);
+            bleManager = BleManager.GetInstance();
         }
-        public double ProgressValue
+        public void StartDataReceive(bool newValue)
         {
-            get => _ProgressValue;
-            set => SetProperty(ref _ProgressValue, value);
+            if (newValue)
+            {
+                try
+                {
+                    bleManager.ToggleMonitoring();
+                    Console.WriteLine("started to receive data");
+                    StepDetector.StepCounted += StepDisplayUpdate;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("something went wrong starting BLE");
+                }
+                
+            }
+            else if(bleManager != null)
+            {
+                 bleManager.ToggleMonitoring();
+                Console.WriteLine("stopped to receive data");
+            }
+
+            ToggleStateDisplay = newValue;
         }
 
-        private double _Minimum;
-        public double Minimum
+        private void StepDisplayUpdate(object s, EventArgs e)
         {
-            get
+            ProgressBarDisplay--;
+            currentSteps++;
+            StepsDisplay++;
+            if (ProgressBarDisplay < max)
             {
-                return _Minimum;
-            }
-            set
-            {
-                _Minimum = value;
-                OnPropertyChanged();
-            }
-        }
-        private double _Maximum;
-        public double Maximum
-        {
-            get
-            {
-                return _ProgressValue;
-            }
-            set
-            {
-                _ProgressValue = value;
-                OnPropertyChanged();
+                ProgressBarDisplay = min;
+                StepsDisplay = 0;
             }
         }
 
-        public void StartTimer()
+
+        private void Step()
         {
-            Minimum = 0;
-            Maximum = 60;
-            ProgressValue = 60;
-            timerRunning = true;
-            time.Start();
-            Device.StartTimer(TimeSpan.FromSeconds(1), () =>
+            ProgressBarDisplay--;
+            currentSteps++;
+            StepsDisplay++;
+            if (ProgressBarDisplay < max)
             {
-                if (ProgressValue > Minimum)
-                {
-                    ProgressValue--;
-                    return true;
-                }
-                else if (ProgressValue == Minimum)
-                {
-                    time.Stop();
-                    timerRunning = false;
-                    //PerformOperationHere logic operation here.
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            });
+                ProgressBarDisplay = min;
+                StepsDisplay = 0;
+            }
         }
+        public bool ToggleStateDisplay
+        {
+            get => ToggleState;
+            set => SetProperty(ref ToggleState, value);
+        }
+        public void UpdateSwitchDisplay()
+        {
+            ToggleStateDisplay = ToggleState;
+        }
+        public double ProgressBarDisplay
+        {
+            get => currentProgressBars;
+            set =>  SetProperty(ref currentProgressBars, value);
+        }
+        public double StepsDisplay
+        {
+            
+            get => currentSteps / StepNeeded * 100;
+            set => SetProperty(ref  temp, value);
+        }
+        private double temp = 0;
 
     }
 }

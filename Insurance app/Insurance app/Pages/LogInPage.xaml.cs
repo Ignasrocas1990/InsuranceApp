@@ -8,14 +8,13 @@ using Xamarin.Forms.Xaml;
 namespace Insurance_app.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class LogInPage : ContentPage,INotification
+    public partial class LogInPage : ContentPage
     {
         public LogInPage()
         {
             InitializeComponent();
             var vModel = ((LogInViewModel) ShellViewModel.GetInstance()
                 .GetViewModel(nameof(LogInViewModel)));
-            vModel.notification = this;
             BindingContext = vModel;
 
         }

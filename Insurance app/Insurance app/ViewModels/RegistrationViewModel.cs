@@ -14,7 +14,6 @@ namespace Insurance_app.ViewModels
     [QueryProperty(nameof(TempQuote),nameof(TempQuote))]
     public class RegistrationViewModel : ObservableObject
     {
-        private INotification notification;
         INavigation nav;
         private Dictionary<string, int> Quote;
         public ICommand RegisterCommand { get; }
@@ -29,9 +28,8 @@ namespace Insurance_app.ViewModels
         private string qString;
 
         
-        public RegistrationViewModel(INotification notification)
+        public RegistrationViewModel()
         {
-            this.notification = notification;
             RegisterCommand = new AsyncCommand(Register);
         }
 
@@ -63,7 +61,8 @@ namespace Insurance_app.ViewModels
                 else
                 {
                     CircularWaitDisplay = false;
-                    await notification.Notify("error", $"{registered}", "close");
+                    await Application.Current.MainPage.DisplayAlert("error", $"{registered}", "close");
+                    
                     return;
                 }
 
@@ -76,7 +75,7 @@ namespace Insurance_app.ViewModels
             }
             await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
             CircularWaitDisplay = false;
-            await notification.Notify("Notice", "Registration completed successfully", "Close");
+            await Application.Current.MainPage.DisplayAlert("Notice", "Registration completed successfully", "Close");
             await Shell.Current.GoToAsync($"//{nameof(LogInPage)}");
        
            

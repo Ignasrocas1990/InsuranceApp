@@ -10,27 +10,28 @@ using Xamarin.Forms.Xaml;
 namespace Insurance_app.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class HomePage : ContentPage, INotification
+    public partial class HomePage : ContentPage
     {
+        public static Switch MySwitch;
         public HomePage()
         {
             InitializeComponent();
             
-             var viewModel = ((HomePageViewModel) ShellViewModel.GetInstance()
-                    .GetViewModel("HomePageViewModel"));
-             viewModel.notification = this;
+             var viewModel = (HomePageViewModel) ShellViewModel.GetInstance()
+                    .GetViewModel(nameof(HomePageViewModel));
              BindingContext = viewModel;
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
 
         }
 
-        public async Task Notify(string title, string message, string close)
+        private void Switch_OnToggled(object sender, ToggledEventArgs e)
         {
-            await DisplayAlert(title, message, close);
-        }
-
-        public async Task<bool> NotifyOption(string title, string message, string accept, string close)
-        {
-           return await DisplayAlert(title, message, accept,close);
+            var vm = (HomePageViewModel) BindingContext;
+            vm.StartDataReceive(e.Value);
         }
     }
 }

@@ -10,7 +10,6 @@ namespace Insurance_app
         {
             InitializeComponent();
         }
-
         private void MenuItem_OnClicked(object sender, EventArgs e)
         {
             try
