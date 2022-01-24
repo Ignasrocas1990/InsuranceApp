@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Insurance_app.Pages;
 using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Exception = System.Exception;
@@ -23,7 +24,11 @@ namespace Insurance_app.ViewModels
             
             LogInCommand = new AsyncCommand(LogIn);
             QuoteCommand = new AsyncCommand(NavigateToQuote);
-
+            Connectivity.ConnectivityChanged += (s, e) =>
+            {
+                App.Connected =  (e.NetworkAccess ==  NetworkAccess.Internet);
+                
+            };
 
         }
 

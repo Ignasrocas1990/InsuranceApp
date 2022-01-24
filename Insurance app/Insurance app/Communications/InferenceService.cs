@@ -67,14 +67,11 @@ namespace Insurance_app.Communications
          */
         public Task<HttpResponseMessage> Predict(Dictionary<String,int>quote)
         {
-            if (!App.Connected)
-            {
-                return null;
-            }
-            
+            if (!App.NetConnection()) return null;
+
             content = new StringContent(JsonConvert.SerializeObject(quote),Encoding.UTF8, "application/json");
             //Console.WriteLine(content);
-            if (content!=null && App.Connected)
+            if (content!=null && App.NetConnection())
             {
                 try
                 {

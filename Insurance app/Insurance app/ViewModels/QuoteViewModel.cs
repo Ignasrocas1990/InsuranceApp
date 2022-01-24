@@ -8,6 +8,7 @@ using Insurance_app.Models;
 using Insurance_app.Pages;
 using Newtonsoft.Json;
 using Xamarin.CommunityToolkit.ObjectModel;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
@@ -31,11 +32,12 @@ namespace Insurance_app.ViewModels
            quoteOptions = new QuoteOptions();
            GetQuotCommand = new AsyncCommand(GetQuote);
            inf = new InferenceService();
+          
        }
 
        private async Task GetQuote()
        {
-           if (!App.Connected)
+           if (!App.NetConnection())
            {
                await Application.Current.MainPage.DisplayAlert("error", "Network connectivity not available", "close");
                return;
@@ -50,11 +52,21 @@ namespace Insurance_app.ViewModels
                {"Smoker",0}
            };
            string price = " ";
-           CircularWaitDisplay=true;
-           var result = await inf.Predict(TempQuote);
-           price =  await result.Content.ReadAsStringAsync();
-           CircularWaitDisplay=false;
            
+           try
+           {
+               CircularWaitDisplay=true;
+               var result = await inf.Predict(TempQuote);
+               price =  await result.Content.ReadAsStringAsync();
+
+           }
+           catch (Exception e)
+           {
+               CircularWaitDisplay=false;
+              await Shell.Current.CurrentPage.DisplayAlert("Error", "Connection not found", "close");
+               return;
+           }
+           CircularWaitDisplay=false;
            bool action = await Application.Current.MainPage.DisplayAlert("Price",price,  "Accept","Deny");
            if (action)
            {

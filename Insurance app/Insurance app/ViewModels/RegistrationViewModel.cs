@@ -44,7 +44,7 @@ namespace Insurance_app.ViewModels
                 {
                     CircularWaitDisplay = true;
                     var user =  await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
-                    Customer customer = new Customer()
+                    var customer = new Customer()
                    {
                        Id = user.Id, Age = Quote["Age"],
                        Name = fName, LastName = lName, PhoneNr = phoneNr, Email=email, Partition = $"Customer ={user.Id}"
@@ -56,13 +56,15 @@ namespace Insurance_app.ViewModels
                         Hospitals = Quote["Hospitals"], Plan = Quote["Plan"], Smoker = Quote["Smoker"],
                         Status = true, StartDate = DateTime.UtcNow
                     };
-                   await App.RealmDb.AddCustomer(customer);
+                   Customer c = await App.RealmDb.AddCustomer(customer);
+                   if (c is null)
+                       throw new Exception("Registration failed");
+                   
                 }
                 else
                 {
                     CircularWaitDisplay = false;
                     await Application.Current.MainPage.DisplayAlert("error", $"{registered}", "close");
-                    
                     return;
                 }
 
@@ -76,7 +78,7 @@ namespace Insurance_app.ViewModels
             await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
             CircularWaitDisplay = false;
             await Application.Current.MainPage.DisplayAlert("Notice", "Registration completed successfully", "Close");
-            await Shell.Current.GoToAsync($"//{nameof(LogInPage)}");
+            await Shell.Current.GoToAsync($"//{nameof(LogInPage)}",false);
        
            
         }

@@ -4,6 +4,7 @@ using System.Timers;
 using System.Windows.Input;
 using Insurance_app.Communications;
 using Insurance_app.Pages;
+using Insurance_app.SupportClasses;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
 
@@ -28,6 +29,14 @@ namespace Insurance_app.ViewModels
             StepCommand = new Command(Step);
             bleManager = BleManager.GetInstance();
             bleManager.InfferEvent += InferredRawData;
+            setup();
+        }
+
+        public void setup()
+        {
+            var customerVM = (CustomerViewModel)ShellViewModel.GetInstance()
+                .GetViewModel(Converter.CustomerViewModel);
+            customerVM.Setup();
         }
 
         private void InferredRawData(object sender, RawDataArgs e)

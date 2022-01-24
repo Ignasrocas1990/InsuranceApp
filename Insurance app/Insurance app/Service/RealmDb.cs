@@ -32,7 +32,7 @@ namespace Insurance_app
         }
 //------------------------------------- Customer methods ---------------------
         
-        public async Task AddCustomer(Customer c)
+        public async Task<Customer> AddCustomer(Customer c)
         {
             try
             {
@@ -40,16 +40,19 @@ namespace Insurance_app
                 if (realm is null)
                 {
                     Console.WriteLine("Couldn't get realm");
-                    return;
+                    return null;
                 }
                 realm.Write(() =>
                 {
                     realm.Add(c);
+                    
                 });
+                return  realm.Find<Customer>(c.Id);
             }
             catch (Exception e)
             {
                 Console.WriteLine($"problem adding customer : \n {e}");
+                return null;
             }
            
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using Insurance_app.Pages;
 using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
@@ -22,10 +23,11 @@ namespace Insurance_app
 
         protected override void OnStart()
         {
+            Connected=NetConnection();
 
+            
             RealmDb = new RealmDb();
             RealmApp = Realms.Sync.App.Create(MyRealmAppId);
-            Connected=NetConnection();
             MainPage = new AppShell();
 
             if (RealmApp.CurrentUser is null)
@@ -37,10 +39,8 @@ namespace Insurance_app
                 RealmDb.user = RealmApp.CurrentUser;
                 Shell.Current.GoToAsync($"//{nameof(HomePage)}");
             }
-            Connectivity.ConnectivityChanged += (s,e) =>
-            {
-                Connected=NetConnection();
-            };
+            
+            
 
 
            //sModel.AddViewModel(nameof(LogInViewModel),new LogInViewModel());
@@ -54,7 +54,20 @@ namespace Insurance_app
         protected override void OnResume()
         {
         }
-        public static bool NetConnection() => (Connectivity.NetworkAccess == NetworkAccess.Internet);
+
+        public static bool NetConnection()
+        {
+            var connection = Connectivity.NetworkAccess;
+            var profiles = Connectivity.ConnectionProfiles;
+            if (profiles.Contains(ConnectionProfile.WiFi) || profiles.Contains(ConnectionProfile.Cellular))
+            {
+                return (Connectivity.NetworkAccess == NetworkAccess.Internet);
+            }
+
+            return false;
+
+
+        }
     }
     
 }

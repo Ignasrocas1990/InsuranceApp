@@ -12,7 +12,8 @@ namespace Insurance_app.ViewModels
     public class CustomerViewModel : ObservableObject
     {
         public CustomerViewModel()
-        {
+        { 
+            
         }
         private Observable _Customer = new Observable();
         private ObservableRangeCollection<MovData> _MovData = new ObservableRangeCollection<MovData>();
