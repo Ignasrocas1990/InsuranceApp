@@ -14,13 +14,13 @@ namespace Insurance_app.Pages
         public LogInPage()
         {
             InitializeComponent();
+            /*
             var vModel = ((LogInViewModel) ShellViewModel.GetInstance()
                 .GetViewModel(Converter.LogInViewModel));
-            BindingContext = vModel;
-
+         */
+            BindingContext = new LogInViewModel();
         }
-
-
+        
         public async Task Notify(string title, string message, string button)
         {
            await DisplayAlert(title, message, button);

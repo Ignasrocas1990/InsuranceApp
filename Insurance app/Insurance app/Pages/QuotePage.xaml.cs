@@ -14,9 +14,12 @@ namespace Insurance_app.Pages
         public QuotePage()
         {
             InitializeComponent();
-            var vModel = (QuoteViewModel)ShellViewModel.GetInstance()
-                .GetViewModel(Converter.QuoteViewModel);
-            BindingContext = vModel;
+            /*
+              var vModel = (QuoteViewModel)ShellViewModel.GetInstance()
+                        .GetViewModel(Converter.QuoteViewModel);
+             */
+           
+            BindingContext = new QuoteViewModel();
         }
     }
 }

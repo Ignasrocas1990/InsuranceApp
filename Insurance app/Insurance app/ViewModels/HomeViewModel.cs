@@ -34,7 +34,7 @@ namespace Insurance_app.ViewModels
 
         public void setup()
         {
-            var customerVM = (CustomerViewModel)ShellViewModel.GetInstance()
+            var customerVM =  (CustomerViewModel)ShellViewModel.GetInstance()
                 .GetViewModel(Converter.CustomerViewModel);
             customerVM.Setup();
         }

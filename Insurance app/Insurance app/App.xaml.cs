@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using Insurance_app.Pages;
+using Insurance_app.Service;
 using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
 using Xamarin.Forms;
@@ -12,7 +13,7 @@ namespace Insurance_app
     public partial class App : Application
     {
         private const string MyRealmAppId = "application-0-bvutx";
-        public static RealmDb RealmDb;
+        //public static RealmDb RealmDb;
         public static Realms.Sync.App RealmApp;
         public static bool Connected;
 
@@ -26,10 +27,11 @@ namespace Insurance_app
             Connected=NetConnection();
 
             
-            RealmDb = new RealmDb();
+            //RealmDb = new RealmDb();
             RealmApp = Realms.Sync.App.Create(MyRealmAppId);
             MainPage = new AppShell();
-
+            Shell.Current.GoToAsync($"//{nameof(LogInPage)}");
+/*
             if (RealmApp.CurrentUser is null)
             {
                 Shell.Current.GoToAsync($"//{nameof(LogInPage)}");
@@ -39,7 +41,7 @@ namespace Insurance_app
                 RealmDb.user = RealmApp.CurrentUser;
                 Shell.Current.GoToAsync($"//{nameof(HomePage)}");
             }
-            
+ */           
             
 
 

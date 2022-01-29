@@ -12,10 +12,10 @@ namespace Insurance_app.Models
         public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
 
         public bool IsFinish { get; set; }
-        public float Amount { get; set; }
+        public float? Amount { get; set; }
         public DateTimeOffset? FinDate { get; set; }
-        public DateTimeOffset? StartDate { get; set; }
-        public bool? DelFlag { get; set; }
+        public DateTimeOffset? StartDate { get; set; } =DateTime.Now;
+        public bool? DelFlag { get; set; } = false;
         public IList<MovData> MovData { get; }
 
         [MapTo("_partition")]

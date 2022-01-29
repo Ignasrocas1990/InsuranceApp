@@ -1,73 +1,53 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Insurance_app.Logic;
 using Insurance_app.Models;
 using Insurance_app.Pages;
-using Java.Util;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
+using UserManager = Insurance_app.Logic.UserManager;
 
 namespace Insurance_app.ViewModels
 {
     public class CustomerViewModel : ObservableObject
     {
+        private UserManager userManager;
+        private RewardManager rewardManager;
         public CustomerViewModel()
-        { 
-            
+        {
+            rewardManager = new RewardManager();
+            userManager = new UserManager();
         }
-        private Observable _Customer = new Observable();
-        private ObservableRangeCollection<MovData> _MovData = new ObservableRangeCollection<MovData>();
-
+        private ObservableRangeCollection<MovData> _MovData;
         public async Task Setup()
         {
             try
             {
-                var c = await App.RealmDb.FindCustomer(App.RealmApp.CurrentUser.Id);
-                if (c is null)
+                var customer = await userManager.GetCustomer();
+                if (customer is null)
                 {
-                    await Shell.Current.GoToAsync($"//{nameof(LogInPage)}");
+                    await Shell.Current.GoToAsync($"//{nameof(LogInPage)}",false);
                     return;
                 }
-                var reward = c.Reward.Where(r => r.FinDate == null).FirstOrDefault();
-                if (reward != null)
+                var reward = customer.Reward.Where(r => r.FinDate == null).FirstOrDefault();
+                if (reward is null)
                 {
-                    var mData = reward.MovData.ToList();
-                    if (mData != null)
-                    {
-                        _MovData =  new ObservableRangeCollection<MovData>(mData);
-                        return;
-                    }
+                    reward= await rewardManager.AddReward(customer);
                 }
-                else
-                {
-                    var rw = await App.RealmDb.AddNewReward(c);
-                }
+                _MovData =  new ObservableRangeCollection<MovData>(reward.MovData.ToList());
+
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
             }
-            
-            
         }
-        
-        
-        
-        
-        
-        
         //property methods
         public ObservableRangeCollection<MovData> MovDataDisplay
         {
             get => _MovData;
             set => SetProperty(ref _MovData, value);
         }
-        public Observable CustomerDisplay
-        {
-            get => _Customer;
-            set => SetProperty(ref _Customer,value);
-        }
-        
     }
 }

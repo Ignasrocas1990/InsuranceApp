@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Insurance_app.Logic;
 using Insurance_app.Models;
 using Insurance_app.Pages;
+using Insurance_app.SupportClasses;
 using Newtonsoft.Json;
 using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
@@ -26,10 +28,14 @@ namespace Insurance_app.ViewModels
         private string phoneNr;
         private bool inputsValid = false;
         private string qString;
+        private UserManager userManager;
+        private PolicyManager policyManager;
 
-        
+
         public RegistrationViewModel()
         {
+            userManager = new UserManager();
+            policyManager = new PolicyManager();
             RegisterCommand = new AsyncCommand(Register);
         }
 
@@ -38,26 +44,17 @@ namespace Insurance_app.ViewModels
             try
             {
                 CircularWaitDisplay = true;
-                var registered = await App.RealmDb.Register(email, password);
+                var registered = await userManager.Register(email, password);
                 
                 if (registered == "success")
                 {
-                    CircularWaitDisplay = true;
                     var user =  await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
-                    var customer = new Customer()
-                   {
-                       Id = user.Id, Age = Quote["Age"],
-                       Name = fName, LastName = lName, PhoneNr = phoneNr, Email=email, Partition = $"Customer ={user.Id}"
-                   };
-                   customer.Policy = new PersonalPolicy()
-                    {
-                        Price = getPrice(),
-                        Cover = Quote["Cover"], HospitalFee = Quote["Hospital_Excess"],
-                        Hospitals = Quote["Hospitals"], Plan = Quote["Plan"], Smoker = Quote["Smoker"],
-                        Status = true, StartDate = DateTime.UtcNow
-                    };
-                   Customer c = await App.RealmDb.AddCustomer(customer);
-                   if (c is null)
+                    userManager.SetUser(user);
+                   var customer = userManager.CreateCustomer(user.Id,Quote["Age"],fName, lName,phoneNr,email,$"Customer ={user.Id}");
+                   customer.Policy=policyManager.CreatePolicy(price, Quote["Cover"], Quote["Hospital_Excess"],
+                       Quote["Hospitals"], Quote["Plan"], Quote["Smoker"], true, DateTime.UtcNow);
+                    
+                   if (await userManager.AddCustomer(customer) is null)
                        throw new Exception("Registration failed");
                    
                 }
@@ -88,12 +85,7 @@ namespace Insurance_app.ViewModels
             get => phoneNr;
             set => SetProperty(ref phoneNr, CheckPhoneNr(phoneNr,value));
         }
-
-        private float getPrice()
-        {
-            return (float) Math.Round(float.Parse(price) * 100f) / 100f;
-        }
-
+        
         private string CheckPhoneNr(string oldValue,string newValue)
         {
             if (newValue.Length == 0) return oldValue;

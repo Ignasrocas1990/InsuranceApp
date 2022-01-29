@@ -6,6 +6,7 @@ using Plugin.BLE.Abstractions.Contracts;
 using Insurance_app.Communications;
 using Insurance_app.Models;
 using Insurance_app.Pages;
+using Insurance_app.Service;
 using Realms;
 using Task = System.Threading.Tasks.Task;
 

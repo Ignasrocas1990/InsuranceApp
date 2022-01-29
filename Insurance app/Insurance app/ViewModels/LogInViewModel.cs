@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Android.OS;
 using Insurance_app.Pages;
 using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
@@ -8,6 +9,7 @@ using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Exception = System.Exception;
+using UserManager = Insurance_app.Logic.UserManager;
 
 namespace Insurance_app.ViewModels
 {
@@ -16,6 +18,7 @@ namespace Insurance_app.ViewModels
     {
         private string email; 
         private string password;
+        private UserManager userManager;
         public ICommand LogInCommand { get; }
         public ICommand QuoteCommand { get; }
 
@@ -30,6 +33,7 @@ namespace Insurance_app.ViewModels
                 
             };
 
+            userManager = new UserManager();
         }
 
         private async Task NavigateToQuote()
@@ -52,7 +56,8 @@ namespace Insurance_app.ViewModels
             
             try
             {
-                await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
+                var user =await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
+                userManager.SetUser(user);
                 await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
             }
             catch (Exception e)
