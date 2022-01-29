@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Globalization;
-using Insurance_app.ViewModels;
 using Xamarin.Forms;
 
-namespace Insurance_app
+namespace Insurance_app.SupportClasses
 {
     public class ValueProgressBarConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (double) value / HomeViewModel.StepNeeded;
+            return (double) value / StaticOptions.StepNeeded;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

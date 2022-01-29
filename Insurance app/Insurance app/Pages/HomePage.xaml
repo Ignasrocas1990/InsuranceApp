@@ -6,13 +6,14 @@
              xmlns:viewModels="clr-namespace:Insurance_app.ViewModels" 
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              xmlns:insuranceApp1="clr-namespace:Insurance_app"
+             xmlns:supportClasses="clr-namespace:Insurance_app.SupportClasses;assembly=Insurance app"
              x:DataType="viewModels:HomeViewModel"
              Shell.PresentationMode="Modal"
              x:Class="Insurance_app.Pages.HomePage">
     
     <ContentPage.Resources>
         <ResourceDictionary>
-            <insuranceApp1:ValueProgressBarConverter x:Key="ValueProgressBar" />
+            <supportClasses:ValueProgressBarConverter x:Key="ValueProgressBar" />
         </ResourceDictionary>
     </ContentPage.Resources>
     

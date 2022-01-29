@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Insurance_app.Models;
 using Realms;
@@ -10,17 +11,18 @@ namespace Insurance_app.Service
     {
         private Realm Realm { set; get; }
         public User User { set; get; }
-        private static RealmDb realmDb = null;
+        private static RealmDb _realmDb = null;
         private RealmDb() {}
 
         public static RealmDb GetInstance()
         {
-            if (realmDb is null)
+            Console.WriteLine("set up");
+            if (_realmDb is null)
             {
-                return new RealmDb();
+                _realmDb = new RealmDb();
             }
 
-            return realmDb;
+            return _realmDb;
         }
 //------------------------- app Access Methods ---------------------------------------
         public async Task<string> Register(String email, String password)
@@ -82,10 +84,27 @@ namespace Insurance_app.Service
         }
         
 // --------------------------- Mov Data  methods --------------------------------     
-        public async Task<MovData> GetMovData(Customer c)
+        public async Task AddMovData(List<MovData> movList, Reward reward)
         {
-            await GetRealm($"Customer ={c.Id}");
-            return null;
+            await GetRealm($"partition={User.Id}");
+            if (Realm is null) return;
+            try
+            {
+                 await Realm.WriteAsync( realm =>
+                {
+                    foreach (var movData in movList)
+                    {
+                        realm.Add(movData);
+                        reward.MovData.Add(movData);
+                    }
+                });
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Realm = null;
+            }
         }
 //------------------------------------------------   reward methods ----------------------
         public async Task<Reward> AddNewReward(Customer c)
@@ -98,8 +117,8 @@ namespace Insurance_app.Service
                 {
                     var reward = Realm.Add(new Reward()
                     {
-                        Partition = $"reward={c.Id}",
-                        Amount = (c.Policy.Price/100)
+                        Partition = $"Customer={c.Id}",
+                        Cost = (c.Policy.Price/100)
                     });
                     //Customer copy = realm.Find<Customer>(c.Id);
                     //realm.Refresh();
@@ -143,5 +162,7 @@ namespace Insurance_app.Service
            
         }
 
+
+   
     }
 }

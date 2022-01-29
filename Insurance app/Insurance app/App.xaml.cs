@@ -12,7 +12,6 @@ namespace Insurance_app
 {
     public partial class App : Application
     {
-        private const string MyRealmAppId = "application-0-bvutx";
         //public static RealmDb RealmDb;
         public static Realms.Sync.App RealmApp;
         public static bool Connected;
@@ -28,7 +27,7 @@ namespace Insurance_app
 
             
             //RealmDb = new RealmDb();
-            RealmApp = Realms.Sync.App.Create(MyRealmAppId);
+            RealmApp = Realms.Sync.App.Create(StaticOptions.MyRealmAppId);
             MainPage = new AppShell();
             Shell.Current.GoToAsync($"//{nameof(LogInPage)}");
 /*

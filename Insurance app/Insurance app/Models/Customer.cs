@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using Insurance_app.Service;
 using MongoDB.Bson;
 using Realms;
 
@@ -25,6 +26,12 @@ namespace Insurance_app.Models
         public bool? DelFlag { get; set; } = false;
         [MapTo("_partition")]
         public string Partition { get; set; }
+
+        public async void CreateReward()
+        {
+            await RealmDb.GetInstance().AddNewReward(this);
+        }
+        
     }
     public class Address  : EmbeddedObject
     {
