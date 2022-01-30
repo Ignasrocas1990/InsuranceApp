@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Insurance_app.Models;
 using Realms;
@@ -10,19 +11,25 @@ namespace Insurance_app.Service
     public class RealmDb
     {
         private Realm Realm { set; get; }
-        public User User { set; get; }
+        private static User _user;
+        private static string _partition;
         private static RealmDb _realmDb = null;
         private RealmDb() {}
 
         public static RealmDb GetInstance()
         {
-            Console.WriteLine("set up");
             if (_realmDb is null)
             {
                 _realmDb = new RealmDb();
             }
 
             return _realmDb;
+        }
+
+        public void SetUser(User user)
+        {
+            _user = user;
+            _partition = user.Id;
         }
 //------------------------- app Access Methods ---------------------------------------
         public async Task<string> Register(String email, String password)
@@ -44,7 +51,7 @@ namespace Insurance_app.Service
         {
             try
             {
-                await GetRealm($"Customer ={c.Id}");
+                await GetRealm();
                 if (Realm is null)
                 {
                     Console.WriteLine("Couldn't get realm");
@@ -55,6 +62,7 @@ namespace Insurance_app.Service
                     Realm.Add(c);
                     
                 });
+                Console.WriteLine("customer added");
                 return  Realm.Find<Customer>(c.Id);
             }
             catch (Exception e)
@@ -69,10 +77,10 @@ namespace Insurance_app.Service
         {
             try
             {
-                await GetRealm($"Customer ={User.Id}");
+                await GetRealm();
                 if (Realm != null)
                 {
-                    return Realm.Find<Customer>(User.Id);
+                    return Realm.Find<Customer>(_user.Id);
                 }
                
             }
@@ -84,32 +92,43 @@ namespace Insurance_app.Service
         }
         
 // --------------------------- Mov Data  methods --------------------------------     
-        public async Task AddMovData(List<MovData> movList, Reward reward)
+        public async Task<List<MovData>> AddMovData(List<MovData> movList)
         {
-            await GetRealm($"partition={User.Id}");
-            if (Realm is null) return;
+            await GetRealm();
+            if (Realm is null) return null;
             try
             {
-                 await Realm.WriteAsync( realm =>
-                {
-                    foreach (var movData in movList)
-                    {
-                        realm.Add(movData);
-                        reward.MovData.Add(movData);
-                    }
-                });
+                 await Realm.WriteAsync(realm =>
+                 {
+                     var customer = realm.Find<Customer>(_user.Id);
+                     if (customer !=null)
+                     {
+                         var reward = customer.Reward.Where(r => !r.IsFinish).FirstOrDefault();
+                         if (reward !=null)
+                         {
+                             foreach (var mov in movList)
+                             {
+                                 reward.MovData.Add(mov);
+                             }
+                             return reward;
+                         }
+                     }
+                     return null;
 
+                 });
+                 return null;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 Realm = null;
+                return null;
             }
         }
 //------------------------------------------------   reward methods ----------------------
         public async Task<Reward> AddNewReward(Customer c)
         {
-            await GetRealm($"partition={User.Id}");
+            await GetRealm();
             if (Realm is null) return null;
             try
             {
@@ -117,13 +136,10 @@ namespace Insurance_app.Service
                 {
                     var reward = Realm.Add(new Reward()
                     {
-                        Partition = $"Customer={c.Id}",
+                        Partition = _partition,
                         Cost = (c.Policy.Price/100)
                     });
-                    //Customer copy = realm.Find<Customer>(c.Id);
-                    //realm.Refresh();
-                    //var copy2 = realm.All<Customer>().Where(x => x.Id == c.Id).FirstOrDefault();
-                    //if (copy2 != null) copy2.Reward.Add(reward);
+                   
                     c.Reward.Add(reward);
                     return reward;
                 });
@@ -136,7 +152,7 @@ namespace Insurance_app.Service
             return null;
         }
 // -------------------------------Get Instance ----------------------------
-        private async Task GetRealm(String partition)
+        private async Task GetRealm()
         {
             try
             {
@@ -149,7 +165,7 @@ namespace Insurance_app.Service
                 */
                 if (Realm==null)
                 {
-                    var config = new SyncConfiguration(partition,User);
+                    var config = new SyncConfiguration(_partition,_user);
                     Realm =await Realm.GetInstanceAsync(config);
                 }
             }

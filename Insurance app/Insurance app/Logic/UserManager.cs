@@ -14,7 +14,7 @@ namespace Insurance_app.Logic
         }
         public void SetUser(User user)
         {
-            realmDb.User = user;
+            realmDb.SetUser(user);
         }
 
         public Task<string> Register(string email, string password)
@@ -35,12 +35,12 @@ namespace Insurance_app.Logic
             return new Customer();
         }
 
-        public Customer CreateCustomer(string userId, int age, string fName, string lName, string phoneNr, string email, string partition)
+        public Customer CreateCustomer(string userId, int age, string fName, string lName, string phoneNr, string email)
         {
             return new Customer()
             {
                 Id = userId, Age = age,
-                Name = fName, LastName = lName, PhoneNr = phoneNr, Email=email, Partition = partition
+                Name = fName, LastName = lName, PhoneNr = phoneNr, Email=email, Partition = userId
             };
         }
 

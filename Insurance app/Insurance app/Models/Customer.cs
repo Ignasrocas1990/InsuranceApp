@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Insurance_app.Service;
 using MongoDB.Bson;
 using Realms;
@@ -24,10 +25,10 @@ namespace Insurance_app.Models
         public Claim Claim { get; set; }
 
         public bool? DelFlag { get; set; } = false;
-        [MapTo("_partition")]
+        [MapTo("_partition")][Required]
         public string Partition { get; set; }
 
-        public async void CreateReward()
+        public async Task CreateReward()
         {
             await RealmDb.GetInstance().AddNewReward(this);
         }

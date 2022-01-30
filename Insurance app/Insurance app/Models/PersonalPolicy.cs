@@ -21,7 +21,7 @@ namespace Insurance_app.Models
         public DateTimeOffset? StartDate { get; set; }
         public bool? Status { get; set; }
         
-        [MapTo("_partition")]
+        [MapTo("_partition")][Required]
         public string Partition { get; set; }
         
     }

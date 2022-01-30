@@ -13,7 +13,7 @@ namespace Insurance_app.Models
         public bool? DelFlag { get; set; } = false;
         public DateTimeOffset? DateTimeStamp { get; set; }
         public string Type { get; set; }
-        [MapTo("_partition")]
+        [MapTo("_partition")][Required]
         public string Partition { get; set; }
 
     }

@@ -30,7 +30,6 @@ namespace watch.Ble
         //public event EventHandler ToggleSensorsEventHandler;
         private readonly BleAdvertiseCallback bltAdvertiserCallback;
         private BluetoothGattService service;
-        private BluetoothDevice device = null;
 
         public BleServer(Context context )
         {
@@ -46,7 +45,6 @@ namespace watch.Ble
 
         public void SendData(object s, BleEventArgs e)
         {
-            device =  e.Device;
             string data = " ";
             if (SensorData.Count > 0)
             {

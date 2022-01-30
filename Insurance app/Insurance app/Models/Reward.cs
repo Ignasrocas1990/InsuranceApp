@@ -20,15 +20,7 @@ namespace Insurance_app.Models
         public bool? DelFlag { get; set; } = false;
         public IList<MovData> MovData { get; }
 
-        [MapTo("_partition")]
-        public string Partition { get; set; }
-
-        public async Task AddMovData(List<MovData> movList)
-        {
-            var realm = RealmDb.GetInstance();
-             await realm.AddMovData(movList, this);
-        }
+        [MapTo("_partition")][Required] public string Partition { get; set; }
         
-
     }
 }

@@ -16,7 +16,7 @@ namespace watch
     {
         private const string TAG = "mono-stdout";
         const int ServiceRunningNotificationId = 10000;
-        const int MaxDisconnectionTime = 10;//10min=600
+        const int MaxDisconnectionTime = 600;//10min=600
         private const int ElapsedTime = 1000;//1sec
         
         private int curDisconnectCounter = 0;
@@ -32,6 +32,10 @@ namespace watch
              SubscribeToSensor();
              timer = new Timer(ElapsedTime);
              timer.Elapsed += DisconnectedCheck;
+             if (intent==null)
+             {
+                 sensorManager.ToggleSensors("Connected");
+             }
              return StartCommandResult.Sticky;
         }
         
@@ -58,7 +62,7 @@ namespace watch
                     {
                         timer.Start();
                     }
-                    else
+                    else if (e.State.Equals("Connected"))
                     {
                         timer.Stop();
                         curDisconnectCounter = 0;
@@ -66,10 +70,6 @@ namespace watch
                     sensorManager.ToggleSensors(e.State);
                     Log.Verbose(TAG, $" is monitoring ? : {sensorManager.isM()}");
                     
-                };
-                bleServer.BltCallback.DataWriteHandler += (s, e) =>
-                {
-                    sensorManager.ToggleSensors(Encoding.ASCII.GetString(e.Value));
                 };
             }
             

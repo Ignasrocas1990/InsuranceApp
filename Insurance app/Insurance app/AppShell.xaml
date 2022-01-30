@@ -9,11 +9,11 @@
              x:Class="Insurance_app.AppShell">
     
 
-
     <ShellContent ContentTemplate="{DataTemplate pages:LogInPage}" Route="LogInPage"/>
     <ShellContent ContentTemplate="{DataTemplate pages:QuotePage}" Route="QuotePage"/>
     <ShellContent ContentTemplate="{DataTemplate pages:RegistrationPage}" Route="RegistrationPage"/>
     <ShellContent ContentTemplate="{DataTemplate pages:HomePage}" Route="HomePage"/>
+
     
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
         <ShellContent Title="Home page" Icon="home.png" ContentTemplate="{DataTemplate pages:HomePage}" />

@@ -54,19 +54,19 @@ namespace Insurance_app.ViewModels
 
         }
 
-        private void InferredRawData(object s, RawDataArgs e)
+        private async void InferredRawData(object s, RawDataArgs e)
         {
-            movViewModel.AddMov(e.x, e.y,e.z, e.Type, e.TimeOffset);
+            await movViewModel.AddMov(e.x, e.y,e.z, e.Type, e.TimeOffset);
             Step();
         }
 
-        public void StartDataReceive(bool newValue)
+        public async void StartDataReceive(bool newValue)
         {
             if (newValue)
             {
                 try
                 {
-                    bleManager.ToggleMonitoring();
+                     await bleManager.ToggleMonitoring();
                     Console.WriteLine("started to receive data");
                     //StepDetector.StepCounted += StepDisplayUpdate;
                 }
@@ -78,7 +78,7 @@ namespace Insurance_app.ViewModels
             }
             else if(bleManager != null)
             {
-                 bleManager.ToggleMonitoring();
+                  await bleManager.ToggleMonitoring();
                 Console.WriteLine("stopped to receive data");
             }
 

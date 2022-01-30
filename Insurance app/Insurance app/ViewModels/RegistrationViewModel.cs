@@ -45,14 +45,14 @@ namespace Insurance_app.ViewModels
             {
                 CircularWaitDisplay = true;
                 var registered = await userManager.Register(email, password);
-                
+
                 if (registered == "success")
                 {
                     var user =  await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
                     userManager.SetUser(user);
-                   var customer = userManager.CreateCustomer(user.Id,Quote["Age"],fName, lName,phoneNr,email,$"Customer ={user.Id}");
+                   var customer = userManager.CreateCustomer(user.Id,Quote["Age"],fName, lName,phoneNr,email);
                    customer.Policy=policyManager.CreatePolicy(price, Quote["Cover"], Quote["Hospital_Excess"],
-                       Quote["Hospitals"], Quote["Plan"], Quote["Smoker"], true, DateTime.UtcNow);
+                       Quote["Hospitals"], Quote["Plan"], Quote["Smoker"], true, DateTime.UtcNow,user.Id);
                     
                    if (await userManager.AddCustomer(customer) is null)
                        throw new Exception("Registration failed");

@@ -1,6 +1,8 @@
 ﻿using System;
 using Android.Util;
+using Java.Lang;
 using Xamarin.Essentials;
+using Exception = System.Exception;
 
 namespace watch.Sensors
 {
@@ -43,13 +45,15 @@ namespace watch.Sensors
         {
             try
             {
-                if (Accelerometer.IsMonitoring && (state.Equals("Disconnected") || state.Equals("off")))
+                if (Accelerometer.IsMonitoring && state.Equals("Disconnected"))
                 {
                     Accelerometer.Stop();
+                    Thread.Sleep(1000);
                 }
-                else
+                else if(!Accelerometer.IsMonitoring && state.Equals("Connected"))
                 {
                     Accelerometer.Start(speed);
+                    Thread.Sleep(1000);
                 }
             }
             catch (FeatureNotSupportedException fe)

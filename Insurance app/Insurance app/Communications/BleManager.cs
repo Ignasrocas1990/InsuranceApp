@@ -30,8 +30,10 @@ namespace Insurance_app.Communications
         private int conErrDelay = 0;
         private bool bleState = false;
         private bool isMonitoring = false;
-        private bool firstSet = true;
+        private bool sendRequest = false;
         private static BleManager bleManager =null;
+        private bool reading = false;
+        private bool CanRead = false;
         
         private BleManager()
         {
@@ -61,7 +63,7 @@ namespace Insurance_app.Communications
                 if (e.NewState == BluetoothState.On)
                 {
                     bleState = true;
-                    ConnectToDevice();
+                    Task.FromResult(ConnectToDevice());
                 }else if (e.NewState == BluetoothState.Off || e.NewState == BluetoothState.TurningOff)
                 {
                     bleState = false;
@@ -70,18 +72,24 @@ namespace Insurance_app.Communications
             adapter.DeviceConnected += (s, e) =>
             {
                 Console.WriteLine($"device connected : {e.Device.Name}");
-                ConnectToService(e.Device);
+                Task.FromResult(ConnectToService(e.Device));
             };
         }
 
         private async Task ReadAsync()
         {
-            if(chara is null || !chara.CanRead) return;
-                //HomePageViewModel.MovDataCommandToggle.Execute(null);
             try
             {
+                if (!CanRead)
+                {
+                    await SendMonitoringRequest();
+                    return;
+                }
+                
+                reading = true;
                 var data = await chara.ReadAsync();
-
+                reading = false;
+                
                 string str = " ";
                 str = Encoding.Default.GetString(data);
                 if (str.Equals(" "))
@@ -93,7 +101,7 @@ namespace Insurance_app.Communications
                     Task t = Task.Run(async () =>
                     {
                         await Task.Delay(readingDelay);
-                        ReadAsync();
+                        return ReadAsync();
                     });
                     return;
                 }
@@ -105,10 +113,12 @@ namespace Insurance_app.Communications
             }
             catch (CharacteristicReadException readException)
             {
+                reading = false;
                 Console.WriteLine("char exception");
             }
             catch (Exception e)
             {
+                reading = false;
                 Console.WriteLine(e);
                 conErrDelay += 3000;
                 Console.WriteLine($"[read disturbed] wait {conErrDelay/1000}s: reconnect to device");
@@ -134,12 +144,16 @@ namespace Insurance_app.Communications
                 var z = Converter.StringToFloat(splitedData[1]);
                 
                 var isStep= stepDetector.updateAccel(timeStamp, x, y, z);
-                InfferEvent?.Invoke(this,new RawDataArgs()
+                if (isStep==1)
                 {
-                    x = x,y = y,z = z,
-                    Type = isStep,
-                    TimeOffset = Converter.ToDTOffset(timeStamp)
-                });
+                    InfferEvent?.Invoke(this,new RawDataArgs()
+                    {
+                        x = x,y = y,z = z,
+                        Type = isStep,
+                        TimeOffset = Converter.ToDTOffset(timeStamp)
+                    });
+                }
+                
             }
             catch (Exception e)
             {
@@ -155,20 +169,19 @@ namespace Insurance_app.Communications
                 chara = await service.GetCharacteristicAsync(ble.SERVER_GUID);
                 if (chara!=null)
                 {
-                    chara.ValueUpdated += (o, e) =>
+                    if (sendRequest)
                     {
-                        
-                        Console.WriteLine("characteristic changed ----------------------------");
-                    };
-                    await chara.StartUpdatesAsync();
-                    
-                    firstSet = false;
+                        await SendMonitoringRequest();
+                        sendRequest = false;
+
+                    }
                     Console.WriteLine("characteristic found ");
-                    ReadAsync();
+                   var a = ReadAsync();
+                   
                 }
                 else
                 {
-                    ConnectToDevice();
+                    var t =ConnectToDevice();
                 }
 
             }
@@ -185,7 +198,7 @@ namespace Insurance_app.Communications
             try
             {
                 var service = await device.GetServiceAsync(ble.SERVER_GUID);
-                    if (service == null && firstSet)
+                    if (service == null)
                     {
                         MainThread.BeginInvokeOnMainThread( async () =>
                         {
@@ -195,18 +208,16 @@ namespace Insurance_app.Communications
 
                         return;
                     }
-                    if (service != null)//when app is 
+                    else
                     {
-                        Console.WriteLine("Service Found");
-                        await GetCharaAsync(service);
-                        return;
+                       var z = GetCharaAsync(service);
                     }
             }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"Service error: {e.Message} ");
-                    ConnectToDevice();
-                }
+            catch (Exception e)
+            { 
+                Console.WriteLine($"Service error: {e.Message} ");
+                var a = ConnectToDevice();
+            }
         }
         
         private async Task ConnectToDevice()
@@ -219,7 +230,6 @@ namespace Insurance_app.Communications
                         "Type of Bluetooth not available and app needs your permissions", "close");
                    
                 });
-                return;
             }
             else if (bleState)
             {
@@ -237,39 +247,46 @@ namespace Insurance_app.Communications
                     Task t = Task.Run(async ()=>
                     {
                         await Task.Delay(conErrDelay);
-                        ConnectToDevice();
+                        return Task.FromResult(ConnectToDevice());
                     });
                     
                 }
                
             }
         }
-        public async Task ToggleMonitoring()
+        public Task ToggleMonitoring()
         {
-            string monitoringString=" ";
+            sendRequest = true;
             if (isMonitoring)
             {
-                monitoringString = "Disconnected";
                 isMonitoring = false;
+                CanRead = false;
+                return Task.CompletedTask;
             }
             else
             {
-                monitoringString = "Connected";
                 isMonitoring = true;
-                await ConnectToDevice();
+                return Task.FromResult(ConnectToDevice());
             }
-            if (chara is null || !(chara.CanWrite)) return;
+           
+        }
+
+        public async Task SendMonitoringRequest()
+        {
+            
             try
             {
-                await chara.WriteAsync(Encoding.ASCII.GetBytes(monitoringString));
+                CanRead = false;
+                await chara.WriteAsync(Encoding.ASCII.GetBytes("trigger"));
+                CanRead = isMonitoring;
+
             }
             catch (Exception e)
             {
-                Console.WriteLine($"stop monitoring sending exception {e}");
+                Console.WriteLine($"problem sending monitoring request {e}");
             }
-            
-
         }
+        
     }
     public partial class RawDataArgs : EventArgs
     {

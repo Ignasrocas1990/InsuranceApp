@@ -13,6 +13,7 @@ namespace watch.Ble
 
         public event EventHandler<BleEventArgs> ReadHandler;
         public EventHandler<ConnectEventArgs> StateHandler;
+        private bool firstTimeConnect = true;
 
         public BleServerCallback() { }
 
@@ -28,13 +29,26 @@ namespace watch.Ble
             bool preparedWrite, bool responseNeeded, int offset, byte[] value)
         {
             base.OnCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
-            DataWriteHandler?.Invoke(this, new BleEventArgs() { Device = device, Characteristic = characteristic, Value = value, RequestId = requestId, Offset = offset });
-        }
+            Log.Verbose(TAG, "onWrite request");
+            if (firstTimeConnect)
+            {
+                Log.Verbose(TAG, "write connected");
+                StateHandler?.Invoke(this,new ConnectEventArgs(){State ="Connected"});
+                firstTimeConnect = false;
+            }
+            else
+            {
+                Log.Verbose(TAG, "write disconnected");
 
+                firstTimeConnect = true;
+                StateHandler?.Invoke(this,new ConnectEventArgs(){State ="Disconnected"});
+            }
+        }
         public override void OnConnectionStateChange(BluetoothDevice device, ProfileState status, ProfileState newState)
         {
             base.OnConnectionStateChange(device, status, newState);
-            
+            if (firstTimeConnect) return;
+  
             if (newState == ProfileState.Disconnected)
             {
                 Log.Verbose(TAG, $"State changed to : {newState}");
@@ -43,6 +57,7 @@ namespace watch.Ble
                 
             }else if (newState == ProfileState.Connected)
             {
+                Log.Verbose(TAG, $"State changed to : {newState}");
                 StateHandler?.Invoke(this,new ConnectEventArgs(){State ="Connected"});
             }
         }
