@@ -97,16 +97,4 @@ namespace Insurance_app.Communications
 
         }
     }
-    /*
-    class Quote
-    {
-        public int Hospitals { get; set; }
-        public int Age { get; set; }
-        public int Cover { get; set; }
-        public int Hospital_Excess { get; set; }
-        public int Plan { get; set; }
-        public int Smoker  { get; set; }
-        public float Price { get; set; }
-    }
-    */
 }

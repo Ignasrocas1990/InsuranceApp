@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Insurance_app.Service;
 using MongoDB.Bson;
 using Realms;
+using Realms.Sync;
 
 namespace Insurance_app.Models
 {
@@ -21,6 +22,12 @@ namespace Insurance_app.Models
         public IList<MovData> MovData { get; }
 
         [MapTo("_partition")][Required] public string Partition { get; set; }
-        
+
+        public void AddMovData(List<MovData> newMovDataList,User user)
+        {
+            RealmDb db = new RealmDb();
+           var t = db.AddMovData(newMovDataList, this,user);
+           Task.FromResult(t);
+        }
     }
 }

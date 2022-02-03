@@ -56,9 +56,16 @@ namespace Insurance_app.ViewModels
             
             try
             {
-                var user =await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
-                userManager.SetUser(user);
-                await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
+                if (App.NetConnection())
+                {
+                    var user =await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
+                    await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
+                }
+                else
+                {
+                   await Shell.Current.DisplayAlert("Notice", "Network Connection needed for log in", "close");
+                }
+                
             }
             catch (Exception e)
             {

@@ -30,10 +30,7 @@ namespace Insurance_app.Communications
         private int conErrDelay = 0;
         private bool bleState = false;
         private bool isMonitoring = false;
-        private bool sendRequest = false;
         private static BleManager bleManager =null;
-        private bool reading = false;
-        private bool CanRead = false;
         
         private BleManager()
         {
@@ -72,7 +69,7 @@ namespace Insurance_app.Communications
             adapter.DeviceConnected += (s, e) =>
             {
                 Console.WriteLine($"device connected : {e.Device.Name}");
-                Task.FromResult(ConnectToService(e.Device));
+                Task.FromResult(GetService(e.Device));
             };
         }
 
@@ -80,15 +77,9 @@ namespace Insurance_app.Communications
         {
             try
             {
-                if (!CanRead)
-                {
-                    await SendMonitoringRequest();
-                    return;
-                }
-                
-                reading = true;
+                if (!isMonitoring) return;
+
                 var data = await chara.ReadAsync();
-                reading = false;
                 
                 string str = " ";
                 str = Encoding.Default.GetString(data);
@@ -111,15 +102,13 @@ namespace Insurance_app.Communications
                 Infer(str);
                 await ReadAsync();
             }
-            catch (CharacteristicReadException readException)
+           /* catch (CharacteristicReadException readException)
             {
                 reading = false;
                 Console.WriteLine("char exception");
-            }
-            catch (Exception e)
+            }*/
+            catch
             {
-                reading = false;
-                Console.WriteLine(e);
                 conErrDelay += 3000;
                 Console.WriteLine($"[read disturbed] wait {conErrDelay/1000}s: reconnect to device");
 
@@ -160,76 +149,43 @@ namespace Insurance_app.Communications
                 Console.WriteLine($"problem pre-paring data for inferring {e}");
             }
         }
-
-
-        private async Task GetCharaAsync(IService service)
-        {
-            try
-            {
-                chara = await service.GetCharacteristicAsync(ble.SERVER_GUID);
-                if (chara!=null)
-                {
-                    if (sendRequest)
-                    {
-                        await SendMonitoringRequest();
-                        sendRequest = false;
-
-                    }
-                    Console.WriteLine("characteristic found ");
-                   var a = ReadAsync();
-                   
-                }
-                else
-                {
-                    var t =ConnectToDevice();
-                }
-
-            }
-            catch (Exception e)
-            {
-                await ConnectToDevice();
-                Console.WriteLine($"GetCharacteristic error : {e}");
-            }
-        }
         
-
-        private async Task ConnectToService(IDevice device)
+        private async Task GetService(IDevice device)
         {
             try
             {
                 var service = await device.GetServiceAsync(ble.SERVER_GUID);
-                    if (service == null)
-                    {
-                        MainThread.BeginInvokeOnMainThread( async () =>
-                        {
-                         await Shell.Current.DisplayAlert("Error"
-                             , "Please install & turn on the watch app", "close");
-                        });
+                if (service is null)
+                {
+                    MainThread.BeginInvokeOnMainThread(Action);
+                    return;
+                }
+                else
+                {
+                    chara = await service.GetCharacteristicAsync(ble.SERVER_GUID);
+                }
 
-                        return;
-                    }
-                    else
-                    {
-                       var z = GetCharaAsync(service);
-                    }
+                if (chara != null)
+                {
+                    ReadAsync();
+                }
             }
-            catch (Exception e)
-            { 
-                Console.WriteLine($"Service error: {e.Message} ");
-                var a = ConnectToDevice();
+            catch //fail to connect
+            {
+                
+                ConnectToDevice();
             }
         }
-        
+        private async void Action()
+        {
+            await Shell.Current.DisplayAlert("Error", "Please install & turn on the watch app", "close");
+        }
+
         private async Task ConnectToDevice()
         {
             if (!ble.IsAvailable() || !await ble.GetPremissionsAsync())
             {
-                MainThread.BeginInvokeOnMainThread( async () =>
-                {
-                    await Shell.Current.DisplayAlert("Error",
-                        "Type of Bluetooth not available and app needs your permissions", "close");
-                   
-                });
+                MainThread.BeginInvokeOnMainThread(Action1);
             }
             else if (bleState)
             {
@@ -254,13 +210,17 @@ namespace Insurance_app.Communications
                
             }
         }
+
+        private async void Action1()
+        {
+            await Shell.Current.DisplayAlert("Error", "Type of Bluetooth not available and app needs your permissions", "close");
+        }
+
         public Task ToggleMonitoring()
         {
-            sendRequest = true;
             if (isMonitoring)
             {
                 isMonitoring = false;
-                CanRead = false;
                 return Task.CompletedTask;
             }
             else
@@ -270,25 +230,8 @@ namespace Insurance_app.Communications
             }
            
         }
-
-        public async Task SendMonitoringRequest()
-        {
-            
-            try
-            {
-                CanRead = false;
-                await chara.WriteAsync(Encoding.ASCII.GetBytes("trigger"));
-                CanRead = isMonitoring;
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"problem sending monitoring request {e}");
-            }
-        }
-        
     }
-    public partial class RawDataArgs : EventArgs
+    public class RawDataArgs : EventArgs
     {
         public int Type { get; set; }
         public DateTimeOffset TimeOffset { get; set; }

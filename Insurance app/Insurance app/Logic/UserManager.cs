@@ -10,11 +10,7 @@ namespace Insurance_app.Logic
         private RealmDb realmDb;
         public UserManager()
         {
-            realmDb=RealmDb.GetInstance();
-        }
-        public void SetUser(User user)
-        {
-            realmDb.SetUser(user);
+            realmDb= new RealmDb();
         }
 
         public Task<string> Register(string email, string password)
@@ -25,9 +21,9 @@ namespace Insurance_app.Logic
         {
             
         }
-        public Task<Customer> GetCustomer()
+        public Task<Customer> GetCustomer(User user)
         {
-            return realmDb.FindCustomer();
+            return realmDb.FindCustomer(user);
         }
 
         public Customer EditCustomer()
@@ -44,9 +40,9 @@ namespace Insurance_app.Logic
             };
         }
 
-        public Task<Customer> AddCustomer(Customer customer)
+        public Task<Customer> AddCustomer(Customer customer,User user)
         {
-            return realmDb.AddCustomer(customer);
+            return realmDb.AddCustomer(customer,user);
         }
     }
 }

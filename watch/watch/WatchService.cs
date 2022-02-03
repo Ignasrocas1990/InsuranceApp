@@ -26,7 +26,7 @@ namespace watch
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            StartForegroundNotification();
+             StartForegroundNotification();
              bleServer =  new BleServer(this);
              sensorManager = new SensorManager();
              SubscribeToSensor();

@@ -13,7 +13,7 @@ namespace Insurance_app.Logic
 
         public PolicyManager()
         {
-            realmDb=RealmDb.GetInstance();
+            realmDb = new RealmDb();
         }
         
         public PersonalPolicy CreatePolicy(string price, int cover, int fee, int hospitals, int plan, int smoker, bool status, DateTime utcNow,string partition)

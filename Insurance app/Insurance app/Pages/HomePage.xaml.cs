@@ -14,25 +14,28 @@ namespace Insurance_app.Pages
     public partial class HomePage : ContentPage
     {
         public static Switch MySwitch;
+        private HomeViewModel viewModel;
 
         public HomePage()
         {
             InitializeComponent();
 
-            var viewModel = (HomeViewModel) ShellViewModel.GetInstance()
+             viewModel = (HomeViewModel) ShellViewModel.GetInstance()
                 .GetViewModel(Converter.HomeViewModel);
-            BindingContext = viewModel;
         }
 
-        protected override void OnAppearing()
-        {
+        protected override async void OnAppearing()//check this via examples...
+        {           
+            await viewModel.Setup();
+            BindingContext = viewModel;
             base.OnAppearing();
+            //circular wait
+            //end circular wait
         }
 
         private void Switch_OnToggled(object sender, ToggledEventArgs e)
         {
-            var vm = (HomeViewModel) BindingContext;
-            vm.StartDataReceive(e.Value);
+            viewModel.StartDataReceive(e.Value);
         }
     }
 }

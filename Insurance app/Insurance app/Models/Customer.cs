@@ -28,9 +28,9 @@ namespace Insurance_app.Models
         [MapTo("_partition")][Required]
         public string Partition { get; set; }
 
-        public async Task CreateReward()
+        public async Task<Reward> CreateReward()
         {
-            await RealmDb.GetInstance().AddNewReward(this);
+           return await new RealmDb().AddNewReward(App.RealmApp.CurrentUser);
         }
         
     }

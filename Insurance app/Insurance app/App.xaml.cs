@@ -29,7 +29,14 @@ namespace Insurance_app
             //RealmDb = new RealmDb();
             RealmApp = Realms.Sync.App.Create(StaticOptions.MyRealmAppId);
             MainPage = new AppShell();
-            Shell.Current.GoToAsync($"//{nameof(LogInPage)}");
+            if (!NetConnection() || RealmApp.CurrentUser is null)
+            {
+                Shell.Current.GoToAsync($"//{nameof(LogInPage)}");
+            }
+            else
+            {
+                Shell.Current.GoToAsync($"//{nameof(HomePage)}");
+            }
 /*
             if (RealmApp.CurrentUser is null)
             {
@@ -38,7 +45,6 @@ namespace Insurance_app
             else
             {
                 RealmDb.user = RealmApp.CurrentUser;
-                Shell.Current.GoToAsync($"//{nameof(HomePage)}");
             }
  */           
             

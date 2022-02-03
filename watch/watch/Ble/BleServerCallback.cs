@@ -13,8 +13,6 @@ namespace watch.Ble
 
         public event EventHandler<BleEventArgs> ReadHandler;
         public EventHandler<ConnectEventArgs> StateHandler;
-        private bool firstTimeConnect = true;
-
         public BleServerCallback() { }
 
 
@@ -24,30 +22,9 @@ namespace watch.Ble
             base.OnCharacteristicReadRequest(device, requestId, offset, chara);
             ReadHandler?.Invoke(this, createArgs(device, chara, requestId, offset));
         }
-
-        public override void OnCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic,
-            bool preparedWrite, bool responseNeeded, int offset, byte[] value)
-        {
-            base.OnCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
-            Log.Verbose(TAG, "onWrite request");
-            if (firstTimeConnect)
-            {
-                Log.Verbose(TAG, "write connected");
-                StateHandler?.Invoke(this,new ConnectEventArgs(){State ="Connected"});
-                firstTimeConnect = false;
-            }
-            else
-            {
-                Log.Verbose(TAG, "write disconnected");
-
-                firstTimeConnect = true;
-                StateHandler?.Invoke(this,new ConnectEventArgs(){State ="Disconnected"});
-            }
-        }
         public override void OnConnectionStateChange(BluetoothDevice device, ProfileState status, ProfileState newState)
         {
             base.OnConnectionStateChange(device, status, newState);
-            if (firstTimeConnect) return;
   
             if (newState == ProfileState.Disconnected)
             {

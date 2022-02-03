@@ -6,10 +6,13 @@ using Insurance_app.Logic;
 using Insurance_app.Models;
 using Insurance_app.Pages;
 using Insurance_app.SupportClasses;
+using Java.Lang;
 using Newtonsoft.Json;
+using Realms;
 using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
+using Exception = System.Exception;
 
 namespace Insurance_app.ViewModels
 {    [QueryProperty(nameof(PriceDisplay),nameof(PriceDisplay))]
@@ -49,35 +52,34 @@ namespace Insurance_app.ViewModels
                 if (registered == "success")
                 {
                     var user =  await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
-                    userManager.SetUser(user);
                    var customer = userManager.CreateCustomer(user.Id,Quote["Age"],fName, lName,phoneNr,email);
                    customer.Policy=policyManager.CreatePolicy(price, Quote["Cover"], Quote["Hospital_Excess"],
                        Quote["Hospitals"], Quote["Plan"], Quote["Smoker"], true, DateTime.UtcNow,user.Id);
                     
-                   if (await userManager.AddCustomer(customer) is null)
+                   if (await userManager.AddCustomer(customer,App.RealmApp.CurrentUser) is null)
                        throw new Exception("Registration failed");
                    
+                   await App.RealmApp.CurrentUser.LogOutAsync();
+                   CircularWaitDisplay = false;
+                   await Application.Current.MainPage.DisplayAlert("Notice", "Registration completed successfully", "Close");
+                   await Shell.Current.GoToAsync($"//{nameof(LogInPage)}",false);
                 }
                 else
                 {
                     CircularWaitDisplay = false;
-                    await Application.Current.MainPage.DisplayAlert("error", $"{registered}", "close");
-                    return;
+                    await Shell.Current.DisplayAlert("error", $"{registered}", "close");
                 }
-
             }
             catch (Exception e)
             {
                 CircularWaitDisplay = false;
+                await Shell.Current.DisplayAlert("error", "registration failed", "close");
                 Console.WriteLine(e);
                 return;
             }
-            await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
-            CircularWaitDisplay = false;
-            await Application.Current.MainPage.DisplayAlert("Notice", "Registration completed successfully", "Close");
-            await Shell.Current.GoToAsync($"//{nameof(LogInPage)}",false);
-       
-           
+
+
+
         }
         // display properties
         public string PhoneNrDisplay
