@@ -22,15 +22,15 @@ namespace Insurance_app.Pages
 
              viewModel = (HomeViewModel) ShellViewModel.GetInstance()
                 .GetViewModel(Converter.HomeViewModel);
+             BindingContext = viewModel;
+             viewModel.Setup();            //circular wait
+
         }
 
-        protected override async void OnAppearing()//check this via examples...
+        protected override void OnAppearing()
         {           
-            await viewModel.Setup();
-            BindingContext = viewModel;
+          
             base.OnAppearing();
-            //circular wait
-            //end circular wait
         }
 
         private void Switch_OnToggled(object sender, ToggledEventArgs e)

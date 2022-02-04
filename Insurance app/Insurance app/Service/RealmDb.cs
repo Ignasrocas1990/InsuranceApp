@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -77,7 +78,7 @@ namespace Insurance_app.Service
         }
         
 // --------------------------- Mov Data  methods --------------------------------     
-        public async Task AddMovData2(List<MovData> movList,User user)
+        public async Task AddMovData2(ConcurrentQueue<MovData> movList,User user)
         {
              await GetRealm(user);
             if (_realm is null)
@@ -92,7 +93,7 @@ namespace Insurance_app.Service
                     var c = _realm.Find<Customer>(user.Id);
                     if (c != null)
                     {
-                        var reward = c.Reward.Where(r => r.IsFinish = false).FirstOrDefault();
+                        var reward = c.Reward.Where(r => r.FinDate == null).FirstOrDefault();
                         if (reward !=null)
                         {
                             foreach (var mov in movList)

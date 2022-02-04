@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace Insurance_app.Models
 
         [MapTo("_partition")][Required] public string Partition { get; set; }
 
-        public async Task AddMovData(List<MovData> newMovDataList,User user)
+        public async Task AddMovData(ConcurrentQueue<MovData> newMovDataList,User user)
         {
             RealmDb db = new RealmDb();
             await db.AddMovData2(newMovDataList,user);

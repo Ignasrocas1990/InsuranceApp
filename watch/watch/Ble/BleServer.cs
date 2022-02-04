@@ -41,6 +41,7 @@ namespace watch.Ble
             bltAdvertiserCallback = new BleAdvertiseCallback();
             bltAdvertiser = bltAdapter.BluetoothLeAdvertiser;
             StartAdvertising();
+
         }
 
         public void SendData(object s, BleEventArgs e)

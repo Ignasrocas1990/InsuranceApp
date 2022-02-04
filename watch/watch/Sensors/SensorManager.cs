@@ -48,12 +48,10 @@ namespace watch.Sensors
                 if (Accelerometer.IsMonitoring && state.Equals("Disconnected"))
                 {
                     Accelerometer.Stop();
-                    Thread.Sleep(1000);
                 }
                 else if(!Accelerometer.IsMonitoring && state.Equals("Connected"))
                 {
                     Accelerometer.Start(speed);
-                    Thread.Sleep(1000);
                 }
             }
             catch (FeatureNotSupportedException fe)
@@ -71,7 +69,7 @@ namespace watch.Sensors
             Log.Verbose(TAG, "SensorManager : unsubscribed");
             Accelerometer.ReadingChanged -= AcceReadingChanged;
         }
-        public  bool isM() => Accelerometer.IsMonitoring;
+        public  bool isMonitoring() => Accelerometer.IsMonitoring;
         
     }
     public class SensorArgs:EventArgs{

@@ -34,6 +34,7 @@ namespace watch
              timer.Elapsed += DisconnectedCheck;
              if (intent==null)
              {
+                 Log.Verbose(TAG, "killed service");
                  sensorManager.ToggleSensors("Connected");
              }
              return StartCommandResult.Sticky;
@@ -68,8 +69,25 @@ namespace watch
                         curDisconnectCounter = 0;
                     }
                     sensorManager.ToggleSensors(e.State);
-                    Log.Verbose(TAG, $" is monitoring ? : {sensorManager.isM()}");
+                    Log.Verbose(TAG, $" is monitoring ? : {sensorManager.isMonitoring()}");
                     
+                };
+                //check if reading but not sending.(in-case the android killed the process)
+                bleServer.BltCallback.ReadHandler += (s, e) =>
+                {
+                    try
+                    {
+                        if (!sensorManager.isMonitoring())
+                        {
+                            sensorManager.ToggleSensors("Connected");
+                            timer.Stop();
+                            curDisconnectCounter = 0;
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        Console.WriteLine(exception);
+                    }
                 };
             }
             

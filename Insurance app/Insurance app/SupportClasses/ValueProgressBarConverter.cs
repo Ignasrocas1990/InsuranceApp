@@ -8,7 +8,16 @@ namespace Insurance_app.SupportClasses
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (double) value / StaticOptions.StepNeeded;
+            try
+            {
+                return (double) value / StaticOptions.StepNeeded;
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

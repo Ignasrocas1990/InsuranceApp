@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using Insurance_app.SupportClasses;
 using Java.Lang;
 using Realms;
 using Xamarin.CommunityToolkit.ObjectModel;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Exception = System.Exception;
 
@@ -25,14 +27,16 @@ namespace Insurance_app.ViewModels
         public bool ToggleState = false;
         private BleManager bleManager;
         private UserManager userManager;
-        private List<MovData> newMovDataList;
+        //private ConcurrentBag<MovData> newMovDataList;
+        private ConcurrentQueue<MovData> newMovDataList;
+        //private List<MovData> newMovDataList;
         private Customer customer;
 
 
 
 
         private double currentSteps = 0;// set this to len of the mov data array
-        private double currentProgressBars;
+        private double currentProgressBars=0.0;
         private double max = 0 ;
         private double min = StaticOptions.StepNeeded;
         
@@ -48,7 +52,7 @@ namespace Insurance_app.ViewModels
         {
             try
             {
-                newMovDataList = new List<MovData>();
+                newMovDataList = new ConcurrentQueue<MovData>();
                 customer = await userManager.GetCustomer(App.RealmApp.CurrentUser);
                 if (customer is null)
                 {
@@ -64,8 +68,7 @@ namespace Insurance_app.ViewModels
                     if (reward != null)
                     {
                         double movLen = Convert.ToDouble(reward.MovData.Count());
-                        ProgressBarDisplay = StaticOptions.StepNeeded - movLen;
-                        StepsDisplay = movLen;
+                        SetUpView(movLen);
                         return;
                     }
                 }
@@ -81,54 +84,56 @@ namespace Insurance_app.ViewModels
         
         private void InferredRawData(object s, RawDataArgs e)
         {
-            Task.FromResult(AddMov(e.x, e.y,e.z, e.Type, e.TimeOffset));
             Step();
-        }
-        public async Task AddMov(float x, float y,float z, int type, DateTimeOffset time)
-        {
-            //here we need to count (if mov data is <=10000)
-            try
+           // AddMov(e.x, e.y,e.z, e.Type, e.TimeOffset);
+            Task.Run(async () =>
             {
-                if (ProgressBarDisplay <= 0)
+                try
                 {
-                    //cicular wait here
-                    await customer.CreateReward();
-                    ProgressBarDisplay = StaticOptions.StepNeeded;
-                    //
-                }
-                var currMovData = new MovData()
-                {
-                    AccData = new Acc()
+                    if (ProgressBarDisplay <= 0)
                     {
-                        X = x,
-                        Y = y,
-                        Z = z
-                    },
-                    DateTimeStamp = time,
-                    Type = "step",
-                    Partition = App.RealmApp.CurrentUser.Id
-                };
-                newMovDataList.Add(currMovData);
+                        await customer.CreateReward();
+                        
+                        MainThread.BeginInvokeOnMainThread(() =>
+                        {
+                            ProgressBarDisplay = StaticOptions.StepNeeded;
+                        
+                        });
+                    }
+                    var currMovData = new MovData()
+                                    {
+                                        AccData = new Acc()
+                                        {
+                                            X = e.x,
+                                            Y = e.y,
+                                            Z = e.z
+                                        },
+                                        DateTimeStamp = e.TimeOffset,
+                                        Type = "step",
+                                        Partition = App.RealmApp.CurrentUser.Id
+                                    };
+                    newMovDataList.Enqueue(currMovData);//-----------------------------------
+                    if (newMovDataList.Count > 4)
+                    {
+                        //or re-create new Realm
+                        RealmDb realmDb = new RealmDb();
+                        await realmDb.AddMovData2(new ConcurrentQueue<MovData>(newMovDataList),App.RealmApp.CurrentUser);
+                        newMovDataList = new ConcurrentQueue<MovData>();
+                    }
 
-                if (newMovDataList.Count > 4)
-                {
-                    //might need to initialize new MovData observable if still gives out-------------------------
-                    //or re-create new Realm
-                    RealmDb realmDb = new RealmDb();
-                    realmDb.AddMovData2(new List<MovData>(newMovDataList),App.RealmApp.CurrentUser);
-                    newMovDataList.Clear();
-                    //movManager.AddMovData(newMovDataList,reward);
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"failed to save mov data {e}");
-            }
-            
-            
-            //else we create new reward
+                catch (Exception exception)
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        Console.WriteLine(exception);
+                        
+                    });
+                }
+                
+            });
         }
-
+        
         public async void StartDataReceive(bool newValue)
         {
             if (newValue)
@@ -152,6 +157,15 @@ namespace Insurance_app.ViewModels
             }
 
             ToggleStateDisplay = newValue;
+        }
+
+        public void SetUpView(double steps)
+        {
+            while (steps !=0)
+            {
+                steps--;
+                Step();
+            }
         }
 
         private void StepDisplayUpdate(object s, EventArgs e)
