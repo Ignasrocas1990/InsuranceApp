@@ -16,8 +16,6 @@ namespace Insurance_app.Pages
         public RegistrationPage()
         {
             InitializeComponent();
-            BindingContext = new RegistrationViewModel();
-            
         }
     }
 }

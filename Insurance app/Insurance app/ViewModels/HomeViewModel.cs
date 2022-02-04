@@ -24,7 +24,6 @@ namespace Insurance_app.ViewModels
         public ICommand StepCommand { get; }
         public bool ToggleState = false;
         private BleManager bleManager;
-        private MovViewModel movViewModel;
         private UserManager userManager;
         private List<MovData> newMovDataList;
         private Customer customer;
@@ -53,25 +52,26 @@ namespace Insurance_app.ViewModels
                 customer = await userManager.GetCustomer(App.RealmApp.CurrentUser);
                 if (customer is null)
                 {
-                    await App.RealmApp.CurrentUser.LogOutAsync();
+                    await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
+                    userManager.realmDb.StopSync();
                     await Shell.Current.GoToAsync($"//{nameof(LogInPage)}",false);
                     return;
                 }
 
-               var reward = customer.Reward.Where(r => r.FinDate == null).FirstOrDefault();// check this also
-               
-                if (reward is null)
+                if (customer.Reward.Count > 0)//TODO need to test this (when has more then 1 reward)
                 {
-                    //reward= await rewardManager.CreateReward(customer);
-                    await customer.CreateReward();
-                    ProgressBarDisplay = StaticOptions.StepNeeded;
+                    var reward = customer.Reward.Where(r => r.FinDate == null).FirstOrDefault();
+                    if (reward != null)
+                    {
+                        double movLen = Convert.ToDouble(reward.MovData.Count());
+                        ProgressBarDisplay = StaticOptions.StepNeeded - movLen;
+                        StepsDisplay = movLen;
+                        return;
+                    }
                 }
-                else
-                {
-                    double movLen = Convert.ToDouble(reward.MovData.Count());
-                    ProgressBarDisplay = StaticOptions.StepNeeded - movLen;
-                    StepsDisplay = movLen;
-                }
+                await customer.CreateReward();
+                ProgressBarDisplay = StaticOptions.StepNeeded;
+
             }
             catch (Exception e)
             {

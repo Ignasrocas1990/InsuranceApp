@@ -8,6 +8,9 @@
              Shell.FlyoutBehavior="Disabled"
              Shell.NavBarIsVisible="False"
              x:Class="Insurance_app.Pages.LogInPage">
+    <ContentPage.BindingContext>
+        <viewModels:LogInViewModel/>
+    </ContentPage.BindingContext>
     
     <StackLayout Padding="40" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
         <Entry Text="{Binding EmailDisplay }"  Placeholder="email@gmail.com" TextColor="Black" PlaceholderColor="Gray" IsTextPredictionEnabled="True" Keyboard="Plain" />

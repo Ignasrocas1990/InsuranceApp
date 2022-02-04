@@ -7,7 +7,9 @@
              Shell.FlyoutBehavior="Disabled"
              Shell.NavBarIsVisible="True"
              x:Class="Insurance_app.Pages.RegistrationPage">
-    <ContentPage.Content>
+       <ContentPage.BindingContext>
+              <viewModels:RegistrationViewModel/>
+       </ContentPage.BindingContext>
             <StackLayout>
                 
                 <Entry Text="{Binding EmailDisplay}" 
@@ -28,5 +30,4 @@
 
             </StackLayout>
 
-    </ContentPage.Content>
 </ContentPage>

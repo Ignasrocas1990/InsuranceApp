@@ -7,7 +7,10 @@
              Shell.FlyoutBehavior="Disabled"
              Shell.NavBarIsVisible="True"
              x:Class="Insurance_app.Pages.QuotePage">
-    <ContentPage.Content>
+    <ContentPage.BindingContext>
+        <viewModels:QuoteViewModel/>
+    </ContentPage.BindingContext>
+    
         <StackLayout>
             <ActivityIndicator
                 IsRunning="{Binding CircularWaitDisplay}" HorizontalOptions="Center" VerticalOptions="Start" Color="Blue" />
@@ -15,5 +18,4 @@
             <Button Text= "Get Quote " Command="{Binding GetQuotCommand}"></Button>
         </StackLayout>
         
-    </ContentPage.Content>
 </ContentPage>

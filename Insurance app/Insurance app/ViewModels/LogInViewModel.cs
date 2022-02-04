@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Android.OS;
 using Insurance_app.Pages;
+using Realms;
 using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Essentials;
@@ -58,7 +59,8 @@ namespace Insurance_app.ViewModels
             {
                 if (App.NetConnection())
                 {
-                    var user =await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
+                    await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
+                    App.RealmApp.Sync.Reconnect();
                     await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
                 }
                 else

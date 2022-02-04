@@ -55,12 +55,20 @@ namespace Insurance_app.ViewModels
                    var customer = userManager.CreateCustomer(user.Id,Quote["Age"],fName, lName,phoneNr,email);
                    customer.Policy=policyManager.CreatePolicy(price, Quote["Cover"], Quote["Hospital_Excess"],
                        Quote["Hospitals"], Quote["Plan"], Quote["Smoker"], true, DateTime.UtcNow,user.Id);
-                    
-                   if (await userManager.AddCustomer(customer,App.RealmApp.CurrentUser) is null)
-                       throw new Exception("Registration failed");
-                   
-                   await App.RealmApp.CurrentUser.LogOutAsync();
+
+                   await userManager.AddCustomer(customer, App.RealmApp.CurrentUser);
+                   await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
+                   userManager.StopSync();
+                   if (App.RealmApp.CurrentUser != null)
+                   {
+                       await App.RealmApp.CurrentUser.LogOutAsync();
+                   }
+                   else
+                   {
+                       Console.WriteLine("user longed out");
+                   }
                    CircularWaitDisplay = false;
+                   
                    await Application.Current.MainPage.DisplayAlert("Notice", "Registration completed successfully", "Close");
                    await Shell.Current.GoToAsync($"//{nameof(LogInPage)}",false);
                 }

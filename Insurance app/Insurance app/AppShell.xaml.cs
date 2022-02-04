@@ -1,4 +1,5 @@
 ﻿using System;
+using Insurance_app.Logic;
 using Insurance_app.Pages;
 using Xamarin.Forms;
 
@@ -10,12 +11,13 @@ namespace Insurance_app
         {
             InitializeComponent();
         }
-        private void MenuItem_OnClicked(object sender, EventArgs e)
+        private async void MenuItem_OnClicked(object sender, EventArgs e)
         {
             try
             {
-                Current.GoToAsync($"//{nameof(LogInPage)}");
-                App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
+                await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
+                await Current.GoToAsync($"//{nameof(LogInPage)}");
+
             }
             catch (Exception ex)
             {

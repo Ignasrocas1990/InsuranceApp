@@ -7,7 +7,7 @@ namespace Insurance_app.Logic
 {
     public class UserManager
     {
-        private RealmDb realmDb;
+        public RealmDb realmDb;
         public UserManager()
         {
             realmDb= new RealmDb();
@@ -40,9 +40,14 @@ namespace Insurance_app.Logic
             };
         }
 
-        public Task<Customer> AddCustomer(Customer customer,User user)
+        public async Task AddCustomer(Customer customer,User user)
         {
-            return realmDb.AddCustomer(customer,user);
+            await realmDb.AddCustomer(customer,user);
+        }
+        
+        public void StopSync()
+        {
+            realmDb.StopSync();
         }
     }
 }
