@@ -31,6 +31,7 @@ namespace Insurance_app.Pages
         {           
           
             base.OnAppearing();
+            
         }
 
         private void Switch_OnToggled(object sender, ToggledEventArgs e)

@@ -27,7 +27,7 @@
         <Grid  VerticalOptions="CenterAndExpand">
             <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
                 <Label FontSize="20"
-                       Text="{Binding StepsDisplay, StringFormat='{0}% Completed'}" TextColor="Black" />
+                       Text="{Binding StepsDisplayLabel, StringFormat='{0}% Completed'}" TextColor="Black" />
             </StackLayout>
 
 

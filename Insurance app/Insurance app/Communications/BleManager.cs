@@ -125,16 +125,14 @@ namespace Insurance_app.Communications
             try
             {
                 var split = rawData.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
-                var timeStamp = Convert.ToInt64(split[0]);
-                var x = Converter.StringToFloat(split[1]);
-                var y = Converter.StringToFloat(split[2]);
-                var z = Converter.StringToFloat(split[3]);
+                var x = Converter.StringToFloat(split[0]);
+                var y = Converter.StringToFloat(split[1]);
+                var z = Converter.StringToFloat(split[2]);
                 
                     InfferEvent?.Invoke(this,new RawDataArgs()
                     {
                         x = x,y = y,z = z,
                         Type = 1,
-                        TimeOffset = Converter.ToDTOffset(timeStamp)
                     });
                 
                 
@@ -228,7 +226,6 @@ namespace Insurance_app.Communications
     public class RawDataArgs : EventArgs
     {
         public int Type { get; set; }
-        public DateTimeOffset TimeOffset { get; set; }
         public float x { get; set; }
         public float y { get; set; }
         public float z { get; set; }

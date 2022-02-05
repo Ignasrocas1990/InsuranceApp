@@ -23,11 +23,5 @@ namespace Insurance_app.Models
         public IList<MovData> MovData { get; }
 
         [MapTo("_partition")][Required] public string Partition { get; set; }
-
-        public async Task AddMovData(ConcurrentQueue<MovData> newMovDataList,User user)
-        {
-            RealmDb db = new RealmDb();
-            await db.AddMovData2(newMovDataList,user);
-        }
     }
 }

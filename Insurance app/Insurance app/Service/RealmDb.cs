@@ -78,7 +78,7 @@ namespace Insurance_app.Service
         }
         
 // --------------------------- Mov Data  methods --------------------------------     
-        public async Task AddMovData2(ConcurrentQueue<MovData> movList,User user)
+        public async Task AddMovData(ConcurrentQueue<MovData> movList,User user)
         {
              await GetRealm(user);
             if (_realm is null)
@@ -90,10 +90,14 @@ namespace Insurance_app.Service
             {
                 _realm.Write(() =>
                 {
-                    var c = _realm.Find<Customer>(user.Id);
-                    if (c != null)
-                    {
-                        var reward = c.Reward.Where(r => r.FinDate == null).FirstOrDefault();
+                    //var c = _realm.Find<Customer>(user.Id);
+                   // if (c != null)
+                   // {
+                        
+                        //var reward = c.Reward.Where(r => r.FinDate == null).FirstOrDefault();
+                        var reward = _realm.All<Reward>()
+                            .Where(r => r.Partition == user.Id && r.FinDate == null)
+                            .FirstOrDefault();
                         if (reward !=null)
                         {
                             foreach (var mov in movList)
@@ -101,7 +105,7 @@ namespace Insurance_app.Service
                                 reward.MovData.Add(mov);
                             }
                         }
-                    }
+                  //  }
                 });
             }
             catch (Exception e)
@@ -109,6 +113,59 @@ namespace Insurance_app.Service
                 Console.WriteLine(e);
             }
         }
+        public async Task<Dictionary<string,int>> GetWeeksMovData(User user)
+        {
+            //int[] chartEntries = {0,0,0,0,0,0,0};
+            Dictionary<string, int> chartEntries = new Dictionary<string, int>();
+            try
+            {
+                var hourDif = 24;
+                var now = DateTime.Now;
+                var prev = DateTime.Now.AddHours(-hourDif);
+                
+                await GetRealm(user);
+                _realm.Write(() =>
+                {
+                    int count = 0;
+                    for (int i = 0; i < 7; i++)
+                    {
+                        count = _realm.All<MovData>()
+                            .Where(m => m.Partition == user.Id && m.DateTimeStamp <= now && 
+                                        m.DateTimeStamp > prev).Count();
+                        chartEntries.Add(now.DayOfWeek.ToString(),count);
+                        now = prev;
+                        prev = prev.AddHours(-hourDif);
+                    }
+                });
+                return chartEntries;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+            
+        }
+
+        public async Task DelAllMovData(User user)
+        {
+            try
+            {
+                await GetRealm(user);
+                _realm.Write(() =>
+                {
+                    var remList = _realm.All<MovData>().Where(m => m.Partition == user.Id);
+                    _realm.RemoveRange(remList);
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+           
+
+        }
+
 //------------------------------------------------   reward methods ----------------------
         public async Task<Reward> AddNewReward(User user)
         {
@@ -164,5 +221,7 @@ namespace Insurance_app.Service
                 _realm.SyncSession.Stop();
             if (_realm != null) _realm.Dispose();
         }
+
+
     }
 }

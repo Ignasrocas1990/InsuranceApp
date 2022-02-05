@@ -39,11 +39,13 @@ namespace Insurance_app.ViewModels
                 try
                 {
                     Type t = Type.GetType(viewModelName);
-                    var obj = Activator.CreateInstance(t);
+                    if (t != null)
+                    {
+                        var obj = Activator.CreateInstance(t);
                     
-                    viewModels.Add(viewModelName,obj);
-                    return obj;
-                    
+                        viewModels.Add(viewModelName,obj);
+                        return obj;
+                    }
                 }catch (Exception e)
                 {
                     Console.WriteLine(e);

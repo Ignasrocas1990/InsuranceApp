@@ -42,7 +42,7 @@ namespace watch.Sensors
 
                 AccEventHandler?.Invoke(this, new SensorArgs()
                 {
-                    Data = $"{timeStamp},{vec.X},{vec.Y},{vec.Z}"
+                    Data = $"{vec.X},{vec.Y},{vec.Z}"
                 });
 
             }

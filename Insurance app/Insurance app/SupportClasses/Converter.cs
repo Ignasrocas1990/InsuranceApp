@@ -15,7 +15,6 @@ namespace Insurance_app.SupportClasses
         public static string HomeViewModel = nameSpace+nameof(HomeViewModel);
         //public static string QuoteViewModel = nameSpace+nameof(QuoteViewModel);
         //public static string RegistrationViewModel  = nameSpace+nameof(RegistrationViewModel);
-        public static string MovViewModel  = nameSpace+nameof(MovViewModel);
 
 
         //public static string LogInViewModel = nameof(Insurance_app)+"."+nameof(ViewModels)+"."+nameof(LogInViewModel);

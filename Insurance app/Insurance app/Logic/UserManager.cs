@@ -11,6 +11,7 @@ namespace Insurance_app.Logic
         public UserManager()
         {
             realmDb= new RealmDb();
+            
         }
 
         public Task<string> Register(string email, string password)

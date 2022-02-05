@@ -27,22 +27,21 @@ namespace Insurance_app.ViewModels
         public bool ToggleState = false;
         private BleManager bleManager;
         private UserManager userManager;
-        //private ConcurrentBag<MovData> newMovDataList;
         private ConcurrentQueue<MovData> newMovDataList;
-        //private List<MovData> newMovDataList;
         private Customer customer;
+        public bool FirstRun = true;
 
 
 
 
-        private double currentSteps = 0;// set this to len of the mov data array
+        private double stepsDisplayValue = 0;
         private double currentProgressBars=0.0;
         private double max = 0 ;
         private double min = StaticOptions.StepNeeded;
         
         public HomeViewModel()
         {
-            StepCommand = new Command(Step);
+            StepCommand = new Command(ResetRewardDisplay);//dont need that
             bleManager = BleManager.GetInstance();
             bleManager.InfferEvent += InferredRawData;
             userManager = new UserManager();
@@ -50,6 +49,8 @@ namespace Insurance_app.ViewModels
 
         public async Task Setup()
         {
+            if (!FirstRun) return;
+            FirstRun = false;
             try
             {
                 newMovDataList = new ConcurrentQueue<MovData>();
@@ -96,8 +97,8 @@ namespace Insurance_app.ViewModels
                         
                         MainThread.BeginInvokeOnMainThread(() =>
                         {
-                            ProgressBarDisplay = StaticOptions.StepNeeded;
-                        
+                            ResetRewardDisplay();
+
                         });
                     }
                     var currMovData = new MovData()
@@ -108,7 +109,6 @@ namespace Insurance_app.ViewModels
                                             Y = e.y,
                                             Z = e.z
                                         },
-                                        DateTimeStamp = e.TimeOffset,
                                         Type = "step",
                                         Partition = App.RealmApp.CurrentUser.Id
                                     };
@@ -116,8 +116,7 @@ namespace Insurance_app.ViewModels
                     if (newMovDataList.Count > 4)
                     {
                         //or re-create new Realm
-                        RealmDb realmDb = new RealmDb();
-                        await realmDb.AddMovData2(new ConcurrentQueue<MovData>(newMovDataList),App.RealmApp.CurrentUser);
+                        await new RealmDb().AddMovData(new ConcurrentQueue<MovData>(newMovDataList),App.RealmApp.CurrentUser);
                         newMovDataList = new ConcurrentQueue<MovData>();
                     }
 
@@ -161,34 +160,31 @@ namespace Insurance_app.ViewModels
 
         public void SetUpView(double steps)
         {
+            ProgressBarDisplay = 0;
             while (steps !=0)
             {
                 steps--;
                 Step();
             }
         }
-
-        private void StepDisplayUpdate(object s, EventArgs e)
+// reset 
+        private void ResetRewardDisplay()
         {
-            ProgressBarDisplay--;
-            currentSteps++;
-            StepsDisplay++;
-            if (ProgressBarDisplay < max)
-            {
-                ProgressBarDisplay = min;
-                StepsDisplay = 0;
-            }
+            ProgressBarDisplay = StaticOptions.StepNeeded;
+            stepsDisplayValue = 0;
+            StepsDisplayLabel = 0;
+
         }
         
         private void Step()
         {
             ProgressBarDisplay--;
-            currentSteps++;
-            StepsDisplay++;
+            stepsDisplayValue++;
+            StepsDisplayLabel++;
             if (ProgressBarDisplay < max)
             {
-                ProgressBarDisplay = min;
-                StepsDisplay = 0;
+                ProgressBarDisplay = StaticOptions.StepNeeded;
+                stepsDisplayValue = 0;
             }
         }
         public bool ToggleStateDisplay
@@ -205,10 +201,10 @@ namespace Insurance_app.ViewModels
             get => currentProgressBars;
             set =>  SetProperty(ref currentProgressBars, value);
         }
-        public double StepsDisplay //the percentages label in the middle
+        public double StepsDisplayLabel //the percentages label in the middle
         {
             
-            get => currentSteps / StaticOptions.StepNeeded * 100;
+            get => stepsDisplayValue / StaticOptions.StepNeeded * 100;
             set => SetProperty(ref  temp, value);
         }
         private double temp = 0;

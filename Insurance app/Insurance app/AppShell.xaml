@@ -17,9 +17,10 @@
     
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
         <ShellContent Title="Home page" Icon="home.png" ContentTemplate="{DataTemplate pages:HomePage}" />
-        
         <ShellContent Title="Profile page" Icon="profile.png" ContentTemplate="{DataTemplate pages:AccountInfoPage}" />
+        <ShellContent Title="Report page" Icon="report.png" ContentTemplate="{DataTemplate pages:Report}"/>        
     </FlyoutItem>
+    
     <MenuItem Text="logout" Clicked="MenuItem_OnClicked"/>
     
     <MenuItem Text="dsdf">
