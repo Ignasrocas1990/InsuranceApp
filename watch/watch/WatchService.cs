@@ -37,6 +37,7 @@ namespace watch
                  Log.Verbose(TAG, "killed service");
                  sensorManager.ToggleSensors("Connected");
              }
+             timer.Start();
              return StartCommandResult.Sticky;
         }
         
@@ -77,11 +78,12 @@ namespace watch
                 {
                     try
                     {
+                        timer.Stop();
+                        curDisconnectCounter = 0;
+                        
                         if (!sensorManager.isMonitoring())
                         {
                             sensorManager.ToggleSensors("Connected");
-                            timer.Stop();
-                            curDisconnectCounter = 0;
                         }
                     }
                     catch (Exception exception)

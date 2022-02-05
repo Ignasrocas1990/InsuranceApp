@@ -22,7 +22,6 @@ namespace Insurance_app.Communications
 
         private IAdapter adapter;
         public Ble ble;
-        private StepDetector stepDetector;
         private ICharacteristic chara=null;
         public EventHandler<RawDataArgs> InfferEvent = delegate {  };
 
@@ -37,7 +36,6 @@ namespace Insurance_app.Communications
             ble = new Ble();
             adapter = CrossBluetoothLE.Current.Adapter;
             RegisterEventHandlers();
-            stepDetector = new StepDetector();
             bleState=ble.BleCheck();
 
         }
@@ -126,22 +124,19 @@ namespace Insurance_app.Communications
         {
             try
             {
-                var splitedData = rawData.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
-                var timeStamp = Convert.ToInt64(splitedData[0]);
-                var x = Converter.StringToFloat(splitedData[1]);
-                var y = Converter.StringToFloat(splitedData[2]);
-                var z = Converter.StringToFloat(splitedData[1]);
+                var split = rawData.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+                var timeStamp = Convert.ToInt64(split[0]);
+                var x = Converter.StringToFloat(split[1]);
+                var y = Converter.StringToFloat(split[2]);
+                var z = Converter.StringToFloat(split[3]);
                 
-                var isStep= stepDetector.updateAccel(timeStamp, x, y, z);
-                if (isStep==1)
-                {
                     InfferEvent?.Invoke(this,new RawDataArgs()
                     {
                         x = x,y = y,z = z,
-                        Type = isStep,
+                        Type = 1,
                         TimeOffset = Converter.ToDTOffset(timeStamp)
                     });
-                }
+                
                 
             }
             catch (Exception e)
@@ -149,7 +144,6 @@ namespace Insurance_app.Communications
                 Console.WriteLine($"problem pre-paring data for inferring {e}");
             }
         }
-        
         private async Task GetService(IDevice device)
         {
             try

@@ -12,34 +12,41 @@ namespace watch.Sensors
         private const string TAG = "mono-stdout";
         
         public event EventHandler<SensorArgs> AccEventHandler;
-        
-        private int nOfAcc;
-        private BleMaFilter filter;
-
+        private StepDetector detector;
         SensorSpeed speed = SensorSpeed.UI;
+        private long shakeDetected = 0;
+        private const long ShakeTimeGap = 300;
+        private int count = 0;
+
         
 
         public SensorManager()
         {
-            filter = new BleMaFilter();
+            detector = new StepDetector();
             Accelerometer.ReadingChanged += AcceReadingChanged;
-            nOfAcc = 0;
+            Accelerometer.ShakeDetected += ShakeDetected;
+        }
+
+        private void ShakeDetected(object sender, EventArgs e)
+        {
+            shakeDetected = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
         }
 
         void AcceReadingChanged(object s, AccelerometerChangedEventArgs args)
         {
-            var reading = args.Reading;
-            filter.AddAcc(reading.Acceleration);
-            nOfAcc++;
-            if (nOfAcc > 2)
+            var vec = args.Reading.Acceleration;
+            long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+            if (detector.updateAccel(timeStamp, vec.X, vec.Y, vec.Z) == 1 && (shakeDetected+ShakeTimeGap) <= timeStamp)
             {
-                nOfAcc = 0;
-                string data = "";
-                long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
-                data = timeStamp + filter.GetAcc();
-                AccEventHandler?.Invoke(this, new SensorArgs(){ Data = data});
-                filter.ClearFilter();
+                Log.Verbose(TAG,$"step counted {++count}");
+
+                AccEventHandler?.Invoke(this, new SensorArgs()
+                {
+                    Data = $"{timeStamp},{vec.X},{vec.Y},{vec.Z}"
+                });
+
             }
+            
         }
         public void ToggleSensors(string state)
         {

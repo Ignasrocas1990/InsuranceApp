@@ -1,18 +1,18 @@
 ﻿using System;
+using Android.Util;
 using Math = Java.Lang.Math;
 
-namespace Insurance_app.Communications
+namespace watch.Sensors
 {
     public class StepDetector
     {
         private static int ACCEL_RING_SIZE = 50;
         private static  int VEL_RING_SIZE = 10;
-        private int n = 0;
 
         // change this threshold according to your sensitivity preferences
-        private static  float STEP_THRESHOLD = 0.3f;// 50f
+        private static  float STEP_THRESHOLD = 1.5f;//50
 
-        private static int STEP_DELAY_MS = 200;//000000;//250000000
+        private static int STEP_DELAY_MS = 150;
 
         private int accelRingCounter = 0;
         private float[] accelRingX = new float[ACCEL_RING_SIZE];
@@ -53,9 +53,10 @@ namespace Insurance_app.Communications
             velRing[velRingCounter % VEL_RING_SIZE] = currentZ;
 
             float velocityEstimate = SensorFilter.sum(velRing);
+           // Log.Verbose(TAG,$"{velocityEstimate} > {STEP_THRESHOLD} and {oldVelocityEstimate}<= {STEP_THRESHOLD} " +
+    //                        $"and {timeMSec - lastStepTimeNs} > {STEP_DELAY_MS}");
             if (velocityEstimate > STEP_THRESHOLD && oldVelocityEstimate <= STEP_THRESHOLD && (timeMSec - lastStepTimeNs > STEP_DELAY_MS))
             {
-                Console.WriteLine("step counted");
                 lastStepTimeNs = timeMSec;
                 return 1;
             }

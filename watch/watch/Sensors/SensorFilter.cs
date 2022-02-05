@@ -1,6 +1,6 @@
 ﻿using Java.Lang;
 
-namespace Insurance_app.Communications
+namespace watch.Sensors
 {
     public class SensorFilter
     {
