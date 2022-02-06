@@ -23,14 +23,15 @@ namespace Insurance_app.Pages
              viewModel = (HomeViewModel) ShellViewModel.GetInstance()
                 .GetViewModel(Converter.HomeViewModel);
              BindingContext = viewModel;
-             viewModel.Setup();            //circular wait
 
         }
 
-        protected override void OnAppearing()
-        {           
-          
-            base.OnAppearing();
+        protected override async void OnAppearing()
+        {
+             CircularWait.IsRunning = true;
+             await viewModel.Setup();            //circular wait
+             CircularWait.IsRunning = false;
+             base.OnAppearing();
             
         }
 

@@ -129,9 +129,11 @@ namespace Insurance_app.Service
                     int count = 0;
                     for (int i = 0; i < 7; i++)
                     {
-                        count = _realm.All<MovData>()
-                            .Where(m => m.Partition == user.Id && m.DateTimeStamp <= now && 
-                                        m.DateTimeStamp > prev).Count();
+                        var prev1 = prev;
+                        var now1 = now;
+                        count = _realm
+                            .All<MovData>().Count(m => m.Partition == user.Id && m.DateTimeStamp <= now1 && 
+                                                       m.DateTimeStamp > prev1);
                         chartEntries.Add(now.DayOfWeek.ToString(),count);
                         now = prev;
                         prev = prev.AddHours(-hourDif);

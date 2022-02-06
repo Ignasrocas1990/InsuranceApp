@@ -6,11 +6,12 @@
              xmlns:microcharts="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms"
              x:DataType="viewModels:ReportViewModel"
              x:Class="Insurance_app.Pages.Report">
-    
-    <ScrollView>
-        <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-            <microcharts:ChartView HeightRequest="300" Chart="{Binding ChartEntries} "/>
-        </StackLayout>
-    </ScrollView>
+
+     <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+         <ActivityIndicator x:Name="CircularWait" HorizontalOptions="Center" VerticalOptions="Center" Color="Gray" />
+         <Label FontSize="Medium" Text="Steps per day" TextColor="Black" HorizontalOptions="Center" VerticalOptions="Center"  ></Label>
+         <microcharts:ChartView x:Name="MyChartView" WidthRequest="400" HeightRequest="300"/>
+     </StackLayout>
+     
     
 </ContentPage>

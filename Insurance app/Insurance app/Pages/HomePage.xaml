@@ -23,7 +23,8 @@
             <Switch x:Name="Switch" ThumbColor="Orange" Scale="1.5" Toggled="Switch_OnToggled" IsToggled="{Binding ToggleStateDisplay,Mode=TwoWay}" />
             <Label Text="Step Tracker" TextColor="Black"/>
         </StackLayout>
-
+        
+        
         <Grid  VerticalOptions="CenterAndExpand">
             <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
                 <Label FontSize="20"
@@ -37,7 +38,10 @@
                                       Progress="{Binding ProgressBarDisplay 
                                       , Converter={StaticResource ValueProgressBar},Mode=TwoWay}"/>
             </StackLayout>
+            <ActivityIndicator x:Name="CircularWait" HorizontalOptions="Center" VerticalOptions="Center" Color="Gray" />
+
         </Grid>
+
         <StackLayout VerticalOptions="End" HorizontalOptions="Center">
             <Button FontSize="30" Command="{Binding StepCommand}" 
                     Text="step" TextColor="Black" />
