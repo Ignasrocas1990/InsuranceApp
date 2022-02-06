@@ -12,6 +12,9 @@ using Newtonsoft.Json;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using System.Timers;
+using Android.Util;
+
 
 namespace Insurance_app.ViewModels
 {
@@ -19,8 +22,8 @@ namespace Insurance_app.ViewModels
     {
         private QuoteOptions quoteOptions;
         public ICommand GetQuotCommand { get; }
-        private bool _gettingQuote = false;
         private bool buttonEnabled = true;
+        private int responseCounter = 0;
 
         private InferenceService inf;
         private bool wait;
@@ -32,6 +35,10 @@ namespace Insurance_app.ViewModels
         private int plan;
         private int smoker=0;
         private bool isSmokerChecker=false;
+        private readonly Timer timer;
+        private string elegalChars = "";
+
+
 
         public IList<String> HospitalList { get; } = QuoteOptions.HospitalsEnum();
         //age
@@ -41,9 +48,12 @@ namespace Insurance_app.ViewModels
 
         public QuoteViewModel()
        {
+           timer = new Timer(1000);
            quoteOptions = new QuoteOptions();
            GetQuotCommand = new AsyncCommand(GetQuote);
            inf = new InferenceService();
+           timer.Elapsed += CheckResponseTime;
+
           
        }
 
@@ -51,7 +61,12 @@ namespace Insurance_app.ViewModels
        {
            if (!App.NetConnection())
            {
-               await Application.Current.MainPage.DisplayAlert("error", "Network connectivity not available", "close");
+               await Shell.Current.CurrentPage.DisplayAlert("error",StaticOptions.ConnectionErrorMessage, "close");
+               return;
+           }
+           if (elegalChars != "")
+           {
+               await Shell.Current.CurrentPage.DisplayAlert("Error",elegalChars , "close");
                return;
            }
            var TempQuote = new Dictionary<string, int>()
@@ -69,6 +84,7 @@ namespace Insurance_app.ViewModels
            {
                CircularWaitDisplay=true;
                 ButtonEnabled = false;
+                timer.Start();
                 var result = await inf.Predict(TempQuote);
                price =  await result.Content.ReadAsStringAsync();
 
@@ -77,12 +93,16 @@ namespace Insurance_app.ViewModels
            {
                CircularWaitDisplay=false;
                 ButtonEnabled = true;
-                await Shell.Current.CurrentPage.DisplayAlert("Error", "Connection not found", "close");
+                timer.Stop();
+                responseCounter = 0;
+                await Shell.Current.CurrentPage.DisplayAlert("Error", StaticOptions.ConnectionErrorMessage, "close");
                return;
            }
            CircularWaitDisplay=false;
            ButtonEnabled = true;
-            bool action = await Application.Current.MainPage.DisplayAlert("Price",price,  "Accept","Deny");
+           timer.Stop();
+           responseCounter = 0;
+            bool action = await Shell.Current.CurrentPage.DisplayAlert("Price",price,  "Accept","Deny");
            if (action)
            {
                try
@@ -95,6 +115,18 @@ namespace Insurance_app.ViewModels
                    Console.WriteLine(e);
                }
            } 
+       }
+
+       private async void CheckResponseTime(object o, ElapsedEventArgs e)
+       {
+           responseCounter += 1;
+           if (responseCounter == StaticOptions.MaxResponseTime)
+           {
+               CircularWaitDisplay=false;
+               ButtonEnabled = true;
+               responseCounter = 0;
+               await Shell.Current.CurrentPage.DisplayAlert("Error",StaticOptions.ConnectionErrorMessage, "close");
+           }
        }
 //-----------------------------data binding methods ------------------------------------------------
        public bool CircularWaitDisplay
@@ -132,22 +164,27 @@ namespace Insurance_app.ViewModels
         public int AgeEntry
         {
             get => age;
-            set => SetProperty(ref age, checkAge(value));
+            set => SetProperty(ref age, CheckAge(value));
         }
-        private int checkAge(int age)
+        private int CheckAge(int value)
         {
-            return age;// need to check here with pop up or create an invisable lable 
+            if ( value > 17 && value < 66)
+            {
+                elegalChars = "";
+            }
+            else
+            {
+                elegalChars = StaticOptions.AgeLimitErrorMessage;
+            }
+            return value;
         }
-
-
-        public bool isSmoker
+        public bool IsSmoker
         {
             get => isSmokerChecker;
-            set => SetProperty(ref isSmokerChecker, updateSmokerValue(value));
+            set => SetProperty(ref isSmokerChecker, UpdateSmokerValue(value));
         }
-        private bool updateSmokerValue(bool value)
+        private bool UpdateSmokerValue(bool value)
         {
-            if (value)
             smoker = value ? 1 : 0;
             return value;
         }

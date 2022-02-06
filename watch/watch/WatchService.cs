@@ -96,6 +96,7 @@ namespace watch
         }
         private void DisconnectedCheck(object sender, ElapsedEventArgs e)
         {
+            
             curDisconnectCounter += 1;
             Log.Verbose(TAG,$"{curDisconnectCounter}");
             if (curDisconnectCounter == MaxDisconnectionTime)

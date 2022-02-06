@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -70,15 +71,12 @@ namespace Insurance_app.Communications
             if (!App.NetConnection()) return null;
 
             content = new StringContent(JsonConvert.SerializeObject(quote),Encoding.UTF8, "application/json");
-            //Console.WriteLine(content);
             if (content!=null && App.NetConnection())
             {
                 try
                 {
-                    //HttpResponseMessage response = await client.PostAsync(Url, content);
                     return client.PostAsync(PredictUrl, content);
-                    //return Task.FromResult(response);
-                    //finRequest?.Invoke(this,response);
+
                 }
                 catch (Exception e)
                 {
