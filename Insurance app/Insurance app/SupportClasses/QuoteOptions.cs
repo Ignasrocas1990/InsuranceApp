@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 
-namespace Insurance_app.Models
+namespace Insurance_app.SupportClasses
 {
     public  class QuoteOptions
     {
         public enum CoverEnum {Low,Medium,High}
-        public enum PlanEnum{ Low,Medium,High}
+        public enum PlanEnum {Low,Medium,High}
 
-        public IList<String> HospitalsEnum()
+        public static IList<String> HospitalsEnum()
         {
             return new List<String>() {"Public Hospitals", "Most Hospitals", "All Hospitals"};
         }
-        public IList<int> ExcessFee()
+        public static IList<int> ExcessFee()
         {
             return new List<int>() {300, 150, 0};
         }

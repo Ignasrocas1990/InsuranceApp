@@ -2,14 +2,14 @@
 
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
-             x:DataType="viewModels:LogInViewModel"
+             xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
+             x:DataType="viewModels1:LogInViewModel"
              Shell.PresentationMode="Modal"
              Shell.FlyoutBehavior="Disabled"
              Shell.NavBarIsVisible="False"
              x:Class="Insurance_app.Pages.LogInPage">
     <ContentPage.BindingContext>
-        <viewModels:LogInViewModel/>
+        <viewModels1:LogInViewModel/>
     </ContentPage.BindingContext>
     
     <StackLayout Padding="40" VerticalOptions="Center" HorizontalOptions="FillAndExpand">

@@ -2,20 +2,70 @@
 
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
-             x:DataType="viewModels:QuoteViewModel"
+            xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app" xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
+             x:DataType="viewModels1:QuoteViewModel"
              Shell.FlyoutBehavior="Disabled"
              Shell.NavBarIsVisible="True"
              x:Class="Insurance_app.Pages.QuotePage">
     <ContentPage.BindingContext>
-        <viewModels:QuoteViewModel/>
+        <viewModels1:QuoteViewModel/>
     </ContentPage.BindingContext>
     
-        <StackLayout>
-            <ActivityIndicator
-                IsRunning="{Binding CircularWaitDisplay}" HorizontalOptions="Center" VerticalOptions="Start" Color="Blue" />
+    
+    <Grid VerticalOptions="CenterAndExpand" RowSpacing="40" ColumnSpacing="5" Padding="40">
+        <Grid.RowDefinitions>
             
-            <Button Text= "Get Quote " Command="{Binding GetQuotCommand}"></Button>
-        </StackLayout>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
+
+        </Grid.RowDefinitions>
         
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+        
+        
+        <Label Text="Age :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="0" />
+        <Entry Text="{Binding AgeEntry}" Keyboard="Numeric"  Placeholder="20" PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White" Grid.Column="1" Grid.Row="0" />
+
+
+
+        <Label Text="Hospital Options :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="1" />
+        <Picker Title="Select Hospital" TextColor="Black" Grid.Column="1" Grid.Row="1"
+                ItemsSource="{Binding HospitalList}" SelectedIndex="{Binding SelectedHospital}" />
+
+
+        <Label Text="Cover Options :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="2" />
+        <Picker Title="Select Hospital" Grid.Column="1" Grid.Row="2" TextColor="Black"
+                ItemsSource="{Binding CoverList}" SelectedIndex="{Binding SelectedCover}" />
+
+
+        <Label Text="Fee Options :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="3" />
+        <Picker Title="Hospital Fee" Grid.Column="1" Grid.Row="3" TextColor="Black"
+                ItemsSource="{Binding HospitalFeeList}" SelectedIndex="{Binding SelectedHospitalExcess}" />
+
+
+        <Label Text="Plan Options :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="4" />
+        <Picker Title="Select Hospital Fee" FontSize="20" TextColor="Black" Grid.Column="1" Grid.Row="4"
+                ItemsSource="{Binding PlanList}" SelectedIndex="{Binding SelectedPlan}" />
+
+
+        <Label Text="Smoker :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="5" />
+        <CheckBox IsChecked="{Binding isSmoker}" VerticalOptions="Center" Grid.Column="1" Grid.Row="5" />
+
+        
+        <Button Text= "Get Quote" IsEnabled="{Binding ButtonEnabled}" 
+                Command="{Binding GetQuotCommand}" Grid.Column="0" Grid.Row="6"  Grid.ColumnSpan="2"/>
+        
+        <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}" HorizontalOptions="Center" Color="Gray" Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" />
+
+    </Grid>
+
 </ContentPage>
