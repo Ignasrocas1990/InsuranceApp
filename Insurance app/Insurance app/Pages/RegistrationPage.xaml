@@ -7,27 +7,67 @@
              Shell.FlyoutBehavior="Disabled"
              Shell.NavBarIsVisible="True"
              x:Class="Insurance_app.Pages.RegistrationPage">
-       <ContentPage.BindingContext>
-              <viewModels1:RegistrationViewModel/>
-       </ContentPage.BindingContext>
-            <StackLayout>
+       
+       <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
+              <Grid.RowDefinitions>
+            
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="2*"/>
+
+              </Grid.RowDefinitions>
+        
+              <Grid.ColumnDefinitions>
+                     <ColumnDefinition Width="5*"/>
+                     <ColumnDefinition Width="5*"/>
+              </Grid.ColumnDefinitions>
                 
-                <Entry Text="{Binding EmailDisplay}" 
-                       Placeholder="email@gmail.com" TextColor="Black"/>
-                <Entry Text="{Binding PassDisplay}" 
-                       Placeholder="password" IsPassword="True" TextColor="Black"/>
-                <Entry Text="{Binding FNameDisplay}" 
-                       Placeholder="First name" TextColor="Black"/>
-                <Entry Text="{Binding LNameDisplay}" 
-                       Placeholder="Last name" TextColor="Black"/>
-                <Entry Text="{Binding PhoneNrDisplay}"
-                       Placeholder= "+353852827820" TextColor="Black" />
-                <Button Text="Register" Command="{Binding RegisterCommand}" TextColor="Black" />
+              <Label Text="Email :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="0" />
+              <Entry  Keyboard="Email" Text="{Binding EmailDisplay}" 
+                      Placeholder="__@__.com"
+                      PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+                      Grid.Column="1" Grid.Row="0"/>
                 
+              <Label Text="Password :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="1" />
+              <Entry  Text="{Binding PassDisplay}" 
+                      Placeholder="*********" IsPassword="True"
+                      PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+                      Grid.Column="1" Grid.Row="1"/>
+                
+              <Label Text="First Name :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="2" />
+              <Entry Keyboard="Text" Text="{Binding FNameDisplay}" 
+                     Placeholder="Jonny" PlaceholderColor="DimGray"
+                     FontSize="20" TextColor="Black" BackgroundColor="White"
+                     Grid.Column="1" Grid.Row="2"/>
+                
+              <Label Text="Last Name :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="3" />
+              <Entry Keyboard="Text" Text="{Binding LNameDisplay}" 
+                     Placeholder="Bravo" PlaceholderColor="DimGray"
+                     FontSize="20" TextColor="Black" BackgroundColor="White"
+                     Grid.Column="1" Grid.Row="3"/>
+                
+              <Label Text="Phone Nr :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="4" />
+              <Entry  Keyboard="Numeric" Text="{Binding PhoneNrDisplay}"
+                      Placeholder= "0852827820" PlaceholderColor="DimGray"
+                      FontSize="20" TextColor="Black" BackgroundColor="White"
+                      Grid.Column="1" Grid.Row="4"/>
+              
+              <Label Text="Address :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="5" />
+              <Entry Placeholder= "Select" Focused="VisualElement_OnFocused"  PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+                     Grid.Column="1" Grid.Row="5"/>
+              
+              <Button Text="Register" Command="{Binding RegisterCommand}"
+                      Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" TextColor="Black" HorizontalOptions="Center" />
                 <ActivityIndicator
                        IsRunning="{Binding CircularWaitDisplay}" 
-                       HorizontalOptions="Center" VerticalOptions="Start" Color="Blue" />
+                       HorizontalOptions="Center" VerticalOptions="Start" Color="Gray" Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" />
 
-            </StackLayout>
+   </Grid>           
 
 </ContentPage>

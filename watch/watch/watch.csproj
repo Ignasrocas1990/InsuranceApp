@@ -95,6 +95,7 @@
     <AndroidResource Include="Resources\values-round\strings.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Resources\drawable" />
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>

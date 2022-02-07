@@ -20,7 +20,6 @@ namespace Insurance_app.ViewModels
 {
     public class QuoteViewModel : ObservableObject
     {
-        private QuoteOptions quoteOptions;
         public ICommand GetQuotCommand { get; }
         private bool buttonEnabled = true;
         private int responseCounter = 0;
@@ -40,16 +39,15 @@ namespace Insurance_app.ViewModels
 
 
 
-        public IList<String> HospitalList { get; } = QuoteOptions.HospitalsEnum();
+        public IList<String> HospitalList { get; } = StaticOptions.HospitalsEnum();
         //age
-        public IList<String> CoverList { get; } = Enum.GetNames(typeof(QuoteOptions.CoverEnum)).ToList();
-        public IList<int> HospitalFeeList { get; } = QuoteOptions.ExcessFee();
-        public IList<String> PlanList { get; } = Enum.GetNames(typeof(QuoteOptions.PlanEnum)).ToList();
+        public IList<String> CoverList { get; } = Enum.GetNames(typeof(StaticOptions.CoverEnum)).ToList();
+        public IList<int> HospitalFeeList { get; } = StaticOptions.ExcessFee();
+        public IList<String> PlanList { get; } = Enum.GetNames(typeof(StaticOptions.PlanEnum)).ToList();
 
         public QuoteViewModel()
        {
            timer = new Timer(1000);
-           quoteOptions = new QuoteOptions();
            GetQuotCommand = new AsyncCommand(GetQuote);
            inf = new InferenceService();
            timer.Elapsed += CheckResponseTime;
