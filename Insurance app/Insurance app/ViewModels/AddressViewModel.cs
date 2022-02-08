@@ -1,5 +1,7 @@
-﻿using System.Windows.Input;
+﻿using System.Threading.Tasks;
+using System.Windows.Input;
 using Insurance_app.Pages;
+using Insurance_app.SupportClasses;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
 
@@ -8,12 +10,13 @@ namespace Insurance_app.ViewModels
     public class AddressViewModel : ObservableObject
     {
         private AddressPopup popup;
-        private string city =""; 
-        private string country=""; 
-        private string county=""; 
         private int houseN=0;
-        private string postCode="";
         private string street="";
+        private string city =""; 
+        private string county="";
+        private string country=""; 
+        private string postCode="";
+        private string errors = "";
 
         public ICommand CancelCommand { get; }
         public ICommand SaveCommand { get; }
@@ -21,16 +24,32 @@ namespace Insurance_app.ViewModels
         public AddressViewModel(AddressPopup popup )
         {
             this.popup = popup;
-            SaveCommand = new Command(save);
-            CancelCommand = new Command(cancel);
+            SaveCommand = new AsyncCommand(Save);
+            CancelCommand = new Command(Cancel);
         }
 
-        private void save()
+        private async Task Save()
         {
-           //check inputs and combine into dictionary
-        }
+            
+            if (postCode.Length < 4 || country.Length < 3 || street.Length < 5 || 0 > houseN )
+            {
+                errors += "Inputs are invalid length \n";
+            }
+            if (StaticOptions.HasNumbers(city) || StaticOptions.HasNumbers(country) || StaticOptions.HasNumbers(county))
+            {
+                errors = "City,Country,County cant have numbers";
+            }
 
-        private void cancel()
+            if (errors != "")
+            {
+                await Shell.Current.CurrentPage.DisplayAlert("Error", errors, "close");
+                errors = "";
+                return;
+
+            }
+            popup.Dismiss($"{houseN}~{street}~{city}~{county}~{country}~{postCode}");
+        }
+        private void Cancel()
         {
             popup.Dismiss("");
         }

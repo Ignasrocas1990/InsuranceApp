@@ -100,11 +100,6 @@ namespace Insurance_app.Communications
                 Infer(str);
                 await ReadAsync();
             }
-           /* catch (CharacteristicReadException readException)
-            {
-                reading = false;
-                Console.WriteLine("char exception");
-            }*/
             catch
             {
                 conErrDelay += 3000;

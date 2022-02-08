@@ -29,6 +29,7 @@ namespace Insurance_app.ViewModels
         private string lName="";
         private string phoneNr="";
         private string qString="";
+        private string address = "";
         private readonly UserManager userManager;
         private readonly PolicyManager policyManager;
         private  string errors ="";
@@ -49,6 +50,7 @@ namespace Insurance_app.ViewModels
                 if (errors != "")
                 {
                     await Shell.Current.CurrentPage.DisplayAlert("Error", errors, "close");
+                    errors = "";
                     return;
                 }
                 CircularWaitDisplay = true;
@@ -57,7 +59,11 @@ namespace Insurance_app.ViewModels
                 if (registered == "success")
                 {
                     var user =  await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
-                   var customer = userManager.CreateCustomer(user.Id,quote["Age"],fName, lName,phoneNr,email);
+                   var customer = userManager.CreateCustomer(user.Id,quote["Age"],fName, lName,phoneNr,email,address);
+                   if (customer is null)
+                   {
+                       throw new Exception("registration failed");
+                   }
                    customer.Policy=policyManager.CreatePolicy(price, quote["Cover"], quote["Hospital_Excess"],
                        quote["Hospitals"], quote["Plan"], quote["Smoker"], true, DateTime.UtcNow,user.Id);
 
@@ -120,7 +126,10 @@ namespace Insurance_app.ViewModels
             {
                 errors += " Email is invalid \n";
             }
-            
+            if (address.Length <2)
+            {
+                errors += "Address is not specified";
+            }
             
         }
 
@@ -156,6 +165,12 @@ namespace Insurance_app.ViewModels
         {
             get => wait;
             set => SetProperty(ref wait, value);
+        }
+
+        public string AddressDisplay
+        {
+            get => address;
+            set => SetProperty(ref address, value);
         }
 
         public string TempQuote

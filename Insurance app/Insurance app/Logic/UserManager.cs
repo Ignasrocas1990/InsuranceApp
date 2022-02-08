@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Insurance_app.Models;
 using Insurance_app.Service;
 using Realms.Sync;
@@ -32,13 +33,35 @@ namespace Insurance_app.Logic
             return new Customer();
         }
 
-        public Customer CreateCustomer(string userId, int age, string fName, string lName, string phoneNr, string email)
+        public Customer CreateCustomer(string userId, int age, string fName, string lName, string phoneNr, string email,string address)
         {
-            return new Customer()
+            try
             {
-                Id = userId, Age = age,
-                Name = fName, LastName = lName, PhoneNr = phoneNr, Email=email, Partition = userId
-            };
+                var split = address.Split(new[] {'~'});
+            
+                return new Customer()
+                {
+                
+                    Id = userId, Age = age,
+                    Name = fName, LastName = lName, PhoneNr = phoneNr, Email=email, Partition = userId, 
+                    Address = new Address()
+                    {
+                        HouseN = Int32.Parse(split[0]),
+                        Street = split[1],
+                        City = split[2],
+                        County=split[3],
+                        Country = split[4],
+                        PostCode = split[5]
+                    }
+                
+                };
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"customer creation error :\n {e}");
+                return null;
+            }
+
         }
 
         public async Task AddCustomer(Customer customer,User user)

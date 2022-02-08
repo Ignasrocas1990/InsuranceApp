@@ -11,7 +11,7 @@ using Xamarin.Forms.Xaml;
 namespace Insurance_app.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class AddressPopup : Popup
+    public partial class AddressPopup : Popup<string>
     {
         public AddressPopup()
         {

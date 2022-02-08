@@ -15,18 +15,17 @@ namespace Insurance_app.Pages
 
     public partial class RegistrationPage : ContentPage
     {
-        private RegistrationViewModel vm;
         public RegistrationPage()
         {
             InitializeComponent();
-            vm = new RegistrationViewModel();
-            BindingContext = vm;
+            BindingContext = new RegistrationViewModel();
         }
         
         private async void VisualElement_OnFocused(object sender, FocusEventArgs e)
         {
-           var result =(string) await Navigation.ShowPopupAsync(new AddressPopup());
-           Console.WriteLine($"{result}");
+            var vm = (RegistrationViewModel)BindingContext;
+            
+            vm.AddressDisplay = await Navigation.ShowPopupAsync<string>(new AddressPopup());
         }
     }
 }

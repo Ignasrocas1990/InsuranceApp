@@ -17,8 +17,6 @@ namespace Insurance_app.SupportClasses
         public static readonly string ConnectionErrorMessage = "Network connectivity not available";
         public static readonly int MaxNameLen = 20;
         public static Func<string, bool> HasNumbers => s => s.Any(char.IsDigit);
-        public static Func<string, bool> HasNum => s => s.Any(char.IsDigit);
-
 
         public static readonly SKColor White = c.WhiteSmoke;
         
