@@ -154,13 +154,13 @@ namespace Insurance_app.Communications
 
                 if (chara != null)
                 {
-                    ReadAsync();
+                    await ReadAsync();
                 }
             }
             catch //fail to connect
             {
                 
-                ConnectToDevice();
+                await ConnectToDevice();
             }
         }
         private async void Action()

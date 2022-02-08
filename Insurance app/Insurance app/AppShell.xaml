@@ -8,39 +8,28 @@
              Shell.TabBarIsVisible="False"
              x:Class="Insurance_app.AppShell">
     
-
-    <ShellContent ContentTemplate="{DataTemplate pages:LogInPage}" Route="LogInPage"/>
-    <ShellContent ContentTemplate="{DataTemplate pages:QuotePage}" Route="QuotePage"/>
-    <ShellContent ContentTemplate="{DataTemplate pages:RegistrationPage}" Route="RegistrationPage"/>
-    <ShellContent ContentTemplate="{DataTemplate pages:HomePage}" Route="HomePage"/>
-
-    <!-- Icon -->
+    
+    <ShellContent ContentTemplate="{DataTemplate pages:LogInPage}" FlyoutItemIsVisible="False" Route="LogInPage"/>
+    <ShellContent ContentTemplate="{DataTemplate pages:QuotePage}" FlyoutItemIsVisible="False" Route="QuotePage"/>
+    <ShellContent ContentTemplate="{DataTemplate pages:RegistrationPage}" FlyoutItemIsVisible="False" Route="RegistrationPage"/>
+    <ShellContent ContentTemplate="{DataTemplate pages:HomePage}" FlyoutItemIsVisible="False" Route="HomePage"/>
+    
+    
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
-        <ShellContent Title="Home page" ContentTemplate="{DataTemplate pages:HomePage}"/>
-            <ShellContent Title="Profile page" ContentTemplate="{DataTemplate pages:AccountInfoPage}" />
-        <ShellContent Title="Report page" ContentTemplate="{DataTemplate pages:Report}"/>        
+        <ShellContent Title="Home page" Icon="walkIcon.png" ContentTemplate="{DataTemplate pages:HomePage}"/>
+        <ShellContent Title="Profile page" Icon="profileIcon.png" ContentTemplate="{DataTemplate pages:ProfilePage}" />
+        <ShellContent Title="Report page" Icon="reportIcon.png" ContentTemplate="{DataTemplate pages:Report}"/>
+        <ShellContent Title="Claim page" Icon="claimIcon.png" ContentTemplate="{DataTemplate pages:ClaimPage}"/>
     </FlyoutItem>
     
-    <MenuItem Text="logout" Clicked="MenuItem_OnClicked"/>
+    <MenuItem Text="logout" IconImageSource="logoutIcon.png" Clicked="MenuItem_OnClicked"/>
     
-    <MenuItem Text="dsdf">
-        <Shell.MenuItemTemplate>
-        <DataTemplate>
-            <StackLayout Padding="10">
-                <RadioButton Content="cat"/>
-            </StackLayout>
-        </DataTemplate>
-    </Shell.MenuItemTemplate>
-    </MenuItem>
 
-
-
-    
     
     <Shell.FlyoutFooterTemplate>
             <DataTemplate>
                 <StackLayout >
-                    <Label Text="Xaminals"
+                    <Label Text="Current time"
                            TextColor="Black"
                            FontAttributes="Bold"
                            HorizontalOptions="Center" />
