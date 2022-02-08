@@ -5,11 +5,65 @@
              xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
              x:DataType="viewModels:ProfileViewModel"
              x:Class="Insurance_app.Pages.ProfilePage">
-    <ContentPage.Content>
-        <StackLayout>
-            <Label Text="ProfilePage"
-                   VerticalOptions="CenterAndExpand"
-                   HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
-    </ContentPage.Content>
+           <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
+              <Grid.RowDefinitions>
+            
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="2*"/>
+
+              </Grid.RowDefinitions>
+        
+              <Grid.ColumnDefinitions>
+                     <ColumnDefinition Width="5*"/>
+                     <ColumnDefinition Width="5*"/>
+              </Grid.ColumnDefinitions>
+                
+              <Label Text="Email :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="0" />
+              <Entry  Keyboard="Email" Text="{Binding EmailDisplay}" 
+                      Placeholder="__@__.com"
+                      PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+                      Grid.Column="1" Grid.Row="0"/>
+                
+              <Label Text="Password :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="1" />
+              <Entry  Text="{Binding PassDisplay}" 
+                      Placeholder="+6 characters" IsPassword="True"
+                      PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+                      Grid.Column="1" Grid.Row="1"/>
+                
+              <Label Text="First Name :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="2" />
+              <Entry Keyboard="Text" Text="{Binding NameDisplay}" 
+                     Placeholder="Jonny" PlaceholderColor="DimGray"
+                     FontSize="20" TextColor="Black" BackgroundColor="White"
+                     Grid.Column="1" Grid.Row="2"/>
+                
+              <Label Text="Last Name :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="3" />
+              <Entry Keyboard="Text" Text="{Binding  LastNameDisplay}" 
+                     Placeholder="Bravo" PlaceholderColor="DimGray"
+                     FontSize="20" TextColor="Black" BackgroundColor="White"
+                     Grid.Column="1" Grid.Row="3"/>
+                
+              <Label Text="Phone Nr :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="4" />
+              <Entry  Keyboard="Numeric" Text="{Binding PhoneNrDisplay}"
+                      Placeholder= "0852827820" PlaceholderColor="DimGray"
+                      FontSize="20" TextColor="Black" BackgroundColor="White"
+                      Grid.Column="1" Grid.Row="4"/>
+              
+              <Button Command="{Binding AddressCommand}" Text="{Binding AddressDisplay}" FontSize="20" TextColor="Black" BackgroundColor="White"
+                     Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" IsEnabled="{Binding IsEnabled}" />
+              
+              
+              <Button  Text="Update" Command="{Binding UpdateCommand}"
+                      Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" TextColor="Black" HorizontalOptions="Center" IsEnabled="{Binding IsEnabled}" />
+                <ActivityIndicator
+                       IsRunning="{Binding CircularWaitDisplay}" 
+                       HorizontalOptions="Center" VerticalOptions="Start" Color="Gray" Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" />
+
+   </Grid>
 </ContentPage>

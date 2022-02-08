@@ -33,27 +33,17 @@ namespace Insurance_app.Logic
             return new Customer();
         }
 
-        public Customer CreateCustomer(string userId, int age, string fName, string lName, string phoneNr, string email,string address)
+        public Customer CreateCustomer(int age, string fName, string lName, string phoneNr, string email,Address address)
         {
             try
             {
-                var split = address.Split(new[] {'~'});
-            
                 return new Customer()
                 {
                 
-                    Id = userId, Age = age,
-                    Name = fName, LastName = lName, PhoneNr = phoneNr, Email=email, Partition = userId, 
-                    Address = new Address()
-                    {
-                        HouseN = Int32.Parse(split[0]),
-                        Street = split[1],
-                        City = split[2],
-                        County=split[3],
-                        Country = split[4],
-                        PostCode = split[5]
-                    }
-                
+                    Age = age,
+                    Name = fName, LastName = lName, PhoneNr = phoneNr, Email=email, 
+                    Address = address
+
                 };
             }
             catch (Exception e)

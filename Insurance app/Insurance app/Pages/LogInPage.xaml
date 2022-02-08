@@ -14,9 +14,10 @@
     
     <StackLayout Padding="40" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
         <Entry Text="{Binding EmailDisplay }"  Placeholder="email@gmail.com" TextColor="Black" PlaceholderColor="Gray" IsTextPredictionEnabled="True" Keyboard="Plain" />
-                <Entry Text= "{Binding PasswordDisplay}" Placeholder="secret" TextColor="Black" PlaceholderColor="Gray"  IsPassword="True" Keyboard="Plain" />
-                <Button Text="Log In" Command="{Binding LogInCommand}" />
-                <Button Text="Get a Quote" Command="{Binding QuoteCommand }" />
+        <Entry Text= "{Binding PasswordDisplay}" Placeholder="password" TextColor="Black" PlaceholderColor="Gray"  IsPassword="True" Keyboard="Plain" />
+        <Button Text="Log In" Command="{Binding LogInCommand}" />
+        <Button Text="Get a Quote" Command="{Binding QuoteCommand }" />
+        <ActivityIndicator x:Name="CircularWait" HorizontalOptions="Center" VerticalOptions="Center" Color="Gray" />
     </StackLayout>
         
 </ContentPage>

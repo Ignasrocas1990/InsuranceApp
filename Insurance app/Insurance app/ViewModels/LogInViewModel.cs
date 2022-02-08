@@ -59,6 +59,7 @@ namespace Insurance_app.ViewModels
             {
                 if (App.NetConnection())
                 {
+                    
                     await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
                     App.RealmApp.Sync.Reconnect();
                     await Shell.Current.GoToAsync($"//{nameof(HomePage)}");

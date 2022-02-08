@@ -18,12 +18,11 @@ namespace Insurance_app.Models
         public int? Plan { get; set; }
         public int? Smoker { get; set; }
         
-        public DateTimeOffset? StartDate { get; set; }
+        public DateTimeOffset? StartDate { get; set; } = DateTimeOffset.Now;
         public bool? Status { get; set; }
-        
-        [MapTo("_partition")][Required]
-        public string Partition { get; set; }
-        
+
+        [MapTo("_partition")] [Required] public string Partition { get; set; } = App.RealmApp.CurrentUser.Id;
+
     }
    
     

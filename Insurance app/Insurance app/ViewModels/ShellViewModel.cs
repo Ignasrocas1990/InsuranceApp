@@ -5,7 +5,7 @@ using Xamarin.CommunityToolkit.ObjectModel;
 
 namespace Insurance_app.ViewModels
 {
-    public class ShellViewModel
+    public class ShellViewModel : IDisposable
     {
         private static ShellViewModel _shellViewModel = null;
         private Dictionary<string , object>viewModels = new Dictionary<string , object>();
@@ -18,12 +18,6 @@ namespace Insurance_app.ViewModels
                 return _shellViewModel = new ShellViewModel();
             }
             return _shellViewModel;
-        }
-
-        public void AddViewModel(string name,object viewModel)
-        {
-            if (viewModels.ContainsKey(name)) return;
-            viewModels.Add(name,viewModel);
         }
 //dictionary  as key Activator.CreateInstance(Type.GetType("namespace."+ nameof(Class)));
         public object GetViewModel(string viewModelName)
@@ -70,6 +64,11 @@ namespace Insurance_app.ViewModels
             }
             return null;
             */
+        }
+
+        public void Dispose()
+        {
+            viewModels = null;
         }
     }
 }

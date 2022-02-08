@@ -23,9 +23,7 @@
     </FlyoutItem>
     
     <MenuItem Text="logout" IconImageSource="logoutIcon.png" Clicked="MenuItem_OnClicked"/>
-    
 
-    
     <Shell.FlyoutFooterTemplate>
             <DataTemplate>
                 <StackLayout >

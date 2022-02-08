@@ -17,5 +17,12 @@ namespace Insurance_app.Pages
             InitializeComponent();
             BindingContext = new ProfileViewModel();
         }
+
+        protected override async void OnAppearing()
+        {
+            var vm = (ProfileViewModel) BindingContext;
+            await vm.Setup();
+            base.OnAppearing();
+        }
     }
 }

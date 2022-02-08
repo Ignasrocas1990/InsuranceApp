@@ -58,9 +58,8 @@
                       FontSize="20" TextColor="Black" BackgroundColor="White"
                       Grid.Column="1" Grid.Row="4"/>
               
-              <Label Text="Address :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="5" />
-              <Entry Placeholder= "Select" Text="{Binding AddressDisplay}" Focused="VisualElement_OnFocused" PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
-                     Grid.Column="1" Grid.Row="5"/>
+              <Button Command="{Binding AddressCommand}" Text="{Binding AddressDisplay}" FontSize="20" TextColor="Black" BackgroundColor="White"
+                     Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" />
               
               
               <Button Text="Register" Command="{Binding RegisterCommand}"

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Insurance_app.Models;
 using SkiaSharp;
 
 using c = SkiaSharp.SKColors;
@@ -35,6 +36,37 @@ namespace Insurance_app.SupportClasses
         public static IList<int> ExcessFee()
         {
             return new List<int>() {300, 150, 0};
+        }
+        public static string IsValid(string fName,string lName,string phoneNr,string password,string email,Address address )
+        {
+            var errors = "";
+            if (fName.Length < 2 || fName.Length > 20 || StaticOptions.HasNumbers(fName))
+            {
+                errors += " First name is invalid \n";
+            }
+            if (lName.Length < 4 || lName.Length > 20 || StaticOptions.HasNumbers(lName))
+            {
+                errors += " Last name is invalid \n";
+            }
+            if (phoneNr.Length < 9 || !StaticOptions.HasNumbers(phoneNr))
+            {
+                errors += " Phone nr is invalid \n";
+            }
+            
+            if (password.Length < 7)
+            {
+                errors += " Password is invalid \n";
+            }
+            if (email.Length < 15 || !email.Contains("@") || !email.Contains("."))
+            {
+                errors += " Email is invalid \n";
+            }
+            if (address is null)
+            {
+                errors += "Address is not specified";
+            }
+
+            return errors;
         }
 
     }

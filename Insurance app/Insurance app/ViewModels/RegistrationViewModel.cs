@@ -13,6 +13,8 @@ using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
 using Exception = System.Exception;
+using Xamarin.CommunityToolkit.Extensions;
+
 
 namespace Insurance_app.ViewModels
 {    [QueryProperty(nameof(PriceDisplay),nameof(PriceDisplay))]
@@ -29,10 +31,11 @@ namespace Insurance_app.ViewModels
         private string lName="";
         private string phoneNr="";
         private string qString="";
-        private string address = "";
+        private string addressText = "Click to input";
         private readonly UserManager userManager;
         private readonly PolicyManager policyManager;
-        private  string errors ="";
+        private Address Address=null;
+        public ICommand AddressCommand { get; }
 
 
         public RegistrationViewModel()
@@ -40,17 +43,19 @@ namespace Insurance_app.ViewModels
             userManager = new UserManager();
             policyManager = new PolicyManager();
             RegisterCommand = new AsyncCommand(Register);
+            AddressCommand = new AsyncCommand(GetAddress);
         }
+
+
 
         private async Task Register()
         {
             try
             {
-                IsValid();
+                var errors = ""; //StaticOptions.IsValid(fName, lName, phoneNr, password, email, Address);TODO uncomment
                 if (errors != "")
                 {
                     await Shell.Current.CurrentPage.DisplayAlert("Error", errors, "close");
-                    errors = "";
                     return;
                 }
                 CircularWaitDisplay = true;
@@ -59,7 +64,7 @@ namespace Insurance_app.ViewModels
                 if (registered == "success")
                 {
                     var user =  await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
-                   var customer = userManager.CreateCustomer(user.Id,quote["Age"],fName, lName,phoneNr,email,address);
+                   var customer = userManager.CreateCustomer(quote["Age"],fName, lName,phoneNr,email,Address);
                    if (customer is null)
                    {
                        throw new Exception("registration failed");
@@ -100,39 +105,15 @@ namespace Insurance_app.ViewModels
 
 
         }
-        /**
-         * Validating inputs
-         */
-        private void IsValid()
+        private async Task GetAddress()
         {
-            if (fName.Length < 2 || fName.Length > 20 || StaticOptions.HasNumbers(fName))
+            Address = await Application.Current.MainPage.Navigation.ShowPopupAsync<Address>(new AddressPopup(new Address()));
+            if (Address!=null)
             {
-                errors += " First name is invalid \n";
+                AddressDisplay = "Address saved";
             }
-            if (lName.Length < 4 || lName.Length > 20 || StaticOptions.HasNumbers(lName))
-            {
-                errors += " Last name is invalid \n";
-            }
-            if (phoneNr.Length < 9 || StaticOptions.HasNumbers(lName))
-            {
-                errors += " Phone nr is invalid \n";
-            }
-            
-            if (password.Length < 7)
-            {
-                errors += " Password is invalid \n";
-            }
-            if (email.Length < 15 || !email.Contains("@") || !email.Contains("."))
-            {
-                errors += " Email is invalid \n";
-            }
-            if (address.Length <2)
-            {
-                errors += "Address is not specified";
-            }
-            
         }
-
+        
         // property bindings
         public string PhoneNrDisplay
         {
@@ -169,8 +150,8 @@ namespace Insurance_app.ViewModels
 
         public string AddressDisplay
         {
-            get => address;
-            set => SetProperty(ref address, value);
+            get => addressText;
+            set => SetProperty(ref addressText, value);
         }
 
         public string TempQuote

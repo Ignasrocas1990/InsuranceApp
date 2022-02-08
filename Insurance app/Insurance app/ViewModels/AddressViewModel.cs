@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Windows.Input;
+using Insurance_app.Models;
 using Insurance_app.Pages;
 using Insurance_app.SupportClasses;
 using Xamarin.CommunityToolkit.ObjectModel;
@@ -10,22 +11,34 @@ namespace Insurance_app.ViewModels
     public class AddressViewModel : ObservableObject
     {
         private AddressPopup popup;
-        private int houseN=0;
-        private string street="";
-        private string city =""; 
-        private string county="";
-        private string country=""; 
-        private string postCode="";
-        private string errors = "";
+        private int houseN;
+        private string street;
+        private string city; 
+        private string county;
+        private string country; 
+        private string postCode;
+        private string errors;
 
         public ICommand CancelCommand { get; }
         public ICommand SaveCommand { get; }
 
-        public AddressViewModel(AddressPopup popup )
+        public AddressViewModel(AddressPopup popup, Address address)
         {
             this.popup = popup;
+            Init(address);
             SaveCommand = new AsyncCommand(Save);
             CancelCommand = new Command(Cancel);
+        }
+
+        private void Init(Address address)
+        {
+            //TODO check this ----------------------------
+            if (address.HouseN != null) HouseNDisplay =  (int) address.HouseN;
+            StreetDisplay = address.Street;
+            CityDisplay = address.City;
+            CountyDisplay = address.County;
+            CountryDisplay = address.Country;
+            PostCodeDisplay = address.PostCode;
         }
 
         private async Task Save()
@@ -47,11 +60,21 @@ namespace Insurance_app.ViewModels
                 return;
 
             }
-            popup.Dismiss($"{houseN}~{street}~{city}~{county}~{country}~{postCode}");
+            
+            popup.Dismiss(new Address() // TODO check this ------------------
+            {
+                HouseN = houseN,
+                Street = street,
+                City = city,
+                County = county,
+                Country = country,
+                PostCode = postCode
+            });
+            //popup.Dismiss($"{houseN}~{street}~{city}~{county}~{country}~{postCode}");
         }
         private void Cancel()
         {
-            popup.Dismiss("");
+            popup.Dismiss(null);
         }
 
         public string CityDisplay

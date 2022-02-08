@@ -62,7 +62,7 @@ namespace Insurance_app.Service
                 {
                     _realm.Write(() =>
                     {
-                        c = _realm.All<Customer>().Where(u => u.Id == user.Id).FirstOrDefault();
+                        c = _realm.All<Customer>().FirstOrDefault(u => u.Id == user.Id);
                         //c = realm.Find<Customer>(user.Id);
 
                     });
@@ -225,5 +225,24 @@ namespace Insurance_app.Service
         }
 
 
+        public async Task AddClaim(User user,Claim claim)
+        {
+            try
+            {
+                await GetRealm(user);
+                _realm.Write(() =>
+                {
+                    var c = _realm.Find<Customer>(user.Id);
+                    if (c is null) return;
+                    c.Claim.Add(_realm.Add(claim));
+
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            
+        }
     }
 }

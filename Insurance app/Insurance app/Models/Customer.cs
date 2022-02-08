@@ -11,8 +11,7 @@ namespace Insurance_app.Models
     public class Customer : RealmObject
     {
         public Customer() { }
-        [PrimaryKey][MapTo("_id")][Required]
-        public string Id { get; set; }
+        [PrimaryKey] [MapTo("_id")] [Required] public string Id { get; set; } = App.RealmApp.CurrentUser.Id;
         public Address Address { get; set; }
         public int? Age { get; set; }
         public string Name { get; set; }
@@ -22,25 +21,29 @@ namespace Insurance_app.Models
         
         public PersonalPolicy Policy { get; set; }
         public IList<Reward> Reward { get; }
-        public Claim Claim { get; set; }
+        public IList<Claim> Claim { get; }
 
         public bool? DelFlag { get; set; } = false;
-        [MapTo("_partition")][Required]
-        public string Partition { get; set; }
+        [MapTo("_partition")] [Required] public string Partition { get; set; } = App.RealmApp.CurrentUser.Id;
 
         public async Task<Reward> CreateReward()
         {
            return await new RealmDb().AddNewReward(App.RealmApp.CurrentUser);
         }
+
+        public async Task CreateClaim(Claim claim)
+        { 
+            await new RealmDb().AddClaim(App.RealmApp.CurrentUser,claim);
+        }
         
     }
     public class Address  : EmbeddedObject
     {
-        public string City { get; set; }
-        public string Country { get; set; }
-        public string County { get; set; }
-        public int? HouseN { get; set; }
-        public string PostCode { get; set; }
-        public string Street { get; set; }
+        public string City { get; set; } = "";
+        public string Country { get; set; } = "";
+        public string County { get; set; } = "";
+        public int? HouseN { get; set; } = 0;
+        public string PostCode { get; set; } = "";
+        public string Street { get; set; } = "";
     }
 }

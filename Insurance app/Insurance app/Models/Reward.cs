@@ -18,10 +18,10 @@ namespace Insurance_app.Models
         public bool IsFinish { get; set; }
         public float? Cost { get; set; }
         public DateTimeOffset? FinDate { get; set; } = null;
-        public DateTimeOffset? StartDate { get; set; } =DateTime.Now;
+        public DateTimeOffset? StartDate { get; set; } = DateTimeOffset.Now;
         public bool? DelFlag { get; set; } = false;
         public IList<MovData> MovData { get; }
 
-        [MapTo("_partition")][Required] public string Partition { get; set; }
+        [MapTo("_partition")] [Required] public string Partition { get; set; } = App.RealmApp.CurrentUser.Id;
     }
 }
