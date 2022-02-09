@@ -19,7 +19,6 @@ namespace Insurance_app.ViewModels
         private string lastName;
         private string phoneNr;
         private string email;
-        private string password;
         private bool wait = false;
         private string addressText = "Click to update address";
         private Address address;
@@ -56,10 +55,11 @@ namespace Insurance_app.ViewModels
         }
         private async Task UpdateAddress()
         {
-            address = await Application.Current.MainPage.Navigation.ShowPopupAsync<Address>(new AddressPopup(address));
-            if (address!=null)
+           var newAddress = await Application.Current.MainPage.Navigation.ShowPopupAsync<Address>(new AddressPopup(address));
+            if (newAddress!=null)
             {
                 AddressDisplay = "Address saved";
+                address = newAddress;
             }
         }
         private async Task Update()
@@ -67,8 +67,8 @@ namespace Insurance_app.ViewModels
             //save to database
             try
             {
-                var errors = StaticOptions.IsValid(name, lastName, phoneNr, password, email, address);
-                if (errors != "" )
+                var errors = ""; //StaticOptions.IsValid(name, lastName, phoneNr, email);//TODO uncomment for submission
+                if (errors.Length > 2)
                 {
                     await Shell.Current.CurrentPage.DisplayAlert("Error", errors, "close");
                     return;
@@ -79,7 +79,7 @@ namespace Insurance_app.ViewModels
                 
                 var customer = userManager.CreateCustomer(age, name, lastName, phoneNr, email, address);
                await userManager.AddCustomer(customer, App.RealmApp.CurrentUser);
-               await App.RealmApp.EmailPasswordAuth.CallResetPasswordFunctionAsync(email, password);
+               //await App.RealmApp.EmailPasswordAuth.CallResetPasswordFunctionAsync(email, password); make it separate screen
                
                CircularWaitDisplay = false;
                IsEnabled = true;
@@ -92,10 +92,7 @@ namespace Insurance_app.ViewModels
                 Console.WriteLine(e);
             }
         }
-
-
-
-
+        
         public string NameDisplay
         {
             get => name;
@@ -128,13 +125,7 @@ namespace Insurance_app.ViewModels
             get => wait;
             set => SetProperty(ref wait, value);
         }
-
-        public string PassDisplay
-        {
-            get => password;
-            set => SetProperty(ref password, value);
-        }
-
+        
         private bool enabled = true;
         public bool IsEnabled
         {

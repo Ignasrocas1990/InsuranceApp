@@ -17,7 +17,7 @@ namespace Insurance_app.ViewModels
         private string county;
         private string country; 
         private string postCode;
-        private string errors;
+        private string errors="";
 
         public ICommand CancelCommand { get; }
         public ICommand SaveCommand { get; }
@@ -27,7 +27,7 @@ namespace Insurance_app.ViewModels
             this.popup = popup;
             Init(address);
             SaveCommand = new AsyncCommand(Save);
-            CancelCommand = new Command(Cancel);
+            CancelCommand = new Command(Close);
         }
 
         private void Init(Address address)
@@ -53,15 +53,15 @@ namespace Insurance_app.ViewModels
                 errors = "City,Country,County cant have numbers";
             }
 
-            if (errors != "")
+            if (errors.Length > 2)
             {
                 await Shell.Current.CurrentPage.DisplayAlert("Error", errors, "close");
                 errors = "";
                 return;
 
             }
-            
-            popup.Dismiss(new Address() // TODO check this ------------------
+
+            popup.Dismiss(new Address()
             {
                 HouseN = houseN,
                 Street = street,
@@ -70,9 +70,10 @@ namespace Insurance_app.ViewModels
                 Country = country,
                 PostCode = postCode
             });
+            
             //popup.Dismiss($"{houseN}~{street}~{city}~{county}~{country}~{postCode}");
         }
-        private void Cancel()
+        private void Close()
         {
             popup.Dismiss(null);
         }

@@ -55,6 +55,7 @@ namespace Insurance_app.ViewModels
             {
                 newMovDataList = new ConcurrentQueue<MovData>();
                 customer = await userManager.GetCustomer(App.RealmApp.CurrentUser);
+                
                 if (customer is null)
                 {
                     await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
@@ -208,5 +209,7 @@ namespace Insurance_app.ViewModels
             set => SetProperty(ref  temp, value);
         }
         private double temp = 0;
+
+        
     }
 }

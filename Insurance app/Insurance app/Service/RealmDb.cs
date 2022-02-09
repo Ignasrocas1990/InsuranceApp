@@ -41,7 +41,7 @@ namespace Insurance_app.Service
                 }
                 _realm.Write(() =>
                 {
-                    _realm.Add(c);
+                    _realm.Add(c,true);
                     
                 });
                 Console.WriteLine("customer added");
@@ -149,24 +149,7 @@ namespace Insurance_app.Service
             
         }
 
-        public async Task DelAllMovData(User user)
-        {
-            try
-            {
-                await GetRealm(user);
-                _realm.Write(() =>
-                {
-                    var remList = _realm.All<MovData>().Where(m => m.Partition == user.Id);
-                    _realm.RemoveRange(remList);
-                });
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-           
 
-        }
 
 //------------------------------------------------   reward methods ----------------------
         public async Task<Reward> AddNewReward(User user)
@@ -220,8 +203,12 @@ namespace Insurance_app.Service
         public void StopSync()
         {
             if (_realm!=null)
+                _realm.RemoveAll();
+            if (_realm != null)
+            {
                 _realm.SyncSession.Stop();
-            if (_realm != null) _realm.Dispose();
+                if (_realm != null) _realm.Dispose();
+            }
         }
 
 
@@ -243,6 +230,29 @@ namespace Insurance_app.Service
                 Console.WriteLine(e);
             }
             
+        }
+        public async Task CleanDatabase(User user)//TODO remove this when submitting
+        {
+            try
+            {
+                await GetRealm(user);
+                _realm.Write(() =>
+                {
+                    _realm.RemoveAll<Claim>();
+                    _realm.RemoveAll<Customer>();
+                    _realm.RemoveAll<MovData>();
+                    _realm.RemoveAll<PersonalPolicy>();
+                    _realm.RemoveAll<Reward>();
+                    //var remList = _realm.All<MovData>().Where(m => m.Partition == user.Id);
+                    //_realm.RemoveRange(remList);
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+           
+
         }
     }
 }

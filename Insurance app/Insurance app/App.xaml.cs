@@ -29,11 +29,12 @@ namespace Insurance_app
             
             //RealmDb = new RealmDb();
             RealmApp = Realms.Sync.App.Create(StaticOptions.MyRealmAppId);
+            
             //firstly check here if user is customer or client at welcome screen
             MainPage = new AppShell();//there should be 2 type of AppShells... (customer/client)
             if (NetConnection() && RealmApp.CurrentUser != null)
             {
-                Shell.Current.GoToAsync($"//{nameof(HomePage)}");// for simplicity just make them log in everytime
+                 Shell.Current.GoToAsync($"//{nameof(HomePage)}");// for simplicity just make them log in everytime
             }
             else
             {
@@ -69,7 +70,8 @@ namespace Insurance_app
         {
             var connection = Connectivity.NetworkAccess;
             var profiles = Connectivity.ConnectionProfiles;
-            if (profiles.Contains(ConnectionProfile.WiFi) || profiles.Contains(ConnectionProfile.Cellular))
+            var connectionProfiles = profiles as ConnectionProfile[] ?? profiles.ToArray();
+            if (connectionProfiles.Contains(ConnectionProfile.WiFi) || connectionProfiles.Contains(ConnectionProfile.Cellular))
             {
                 return (Connectivity.NetworkAccess == NetworkAccess.Internet);
             }
@@ -78,6 +80,7 @@ namespace Insurance_app
 
 
         }
+       
     }
     
 }

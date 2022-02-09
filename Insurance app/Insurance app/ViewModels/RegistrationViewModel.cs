@@ -34,26 +34,26 @@ namespace Insurance_app.ViewModels
         private string addressText = "Click to input";
         private readonly UserManager userManager;
         private readonly PolicyManager policyManager;
-        private Address Address=null;
+        private Address address=null;
         public ICommand AddressCommand { get; }
 
 
         public RegistrationViewModel()
         {
+            address = new Address();
             userManager = new UserManager();
             policyManager = new PolicyManager();
             RegisterCommand = new AsyncCommand(Register);
             AddressCommand = new AsyncCommand(GetAddress);
         }
-
-
-
+        
         private async Task Register()
         {
             try
             {
-                var errors = ""; //StaticOptions.IsValid(fName, lName, phoneNr, password, email, Address);TODO uncomment
-                if (errors != "")
+                var errors = "";//StaticOptions.IsValid(fName, lName, phoneNr, email);//TODO uncomment
+                errors += StaticOptions.isPasswordValid(password);
+                if (errors.Length > 2)
                 {
                     await Shell.Current.CurrentPage.DisplayAlert("Error", errors, "close");
                     return;
@@ -64,7 +64,7 @@ namespace Insurance_app.ViewModels
                 if (registered == "success")
                 {
                     var user =  await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
-                   var customer = userManager.CreateCustomer(quote["Age"],fName, lName,phoneNr,email,Address);
+                   var customer = userManager.CreateCustomer(quote["Age"],fName, lName,phoneNr,email,address);
                    if (customer is null)
                    {
                        throw new Exception("registration failed");
@@ -107,10 +107,11 @@ namespace Insurance_app.ViewModels
         }
         private async Task GetAddress()
         {
-            Address = await Application.Current.MainPage.Navigation.ShowPopupAsync<Address>(new AddressPopup(new Address()));
-            if (Address!=null)
+           var newAddress = await Application.Current.MainPage.Navigation.ShowPopupAsync<Address>(new AddressPopup(address));
+            if (newAddress!=null)
             {
                 AddressDisplay = "Address saved";
+                address = newAddress;
             }
         }
         

@@ -37,7 +37,7 @@ namespace Insurance_app.SupportClasses
         {
             return new List<int>() {300, 150, 0};
         }
-        public static string IsValid(string fName,string lName,string phoneNr,string password,string email,Address address )
+        public static string IsValid(string fName,string lName,string phoneNr,string email)
         {
             var errors = "";
             if (fName.Length < 2 || fName.Length > 20 || StaticOptions.HasNumbers(fName))
@@ -53,21 +53,25 @@ namespace Insurance_app.SupportClasses
                 errors += " Phone nr is invalid \n";
             }
             
-            if (password.Length < 7)
-            {
-                errors += " Password is invalid \n";
-            }
+            
             if (email.Length < 15 || !email.Contains("@") || !email.Contains("."))
             {
                 errors += " Email is invalid \n";
             }
-            if (address is null)
+            return errors;
+        }
+
+        public static string isPasswordValid(string password)
+        {
+            string errors="";
+            if (password.Length < 7)
             {
-                errors += "Address is not specified";
+                errors += " Password is invalid \n";
             }
 
             return errors;
         }
+        
 
     }
 }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Android.OS;
 using Insurance_app.Pages;
+using Insurance_app.Service;
 using Realms;
 using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
@@ -35,12 +36,14 @@ namespace Insurance_app.ViewModels
             };
 
             userManager = new UserManager();
+            
         }
 
         private async Task NavigateToQuote()
         {
             try
             {
+
                 await Shell.Current.GoToAsync($"//{nameof(QuotePage)}");
                 //var quotePage = new QuotePage();
                 //await Nav.PushAsync(quotePage);
@@ -62,6 +65,9 @@ namespace Insurance_app.ViewModels
                     
                     await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
                     App.RealmApp.Sync.Reconnect();
+                    
+                   // await CleanDatabase();//TODO remove when submitting
+                    
                     await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
                 }
                 else
@@ -92,7 +98,11 @@ namespace Insurance_app.ViewModels
             get => password;
             set => SetProperty(ref password, value);
         }
-        
+        private async Task CleanDatabase()//TODO Remove when submitting
+        {
+            RealmDb db = new RealmDb();
+            await db.CleanDatabase(App.RealmApp.CurrentUser);
+        }
 
     }
 }
