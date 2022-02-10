@@ -4,12 +4,13 @@ using System.Windows.Input;
 using Insurance_app.Logic;
 using Insurance_app.Pages;
 using Java.Lang.Reflect;
+using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
 {
-    public class ClaimViewModel : ObservableObject
+    public class ClaimViewModel : ObservableObject,IDisposable
     {
         public ICommand CreateClaimCommand { get; }
         public ICommand ViewPreviousClaimsCommand { get; }
@@ -24,7 +25,7 @@ namespace Insurance_app.ViewModels
         public ClaimViewModel()
         {
             CreateClaimCommand = new AsyncCommand(CreateClaim);
-            ViewPreviousClaimsCommand = new Command(GetClaims);
+            ViewPreviousClaimsCommand = new AsyncCommand(GetClaims);
             claimManager = new ClaimManager();
             
         }
@@ -35,7 +36,7 @@ namespace Insurance_app.ViewModels
             var claim = claimManager.GetCurrentClaim();
             if (claim != null)
             {
-                FieldEnabledDisplay = false;
+                FieldEnabledDisplay = true;
                 DateDisplay = $"{claim.StartDate}";
                 HospitalPostCodeDisplay = claim.HospitalPostCode;
                 PatientNrDisplay = claim.PatientNr;
@@ -43,6 +44,7 @@ namespace Insurance_app.ViewModels
             }
             else
             {
+                FieldEnabledDisplay = false;
                 DateDisplay = $"{DateTimeOffset.Now.DateTime}";
             }
 
@@ -52,15 +54,16 @@ namespace Insurance_app.ViewModels
             }
         }
 
-        private void GetClaims()
+        private async Task GetClaims()
         {
-            var displayClaimsPopup = new ExistingClaimsPopup(claimManager.Claims);
+            var newAddress = await Application.Current.MainPage.Navigation
+                .ShowPopupAsync(new ExistingClaimsPopup(claimManager.Claims));
         }
         
         private async Task CreateClaim()
         {
             CircularWaitDisplay = true;
-            FieldEnabledDisplay = false;
+            FieldEnabledDisplay = true;
             await claimManager.CreateClaim(hospitalPostcode, patientNr, type, true,App.RealmApp.CurrentUser);
             StatusDisplay = "open";
             CircularWaitDisplay = false;
@@ -83,7 +86,7 @@ namespace Insurance_app.ViewModels
         
         public string StatusDisplay
         {
-            get => $"Status : {status}";
+            get => status;
             set => SetProperty(ref status, value);
         }
         private bool wait;
@@ -110,6 +113,11 @@ namespace Insurance_app.ViewModels
         {
             get => dateString;
             set => SetProperty(ref dateString, value);
+        }
+
+        public void Dispose()
+        {
+            claimManager.Dispose();
         }
     }
 }

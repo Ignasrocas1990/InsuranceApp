@@ -6,7 +6,7 @@ using Realms.Sync;
 
 namespace Insurance_app.Logic
 {
-    public class ReportManager
+    public class ReportManager : IDisposable
     {
         private RealmDb realmDb;
         public ReportManager()
@@ -17,6 +17,11 @@ namespace Insurance_app.Logic
         public Task<Dictionary<string,int>> GetWeeksMovData(User user)
         {
             return realmDb.GetWeeksMovData(user);
+        }
+
+        public void Dispose()
+        {
+            realmDb.Dispose();
         }
     }
 }

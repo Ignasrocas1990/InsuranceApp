@@ -17,11 +17,11 @@ namespace Insurance_app.Pages
         public HomePage()
         {
             InitializeComponent();
-/*
-             viewModel = (HomeViewModel) ShellViewModel.GetInstance()
+
+            BindingContext = (HomeViewModel) ShellViewModel.GetInstance()
                 .GetViewModel(Converter.HomeViewModel);
-                */
-             BindingContext = new HomeViewModel();
+
+             //BindingContext   = new HomeViewModel();
         }
 
         protected override async void OnAppearing()

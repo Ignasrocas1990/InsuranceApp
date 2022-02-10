@@ -10,14 +10,14 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
 {
-    public class ReportViewModel : ObservableObject
+    public class ReportViewModel : ObservableObject,IDisposable
     {
         private Dictionary<string, int> chartEntries = null;
         public Stack<ChartEntry> Entries = new Stack<ChartEntry>();
 
         private bool firstSetup = true;
 
-        private ReportManager reportManager;
+        private readonly ReportManager reportManager;
 
         public ReportViewModel()
         {
@@ -61,6 +61,13 @@ namespace Insurance_app.ViewModels
                         index--;
                     }
                 }
+        }
+
+        public void Dispose()
+        {
+            chartEntries = null;
+            Entries = null;
+            reportManager.Dispose();
         }
     }
 }

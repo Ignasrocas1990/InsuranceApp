@@ -20,16 +20,17 @@ using Exception = System.Exception;
 
 namespace Insurance_app.ViewModels
 {
-    public class HomeViewModel : ObservableObject
+    public class HomeViewModel : ObservableObject,IDisposable
     {
 
         public ICommand StepCommand { get; }
-        public bool ToggleState = false;
+        private bool ToggleState = false;
         private BleManager bleManager;
         private UserManager userManager;
+        private RewardManager rewardManager;
         private ConcurrentQueue<MovData> newMovDataList;
-        private Customer customer;
-        public bool FirstRun = true;
+        //private Customer customer;
+        private bool FirstRun = true;
 
 
 
@@ -45,6 +46,7 @@ namespace Insurance_app.ViewModels
             bleManager = BleManager.GetInstance();
             bleManager.InfferEvent += InferredRawData;
             userManager = new UserManager();
+            rewardManager = new RewardManager();
         }
 
         public async Task Setup()
@@ -54,7 +56,7 @@ namespace Insurance_app.ViewModels
             try
             {
                 newMovDataList = new ConcurrentQueue<MovData>();
-                customer = await userManager.GetCustomer(App.RealmApp.CurrentUser);
+                var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser);
                 
                 if (customer is null)
                 {
@@ -94,7 +96,8 @@ namespace Insurance_app.ViewModels
                 {
                     if (ProgressBarDisplay <= 0)
                     {
-                        await customer.CreateReward();
+                        await rewardManager.CreateReward(App.RealmApp.CurrentUser);
+                       //await customer.CreateReward();
                         
                         MainThread.BeginInvokeOnMainThread(ResetRewardDisplay);
                     }
@@ -109,7 +112,7 @@ namespace Insurance_app.ViewModels
                                         Type = "step",
                                         Partition = App.RealmApp.CurrentUser.Id
                                     };
-                    newMovDataList.Enqueue(currMovData);//-----------------------------------
+                    newMovDataList.Enqueue(currMovData);
                     if (newMovDataList.Count > 4)
                     {
                         //or re-create new Realm
@@ -203,6 +206,13 @@ namespace Insurance_app.ViewModels
         }
         private double temp = 0;
 
-        
+
+        public void Dispose()
+        {
+            userManager.Dispose();
+            newMovDataList = null;
+            rewardManager.Dispose();
+
+        }
     }
 }

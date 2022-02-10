@@ -1,4 +1,5 @@
 ﻿
+using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -11,7 +12,9 @@ namespace Insurance_app.Pages
         public ClaimPage()
         {
             InitializeComponent();
-            BindingContext = new ClaimViewModel();
+            
+            BindingContext = (ClaimViewModel) ShellViewModel.GetInstance()
+                .GetViewModel(Converter.ClaimViewModel);
         }
 
         protected override async void OnAppearing()

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Insurance_app.Models;
 using Insurance_app.Pages;
@@ -6,7 +7,7 @@ using Insurance_app.SupportClasses;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
 
-namespace Insurance_app.ViewModels
+namespace Insurance_app.ViewModels.Popups
 {
     public class AddressViewModel : ObservableObject
     {

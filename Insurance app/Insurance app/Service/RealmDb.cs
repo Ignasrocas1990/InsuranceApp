@@ -5,11 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Insurance_app.Models;
 using Realms;
+using Realms.Exceptions;
 using Realms.Sync;
 
 namespace Insurance_app.Service
 {
-    public class RealmDb
+    public class RealmDb : IDisposable
     {
         private Realm realm = null;
         public RealmDb() {}
@@ -265,8 +266,16 @@ namespace Insurance_app.Service
             {
                 realm = null;
 
-                var config = new SyncConfiguration(user.Id,user);
+                var config = new PartitionSyncConfiguration(user.Id, user);
                 realm = await Realm.GetInstanceAsync(config);
+            }
+            catch (RealmInUseException)
+            {
+                Console.WriteLine("RealmInUseException");
+            }
+            catch (RealmFileAccessErrorException)
+            {
+                Console.WriteLine("RealmFileAccessErrorException");
             }
             catch (Exception e)
             {
@@ -281,6 +290,7 @@ namespace Insurance_app.Service
             try
             {
                 if (realm is null) return;
+                //realm = null;
                 realm.Dispose();
             }
             catch (Exception e)

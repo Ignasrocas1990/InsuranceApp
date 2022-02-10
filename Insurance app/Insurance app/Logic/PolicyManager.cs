@@ -7,7 +7,7 @@ using Realms.Sync;
 
 namespace Insurance_app.Logic
 {
-    public class PolicyManager
+    public class PolicyManager : IDisposable
     {
         private readonly RealmDb realmDb;
 
@@ -25,6 +25,11 @@ namespace Insurance_app.Logic
                 Hospitals = hospitals, Plan = plan, Smoker = smoker,
                 Status = status, StartDate = utcNow,Partition = partition
             };
+        }
+
+        public void Dispose()
+        {
+            realmDb.Dispose();
         }
     }
 }

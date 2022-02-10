@@ -26,7 +26,6 @@ namespace Insurance_app.ViewModels
 
         public LogInViewModel()
         {
-            
             LogInCommand = new AsyncCommand(LogIn);
             QuoteCommand = new AsyncCommand(NavigateToQuote);
             Connectivity.ConnectivityChanged += (s, e) =>
@@ -43,7 +42,6 @@ namespace Insurance_app.ViewModels
         {
             try
             {
-
                 await Shell.Current.GoToAsync($"//{nameof(QuotePage)}");
                 //var quotePage = new QuotePage();
                 //await Nav.PushAsync(quotePage);
@@ -62,7 +60,7 @@ namespace Insurance_app.ViewModels
             {
                 if (App.NetConnection())
                 {
-                    
+
                     await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
                     App.RealmApp.Sync.Reconnect();
                     

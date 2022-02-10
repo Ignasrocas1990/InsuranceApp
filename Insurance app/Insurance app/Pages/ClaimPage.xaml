@@ -2,12 +2,12 @@
 
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
-             x:DataType="viewModels:ClaimViewModel"
+             xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
+             x:DataType="viewModels1:ClaimViewModel"
              x:Class="Insurance_app.Pages.ClaimPage">
     
     
-    <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
+    <Grid VerticalOptions="Center"  RowSpacing="20" ColumnSpacing="5" Padding="40">
               <Grid.RowDefinitions>
             
                      <RowDefinition Height="Auto"/>
@@ -15,7 +15,7 @@
                      <RowDefinition Height="Auto"/>
                      <RowDefinition Height="Auto"/>
                      <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="*"/>
+                     <RowDefinition Height="2*"/>
 
               </Grid.RowDefinitions>
         
@@ -24,31 +24,38 @@
                      <ColumnDefinition Width="5*"/>
               </Grid.ColumnDefinitions>
                 
-            <Label Text="{Binding DateDisplay}" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" 
+            <Label Text="{Binding DateDisplay}" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="Black" BackgroundColor="White" 
                    Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" />
             
-            <Label Text="Hospital P. Code:" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="1" />
-            <Entry  Keyboard="Email" IsEnabled="{Binding FieldEnabledDisplay}"
+            <Label Text="Hospital Code :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" 
+                   Grid.Column="0" Grid.Row="1" />
+            <Entry  Keyboard="Email" IsReadOnly="{Binding FieldEnabledDisplay}"
                     Text="{Binding  HospitalPostCodeDisplay}" 
                     Placeholder="R93 V1N6" PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
                     Grid.Column="1" Grid.Row="1"/>
                 
-            <Label Text="Patient Nr :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="2" />
-            <Entry  Text="{Binding PatientNrDisplay}" IsEnabled="{Binding FieldEnabledDisplay}"
+            <Label Text="Patient Nr :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White"
+                   Grid.Column="0" Grid.Row="2" />
+             <Entry  Text="{Binding PatientNrDisplay}" IsReadOnly="{Binding FieldEnabledDisplay}" 
                     Placeholder="123S3DG23S" PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
                     Grid.Column="1" Grid.Row="2"/>
               
-            <Label Text="{Binding StatusDisplay}" IsEnabled="False" 
-                   Grid.Column="0" Grid.Row="3"  FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="Black" BackgroundColor="White" />
+            <Label Text="Status :"
+                   Grid.Column="0" Grid.Row="3" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" />
+            <Label Text="{Binding StatusDisplay}"
+                   Grid.Column="1" Grid.Row="3" FontSize="20" VerticalTextAlignment="Center" TextColor="Black" BackgroundColor="White" />
+
+            <Button Text="Create"  Command="{Binding  CreateClaimCommand}"  BackgroundColor="Green" TextColor="White"
+                    Grid.Column="1" Grid.Row="4" IsEnabled="{Binding FieldEnabledDisplay}" HorizontalOptions="Fill" />
+
+            <Button Text="All Claims" Command="{Binding ViewPreviousClaimsCommand}" IsEnabled="{Binding PreviousButtonEnabled}"
+                    Grid.Column="0" Grid.Row="4" TextColor="White"  HorizontalOptions="Fill" BackgroundColor="Indigo" />
+
             
-            <Button Text="AllClaims" Command="{Binding ViewPreviousClaimsCommand}" IsEnabled="{Binding PreviousButtonEnabled}"
-                    Grid.Column="0" Grid.Row="4" TextColor="Black"  HorizontalOptions="Center" BackgroundColor="Indigo" />
-            <Button Text="Create"  Command="{Binding  CreateClaimCommand}"  FontSize="20" TextColor="Black" BackgroundColor="Green"
-                    Grid.Column="1" Grid.Row="4" IsEnabled="{Binding FieldEnabledDisplay}" />
-              
+          
             
             <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}" 
-                    HorizontalOptions="Center" VerticalOptions="Start" Color="Gray" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" />
+                    HorizontalOptions="Center" Color="Gray" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" />
     </Grid>           
     
 </ContentPage>

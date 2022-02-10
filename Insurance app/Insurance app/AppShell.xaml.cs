@@ -1,6 +1,8 @@
 ﻿using System;
 using Insurance_app.Logic;
 using Insurance_app.Pages;
+using Insurance_app.SupportClasses;
+using Insurance_app.ViewModels;
 using Xamarin.Forms;
 
 namespace Insurance_app
@@ -15,8 +17,16 @@ namespace Insurance_app
         {
             try
             {
+                var svm = ShellViewModel.GetInstance();
+                ((HomeViewModel) svm.GetViewModel(Converter.HomeViewModel)).Dispose();
+                ((ClaimViewModel) svm.GetViewModel(Converter.ClaimViewModel)).Dispose();
+                ((ProfileViewModel) svm.GetViewModel(Converter.ProfileViewModel)).Dispose();
+                ((ReportViewModel) svm.GetViewModel(Converter.ReportViewModel)).Dispose();
+                
+                ShellViewModel.GetInstance().Dispose();
                 await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
-                await Current.GoToAsync($"//{nameof(LogInPage)}");
+                
+                await Shell.Current.GoToAsync($"//{nameof(LogInPage)}",true);
             }
             catch (Exception ex)
             {

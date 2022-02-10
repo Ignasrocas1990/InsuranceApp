@@ -3,9 +3,9 @@
 <xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
-             xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
-             xmlns:models="clr-namespace:Insurance_app.Models;assembly=Insurance app"
-             x:DataType="viewModels:EcPopUpViewModel"
+           xmlns:models1="clr-namespace:Insurance_app.Models"
+           xmlns:popups="clr-namespace:Insurance_app.ViewModels.Popups;assembly=Insurance app"
+           x:DataType="popups:EcPopUpViewModel"
              IsLightDismissEnabled="False"
              Size="350,500"
              x:Class="Insurance_app.Pages.ExistingClaimsPopup">
@@ -14,15 +14,20 @@
     <ListView BackgroundColor="Transparent"
               ItemsSource="{Binding Claims}" HasUnevenRows="True" Header="Previous Claims">
         <ListView.ItemTemplate>
-            <DataTemplate x:DataType="models:Claim">
+            <DataTemplate x:DataType="models1:Claim">
                <ViewCell>
                    <Grid>
                        <Frame>
-                           <StackLayout>
-                               <Label Text="{Binding StartDate}"/>
-                               <Label Text="{Binding CloseDate}"/>
-                               <Label Text="{Binding HospitalPostCode}"/>
-                               <Label Text="{Binding Type}"/>
+                           <StackLayout Orientation="Vertical">
+                               <Label TextColor="Black" BackgroundColor="White"
+                                      Text="{Binding StartDate, StringFormat='{0:dd/MM/yyyy, HH:mm:ss}'}" />
+                               
+                               <Label TextColor="Black" BackgroundColor="White"
+                                      Text="{Binding CloseDate,StringFormat='{0:dd/MM/yyyy, HH:mm:ss}'}"/>
+                               <Label TextColor="Black" BackgroundColor="White"
+                                      Text="{Binding HospitalPostCode}"/>
+                               <Label TextColor="Black" BackgroundColor="White"
+                                      Text="{Binding Type}"/>
                            </StackLayout>
                        </Frame>
                    </Grid>

@@ -69,6 +69,7 @@ namespace Insurance_app.ViewModels
         public void Dispose()
         {
             viewModels = null;
+            _shellViewModel = null;
         }
     }
 }

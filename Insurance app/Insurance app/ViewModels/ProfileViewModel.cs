@@ -11,7 +11,7 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
 {
-    public class ProfileViewModel:ObservableObject
+    public class ProfileViewModel:ObservableObject,IDisposable
     {
         private UserManager userManager;
         private int age;
@@ -131,6 +131,12 @@ namespace Insurance_app.ViewModels
         {
             get => enabled;
             set => SetProperty(ref enabled, value);
+        }
+
+        public void Dispose()
+        {
+            address = null;
+            userManager.Dispose();
         }
     }
 }

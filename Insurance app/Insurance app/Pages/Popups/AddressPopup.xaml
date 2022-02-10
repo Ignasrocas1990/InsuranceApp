@@ -3,9 +3,9 @@
 <xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:xct="clr-namespace:Xamarin.CommunityToolkit.UI.Views;assembly=Xamarin.CommunityToolkit"
-            xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
             xmlns:local="clr-namespace:Insurance_app.Models;assembly=Insurance app"
-            x:DataType="viewModels1:AddressViewModel"
+            xmlns:popups="clr-namespace:Insurance_app.ViewModels.Popups;assembly=Insurance app"
+            x:DataType="popups:AddressViewModel"
              x:TypeArguments="local:Address"
              IsLightDismissEnabled="False"
             Size="350,525"
@@ -42,7 +42,7 @@
         
         <Label Text="County :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="2" />
         <Entry  Text="{Binding CountyDisplay}" 
-                Placeholder="co.Laois"
+                Placeholder="co.Dublin"
                 PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
                 Grid.Column="1" Grid.Row="2"/>
         

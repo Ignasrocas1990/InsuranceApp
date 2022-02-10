@@ -6,9 +6,7 @@ using Insurance_app.Logic;
 using Insurance_app.Models;
 using Insurance_app.Pages;
 using Insurance_app.SupportClasses;
-using Java.Lang;
 using Newtonsoft.Json;
-using Realms;
 using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
@@ -99,7 +97,6 @@ namespace Insurance_app.ViewModels
                 CircularWaitDisplay = false;
                 await Shell.Current.DisplayAlert("error", "registration failed", "close");
                 Console.WriteLine(e);
-                return;
             }
 
 
