@@ -74,7 +74,7 @@ namespace Insurance_app.ViewModels
 
                    await userManager.AddCustomer(customer, App.RealmApp.CurrentUser);
                    await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
-                   userManager.StopSync();
+                   userManager.Dispose();
                    if (App.RealmApp.CurrentUser != null)
                    {
                        await App.RealmApp.CurrentUser.LogOutAsync();

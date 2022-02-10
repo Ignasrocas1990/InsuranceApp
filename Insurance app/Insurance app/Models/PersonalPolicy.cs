@@ -17,8 +17,8 @@ namespace Insurance_app.Models
         public int? Hospitals { get; set; }
         public int? Plan { get; set; }
         public int? Smoker { get; set; }
-        
-        public DateTimeOffset? StartDate { get; set; } = DateTimeOffset.Now;
+
+        public DateTimeOffset? StartDate { get; set; } = DateTimeOffset.Now.DateTime;
         public bool? Status { get; set; }
 
         [MapTo("_partition")] [Required] public string Partition { get; set; } = App.RealmApp.CurrentUser.Id;

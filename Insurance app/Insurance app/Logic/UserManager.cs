@@ -6,9 +6,9 @@ using Realms.Sync;
 
 namespace Insurance_app.Logic
 {
-    public class UserManager
+    public class UserManager : IDisposable
     {
-        public RealmDb realmDb;
+        private RealmDb realmDb;
         public UserManager()
         {
             realmDb= new RealmDb();
@@ -58,10 +58,13 @@ namespace Insurance_app.Logic
         {
             await realmDb.AddCustomer(customer,user);
         }
-        
-        public void StopSync()
+        public void Dispose()
         {
-            realmDb.StopSync();
+            if (realmDb!=null)
+            {
+                realmDb.Dispose();
+                
+            }
         }
     }
 }

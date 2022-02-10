@@ -59,7 +59,7 @@ namespace Insurance_app.ViewModels
                 if (customer is null)
                 {
                     await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
-                    userManager.realmDb.StopSync();
+                    userManager.Dispose();
                     await Shell.Current.GoToAsync($"//{nameof(LogInPage)}",false);
                     return;
                 }
@@ -96,11 +96,7 @@ namespace Insurance_app.ViewModels
                     {
                         await customer.CreateReward();
                         
-                        MainThread.BeginInvokeOnMainThread(() =>
-                        {
-                            ResetRewardDisplay();
-
-                        });
+                        MainThread.BeginInvokeOnMainThread(ResetRewardDisplay);
                     }
                     var currMovData = new MovData()
                                     {
@@ -159,9 +155,9 @@ namespace Insurance_app.ViewModels
             ToggleStateDisplay = newValue;
         }
 
-        public void SetUpView(double steps)
+        private void SetUpView(double steps)
         {
-            ProgressBarDisplay = 0;
+            ProgressBarDisplay = StaticOptions.StepNeeded;
             while (steps !=0)
             {
                 steps--;
@@ -193,10 +189,7 @@ namespace Insurance_app.ViewModels
             get => ToggleState;
             set => SetProperty(ref ToggleState, value);
         }
-        public void UpdateSwitchDisplay()
-        {
-            ToggleStateDisplay = ToggleState;
-        }
+        
         public double ProgressBarDisplay // progress bar display
         {
             get => currentProgressBars;

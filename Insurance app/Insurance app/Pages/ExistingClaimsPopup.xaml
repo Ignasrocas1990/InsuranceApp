@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
+             xmlns:models="clr-namespace:Insurance_app.Models;assembly=Insurance app"
+             x:DataType="viewModels:EcPopUpViewModel"
+             IsLightDismissEnabled="False"
+             Size="350,500"
+             x:Class="Insurance_app.Pages.ExistingClaimsPopup">
+    <!--Size = width,height -->
+    
+    <ListView BackgroundColor="Transparent"
+              ItemsSource="{Binding Claims}" HasUnevenRows="True" Header="Previous Claims">
+        <ListView.ItemTemplate>
+            <DataTemplate x:DataType="models:Claim">
+               <ViewCell>
+                   <Grid>
+                       <Frame>
+                           <StackLayout>
+                               <Label Text="{Binding StartDate}"/>
+                               <Label Text="{Binding CloseDate}"/>
+                               <Label Text="{Binding HospitalPostCode}"/>
+                               <Label Text="{Binding Type}"/>
+                           </StackLayout>
+                       </Frame>
+                   </Grid>
+               </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+        <ListView.Footer>
+            <StackLayout HorizontalOptions="Center">
+                <Button Text="close" Command="{Binding CloseCommand}"></Button>
+            </StackLayout>
+        </ListView.Footer>
+    </ListView>
+    
+    
+    
+</xct:Popup>

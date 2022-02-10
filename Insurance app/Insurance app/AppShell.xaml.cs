@@ -17,7 +17,6 @@ namespace Insurance_app
             {
                 await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
                 await Current.GoToAsync($"//{nameof(LogInPage)}");
-
             }
             catch (Exception ex)
             {

@@ -13,23 +13,22 @@ namespace Insurance_app.Pages
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class HomePage : ContentPage
     {
-        public static Switch MySwitch;
-        private HomeViewModel viewModel;
 
         public HomePage()
         {
             InitializeComponent();
-
+/*
              viewModel = (HomeViewModel) ShellViewModel.GetInstance()
                 .GetViewModel(Converter.HomeViewModel);
-             BindingContext = viewModel;
-
+                */
+             BindingContext = new HomeViewModel();
         }
 
         protected override async void OnAppearing()
         {
+            var vm = (HomeViewModel)BindingContext;
              CircularWait.IsRunning = true;
-             await viewModel.Setup();            //circular wait
+             await vm.Setup();                      //circular wait
              CircularWait.IsRunning = false;
              base.OnAppearing();
             
@@ -37,7 +36,8 @@ namespace Insurance_app.Pages
 
         private void Switch_OnToggled(object sender, ToggledEventArgs e)
         {
-            viewModel.StartDataReceive(e.Value);
+            var vm = (HomeViewModel)BindingContext;
+            vm.StartDataReceive(e.Value);
         }
     }
 }

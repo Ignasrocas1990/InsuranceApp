@@ -2,8 +2,10 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Insurance_app.Logic;
+using Insurance_app.Pages;
 using Java.Lang.Reflect;
 using Xamarin.CommunityToolkit.ObjectModel;
+using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
 {
@@ -12,7 +14,8 @@ namespace Insurance_app.ViewModels
         public ICommand CreateClaimCommand { get; }
         public ICommand ViewPreviousClaimsCommand { get; }
         private readonly ClaimManager claimManager;
-        
+
+        private string dateString;
         private string hospitalPostcode="";
         private string patientNr="";
         private string status = "Not Created";
@@ -21,21 +24,43 @@ namespace Insurance_app.ViewModels
         public ClaimViewModel()
         {
             CreateClaimCommand = new AsyncCommand(CreateClaim);
-            ViewPreviousClaimsCommand = new AsyncCommand(getClaims);
+            ViewPreviousClaimsCommand = new Command(GetClaims);
             claimManager = new ClaimManager();
+            
         }
 
-        private async Task getClaims()
+        public async Task SetUp()
         {
-            
-            //get claims and create list view model inside a pop up.
+            await claimManager.GetClaims(App.RealmApp.CurrentUser);
+            var claim = claimManager.GetCurrentClaim();
+            if (claim != null)
+            {
+                FieldEnabledDisplay = false;
+                DateDisplay = $"{claim.StartDate}";
+                HospitalPostCodeDisplay = claim.HospitalPostCode;
+                PatientNrDisplay = claim.PatientNr;
+                StatusDisplay = "open";
+            }
+            else
+            {
+                DateDisplay = $"{DateTimeOffset.Now.DateTime}";
+            }
+
+            if (claimManager.Claims.Count > 1)
+            {
+                PreviousButtonEnabled = true;
+            }
+        }
+
+        private void GetClaims()
+        {
+            var displayClaimsPopup = new ExistingClaimsPopup(claimManager.Claims);
         }
         
-//right now can only have 1 claim open at a time.
         private async Task CreateClaim()
         {
             CircularWaitDisplay = true;
-            fieldsEnabled = false;
+            FieldEnabledDisplay = false;
             await claimManager.CreateClaim(hospitalPostcode, patientNr, type, true,App.RealmApp.CurrentUser);
             StatusDisplay = "open";
             CircularWaitDisplay = false;
@@ -58,7 +83,7 @@ namespace Insurance_app.ViewModels
         
         public string StatusDisplay
         {
-            get => status;
+            get => $"Status : {status}";
             set => SetProperty(ref status, value);
         }
         private bool wait;
@@ -75,10 +100,16 @@ namespace Insurance_app.ViewModels
         }
 
         private bool previousExist;
-        public bool PreviousExistDisplay
+        public bool PreviousButtonEnabled
         {
             get => previousExist;
             set => SetProperty(ref previousExist, value);
+        }
+
+        public string DateDisplay
+        {
+            get => dateString;
+            set => SetProperty(ref dateString, value);
         }
     }
 }

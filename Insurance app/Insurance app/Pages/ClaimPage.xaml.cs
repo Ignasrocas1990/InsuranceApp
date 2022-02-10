@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using Insurance_app.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -16,6 +12,15 @@ namespace Insurance_app.Pages
         {
             InitializeComponent();
             BindingContext = new ClaimViewModel();
+        }
+
+        protected override async void OnAppearing()
+        {
+            var vm = (ClaimViewModel)BindingContext;
+            vm.CircularWaitDisplay = true;
+             await vm.SetUp();
+            vm.CircularWaitDisplay = false;
+            base.OnAppearing();
         }
     }
 }
