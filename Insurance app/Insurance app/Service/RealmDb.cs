@@ -212,17 +212,25 @@ namespace Insurance_app.Service
         }
 
 
-        public async Task AddClaim(User user,Claim claim)
+        public async Task AddClaim( string hospitalCode,string patientNr,string type,bool openStatus,User user)
         {
             try
             {
                 await GetRealm(user);
                 _realm.Write(() =>
                 {
-                    var c = _realm.Find<Customer>(user.Id);
-                    if (c is null) return;
-                    c.Claim.Add(_realm.Add(claim));
+                    var customer = _realm.Find<Customer>(user.Id);
+                    if (customer != null)
+                    {
+                        customer.Claim.Add(_realm.Add(new Claim()
+                        {
+                            HospitalPostCode = hospitalCode,
+                            PatientNr = patientNr,
+                            Type = type,
+                            OpenStatus = openStatus
 
+                        },true));
+                    }
                 });
             }
             catch (Exception e)

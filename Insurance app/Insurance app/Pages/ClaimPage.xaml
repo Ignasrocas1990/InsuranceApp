@@ -5,11 +5,50 @@
              xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
              x:DataType="viewModels:ClaimViewModel"
              x:Class="Insurance_app.Pages.ClaimPage">
-    <ContentPage.Content>
-        <StackLayout>
-            <Label Text="this is claim page"
-                   VerticalOptions="CenterAndExpand"
-                   HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
-    </ContentPage.Content>
+    
+    
+    <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
+              <Grid.RowDefinitions>
+            
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="Auto"/>
+                     <RowDefinition Height="*"/>
+
+              </Grid.RowDefinitions>
+        
+              <Grid.ColumnDefinitions>
+                     <ColumnDefinition Width="5*"/>
+                     <ColumnDefinition Width="5*"/>
+              </Grid.ColumnDefinitions>
+                
+              <Label Text="Hospital Postcode :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="0" />
+              <Entry  Keyboard="Email" IsEnabled="{Binding FieldEnabledDisplay}"
+                      Text="{Binding  HospitalPostCodeDisplay}" 
+                      Placeholder="R93 V1N6" PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+                      Grid.Column="1" Grid.Row="0"/>
+                
+              <Label Text="Patient Nr :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="1" />
+              <Entry  Text="{Binding PatientNrDisplay}" IsEnabled="{Binding FieldEnabledDisplay}"
+                      Placeholder="123S3DG23S" IsPassword="True" PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+                      Grid.Column="1" Grid.Row="1"/>
+              
+              <Label Text="{Binding StatusDisplay}" IsEnabled="False" 
+                      Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"  FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="Black" BackgroundColor="White" />
+
+              
+              <Button Text="Create"  Command="{Binding  CreateClaimCommand}"  FontSize="20" TextColor="Black" BackgroundColor="White"
+                      Grid.Column="0" Grid.Row="3" IsEnabled="{Binding FieldEnabledDisplay}" />
+              
+              <Button Text="Previous" Command="{Binding ViewPreviousClaimsCommand}"
+                      IsEnabled="{Binding PreviousExistDisplay}"
+                      Grid.Column="1" Grid.Row="3" TextColor="Black" HorizontalOptions="Center" />
+              
+                <ActivityIndicator
+                       IsRunning="{Binding CircularWaitDisplay}" 
+                       HorizontalOptions="Center" VerticalOptions="Start" Color="Gray" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" />
+
+   </Grid>           
+    
 </ContentPage>

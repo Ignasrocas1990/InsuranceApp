@@ -67,7 +67,7 @@ namespace Insurance_app.ViewModels
                await Shell.Current.CurrentPage.DisplayAlert("Error",elegalChars , "close");
                return;
            }
-           var TempQuote = new Dictionary<string, int>()
+           var tempQuote = new Dictionary<string, int>()
            {
                {"Hospitals",hospitals},
                {"Age",age},
@@ -83,7 +83,7 @@ namespace Insurance_app.ViewModels
                CircularWaitDisplay=true;
                 ButtonEnabled = false;
                 timer.Start();
-                var result = await inf.Predict(TempQuote);
+                var result = await inf.Predict(tempQuote);
                price =  await result.Content.ReadAsStringAsync();
 
            }
@@ -105,7 +105,7 @@ namespace Insurance_app.ViewModels
            {
                try
                {   
-                   var jsonQuote = JsonConvert.SerializeObject(TempQuote);
+                   var jsonQuote = JsonConvert.SerializeObject(tempQuote);
                    await Shell.Current.GoToAsync($"//{nameof(RegistrationPage)}?PriceDisplay={price}&TempQuote={jsonQuote}");
                }
                catch (Exception e)

@@ -31,9 +31,9 @@ namespace Insurance_app.Models
            return await new RealmDb().AddNewReward(App.RealmApp.CurrentUser);
         }
 
-        public async Task CreateClaim(Claim claim)
+        public async Task CreateClaim(string hospitalCode,string patientNr,string type,bool status)
         { 
-            await new RealmDb().AddClaim(App.RealmApp.CurrentUser,claim);
+            await new RealmDb().AddClaim( hospitalCode, patientNr,type,status,App.RealmApp.CurrentUser);
         }
         
     }
