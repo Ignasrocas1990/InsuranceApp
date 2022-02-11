@@ -9,11 +9,9 @@ namespace Insurance_app.Logic
 {
     public class PolicyManager : IDisposable
     {
-        private readonly RealmDb realmDb;
 
         public PolicyManager()
         {
-            realmDb = new RealmDb();
         }
         
         public PersonalPolicy CreatePolicy(string price, int cover, int fee, int hospitals, int plan, int smoker, bool status, DateTime utcNow,string partition)
@@ -29,7 +27,7 @@ namespace Insurance_app.Logic
 
         public void Dispose()
         {
-            realmDb.Dispose();
+            RealmDb.GetInstance().Dispose();
         }
     }
 }

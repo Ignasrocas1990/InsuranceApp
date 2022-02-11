@@ -40,9 +40,8 @@
 
         </Grid>
 
-        <StackLayout VerticalOptions="End" HorizontalOptions="Center">
-            <Button FontSize="30" Command="{Binding StepCommand}" 
-                    Text="step" TextColor="Black" />
+        <StackLayout VerticalOptions="End" HorizontalOptions="Center"><!-- need to bind to total Text property -->
+            <Label FontSize="30" Text="Total Earned" TextColor="Black" />
         </StackLayout>
         
     </StackLayout>

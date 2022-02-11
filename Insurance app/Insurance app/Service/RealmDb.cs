@@ -2,18 +2,32 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Insurance_app.Models;
 using Realms;
 using Realms.Exceptions;
 using Realms.Sync;
+using Xamarin.Essentials;
 
 namespace Insurance_app.Service
 {
     public class RealmDb : IDisposable
     {
         private Realm realm = null;
-        public RealmDb() {}
+        readonly Thread curThread = Thread.CurrentThread;
+        private static RealmDb db = null;
+
+        private RealmDb()
+        {
+        }
+
+        public static RealmDb GetInstance()
+        {
+            return db ?? (db = new RealmDb());
+        }
+        
+        
 //------------------------- app Access Methods ---------------------------------------
         public async Task<string> Register(String email, String password)
         {
@@ -52,22 +66,17 @@ namespace Insurance_app.Service
                 Console.WriteLine($"problem adding customer : \n {e}");
             }
         }
-        
+
         public async Task<Customer> FindCustomer(User user)
         {
             try
             {
                 Customer c = null;
                 await GetRealm(user);
-                if (realm != null)
+                realm?.Write(() =>
                 {
-                    realm.Write(() =>
-                    {
-                        c = realm.All<Customer>().FirstOrDefault(u => u.Id == user.Id);
-                        //c = realm.Find<Customer>(user.Id);
-
-                    });
-                }
+                    c = realm.All<Customer>().FirstOrDefault(u => u.Id == user.Id);
+                });
                 return c;
             }
             catch (Exception e)
@@ -76,6 +85,32 @@ namespace Insurance_app.Service
                 return null;
 
             }
+        }
+        public async Task UpdateCustomer(int age, string name, string lastName, 
+            string phoneNr, string email, Address address, User user)
+        {
+            try
+            {
+               await GetRealm(user);
+               realm.Write(() =>
+               {
+                   var customer = realm.All<Customer>().FirstOrDefault(c => c.Id == user.Id);
+                   if (customer!=null)
+                   {
+                       customer.Age = age;
+                       customer.Name = name;
+                       customer.LastName = lastName;
+                       customer.PhoneNr = phoneNr;
+                       customer.Email = email;
+                       customer.Address = address;
+                   }
+               });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error when updating customer \n{e}");
+            }
+            
         }
         
 // --------------------------- Mov Data  methods --------------------------------     
@@ -91,22 +126,14 @@ namespace Insurance_app.Service
             {
                 realm.Write(() =>
                 {
-                    //var c = _realm.Find<Customer>(user.Id);
-                   // if (c != null)
-                   // {
-                        
-                        //var reward = c.Reward.Where(r => r.FinDate == null).FirstOrDefault();
-                        var reward = realm.All<Reward>()
-                            .Where(r => r.Partition == user.Id && r.FinDate == null)
-                            .FirstOrDefault();
-                        if (reward !=null)
+                    var reward = realm.All<Reward>().FirstOrDefault(r => r.Partition == user.Id && r.FinDate == null);
+                    if (reward != null)
+                    {
+                        foreach (var mov in movList)
                         {
-                            foreach (var mov in movList)
-                            {
-                                reward.MovData.Add(mov);
-                            }
+                            reward.MovData.Add(mov);
                         }
-                  //  }
+                    }
                 });
             }
             catch (Exception e)
@@ -162,17 +189,18 @@ namespace Insurance_app.Service
                 Reward reward = null;
                 realm.Write(()=>
                 {
-                    
-                    var c = realm.Find<Customer>(user.Id);
-                    if (c!=null)
+
+                    var customer = realm.All<Customer>().FirstOrDefault(c => c.Id == user.Id);
+                    if (customer!=null)
                     {
+                        var cost = customer.Policy.Price / 100;
                         var r = realm.Add(new Reward()
                         {
                             Partition = user.Id,
-                            Cost = (c.Policy.Price/100)
+                            Cost = cost
                         });
                    
-                        c.Reward.Add(r);
+                        customer.Reward.Add(r);
                         reward = realm.Find<Reward>(r.Id);
                     }
                 });
@@ -195,6 +223,7 @@ namespace Insurance_app.Service
                 realm.Write(() =>
                 {
                     var customer = realm.Find<Customer>(user.Id);
+                    
                     if (customer != null)
                     {
                         customer.Claim.Add(realm.Add(new Claim()
@@ -260,38 +289,56 @@ namespace Insurance_app.Service
            
 
         }
-        private async Task GetRealm(User user)
+        private async Task GetRealm(User user)//ne
+        {
+           
+            try
+            {
+                realm = null;
+                var config = new PartitionSyncConfiguration(user.Id, user);
+                realm = await Realm.GetInstanceAsync(config);
+                /*
+                if (!curThread.Equals(Thread.CurrentThread))
+                {
+                    realm = null;
+                    Console.WriteLine("different thread");
+                }
+                */
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"GetRealm,realm error : \n {e.Message}");
+                Console.WriteLine($"GetRealm, inner exception : {e.InnerException}");
+                //await GetDifferentRealm(user);
+
+            }
+        }
+
+        private async Task GetDifferentRealm(User user)
         {
             try
             {
                 realm = null;
-
                 var config = new PartitionSyncConfiguration(user.Id, user);
                 realm = await Realm.GetInstanceAsync(config);
             }
-            catch (RealmInUseException)
-            {
-                Console.WriteLine("RealmInUseException");
-            }
-            catch (RealmFileAccessErrorException)
-            {
-                Console.WriteLine("RealmFileAccessErrorException");
-            }
             catch (Exception e)
             {
-                Console.WriteLine($"realm instance error return null {e.Message}");
-                Console.WriteLine($" inner exception : {e.InnerException}");
+                Console.WriteLine($"GetDifferentRealm, error \n {e.Message}");
+                Console.WriteLine($"GetDifferentRealm, inner exception : \n {e.InnerException}");
                 realm = null;
             }
         }
+        
 
         public void Dispose()
         {
             try
             {
                 if (realm is null) return;
-                //realm = null;
                 realm.Dispose();
+                realm = null;
             }
             catch (Exception e)
             {
@@ -299,5 +346,6 @@ namespace Insurance_app.Service
             }
         }
 
+        
     }
 }

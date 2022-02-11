@@ -5,7 +5,7 @@
              xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
              xmlns:sys="clr-namespace:System;assembly=netstandard"
              BackgroundColor="LightSteelBlue"
-             Shell.NavBarIsVisible="False"
+             Title="Welcome"
              x:Class="Insurance_app.AppShell">
     
     

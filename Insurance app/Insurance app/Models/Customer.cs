@@ -28,14 +28,15 @@ namespace Insurance_app.Models
 
         public async Task<Reward> CreateReward()
         {
-           return await new RealmDb().AddNewReward(App.RealmApp.CurrentUser);
+           return await RealmDb.GetInstance().AddNewReward(App.RealmApp.CurrentUser);
         }
 
         public async Task CreateClaim(string hospitalCode,string patientNr,string type,bool status)
         { 
-            await new RealmDb().AddClaim( hospitalCode, patientNr,type,status,App.RealmApp.CurrentUser);
+            await RealmDb.GetInstance().AddClaim( hospitalCode, patientNr,type,status,App.RealmApp.CurrentUser);
         }
-        
+
+
     }
     public class Address  : EmbeddedObject
     {

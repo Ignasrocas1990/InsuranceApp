@@ -12,21 +12,19 @@ namespace Insurance_app.Logic
 {
     public class ClaimManager : IDisposable
     {
-        private RealmDb db;
         public List<Claim> Claims { get; set; }
 
         public ClaimManager()
         {
-            db = new RealmDb();
         }
         public async Task CreateClaim(string hospitalPostcode, string patientNr, string type, bool status, User user)
         {
-            await db.AddClaim(hospitalPostcode, patientNr, type, status, user);
+            await RealmDb.GetInstance().AddClaim(hospitalPostcode, patientNr, type, status, user);
         }
 
         public async Task<List<Claim>> GetClaims(User user)
         {
-            Claims = await db.GetClaims(user);
+            Claims = await RealmDb.GetInstance().GetClaims(user);
             return Claims;
         }
 
@@ -46,7 +44,7 @@ namespace Insurance_app.Logic
 
         public void Dispose()
         {
-            if (db !=null) db.Dispose();
+            RealmDb.GetInstance().Dispose();
             if (Claims != null) Claims = null;
         }
     }

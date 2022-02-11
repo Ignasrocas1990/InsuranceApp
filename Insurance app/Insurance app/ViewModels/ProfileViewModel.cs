@@ -21,7 +21,15 @@ namespace Insurance_app.ViewModels
         private string email;
         private bool wait = false;
         private string addressText = "Click to update address";
+        //--- address backing fields ---
+        private int? HouseN;
+        private string PostCode;
+        private string Street;
+        private string County;
+        private string Country;
+        private string City;
         private Address address;
+
         public ICommand UpdateCommand { get; }
         public ICommand AddressCommand { get; }
 
@@ -44,7 +52,23 @@ namespace Insurance_app.ViewModels
                     LastNameDisplay = customer.LastName;
                     PhoneNrDisplay = customer.PhoneNr;
                     EmailDisplay = customer.Email;
-                    address = customer.Address;
+                    
+                    //address backing fields
+                    HouseN = customer.Address.HouseN;
+                    Street = customer.Address.Street;
+                    City = customer.Address.City;
+                    Country = customer.Address.Country;
+                    County = customer.Address.County;
+                    PostCode = customer.Address.PostCode;
+                    address = new Address()
+                    {
+                        HouseN = HouseN,
+                        Street = Street,
+                        Country = Country,
+                        City = City,
+                        County = County,
+                        PostCode = PostCode
+                    };
                 }
                 
             }
@@ -55,7 +79,16 @@ namespace Insurance_app.ViewModels
         }
         private async Task UpdateAddress()
         {
-           var newAddress = await Application.Current.MainPage.Navigation.ShowPopupAsync<Address>(new AddressPopup(address));
+            
+           var newAddress = await Application.Current.MainPage.Navigation.ShowPopupAsync<Address>(new AddressPopup(new Address()
+           {
+               HouseN = HouseN,
+               City = City,
+               Country = Country,
+               County = County,
+               PostCode = PostCode,
+               Street = Street
+           }));
             if (newAddress!=null)
             {
                 AddressDisplay = "Address saved";
@@ -77,8 +110,8 @@ namespace Insurance_app.ViewModels
                 IsEnabled = false;
                 CircularWaitDisplay = true;
                 
-                var customer = userManager.CreateCustomer(age, name, lastName, phoneNr, email, address);
-               await userManager.AddCustomer(customer, App.RealmApp.CurrentUser);
+               
+               await userManager.updateCustomer(age,name,lastName,phoneNr,email,address, App.RealmApp.CurrentUser);
                //await App.RealmApp.EmailPasswordAuth.CallResetPasswordFunctionAsync(email, password); make it separate screen
                
                CircularWaitDisplay = false;

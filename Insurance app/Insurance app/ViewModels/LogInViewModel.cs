@@ -98,8 +98,7 @@ namespace Insurance_app.ViewModels
         }
         private async Task CleanDatabase()//TODO Remove when submitting
         {
-            RealmDb db = new RealmDb();
-            await db.CleanDatabase(App.RealmApp.CurrentUser);
+            await RealmDb.GetInstance().CleanDatabase(App.RealmApp.CurrentUser);
         }
 
     }

@@ -7,20 +7,18 @@ namespace Insurance_app.Logic
 {
     public class RewardManager : IDisposable
     {
-        private RealmDb db;
         public RewardManager()
         {
-            db = new RealmDb();
         }
 
         public async Task CreateReward(User user)
         {
-           await db.AddNewReward(user);
+           await RealmDb.GetInstance().AddNewReward(user);
         }
 
         public void Dispose()
         {
-            db.Dispose();
+            RealmDb.GetInstance().Dispose();
         }
     }
 }

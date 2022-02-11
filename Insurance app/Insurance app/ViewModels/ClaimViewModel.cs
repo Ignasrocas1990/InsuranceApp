@@ -51,14 +51,7 @@ namespace Insurance_app.ViewModels
                 StatusDisplay = "Not Created";
             }
 
-            if (claimManager.Claims.Count > 1)
-            {
-                PreviousButtonEnabled = true;
-            }
-            else
-            {
-                PreviousButtonEnabled = false;
-            }
+            PreviousButtonEnabled = claimManager.Claims.Count > 1;
         }
 
         private async Task GetClaims()

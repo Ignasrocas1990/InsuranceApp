@@ -36,7 +36,7 @@ namespace Insurance_app.ViewModels
 
 
         private double stepsDisplayValue = 0;
-        private double currentProgressBars=0.0;
+        private double currentProgressBars = 0.0;
         private double max = 0 ;
         private double min = StaticOptions.StepNeeded;
         
@@ -68,7 +68,7 @@ namespace Insurance_app.ViewModels
 
                 if (customer.Reward.Count > 0)//TODO need to test this (when has more then 1 reward)
                 {
-                    var reward = customer.Reward.Where(r => r.FinDate == null).FirstOrDefault();
+                    var reward = customer.Reward.FirstOrDefault(r => r.FinDate == null);
                     if (reward != null)
                     {
                         double movLen = Convert.ToDouble(reward.MovData.Count());
@@ -115,8 +115,8 @@ namespace Insurance_app.ViewModels
                     newMovDataList.Enqueue(currMovData);
                     if (newMovDataList.Count > 4)
                     {
-                        //or re-create new Realm
-                        await new RealmDb().AddMovData(new ConcurrentQueue<MovData>(newMovDataList),App.RealmApp.CurrentUser);
+                        //or re-create new Realm (TODO need to change this)
+                        await RealmDb.GetInstance().AddMovData(new ConcurrentQueue<MovData>(newMovDataList),App.RealmApp.CurrentUser);
                         newMovDataList = new ConcurrentQueue<MovData>();
                     }
 

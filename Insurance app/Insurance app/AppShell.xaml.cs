@@ -22,9 +22,11 @@ namespace Insurance_app
                 ((ClaimViewModel) svm.GetViewModel(Converter.ClaimViewModel)).Dispose();
                 ((ProfileViewModel) svm.GetViewModel(Converter.ProfileViewModel)).Dispose();
                 ((ReportViewModel) svm.GetViewModel(Converter.ReportViewModel)).Dispose();
-                
                 svm.Dispose();
-                await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
+                if (App.RealmApp.CurrentUser != null)
+                {
+                    await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
+                }
                 await Shell.Current.GoToAsync($"//{nameof(LogInPage)}",true);
             }
             catch (Exception ex)
