@@ -5,22 +5,38 @@
              xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
              xmlns:sys="clr-namespace:System;assembly=netstandard"
              BackgroundColor="LightSteelBlue"
-             Shell.TabBarIsVisible="False"
+             Shell.NavBarIsVisible="False"
              x:Class="Insurance_app.AppShell">
     
     
-    <ShellContent ContentTemplate="{DataTemplate pages:LogInPage}" FlyoutItemIsVisible="False" Route="LogInPage"/>
-    <ShellContent ContentTemplate="{DataTemplate pages:QuotePage}" FlyoutItemIsVisible="False" Route="QuotePage"/>
-    <ShellContent ContentTemplate="{DataTemplate pages:RegistrationPage}" FlyoutItemIsVisible="False" Route="RegistrationPage"/>
-    <ShellContent ContentTemplate="{DataTemplate pages:HomePage}" FlyoutItemIsVisible="False" Route="HomePage"/>
+    <ShellItem FlyoutItemIsVisible="False" Route="LogInPage">
+        <ShellContent ContentTemplate="{DataTemplate pages:LogInPage}"/>
+    </ShellItem>
     
+    <ShellItem FlyoutItemIsVisible="False" Route="QuotePage">
+        <ShellContent ContentTemplate="{DataTemplate pages:QuotePage}"/>
+    </ShellItem>
     
-    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
-        <ShellContent Title="Home page" Icon="walkIcon.png" ContentTemplate="{DataTemplate pages:HomePage}"/>
-        <ShellContent Title="Profile page" Icon="profileIcon.png" ContentTemplate="{DataTemplate pages:ProfilePage}" />
-        <ShellContent Title="Report page" Icon="reportIcon.png" ContentTemplate="{DataTemplate pages:Report}"/>
-        <ShellContent Title="Claim page" Icon="claimIcon.png" ContentTemplate="{DataTemplate pages:ClaimPage}"/>
+    <ShellItem FlyoutItemIsVisible="False" Route="RegistrationPage">
+        <ShellContent ContentTemplate="{DataTemplate pages:RegistrationPage}"/>
+    </ShellItem>
+    
+    <!--    side Flyout menu navigation                    -->
+    <FlyoutItem Title="Home page" Icon="walkIcon.png" Route="HomePage">
+        <ShellContent ContentTemplate="{DataTemplate pages:HomePage}" />
     </FlyoutItem>
+    
+    <FlyoutItem Title="Profile page" Icon="profileIcon.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:ProfilePage}" />
+    </FlyoutItem>
+    <FlyoutItem Title="Report page" Icon="reportIcon.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:Report}"/>
+    </FlyoutItem>
+    <FlyoutItem Title="Claim page" Icon="claimIcon.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:ClaimPage}"/>
+    </FlyoutItem>
+
+    
     
     <MenuItem Text="logout" IconImageSource="logoutIcon.png" Clicked="MenuItem_OnClicked"/>
 

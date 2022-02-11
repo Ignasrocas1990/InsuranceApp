@@ -46,11 +46,18 @@ namespace Insurance_app.ViewModels
             {
                 FieldEnabledDisplay = false;
                 DateDisplay = $"{DateTimeOffset.Now.DateTime}";
+                HospitalPostCodeDisplay = "";
+                PatientNrDisplay = "";
+                StatusDisplay = "Not Created";
             }
 
             if (claimManager.Claims.Count > 1)
             {
                 PreviousButtonEnabled = true;
+            }
+            else
+            {
+                PreviousButtonEnabled = false;
             }
         }
 

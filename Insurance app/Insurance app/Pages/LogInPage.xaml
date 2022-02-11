@@ -6,7 +6,7 @@
              x:DataType="viewModels1:LogInViewModel"
              Shell.PresentationMode="Modal"
              Shell.FlyoutBehavior="Disabled"
-             Shell.NavBarIsVisible="False"
+             Title="Log in page"
              x:Class="Insurance_app.Pages.LogInPage">
     <ContentPage.BindingContext>
         <viewModels1:LogInViewModel/>

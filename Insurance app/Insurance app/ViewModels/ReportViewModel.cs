@@ -66,7 +66,7 @@ namespace Insurance_app.ViewModels
         public void Dispose()
         {
             chartEntries = null;
-            Entries = null;
+            //Entries = null;
             reportManager.Dispose();
         }
     }
