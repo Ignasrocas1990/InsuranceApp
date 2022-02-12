@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
 using Microcharts;
+using SkiaSharp;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -17,6 +18,7 @@ namespace Insurance_app.Pages
         public Report()
         {
             InitializeComponent();
+            
             BindingContext = (ReportViewModel) ShellViewModel.GetInstance()
                 .GetViewModel(Converter.ReportViewModel);
         }
@@ -24,20 +26,24 @@ namespace Insurance_app.Pages
         protected override async void OnAppearing()
         {
             var vm = (ReportViewModel) BindingContext;
-            CircularWait.IsRunning = true;
             await vm.SetUp();
-            
+            /*
             MyChartView.Chart = new BarChart()
             {
                 Entries = vm.Entries,
                 LabelOrientation = Orientation.Vertical, 
                 ValueLabelOrientation = Orientation.Horizontal,
-                LabelTextSize = 30,
+                LabelTextSize = 30, 
             };
             CircularWait.IsRunning = false;
-
+            */
+            
             base.OnAppearing();
 
         }
+        
+        
+        
+        
     }
 }

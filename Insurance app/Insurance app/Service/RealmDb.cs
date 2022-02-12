@@ -152,6 +152,8 @@ namespace Insurance_app.Service
                 var prev = DateTime.Now.AddHours(-hourDif);
                 
                 await GetRealm(user);
+                if (realm is null)
+                    throw new Exception("real null");
                 realm.Write(() =>
                 {
                     int count = 0;
@@ -183,7 +185,8 @@ namespace Insurance_app.Service
         public async Task<Reward> AddNewReward(User user)
         {
             await GetRealm(user);
-            if (realm is null) return null;
+            if (realm is null)
+                throw new Exception("real, AddNewReward, null");
             try
             {
                 Reward reward = null;
@@ -212,6 +215,31 @@ namespace Insurance_app.Service
                 return null;
             }
         }
+        public async Task<float> GetTotalRewards(User user)
+        {
+            float totalEarnings = 0;
+            try
+            {
+                await GetRealm(user);
+                if (realm is null) throw new Exception("getTotalRewards realm null my exception");
+                realm.Write(() =>
+                {
+                    var rewards = realm.All<Reward>().Where(r => r.Partition == user.Id &&
+                                                                 r.FinDate != null && r.DelFlag == false).ToList();
+                    totalEarnings += rewards.Where(r => r.Cost != null).Sum(r =>
+                    {
+                        if (r.Cost != null) return (float) r.Cost;
+                        return 0;
+                    });
+                });
+                return totalEarnings;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return totalEarnings;
+            }
+        }
 
 // ---------------------------- Claim methods --------------------------
 
@@ -220,6 +248,8 @@ namespace Insurance_app.Service
             try
             {
                 await GetRealm(user);
+                if (realm is null)
+                    throw new Exception(" AddClaim realm null");
                 realm.Write(() =>
                 {
                     var customer = realm.Find<Customer>(user.Id);
@@ -246,6 +276,8 @@ namespace Insurance_app.Service
         public async Task<List<Claim>> GetClaims(User user)
         {
             await GetRealm(user);
+            if (realm is null)
+                throw new Exception(" GetClaims realm null");
             List<Claim> claims = new List<Claim>();
             try
             {
@@ -271,6 +303,8 @@ namespace Insurance_app.Service
             try
             {
                 await GetRealm(user);
+                if (realm is null)
+                    throw new Exception(" CleanDatabase realm null");
                 realm.Write(() =>
                 {
                     realm.RemoveAll<Claim>();
@@ -294,7 +328,6 @@ namespace Insurance_app.Service
            
             try
             {
-                realm = null;
                 var config = new PartitionSyncConfiguration(user.Id, user);
                 realm = await Realm.GetInstanceAsync(config);
                 /*
@@ -308,35 +341,17 @@ namespace Insurance_app.Service
             }
             catch (Exception e)
             {
+                realm = null;
                 Console.WriteLine($"GetRealm,realm error : \n {e.Message}");
                 Console.WriteLine($"GetRealm, inner exception : {e.InnerException}");
-                //await GetDifferentRealm(user);
-
             }
         }
-
-        private async Task GetDifferentRealm(User user)
-        {
-            try
-            {
-                realm = null;
-                var config = new PartitionSyncConfiguration(user.Id, user);
-                realm = await Realm.GetInstanceAsync(config);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"GetDifferentRealm, error \n {e.Message}");
-                Console.WriteLine($"GetDifferentRealm, inner exception : \n {e.InnerException}");
-                realm = null;
-            }
-        }
-        
-
         public void Dispose()
         {
             try
             {
                 if (realm is null) return;
+                realm.SyncSession.Stop();
                 realm.Dispose();
                 realm = null;
             }
@@ -346,6 +361,7 @@ namespace Insurance_app.Service
             }
         }
 
-        
+
+
     }
 }

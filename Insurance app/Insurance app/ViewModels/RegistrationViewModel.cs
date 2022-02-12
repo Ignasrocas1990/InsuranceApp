@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Insurance_app.Logic;
 using Insurance_app.Models;
 using Insurance_app.Pages;
+using Insurance_app.Pages.Popups;
 using Insurance_app.SupportClasses;
 using Newtonsoft.Json;
 using Realms.Sync;
@@ -29,7 +30,7 @@ namespace Insurance_app.ViewModels
         private string lName="";
         private string phoneNr="";
         private string qString="";
-        private string addressText = "Click to input";
+        private string addressText = "Add address";
         private readonly UserManager userManager;
         private readonly PolicyManager policyManager;
         private Address address=null;

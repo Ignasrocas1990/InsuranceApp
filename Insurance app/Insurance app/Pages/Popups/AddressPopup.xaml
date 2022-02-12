@@ -8,8 +8,8 @@
             x:DataType="popups:AddressViewModel"
              x:TypeArguments="local:Address"
              IsLightDismissEnabled="False"
-            Size="350,525"
-             x:Class="Insurance_app.Pages.AddressPopup">
+             Size="350,500"
+             x:Class="Insurance_app.Pages.Popups.AddressPopup">
         <!--Size = width,height -->
         <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5">
         <Grid.RowDefinitions>
@@ -20,7 +20,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="2*"/>
+            <RowDefinition Height="Auto"/>
 
         </Grid.RowDefinitions>
         
@@ -64,8 +64,8 @@
                 PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
                 Grid.Column="1" Grid.Row="5"/>
         
-        <Button Grid.Column="0" Grid.Row="6" Text="Cancel" Command="{Binding  CancelCommand}"/>
-        <Button Grid.Column="1" Grid.Row="6" Text="Save" Command="{Binding SaveCommand}"/>
+        <Button Grid.Column="0" Grid.Row="6" Text="Cancel" HorizontalOptions="Center" VerticalOptions="Center" Command="{Binding  CancelCommand}"/>
+        <Button Grid.Column="1" Grid.Row="6" Text="Save" HorizontalOptions="Center" VerticalOptions="Center" Command="{Binding SaveCommand}"/>
     </Grid>
    
 </xct:Popup>

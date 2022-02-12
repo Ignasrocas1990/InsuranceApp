@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Insurance_app.Logic;
 using Insurance_app.Models;
 using Insurance_app.Pages;
+using Insurance_app.Pages.Popups;
 using Insurance_app.SupportClasses;
 using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.CommunityToolkit.ObjectModel;
@@ -15,19 +16,19 @@ namespace Insurance_app.ViewModels
     {
         private UserManager userManager;
         private int age;
-        private string name;
-        private string lastName;
-        private string phoneNr;
-        private string email;
+        private string name="";
+        private string lastName="";
+        private string phoneNr="";
+        private string email="";
         private bool wait = false;
         private string addressText = "Click to update address";
         //--- address backing fields ---
-        private int? HouseN;
-        private string PostCode;
-        private string Street;
-        private string County;
-        private string Country;
-        private string City;
+        private int? houseN;
+        private string postCode="";
+        private string street="";
+        private string county="";
+        private string country="";
+        private string city="";
         private Address address;
 
         public ICommand UpdateCommand { get; }
@@ -54,20 +55,20 @@ namespace Insurance_app.ViewModels
                     EmailDisplay = customer.Email;
                     
                     //address backing fields
-                    HouseN = customer.Address.HouseN;
-                    Street = customer.Address.Street;
-                    City = customer.Address.City;
-                    Country = customer.Address.Country;
-                    County = customer.Address.County;
-                    PostCode = customer.Address.PostCode;
+                    houseN = customer.Address.HouseN;
+                    street = customer.Address.Street;
+                    city = customer.Address.City;
+                    country = customer.Address.Country;
+                    county = customer.Address.County;
+                    postCode = customer.Address.PostCode;
                     address = new Address()
                     {
-                        HouseN = HouseN,
-                        Street = Street,
-                        Country = Country,
-                        City = City,
-                        County = County,
-                        PostCode = PostCode
+                        HouseN = houseN,
+                        Street = street,
+                        Country = country,
+                        City = city,
+                        County = county,
+                        PostCode = postCode
                     };
                 }
                 
@@ -82,12 +83,12 @@ namespace Insurance_app.ViewModels
             
            var newAddress = await Application.Current.MainPage.Navigation.ShowPopupAsync<Address>(new AddressPopup(new Address()
            {
-               HouseN = HouseN,
-               City = City,
-               Country = Country,
-               County = County,
-               PostCode = PostCode,
-               Street = Street
+               HouseN = houseN,
+               City = city,
+               Country = country,
+               County = county,
+               PostCode = postCode,
+               Street = street
            }));
             if (newAddress!=null)
             {
@@ -97,6 +98,10 @@ namespace Insurance_app.ViewModels
         }
         private async Task Update()
         {
+            var answer = await Shell.Current.CurrentPage.DisplayAlert(
+                "Notice","You about to update details", "save", "cancel");
+            if (!answer) return;
+            
             //save to database
             try
             {
@@ -124,8 +129,10 @@ namespace Insurance_app.ViewModels
                 IsEnabled = true;
                 Console.WriteLine(e);
             }
+
+            await Shell.Current.DisplayAlert("Message", "Details updated", "close");
         }
-        
+
         public string NameDisplay
         {
             get => name;

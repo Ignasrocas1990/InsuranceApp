@@ -36,7 +36,7 @@ namespace Insurance_app.ViewModels
             var claim = claimManager.GetCurrentClaim();
             if (claim != null)
             {
-                FieldEnabledDisplay = true;
+                IsReadOnly = true;
                 DateDisplay = $"{claim.StartDate}";
                 HospitalPostCodeDisplay = claim.HospitalPostCode;
                 PatientNrDisplay = claim.PatientNr;
@@ -44,12 +44,13 @@ namespace Insurance_app.ViewModels
             }
             else
             {
-                FieldEnabledDisplay = false;
+                IsReadOnly = false;
                 DateDisplay = $"{DateTimeOffset.Now.DateTime}";
                 HospitalPostCodeDisplay = "";
                 PatientNrDisplay = "";
                 StatusDisplay = "Not Created";
             }
+            CreateEnabled = !IsReadOnly;
 
             PreviousButtonEnabled = claimManager.Claims.Count > 1;
         }
@@ -62,11 +63,21 @@ namespace Insurance_app.ViewModels
         
         private async Task CreateClaim()
         {
+           bool answer = await Shell.Current.DisplayAlert("Notice",
+               "Are you sure to open new Claim?", "create", "cancel");
+           if (!answer) return;
+
             CircularWaitDisplay = true;
-            FieldEnabledDisplay = true;
+            IsReadOnly = true;
+            CreateEnabled = !IsReadOnly;
+
             await claimManager.CreateClaim(hospitalPostcode, patientNr, type, true,App.RealmApp.CurrentUser);
+            
             StatusDisplay = "open";
             CircularWaitDisplay = false;
+            await Shell.Current.DisplayAlert("Message", 
+                "New Claim has been Opened,\n Client will take a look at it shortly",
+                "close");
         }
 
 
@@ -95,12 +106,14 @@ namespace Insurance_app.ViewModels
             get => wait;
             set => SetProperty(ref wait, value);
         }
-        private bool fieldsEnabled=true;
-        public bool FieldEnabledDisplay
+        private bool fieldsEnabled=false;
+        public bool IsReadOnly// opposite to this
         {
             get => fieldsEnabled;
             set => SetProperty(ref fieldsEnabled, value);
         }
+
+        public bool CreateEnabled { get; set; }
 
         private bool previousExist;
         public bool PreviousButtonEnabled

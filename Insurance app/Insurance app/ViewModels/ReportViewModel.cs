@@ -12,9 +12,8 @@ namespace Insurance_app.ViewModels
 {
     public class ReportViewModel : ObservableObject,IDisposable
     {
-        private Dictionary<string, int> chartEntries = null;
-        public Stack<ChartEntry> Entries = new Stack<ChartEntry>();
-
+       // private Dictionary<string, int> chartEntries = null;
+       
         private bool firstSetup = true;
 
         private readonly ReportManager reportManager;
@@ -27,11 +26,15 @@ namespace Insurance_app.ViewModels
 
         public async Task SetUp()
         {
+            var entries = new Stack<ChartEntry>();
+            
             if (!firstSetup) return;
             firstSetup = false;
             var r = new Random();
             bool today = true;
-            chartEntries = await reportManager.GetWeeksMovData(App.RealmApp.CurrentUser);
+            CircularDisplay = true;
+
+            var chartEntries = await reportManager.GetWeeksMovData(App.RealmApp.CurrentUser);
                 
                 if (chartEntries != null)
                 {
@@ -39,7 +42,8 @@ namespace Insurance_app.ViewModels
                     foreach (KeyValuePair<string, int> i in chartEntries)
                     {
                         var label = i.Key;
-                        float value = (float)i.Value;
+                        float value = i.Value;
+                        value = r.Next(0, 20000);//TODO Remove
                         var color = StaticOptions.ChartColors[r.Next(0, StaticOptions.ChartColors.Length - 1)];
                         if (today)
                         {
@@ -51,21 +55,39 @@ namespace Insurance_app.ViewModels
                             value = 0.0001f;
                             color = StaticOptions.White;
                         }
-                        Entries.Push(new ChartEntry(value)
+                        entries.Push(new ChartEntry(value)
                             {
-                                Label = label,
+                                Color = color,
                                 ValueLabel = $"{(int)value}",
-                                Color = color
+                                Label = label
+
                             });
-                        
-                        index--;
                     }
                 }
+                CircularDisplay = false;
+                LineChart = new LineChart()
+                    {Entries = entries, LabelTextSize = 30f,ValueLabelTextSize = 30f};
+
         }
+       
+        private LineChart lineChart;
+        public LineChart LineChart
+        {
+            get => lineChart;
+            set => SetProperty(ref lineChart, value);
+        }
+
+        private bool isRunning;
+        public bool CircularDisplay
+        {
+            get => isRunning;
+            set => SetProperty(ref isRunning, value);
+        }
+
 
         public void Dispose()
         {
-            chartEntries = null;
+           // chartEntries = null;
             //Entries = null;
             reportManager.Dispose();
         }

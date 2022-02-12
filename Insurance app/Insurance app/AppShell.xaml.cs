@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Insurance_app.Logic;
 using Insurance_app.Pages;
 using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
+using Java.Lang;
+using Xamarin.Essentials;
 using Xamarin.Forms;
+using Exception = System.Exception;
 
 namespace Insurance_app
 {
@@ -18,16 +22,27 @@ namespace Insurance_app
             try
             {
                 var svm = ShellViewModel.GetInstance();
-                ((HomeViewModel) svm.GetViewModel(Converter.HomeViewModel)).Dispose();
-                ((ClaimViewModel) svm.GetViewModel(Converter.ClaimViewModel)).Dispose();
-                ((ProfileViewModel) svm.GetViewModel(Converter.ProfileViewModel)).Dispose();
-                ((ReportViewModel) svm.GetViewModel(Converter.ReportViewModel)).Dispose();
+                var t = ((HomeViewModel) svm.GetViewModel(Converter.HomeViewModel));
+                t.Dispose();
+                t = null;
+                var t2 = ((ClaimViewModel) svm.GetViewModel(Converter.ClaimViewModel));
+                    t2.Dispose();
+                    t2 = null;
+
+                var t3 = ((ProfileViewModel) svm.GetViewModel(Converter.ProfileViewModel));
+                t3.Dispose();
+                t3 = null;
+                var t4 = ((ReportViewModel) svm.GetViewModel(Converter.ReportViewModel));
+                t4.Dispose();
                 svm.Dispose();
+                svm = null;
                 if (App.RealmApp.CurrentUser != null)
                 {
                     await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
                 }
-                await Shell.Current.GoToAsync($"//{nameof(LogInPage)}",true);
+                await Current.GoToAsync($"//{nameof(LogInPage)}",true);
+
+
             }
             catch (Exception ex)
             {

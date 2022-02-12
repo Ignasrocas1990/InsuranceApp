@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Insurance_app.SupportClasses;
-using Insurance_app.ViewModels;
+﻿
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 

@@ -4,20 +4,42 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
              x:DataType="viewModels1:LogInViewModel"
-             Shell.PresentationMode="Modal"
              Shell.FlyoutBehavior="Disabled"
-             Title="Log in page"
+             Title="Welcome to Dynamic Insurance"
              x:Class="Insurance_app.Pages.LogInPage">
     <ContentPage.BindingContext>
         <viewModels1:LogInViewModel/>
     </ContentPage.BindingContext>
-    
-    <StackLayout Padding="40" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
-        <Entry Text="{Binding EmailDisplay }"  Placeholder="email@gmail.com" TextColor="Black" PlaceholderColor="Gray" IsTextPredictionEnabled="True" Keyboard="Plain" />
-        <Entry Text= "{Binding PasswordDisplay}" Placeholder="password" TextColor="Black" PlaceholderColor="Gray"  IsPassword="True" Keyboard="Plain" />
-        <Button Text="Log In" Command="{Binding LogInCommand}" />
-        <Button Text="Get a Quote" Command="{Binding QuoteCommand }" />
-        <ActivityIndicator x:Name="CircularWait" HorizontalOptions="Center" VerticalOptions="Center" Color="Gray" />
-    </StackLayout>
+    <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="20" Padding="40">
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
+            
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Entry Text="{Binding EmailDisplay}" Placeholder="email@gmail.com" HorizontalTextAlignment="Center"
+               TextColor="Black" PlaceholderColor="Gray" IsTextPredictionEnabled="True" Keyboard="Plain"
+               Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"/>
+        
+        <Entry Text= "{Binding PasswordDisplay}" Placeholder="password" HorizontalTextAlignment="Center"
+               TextColor="Black" PlaceholderColor="Gray"  IsPassword="True" Keyboard="Plain" 
+               Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
+        
+        <Button Text="Log In" Command="{Binding LogInCommand}" HorizontalOptions="Fill"
+                Grid.Column="1" Grid.Row="2"/>
+        <Button Text="Get a Quote" Command="{Binding QuoteCommand}" HorizontalOptions="Fill"
+                Grid.Column="0" Grid.Row="2"/>
+        <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}" x:Name="CircularWait" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2"
+                           HorizontalOptions="Center" VerticalOptions="Center" Color="Gray" />
+        
+        
+    </Grid>
         
 </ContentPage>

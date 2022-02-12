@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Insurance_app.Models;
 using Insurance_app.Pages;
+using Insurance_app.Pages.Popups;
 using Insurance_app.SupportClasses;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
@@ -33,7 +34,6 @@ namespace Insurance_app.ViewModels.Popups
 
         private void Init(Address address)
         {
-            //TODO check this ----------------------------
             if (address.HouseN != null) HouseNDisplay =  (int) address.HouseN;
             StreetDisplay = address.Street;
             CityDisplay = address.City;
@@ -72,7 +72,6 @@ namespace Insurance_app.ViewModels.Popups
                 PostCode = postCode
             });
             
-            //popup.Dismiss($"{houseN}~{street}~{city}~{county}~{country}~{postCode}");
         }
         private void Close()
         {

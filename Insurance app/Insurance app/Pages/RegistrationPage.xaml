@@ -5,7 +5,7 @@
              xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
              x:DataType="viewModels1:RegistrationViewModel"
              Shell.FlyoutBehavior="Disabled"
-             Shell.NavBarIsVisible="True"
+             Title="Customer Registration"
              x:Class="Insurance_app.Pages.RegistrationPage">
        
        <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
@@ -58,12 +58,12 @@
                       FontSize="20" TextColor="Black" BackgroundColor="White"
                       Grid.Column="1" Grid.Row="4"/>
               
-              <Button Command="{Binding AddressCommand}" Text="{Binding AddressDisplay}" FontSize="20" TextColor="Black" BackgroundColor="White"
+              <Button Command="{Binding AddressCommand}" Text="{Binding AddressDisplay}" TextTransform="None" FontSize="20" TextColor="Black" BackgroundColor="White"
                      Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" />
               
               
               <Button Text="Register" Command="{Binding RegisterCommand}"
-                      Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" TextColor="Black" HorizontalOptions="Center" />
+                      Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" HorizontalOptions="Center" />
                 <ActivityIndicator
                        IsRunning="{Binding CircularWaitDisplay}" 
                        HorizontalOptions="Center" VerticalOptions="Start" Color="Gray" Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" />

@@ -18,9 +18,8 @@ namespace Insurance_app.ViewModels
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public class LogInViewModel : ObservableObject
     {
-        private string email; 
-        private string password;
-        private UserManager userManager;
+        private string email=""; 
+        private string password="";
         public ICommand LogInCommand { get; }
         public ICommand QuoteCommand { get; }
 
@@ -33,9 +32,6 @@ namespace Insurance_app.ViewModels
                 App.Connected =  (e.NetworkAccess ==  NetworkAccess.Internet);
                 
             };
-
-            userManager = new UserManager();
-            
         }
 
         private async Task NavigateToQuote()
@@ -60,7 +56,7 @@ namespace Insurance_app.ViewModels
             {
                 if (App.NetConnection())
                 {
-
+                    CircularWaitDisplay = true;
                     await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
                     App.RealmApp.Sync.Reconnect();
                     
@@ -80,7 +76,7 @@ namespace Insurance_app.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Login Failed", e.Message, "close");
 
             }
-
+            CircularWaitDisplay = false;
             
             //return Task.CompletedTask;
         }
@@ -96,6 +92,14 @@ namespace Insurance_app.ViewModels
             get => password;
             set => SetProperty(ref password, value);
         }
+
+        private bool circularWaitDisplay;
+        public bool CircularWaitDisplay
+        {
+            get => circularWaitDisplay;
+            set => SetProperty(ref circularWaitDisplay, value);
+        }
+
         private async Task CleanDatabase()//TODO Remove when submitting
         {
             await RealmDb.GetInstance().CleanDatabase(App.RealmApp.CurrentUser);

@@ -38,7 +38,6 @@ namespace Insurance_app.Logic
             {
                 Console.WriteLine($"GetCurrentClaim error : {e}");
             }
-
             return null;
         }
 

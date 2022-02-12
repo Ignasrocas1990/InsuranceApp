@@ -26,10 +26,12 @@ namespace Insurance_app.Pages
 
         protected override async void OnAppearing()
         {
-            var vm = (HomeViewModel)BindingContext;
-             CircularWait.IsRunning = true;
-             await vm.Setup();                      //circular wait
-             CircularWait.IsRunning = false;
+             var vm = (HomeViewModel)BindingContext;
+             vm.CircularWaitDisplay = true;
+             await vm.Setup();
+             await vm.SetUpEarningsDisplay();
+             vm.CircularWaitDisplay = false;
+             
              base.OnAppearing();
             
         }

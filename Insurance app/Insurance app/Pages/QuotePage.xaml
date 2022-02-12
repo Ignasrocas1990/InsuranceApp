@@ -5,14 +5,14 @@
              xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
              x:DataType="viewModels1:QuoteViewModel"
              Shell.FlyoutBehavior="Disabled"
-             Shell.NavBarIsVisible="True"
+             Title="Get a Quote"
              x:Class="Insurance_app.Pages.QuotePage">
     <ContentPage.BindingContext>
         <viewModels1:QuoteViewModel/>
     </ContentPage.BindingContext>
     
     
-    <Grid VerticalOptions="CenterAndExpand" RowSpacing="40" ColumnSpacing="5" Padding="40">
+    <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
         <Grid.RowDefinitions>
             
             <RowDefinition Height="Auto"/>
@@ -59,7 +59,7 @@
         <CheckBox IsChecked="{Binding IsSmoker}" VerticalOptions="Center" Grid.Column="1" Grid.Row="5" />
 
         
-        <Button Text= "Get Quote" IsEnabled="{Binding ButtonEnabled}" 
+        <Button Text= "Get Quote" IsEnabled="{Binding ButtonEnabled}" HorizontalOptions="Center"
                 Command="{Binding GetQuotCommand}" Grid.Column="0" Grid.Row="6"  Grid.ColumnSpan="2"/>
         
         <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}" HorizontalOptions="Center" Color="Gray" Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" />

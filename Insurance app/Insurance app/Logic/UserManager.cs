@@ -8,12 +8,10 @@ namespace Insurance_app.Logic
 {
     public class UserManager : IDisposable
     {
-        //private Customer currentCustomer;
         public UserManager()
         {
             
         }
-
         public Task<string> Register(string email, string password)
         {
             

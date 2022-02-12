@@ -2,14 +2,16 @@
 
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:microcharts="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms" xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
+             xmlns:microcharts="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms" 
+             xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
              x:DataType="viewModels1:ReportViewModel"
+             Title="Customer Report"
              x:Class="Insurance_app.Pages.Report">
 
      <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-         <ActivityIndicator x:Name="CircularWait" HorizontalOptions="Center" VerticalOptions="Center" Color="Gray" />
+         <ActivityIndicator IsRunning="{Binding CircularDisplay}" HorizontalOptions="Center" VerticalOptions="Center" Color="Gray" />
          <Label FontSize="Medium" Text="Steps per day" TextColor="Black" HorizontalOptions="Center" VerticalOptions="Center"  ></Label>
-         <microcharts:ChartView x:Name="MyChartView" WidthRequest="400" HeightRequest="300"/>
+         <microcharts:ChartView Chart="{Binding LineChart}" WidthRequest="400" HeightRequest="500"/>
      </StackLayout>
      
     

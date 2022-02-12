@@ -5,6 +5,7 @@
              xmlns:plugin="clr-namespace:ProgressRingControl.Forms.Plugin;assembly=ProgressRing.Forms.Plugin"
              xmlns:viewModels="clr-namespace:Insurance_app.ViewModels"
              xmlns:supportClasses1="clr-namespace:Insurance_app.SupportClasses"
+             Title="Home Page"
              x:DataType="viewModels:HomeViewModel"
              Shell.PresentationMode="Modal"
              x:Class="Insurance_app.Pages.HomePage">
@@ -19,7 +20,7 @@
     <StackLayout>
         <StackLayout Padding="20" HorizontalOptions="Center">
             <Switch x:Name="Switch" ThumbColor="Orange" Scale="1.5" Toggled="Switch_OnToggled" IsToggled="{Binding ToggleStateDisplay,Mode=TwoWay}" />
-            <Label Text="Step Tracker" TextColor="Black"/>
+            <Label FontSize="20" Text="Step Tracker" TextColor="Black"/>
         </StackLayout>
         
         
@@ -31,17 +32,17 @@
 
 
             <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-                <plugin:ProgressRing HeightRequest="150" RingBaseColor="Orange" RingProgressColor="Black" 
+                <plugin:ProgressRing HeightRequest="150" RingBaseColor="Orange" RingProgressColor="WhiteSmoke" 
                                       Scale="2" WidthRequest="150"  RingThickness="10"  
                                       Progress="{Binding ProgressBarDisplay 
                                       , Converter={StaticResource ValueProgressBar},Mode=TwoWay}"/>
             </StackLayout>
-            <ActivityIndicator x:Name="CircularWait" HorizontalOptions="Center" VerticalOptions="Center" Color="Gray" />
+            <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}" HorizontalOptions="Center" VerticalOptions="Center" Color="Gray" />
 
         </Grid>
 
-        <StackLayout VerticalOptions="End" HorizontalOptions="Center"><!-- need to bind to total Text property -->
-            <Label FontSize="30" Text="Total Earned" TextColor="Black" />
+        <StackLayout HorizontalOptions="Center">
+            <Label FontSize="20" Text="{Binding TotalEarnedDisplay}" TextColor="Black" />
         </StackLayout>
         
     </StackLayout>

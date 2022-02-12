@@ -4,9 +4,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
              x:DataType="viewModels:ProfileViewModel"
+             Title="Customer Profile"
              x:Class="Insurance_app.Pages.ProfilePage">
-           <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
-              <Grid.RowDefinitions>
+       
+       <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
+                  <Grid.RowDefinitions>
             
                      <RowDefinition Height="Auto"/>
                      <RowDefinition Height="Auto"/>
@@ -24,9 +26,7 @@
               </Grid.ColumnDefinitions>
                 
               <Label Text="Email :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="0" />
-              <Entry  Keyboard="Email" Text="{Binding EmailDisplay}" 
-                      Placeholder="__@__.com"
-                      PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+              <Label Text="{Binding EmailDisplay}" FontSize="20" TextColor="Black" BackgroundColor="White"
                       Grid.Column="1" Grid.Row="0"/>
                 
               <Label Text="First Name :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="1" />
@@ -47,7 +47,7 @@
                       FontSize="20" TextColor="Black" BackgroundColor="White"
                       Grid.Column="1" Grid.Row="3"/>
               
-              <Button Command="{Binding AddressCommand}" Text="{Binding AddressDisplay}" FontSize="20" TextColor="Black" BackgroundColor="White"
+              <Button Command="{Binding AddressCommand}" TextTransform="None" Text="{Binding AddressDisplay}" FontSize="20" TextColor="Black" BackgroundColor="White"
                      Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" IsEnabled="{Binding IsEnabled}" />
               
               

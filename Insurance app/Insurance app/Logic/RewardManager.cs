@@ -20,5 +20,10 @@ namespace Insurance_app.Logic
         {
             RealmDb.GetInstance().Dispose();
         }
+
+        public async Task<float> getTotalRewards(User user)
+        {
+            return await RealmDb.GetInstance().GetTotalRewards(user);
+        }
     }
 }

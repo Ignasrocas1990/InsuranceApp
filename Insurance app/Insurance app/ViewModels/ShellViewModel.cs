@@ -14,8 +14,8 @@ namespace Insurance_app.ViewModels
         public static ShellViewModel GetInstance()
         {
             if (_shellViewModel is null)
-            {
-                return _shellViewModel = new ShellViewModel();
+            { 
+                _shellViewModel = new ShellViewModel();
             }
             return _shellViewModel;
         }
@@ -24,46 +24,25 @@ namespace Insurance_app.ViewModels
         {
             if (viewModels.ContainsKey(viewModelName))
             {
-                object obj;
-                viewModels.TryGetValue(viewModelName, out obj);
+                viewModels.TryGetValue(viewModelName, out var obj);
                 return obj;
             }
-            else
-            {
-                try
-                {
-                    Type t = Type.GetType(viewModelName);
-                    if (t != null)
-                    {
-                        var obj = Activator.CreateInstance(t);
-                    
-                        viewModels.Add(viewModelName,obj);
-                        return obj;
-                    }
-                }catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
 
-            return null;
-/*
             try
             {
-                if (viewModels.ContainsKey(name))
+                Type t = Type.GetType(viewModelName);
+                if (t != null)
                 {
-                    object viewModel = null;
-                    viewModels.TryGetValue(name, out viewModel);
-                    return viewModel;
+                    var obj = Activator.CreateInstance(t);
+                    
+                    viewModels.Add(viewModelName,obj);
+                    return obj;
                 }
-            }
-            catch (Exception e)
+            }catch (Exception e)
             {
                 Console.WriteLine(e);
-
             }
             return null;
-            */
         }
 
         public void Dispose()

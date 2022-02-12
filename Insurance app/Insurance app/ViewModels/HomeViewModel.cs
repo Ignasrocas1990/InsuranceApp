@@ -72,6 +72,7 @@ namespace Insurance_app.ViewModels
                     if (reward != null)
                     {
                         double movLen = Convert.ToDouble(reward.MovData.Count());
+                        movLen = 6246;//TODO Remove
                         SetUpView(movLen);
                         return;
                     }
@@ -84,6 +85,11 @@ namespace Insurance_app.ViewModels
             {
                 Console.WriteLine(e);
             }
+        }
+
+        public async Task SetUpEarningsDisplay()
+        {
+            TotalEarnedDisplay = $"{await rewardManager.getTotalRewards(App.RealmApp.CurrentUser)}";
         }
         
         private void InferredRawData(object s, RawDataArgs e)
@@ -160,12 +166,15 @@ namespace Insurance_app.ViewModels
 
         private void SetUpView(double steps)
         {
-            ProgressBarDisplay = StaticOptions.StepNeeded;
-            while (steps !=0)
-            {
-                steps--;
-                Step();
-            }
+            ProgressBarDisplay = StaticOptions.StepNeeded - steps;
+            StepsDisplayLabel = steps;
+
+            /*
+        while (steps !=0)
+        {
+            steps--;
+            Step();
+        }*/
         }
 // reset 
         private void ResetRewardDisplay()
@@ -179,12 +188,13 @@ namespace Insurance_app.ViewModels
         private void Step()
         {
             ProgressBarDisplay--;
-            stepsDisplayValue++;
-            StepsDisplayLabel++;
+            //stepsDisplayValue++;
+            StepsDisplayLabel=stepsDisplayValue+1;
             if (ProgressBarDisplay < max)
             {
                 ProgressBarDisplay = StaticOptions.StepNeeded;
-                stepsDisplayValue = 0;
+                //stepsDisplayValue = 0;
+                StepsDisplayLabel = 0;
             }
         }
         public bool ToggleStateDisplay
@@ -202,9 +212,24 @@ namespace Insurance_app.ViewModels
         {
             
             get => stepsDisplayValue / StaticOptions.StepNeeded * 100;
-            set => SetProperty(ref  temp, value);
+            set => SetProperty(ref  stepsDisplayValue, value);
         }
-        private double temp = 0;
+
+        private bool circularWait;
+        public bool CircularWaitDisplay
+        {
+            get => circularWait;
+            set => SetProperty(ref circularWait, value);
+        }
+
+        private string totalEarnedDisplay;
+        public string TotalEarnedDisplay
+        {
+            get => $"Total Earned : {totalEarnedDisplay}";
+            set => SetProperty(ref totalEarnedDisplay, value);
+        }
+
+        //private double temp = 0;
 
 
         public void Dispose()
@@ -212,6 +237,8 @@ namespace Insurance_app.ViewModels
             userManager.Dispose();
             newMovDataList = null;
             rewardManager.Dispose();
+            userManager = null;
+            rewardManager = null;
 
         }
     }

@@ -7,7 +7,9 @@
              BackgroundColor="LightSteelBlue"
              Title="Welcome"
              x:Class="Insurance_app.AppShell">
-    
+    <Shell.FlyoutHeader>
+        <!-- header content later  -->
+    </Shell.FlyoutHeader>
     
     <ShellItem FlyoutItemIsVisible="False" Route="LogInPage">
         <ShellContent ContentTemplate="{DataTemplate pages:LogInPage}"/>
