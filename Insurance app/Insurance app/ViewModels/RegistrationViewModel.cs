@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Insurance_app.Logic;
@@ -22,7 +23,7 @@ namespace Insurance_app.ViewModels
     {
         private Dictionary<string, int> quote;
         public ICommand RegisterCommand { get; }
-        private bool wait=false;
+        private bool wait;
         private string price="";
         private string email="";
         private string password="";
@@ -33,7 +34,7 @@ namespace Insurance_app.ViewModels
         private string addressText = "Add address";
         private readonly UserManager userManager;
         private readonly PolicyManager policyManager;
-        private Address address=null;
+        private Address address;
         public ICommand AddressCommand { get; }
 
 
@@ -51,7 +52,7 @@ namespace Insurance_app.ViewModels
             try
             {
                 var errors = "";//StaticOptions.IsValid(fName, lName, phoneNr, email);//TODO uncomment
-                errors += StaticOptions.isPasswordValid(password);
+                errors += "";//StaticOptions.IsPasswordValid(password);
                 if (errors.Length > 2)
                 {
                     await Shell.Current.CurrentPage.DisplayAlert("Error", errors, "close");
@@ -63,7 +64,8 @@ namespace Insurance_app.ViewModels
                 if (registered == "success")
                 {
                     var user =  await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
-                   var customer = userManager.CreateCustomer(quote["Age"],fName, lName,phoneNr,email,address);
+                    
+                   var customer = userManager.CreateCustomer(GetDob(),fName, lName,phoneNr,email,address);
                    if (customer is null)
                    {
                        throw new Exception("registration failed");
@@ -99,9 +101,21 @@ namespace Insurance_app.ViewModels
                 await Shell.Current.DisplayAlert("error", "registration failed", "close");
                 Console.WriteLine(e);
             }
+        }
 
+        private DateTimeOffset GetDob()
+        {
+            try
+            {
+                var dateString = quote.FirstOrDefault(x => x.Value == -1).Key;
+                return DateTimeOffset.Parse(dateString);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($" GetDob error : {e}");
+            }
 
-
+            return DateTimeOffset.Now.AddYears(-18);
         }
         private async Task GetAddress()
         {

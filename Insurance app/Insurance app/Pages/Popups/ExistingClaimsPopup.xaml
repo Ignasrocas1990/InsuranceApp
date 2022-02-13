@@ -18,18 +18,45 @@
                <ViewCell>
                    <Grid>
                        <Frame>
-                           <StackLayout Orientation="Vertical">
+                           <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
+                               <Grid.RowDefinitions>
+            
+                                   <RowDefinition Height="Auto"/>
+                                   <RowDefinition Height="Auto"/>
+                                   <RowDefinition Height="Auto"/>
+                                   <RowDefinition Height="*"/>
+
+                               </Grid.RowDefinitions>
+        
+                               <Grid.ColumnDefinitions>
+                                   <ColumnDefinition Width="5*"/>
+                                   <ColumnDefinition Width="5*"/>
+                               </Grid.ColumnDefinitions>
                                
-                               <Label TextColor="Black" BackgroundColor="White"
-                                      Text="{Binding StartDate, StringFormat='{0:dd/MM/yyyy, HH:mm:ss}'}" />
+                               <Label Text="Start Date :" Style = "{ StaticResource EndLabel}"
+                                      Grid.Column="0" Grid.Row="0" />
+                               <Label Text="{Binding StartDate, StringFormat='{0:dd/MM/yyyy, HH:mm:ss}'}"
+                                      Style = "{ StaticResource NormalLabel}"
+                                      Grid.Column="1" Grid.Row="0" />
                                
-                               <Label TextColor="Black" BackgroundColor="White"
-                                      Text="{Binding CloseDate,StringFormat='{0:dd/MM/yyyy, HH:mm:ss}'}"/>
-                               <Label TextColor="Black" BackgroundColor="White"
-                                      Text="{Binding HospitalPostCode}"/>
-                               <Label TextColor="Black" BackgroundColor="White"
-                                      Text="{Binding Type}"/>
-                           </StackLayout>
+                               <Label Text="Close Date :"
+                                      Grid.Column="0" Grid.Row="1" Style = "{ StaticResource EndLabel}" />
+                               <Label Text="{Binding CloseDate, StringFormat='{0:dd/MM/yyyy, HH:mm:ss}'}"
+                                      Style = "{ StaticResource NormalLabel}"
+                                      Grid.Column="1" Grid.Row="1" />
+                               
+                               <Label Text="Hospital Code :" Style = "{ StaticResource EndLabel}"
+                                      Grid.Column="0" Grid.Row="2" />
+                               <Label Text="{Binding HospitalPostCode}"
+                                      Style = "{ StaticResource NormalLabel}"
+                                      Grid.Column="1" Grid.Row="2" />
+                               
+                               <Label Text="Type of Claim :" Style = "{ StaticResource EndLabel}"
+                                      Grid.Column="0" Grid.Row="3" />
+                               <Label Text="{Binding Type}"
+                                      Style = "{ StaticResource NormalLabel}"
+                                      Grid.Column="1" Grid.Row="3" />
+                           </Grid>
                        </Frame>
                    </Grid>
                </ViewCell>
@@ -37,7 +64,7 @@
         </ListView.ItemTemplate>
         <ListView.Footer>
             <StackLayout HorizontalOptions="Center">
-                <Button Text="close" Command="{Binding CloseCommand}"></Button>
+                <Button Text="close" Command="{Binding CloseCommand}" Style="{StaticResource SecondaryBtn}" />
             </StackLayout>
         </ListView.Footer>
     </ListView>

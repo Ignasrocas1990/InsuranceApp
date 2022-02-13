@@ -28,36 +28,37 @@
                      <ColumnDefinition Width="5*"/>
               </Grid.ColumnDefinitions>
                 
-            <Label Text="{Binding DateDisplay,StringFormat='{0:dd/MM/yyyy, HH:mm:ss}'}" 
-                   FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="Black" BackgroundColor="White" 
+            <Label Text="{Binding DateDisplay}" Style="{StaticResource NormalLabel}" HorizontalTextAlignment="Center"
                    Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" />
             
-            <Label Text="Hospital Code :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" 
+            <Label Text="Hospital Code :" Style="{StaticResource EndLabel}"
                    Grid.Column="0" Grid.Row="1" />
             <Entry  Keyboard="Email" IsReadOnly="{Binding IsReadOnly}"
                     Text="{Binding  HospitalPostCodeDisplay}" 
-                    Placeholder="R93 V1N6" PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+                    Placeholder="R93 V1N6" Style="{StaticResource NormalEntry}"
                     Grid.Column="1" Grid.Row="1"/>
                 
-            <Label Text="Patient Nr :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White"
+            <Label Text="Patient Nr :" Style="{StaticResource EndLabel}"
                    Grid.Column="0" Grid.Row="2" />
              <Entry  Text="{Binding PatientNrDisplay}" IsReadOnly="{Binding IsReadOnly}" 
-                    Placeholder="123S3DG23S" PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+                    Placeholder="123S3DG23S" Style="{StaticResource NormalEntry}"
                     Grid.Column="1" Grid.Row="2"/>
               
             <Label Text="Status :"
-                   Grid.Column="0" Grid.Row="3" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" />
+                   Grid.Column="0" Grid.Row="3" Style="{StaticResource EndLabel}" />
             <Label Text="{Binding StatusDisplay}"
-                   Grid.Column="1" Grid.Row="3" FontSize="20" VerticalTextAlignment="Center" TextColor="Black" BackgroundColor="White" />
+                   Grid.Column="1" Grid.Row="3" Style="{StaticResource NormalLabel}" />
 
             <Button Text="Create"  Command="{Binding  CreateClaimCommand}" Padding="10,0,0,0"
+                    Style="{StaticResource PrimaryBtn}"
                     Grid.Column="1" Grid.Row="4" IsEnabled="{Binding CreateBtnIsEnabled}" HorizontalOptions="Fill" />
 
             <Button Text="All Claims" Command="{Binding ViewPreviousClaimsCommand}" IsEnabled="{Binding PreviousBtnIsEnabled}"
-                    Grid.Column="0" Grid.Row="4" TextColor="White"  HorizontalOptions="Fill" Padding="0,0,10,0" />
+                    Style="{StaticResource SecondaryBtn}"
+                    Grid.Column="0" Grid.Row="4"  HorizontalOptions="Fill" Padding="0,0,10,0" />
             
             <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}" 
-                    HorizontalOptions="Center" Color="Gray" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" />
+                  Style="{StaticResource NormalCircularWait}" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" />
     </Grid>           
     
 </ContentPage>

@@ -13,7 +13,8 @@ namespace Insurance_app.Models
         public Customer() { }
         [PrimaryKey] [MapTo("_id")] [Required] public string Id { get; set; } = App.RealmApp.CurrentUser.Id;
         public Address Address { get; set; }
-        public int? Age { get; set; }
+        
+        public DateTimeOffset? Dob { get; set; }
         public string Name { get; set; }
         public string LastName { get; set; }
         public string PhoneNr { get;set; }

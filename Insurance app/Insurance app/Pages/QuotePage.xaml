@@ -32,37 +32,42 @@
         </Grid.ColumnDefinitions>
         
         
-        <Label Text="Age :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="0" />
-        <Entry Text="{Binding AgeEntry}" Keyboard="Numeric"  Placeholder="20" PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White" Grid.Column="1" Grid.Row="0" />
+        <Label Text="Dob :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="0" />
+        <DatePicker MinimumDate="{Binding MinDate}"
+                    MaximumDate="{Binding MaxDate}"
+                    Date="{Binding SelectedDate,Mode=TwoWay}"
+                    FontSize="20" TextColor="Black" BackgroundColor="White" Grid.Column="1" Grid.Row="0" />
 
-        <Label Text="Hospital :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="1" />
-        <Picker Title="Select Hospital" TextColor="Black" Grid.Column="1" Grid.Row="1"
-                ItemsSource="{Binding HospitalList}" SelectedIndex="{Binding SelectedHospital}" />
+        <Label Text="Hospital :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" />
+        <Picker Title="Select Hospital" Grid.Column="1" Grid.Row="1"
+                ItemsSource="{Binding HospitalList}" Style="{StaticResource NormalPicker}"
+                SelectedIndex="{Binding SelectedHospital}" />
 
 
-        <Label Text="Cover :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="2" />
-        <Picker Title="Select Hospital" Grid.Column="1" Grid.Row="2" TextColor="Black"
+        <Label Text="Cover :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" />
+        <Picker Title="Select Hospital" Grid.Column="1" Grid.Row="2" Style="{StaticResource NormalPicker}"
                 ItemsSource="{Binding CoverList}" SelectedIndex="{Binding SelectedCover}" />
 
 
-        <Label Text="Fee :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="3" />
-        <Picker Title="Hospital Fee" Grid.Column="1" Grid.Row="3" TextColor="Black"
+        <Label Text="Fee :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="3" />
+        <Picker Title="Hospital Fee" Grid.Column="1" Grid.Row="3" Style="{StaticResource NormalPicker}"
                 ItemsSource="{Binding HospitalFeeList}" SelectedItem="{Binding SelectedHospitalExcess}" />
 
 
-        <Label Text="Plan :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="4" />
-        <Picker Title="Select Hospital Fee" FontSize="20" TextColor="Black" Grid.Column="1" Grid.Row="4"
+        <Label Text="Plan :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="4" />
+        <Picker Title="Select Hospital Fee" Style="{StaticResource NormalPicker}" Grid.Column="1" Grid.Row="4"
                 ItemsSource="{Binding PlanList}" SelectedIndex="{Binding SelectedPlan}" />
 
 
-        <Label Text="Smoker :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="5" />
-        <CheckBox IsChecked="{Binding IsSmoker}" VerticalOptions="Center" Grid.Column="1" Grid.Row="5" />
+        <Label Text="Smoker :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="5" />
+        <CheckBox IsChecked="{Binding IsSmoker}" Grid.Column="1" Grid.Row="5" />
 
         
-        <Button Text= "Get Quote" IsEnabled="{Binding ButtonEnabled}" HorizontalOptions="Center"
+        <Button Text= "Get Quote" IsEnabled="{Binding ButtonEnabled}" Style="{StaticResource PrimaryBtn}"
                 Command="{Binding GetQuotCommand}" Grid.Column="0" Grid.Row="6"  Grid.ColumnSpan="2"/>
         
-        <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}" HorizontalOptions="Center" Color="Gray" Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" />
+        <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}" Style="{StaticResource NormalCircularWait}"
+                           Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" />
 
     </Grid>
 

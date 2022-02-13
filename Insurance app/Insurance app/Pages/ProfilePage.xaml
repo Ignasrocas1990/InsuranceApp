@@ -18,7 +18,6 @@
                      <RowDefinition Height="Auto"/>
                      <RowDefinition Height="Auto"/>
                      <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="Auto"/>
                      <RowDefinition Height="*"/>
 
               </Grid.RowDefinitions>
@@ -27,38 +26,32 @@
                      <ColumnDefinition Width="5*"/>
                      <ColumnDefinition Width="5*"/>
               </Grid.ColumnDefinitions>
-                
-              <Label Text="Email :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="0" />
-              <Label Text="{Binding EmailDisplay}" FontSize="20" TextColor="Black" BackgroundColor="White"
-                      Grid.Column="1" Grid.Row="0"/>
-                
-              <Label Text="First Name :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="1" />
+              
+              <Label Text="First Name :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="0" />
               <Entry Keyboard="Text" Text="{Binding NameDisplay}" 
-                     Placeholder="Jonny" PlaceholderColor="DimGray"
-                     FontSize="20" TextColor="Black" BackgroundColor="White"
+                     Placeholder="Jonny" Style="{StaticResource NormalEntry}"
+                     Grid.Column="1" Grid.Row="0"/>
+                
+              <Label Text="Last Name :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" />
+              <Entry Keyboard="Text" Text="{Binding  LastNameDisplay}" 
+                     Placeholder="Bravo" Style="{StaticResource NormalEntry}"
                      Grid.Column="1" Grid.Row="1"/>
                 
-              <Label Text="Last Name :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="2" />
-              <Entry Keyboard="Text" Text="{Binding  LastNameDisplay}" 
-                     Placeholder="Bravo" PlaceholderColor="DimGray"
-                     FontSize="20" TextColor="Black" BackgroundColor="White"
-                     Grid.Column="1" Grid.Row="2"/>
-                
-              <Label Text="Phone Nr :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="3" />
+              <Label Text="Phone Nr :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" />
               <Entry  Keyboard="Numeric" Text="{Binding PhoneNrDisplay}"
-                      Placeholder= "0852827820" PlaceholderColor="DimGray"
-                      FontSize="20" TextColor="Black" BackgroundColor="White"
-                      Grid.Column="1" Grid.Row="3"/>
+                      Placeholder= "0852827820" Style="{StaticResource NormalEntry}"
+                      Grid.Column="1" Grid.Row="2"/>
               
-              <Button Command="{Binding AddressCommand}" TextTransform="None" Text="{Binding AddressDisplay}" FontSize="20" TextColor="Black" BackgroundColor="White"
-                     Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" IsEnabled="{Binding IsEnabled}" />
+              <Button Command="{Binding AddressCommand}" TextTransform="None" TextColor="Black"
+                      Text="{Binding AddressDisplay}" BackgroundColor="WhiteSmoke"
+                     Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" IsEnabled="{Binding IsEnabled}" />
               
               
-              <Button  Text="Update" Command="{Binding UpdateCommand}"
-                      Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" TextColor="Black" HorizontalOptions="Center" IsEnabled="{Binding IsEnabled}" />
+              <Button  Text="Update" Command="{Binding UpdateCommand}" Style="{StaticResource PrimaryBtn}"
+                      Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" HorizontalOptions="Center" IsEnabled="{Binding IsEnabled}" />
                 <ActivityIndicator
-                       IsRunning="{Binding CircularWaitDisplay}" 
-                       HorizontalOptions="Center" VerticalOptions="Start" Color="Gray" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" />
+                       IsRunning="{Binding CircularWaitDisplay}" Style="{StaticResource NormalCircularWait}"
+                       Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" />
 
    </Grid>
 </ContentPage>

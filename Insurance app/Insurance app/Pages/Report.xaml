@@ -12,8 +12,8 @@
     </ContentPage.BindingContext>
 
     <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-         <ActivityIndicator IsRunning="{Binding CircularDisplay}" HorizontalOptions="Center" VerticalOptions="Center" Color="Gray" />
-         <Label FontSize="Medium" Text="Steps per day" TextColor="Black" HorizontalOptions="Center" VerticalOptions="Center"  ></Label>
+         <ActivityIndicator IsRunning="{Binding CircularDisplay}" Style="{StaticResource NormalCircularWait}" />
+         <Label  Text="Steps per day" HorizontalTextAlignment="Center" Style="{StaticResource NormalLabel}"/>
          <microcharts:ChartView Chart="{Binding LineChart}" WidthRequest="400" HeightRequest="500"/>
      </StackLayout>
      

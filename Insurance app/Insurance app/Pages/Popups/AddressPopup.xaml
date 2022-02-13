@@ -29,43 +29,43 @@
             <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
         
-        <Label Text="House Nr :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="0" />
+        <Label Text="House Nr :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="0" />
         <Entry  Keyboard="Numeric" Text="{Binding HouseNDisplay}"
-                Placeholder="a number"
-                PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+                Placeholder="a number" Style="{StaticResource NormalEntry}"
                 Grid.Column="1" Grid.Row="0"/>
         
         <Entry  Text="{Binding StreetDisplay}" 
                 Placeholder="Enter your street name here" HorizontalTextAlignment="Center"
-                PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+                Style="{StaticResource NormalEntry}"
                 Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
         
-        <Label Text="County :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="2" />
+        <Label Text="County :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" />
         <Entry  Text="{Binding CountyDisplay}" 
                 Placeholder="co.Dublin"
-                PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+                Style="{StaticResource NormalEntry}"
                 Grid.Column="1" Grid.Row="2"/>
         
-        <Label Text="City :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="3" />
-        <Entry  Text="{Binding CityDisplay}" 
-                Placeholder="Dublin"
-                PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+        <Label Text="City :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="3" />
+        <Entry  Text="{Binding CityDisplay}" Placeholder="Dublin"
+                Style="{StaticResource NormalEntry}"
                 Grid.Column="1" Grid.Row="3"/>
         
-        <Label Text="Country :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="4" />
+        <Label Text="Country :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="4" />
         <Entry  Text="{Binding CountryDisplay}" 
                 Placeholder="4 length"
-                PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+                Style="{StaticResource NormalEntry}"
                 Grid.Column="1" Grid.Row="4"/>
         
-        <Label Text="Post Code :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="5" />
+        <Label Text="Post Code :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="5" />
         <Entry  Text="{Binding PostCodeDisplay}" 
                 Placeholder="6 length"
-                PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+                Style="{StaticResource NormalEntry}"
                 Grid.Column="1" Grid.Row="5"/>
         
-        <Button Grid.Column="0" Grid.Row="6" Text="Cancel" HorizontalOptions="Center" VerticalOptions="Center" Command="{Binding  CancelCommand}"/>
-        <Button Grid.Column="1" Grid.Row="6" Text="Save" HorizontalOptions="Center" VerticalOptions="Center" Command="{Binding SaveCommand}"/>
+        <Button Grid.Column="0" Grid.Row="6" Text="Cancel" Style="{StaticResource  SecondaryBtn}"
+                HorizontalOptions="Center" VerticalOptions="Center" Command="{Binding  CancelCommand}"/>
+        <Button Grid.Column="1" Grid.Row="6" Text="Save" Style="{StaticResource  PrimaryBtn}"
+                HorizontalOptions="Center" VerticalOptions="Center" Command="{Binding SaveCommand}"/>
     </Grid>
    
 </xct:Popup>

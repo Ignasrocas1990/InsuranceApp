@@ -69,13 +69,20 @@ namespace Insurance_app.ViewModels
             
             try
             {
+                
+
                 CircularWaitDisplay = true;
                 if (App.NetConnection())
                 {
-                    
+                    if (email.Length < 1 || password.Length <1 )
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Error", "Email or Password fields left blank",
+                            "close");
+                        return;
+                    }
                     await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
-                    // await CleanDatabase();//TODO remove when submitting
-                    
+                    //await CleanDatabase();//TODO remove when submitting 
+                    //return;
                     await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
                 }
                 else

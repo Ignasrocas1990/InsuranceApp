@@ -15,11 +15,9 @@ namespace Insurance_app.ViewModels
     public class ProfileViewModel:ObservableObject,IDisposable
     {
         private UserManager userManager;
-        private int age;
         private string name="";
         private string lastName="";
         private string phoneNr="";
-        private string email="";
         private bool wait = false;
         private string addressText = "Click to update address";
         //--- address backing fields ---
@@ -48,11 +46,9 @@ namespace Insurance_app.ViewModels
                 var customer =  await userManager.GetCustomer(App.RealmApp.CurrentUser);
                 if (customer !=null)
                 {
-                    if (customer.Age != null) age = (int) customer.Age;
                     NameDisplay = customer.Name;
                     LastNameDisplay = customer.LastName;
                     PhoneNrDisplay = customer.PhoneNr;
-                    EmailDisplay = customer.Email;
                     
                     //address backing fields
                     houseN = customer.Address.HouseN;
@@ -115,8 +111,7 @@ namespace Insurance_app.ViewModels
                 IsEnabled = false;
                 CircularWaitDisplay = true;
                 
-               
-               await userManager.updateCustomer(age,name,lastName,phoneNr,email,address, App.RealmApp.CurrentUser);
+               await userManager.updateCustomer(name,lastName,phoneNr,address, App.RealmApp.CurrentUser);
                //await App.RealmApp.EmailPasswordAuth.CallResetPasswordFunctionAsync(email, password); make it separate screen
                
                CircularWaitDisplay = false;
@@ -147,11 +142,6 @@ namespace Insurance_app.ViewModels
         {
             get => phoneNr;
             set => SetProperty(ref phoneNr, value);
-        } 
-        public string EmailDisplay
-        {
-            get => email;
-            set => SetProperty(ref email, value);
         }
 
         public string AddressDisplay

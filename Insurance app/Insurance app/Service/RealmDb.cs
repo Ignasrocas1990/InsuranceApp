@@ -82,8 +82,8 @@ namespace Insurance_app.Service
 
             }
         }
-        public async Task UpdateCustomer(int age, string name, string lastName, 
-            string phoneNr, string email, Address address, User user)
+        public async Task UpdateCustomer(string name, string lastName, 
+            string phoneNr, Address address, User user)
         {
             try
             {
@@ -93,11 +93,9 @@ namespace Insurance_app.Service
                {
                    var customer = realm.All<Customer>().FirstOrDefault(c => c.Id == user.Id);
                    if (customer == null) return;
-                   customer.Age = age;
                    customer.Name = name;
                    customer.LastName = lastName;
                    customer.PhoneNr = phoneNr;
-                   customer.Email = email;
                    customer.Address = address;
                });
             }
@@ -323,7 +321,7 @@ namespace Insurance_app.Service
            
             try
             {
-                var config = new PartitionSyncConfiguration(user.Id, user);
+                var config = new SyncConfiguration(user.Id, user);
                 realm = await Realm.GetInstanceAsync(config);
                 /*
                 if (!curThread.Equals(Thread.CurrentThread))

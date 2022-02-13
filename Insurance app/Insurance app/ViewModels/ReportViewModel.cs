@@ -43,7 +43,7 @@ namespace Insurance_app.ViewModels
                     {
                         var label = i.Key;
                         float value = i.Value;
-                        value = r.Next(0, 20000);//TODO Remove
+                        //value = r.Next(0, 20000);//TODO To show that it works this can be uncommented
                         var color = StaticOptions.ChartColors[r.Next(0, StaticOptions.ChartColors.Length - 1)];
                         if (today)
                         {

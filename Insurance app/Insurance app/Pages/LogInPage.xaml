@@ -25,21 +25,21 @@
         </Grid.ColumnDefinitions>
         
         <Entry Text="{Binding EmailDisplay}" Placeholder="email@gmail.com" HorizontalTextAlignment="Center"
-               TextColor="Black" PlaceholderColor="Gray" IsTextPredictionEnabled="True" Keyboard="Plain"
+               Keyboard="Plain" Style="{StaticResource NormalEntry}"
                Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"/>
         
         <Entry Text= "{Binding PasswordDisplay}" Placeholder="password" HorizontalTextAlignment="Center"
-               TextColor="Black" PlaceholderColor="Gray"  IsPassword="True" Keyboard="Plain" 
+               IsPassword="True" Keyboard="Plain" Style="{StaticResource NormalEntry}"
                Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
         
-        <Button Text="Log In" Command="{Binding LogInCommand}" HorizontalOptions="Fill"
+        <Button Text="Log In" Command="{Binding LogInCommand}" HorizontalOptions="Fill" Style="{StaticResource PrimaryBtn}"
                 Grid.Column="1" Grid.Row="2"/>
-        <Button Text="Get a Quote" Command="{Binding QuoteCommand}" HorizontalOptions="Fill"
+        <Button Text="Get a Quote" Command="{Binding QuoteCommand}" HorizontalOptions="Fill" Style="{StaticResource SecondaryBtn}"
                 Grid.Column="0" Grid.Row="2"/>
-        <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}" x:Name="CircularWait" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2"
-                           HorizontalOptions="Center" VerticalOptions="Center" Color="Gray" />
         
-        
+        <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}" 
+                           Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2"
+                           Style="{StaticResource NormalCircularWait}" />
     </Grid>
         
 </ContentPage>

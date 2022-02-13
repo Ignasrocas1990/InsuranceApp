@@ -7,6 +7,10 @@
              Shell.FlyoutBehavior="Disabled"
              Title="Customer Registration"
              x:Class="Insurance_app.Pages.RegistrationPage">
+       
+       <ContentPage.BindingContext>
+              <viewModels1:RegistrationViewModel/>
+       </ContentPage.BindingContext>
 
        
        <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
@@ -29,45 +33,46 @@
                      <ColumnDefinition Width="5*"/>
               </Grid.ColumnDefinitions>
                 
-              <Label Text="Email :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="0" />
+              <Label Text="Email :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="0" />
               <Entry  Keyboard="Email" Text="{Binding EmailDisplay}" 
                       Placeholder="__@__.com"
-                      PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+                      Style="{StaticResource NormalEntry}"
                       Grid.Column="1" Grid.Row="0"/>
                 
-              <Label Text="Password :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="1" />
+              <Label Text="Password :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" />
               <Entry  Text="{Binding PassDisplay}" 
                       Placeholder="*********" IsPassword="True"
-                      PlaceholderColor="DimGray" FontSize="20" TextColor="Black" BackgroundColor="White"
+                      Style="{StaticResource NormalEntry}"
                       Grid.Column="1" Grid.Row="1"/>
                 
-              <Label Text="First Name :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="2" />
+              <Label Text="First Name :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" />
               <Entry Keyboard="Text" Text="{Binding FNameDisplay}" 
-                     Placeholder="Jonny" PlaceholderColor="DimGray"
-                     FontSize="20" TextColor="Black" BackgroundColor="White"
+                     Placeholder="Jonny" Style="{StaticResource NormalEntry}"
                      Grid.Column="1" Grid.Row="2"/>
                 
-              <Label Text="Last Name :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="3" />
+              <Label Text="Last Name :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="3" />
               <Entry Keyboard="Text" Text="{Binding LNameDisplay}" 
-                     Placeholder="Bravo" PlaceholderColor="DimGray"
-                     FontSize="20" TextColor="Black" BackgroundColor="White"
+                     Placeholder="Bravo" Style="{StaticResource NormalEntry}"
                      Grid.Column="1" Grid.Row="3"/>
                 
-              <Label Text="Phone Nr :" FontSize="20" VerticalTextAlignment="Center" HorizontalTextAlignment="End" TextColor="Black" BackgroundColor="White" Grid.Column="0" Grid.Row="4" />
+              <Label Text="Phone Nr :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="4" />
               <Entry  Keyboard="Numeric" Text="{Binding PhoneNrDisplay}"
-                      Placeholder= "0852827820" PlaceholderColor="DimGray"
-                      FontSize="20" TextColor="Black" BackgroundColor="White"
+                      Placeholder= "0852827820" Style="{StaticResource NormalEntry}"
                       Grid.Column="1" Grid.Row="4"/>
               
-              <Button Command="{Binding AddressCommand}" Text="{Binding AddressDisplay}" TextTransform="None" FontSize="20" TextColor="Black" BackgroundColor="White"
+              <Button Command="{Binding AddressCommand}" 
+                      Text="{Binding AddressDisplay}" TextTransform="None" FontSize="20" TextColor="Black" BackgroundColor="White"
                      Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" />
               
               
               <Button Text="Register" Command="{Binding RegisterCommand}"
+                      Style="{StaticResource PrimaryBtn}"
                       Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" HorizontalOptions="Center" />
+              
                 <ActivityIndicator
                        IsRunning="{Binding CircularWaitDisplay}" 
-                       HorizontalOptions="Center" VerticalOptions="Start" Color="Gray" Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" />
+                       Style="{StaticResource NormalCircularWait}"
+                       Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" />
 
    </Grid>           
 

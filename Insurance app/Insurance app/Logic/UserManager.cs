@@ -32,17 +32,24 @@ namespace Insurance_app.Logic
             return new Customer();
         }
 
-        public Customer CreateCustomer(int age, string fName, string lName, string phoneNr, string email,Address address)
+        public Customer CreateCustomer(DateTimeOffset dob, string fName, string lName, string phoneNr, string email,Address address)
         {
             try
             {
                 return new Customer()
                 {
                 
-                    Age = age,
-                    Name = fName, LastName = lName, PhoneNr = phoneNr, Email=email, 
-                    Address = address
-
+                    Dob = dob,
+                    Name = fName, LastName = lName, PhoneNr = phoneNr, Email=email,
+                    Address = new Address()
+                    {
+                        HouseN = address.HouseN,
+                        City = address.City,
+                        Country = address.Country,
+                        County = address.County,
+                        PostCode = address.PostCode,
+                        Street = address.Street
+                    }
                 };
             }
             catch (Exception e)
@@ -65,11 +72,11 @@ namespace Insurance_app.Logic
             }
         }
 
-        public async Task updateCustomer(int age, string name, string lastName, 
-            string phoneNr, string email, Address address, User user)
+        public async Task updateCustomer(string name, string lastName, 
+            string phoneNr,Address address, User user)
         {
-           await RealmDb.GetInstance().UpdateCustomer(age, name, lastName,
-                phoneNr, email, address, user);
+           await RealmDb.GetInstance().UpdateCustomer(name, lastName,
+                phoneNr,  address, user);
         }
     }
 }

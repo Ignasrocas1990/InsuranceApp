@@ -36,8 +36,15 @@ namespace Insurance_app.ViewModels
             var claim = claimManager.GetCurrentClaim();
             if (claim != null)
             {
+                var dtoDate = claim.StartDate;
+                string displayDate = "Date Not found";
+                if (dtoDate !=null)
+                {
+                    displayDate = dtoDate.Value.Date.ToString("d");
+
+                }
                 IsReadOnly = true;
-                DateDisplay = $"{claim.StartDate}";
+                DateDisplay = displayDate;
                 HospitalPostCodeDisplay = claim.HospitalPostCode;
                 PatientNrDisplay = claim.PatientNr;
                 StatusDisplay = "open";
@@ -45,7 +52,7 @@ namespace Insurance_app.ViewModels
             else
             {
                 IsReadOnly = false;
-                DateDisplay = $"{DateTimeOffset.Now.DateTime}";
+                DateDisplay = DateTimeOffset.Now.Date.ToString("d");
                 HospitalPostCodeDisplay = "";
                 PatientNrDisplay = "";
                 StatusDisplay = "Not Created";

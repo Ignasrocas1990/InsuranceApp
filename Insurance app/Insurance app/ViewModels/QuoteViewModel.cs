@@ -28,7 +28,7 @@ namespace Insurance_app.ViewModels
         private bool wait;
 
         private int hospitals;
-        private int age;
+        private DateTime dob;
         private int cover;
         private int hospitalExcess;
         private int plan;
@@ -67,6 +67,8 @@ namespace Insurance_app.ViewModels
                await Shell.Current.CurrentPage.DisplayAlert("Error",elegalChars , "close");
                return;
            }
+
+           var age = DateTime.Now.Year - selectedDate.Year;
            var tempQuote = new Dictionary<string, int>()
            {
                {"Hospitals",hospitals},
@@ -105,6 +107,7 @@ namespace Insurance_app.ViewModels
            {
                try
                {   
+                   tempQuote.Add(selectedDate.ToString("d"),-1);
                    var jsonQuote = JsonConvert.SerializeObject(tempQuote);
                    await Shell.Current.GoToAsync($"//{nameof(RegistrationPage)}?PriceDisplay={price}&TempQuote={jsonQuote}");
                }
@@ -159,23 +162,18 @@ namespace Insurance_app.ViewModels
             get => plan;
             set => SetProperty(ref plan, value);
         }
-        public int AgeEntry
+
+        public DateTime MinDate { get; } = DateTime.Now.AddYears(-65);
+        public DateTime MaxDate { get; } = DateTime.Now.AddYears(-18);
+        
+        private DateTime selectedDate = DateTime.Now.AddYears(-18);
+        public DateTime SelectedDate
         {
-            get => age;
-            set => SetProperty(ref age, CheckAge(value));
+            get => selectedDate;
+            set => SetProperty(ref selectedDate, value);
         }
-        private int CheckAge(int value)
-        {
-            if ( value > 17 && value < 66)
-            {
-                elegalChars = "";
-            }
-            else
-            {
-                elegalChars = StaticOptions.AgeLimitErrorMessage;
-            }
-            return value;
-        }
+        
+
         public bool IsSmoker
         {
             get => isSmokerChecker;

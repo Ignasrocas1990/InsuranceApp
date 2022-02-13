@@ -13,7 +13,7 @@ namespace Insurance_app.SupportClasses
         public static string MyRealmAppId = "application-0-bvutx";
         public static readonly double StepNeeded = 10000;
         public static readonly int MovUpdateArraySize = 5;
-        public static readonly int MaxResponseTime = 30;
+        public static readonly int MaxResponseTime = 60;
         public static readonly string AgeLimitErrorMessage = "The age limit is between 18 and 65";
         public static readonly string ConnectionErrorMessage = "Network connectivity not available";
         public static readonly int MaxNameLen = 20;
@@ -40,15 +40,15 @@ namespace Insurance_app.SupportClasses
         public static string IsValid(string fName,string lName,string phoneNr,string email)
         {
             var errors = "";
-            if (fName.Length < 2 || fName.Length > 20 || StaticOptions.HasNumbers(fName))
+            if (fName.Length < 2 || fName.Length > 20 || HasNumbers(fName))
             {
                 errors += " First name is invalid \n";
             }
-            if (lName.Length < 4 || lName.Length > 20 || StaticOptions.HasNumbers(lName))
+            if (lName.Length < 4 || lName.Length > 20 || HasNumbers(lName))
             {
                 errors += " Last name is invalid \n";
             }
-            if (phoneNr.Length < 9 || !StaticOptions.HasNumbers(phoneNr))
+            if (phoneNr.Length < 9 || !HasNumbers(phoneNr))
             {
                 errors += " Phone nr is invalid \n";
             }
@@ -61,7 +61,7 @@ namespace Insurance_app.SupportClasses
             return errors;
         }
 
-        public static string isPasswordValid(string password)
+        public static string IsPasswordValid(string password)
         {
             string errors="";
             if (password.Length < 7)

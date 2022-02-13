@@ -25,7 +25,7 @@ namespace Insurance_app.Communications
         private ICharacteristic chara=null;
         public EventHandler<RawDataArgs> InfferEvent = delegate {  };
 
-        private int readingDelay = 0;
+        private int readingDelay = 5000; // reading delay every 5 sec (incase empty read.)
         private int conErrDelay = 0;
         private bool bleState = false;
         private bool isMonitoring = false;
@@ -85,7 +85,6 @@ namespace Insurance_app.Communications
                 {
                     if (!isMonitoring) return;
 
-                    readingDelay += 3000;
                     Console.WriteLine($"reading empty : wait {readingDelay / 1000}sec > try again");
                     Task t = Task.Run(async () =>
                     {
@@ -95,7 +94,6 @@ namespace Insurance_app.Communications
                     return;
                 }
 
-                readingDelay = 0;
                 //Console.WriteLine($"Read complete, values are : > {str}");
                 Infer(str);
                 await ReadAsync();
