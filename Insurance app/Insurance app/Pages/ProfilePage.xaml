@@ -6,6 +6,9 @@
              x:DataType="viewModels:ProfileViewModel"
              Title="Customer Profile"
              x:Class="Insurance_app.Pages.ProfilePage">
+       <ContentPage.BindingContext>
+              <viewModels:ProfileViewModel/>
+       </ContentPage.BindingContext>
        
        <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
                   <Grid.RowDefinitions>

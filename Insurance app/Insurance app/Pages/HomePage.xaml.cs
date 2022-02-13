@@ -18,8 +18,8 @@ namespace Insurance_app.Pages
         {
             InitializeComponent();
 
-            BindingContext = (HomeViewModel) ShellViewModel.GetInstance()
-                .GetViewModel(Converter.HomeViewModel);
+            //BindingContext = (HomeViewModel) ShellViewModel.GetInstance()
+              //  .GetViewModel(Converter.HomeViewModel);
 
              //BindingContext   = new HomeViewModel();
         }

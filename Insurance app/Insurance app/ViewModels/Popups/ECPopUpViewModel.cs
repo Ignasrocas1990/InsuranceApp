@@ -20,7 +20,6 @@ namespace Insurance_app.ViewModels.Popups
             Claims = new ObservableRangeCollection<Claim>(existingClaims);
             CloseCommand = new Command(ClosePopUp);
         }
-
         private void ClosePopUp()
         {
             Claims = null;

@@ -25,13 +25,28 @@ namespace Insurance_app.ViewModels
 
         public LogInViewModel()
         {
+            checkIfUserExist();
             LogInCommand = new AsyncCommand(LogIn);
             QuoteCommand = new AsyncCommand(NavigateToQuote);
             Connectivity.ConnectivityChanged += (s, e) =>
             {
                 App.Connected =  (e.NetworkAccess ==  NetworkAccess.Internet);
-                
             };
+            
+        }
+
+        private async void checkIfUserExist()
+        {
+            try
+            {
+                if (App.RealmApp.CurrentUser == null) return;
+                await App.RealmApp.CurrentUser.LogOutAsync();
+                RealmDb.GetInstance().Dispose();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         private async Task NavigateToQuote()
@@ -54,13 +69,12 @@ namespace Insurance_app.ViewModels
             
             try
             {
+                CircularWaitDisplay = true;
                 if (App.NetConnection())
                 {
-                    CircularWaitDisplay = true;
-                    await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
-                    App.RealmApp.Sync.Reconnect();
                     
-                   // await CleanDatabase();//TODO remove when submitting
+                    await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
+                    // await CleanDatabase();//TODO remove when submitting
                     
                     await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
                 }
@@ -68,12 +82,11 @@ namespace Insurance_app.ViewModels
                 {
                    await Shell.Current.DisplayAlert("Notice", "Network Connection needed for log in", "close");
                 }
-                
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                await Application.Current.MainPage.DisplayAlert("Login Failed", e.Message, "close");
+                await Shell.Current.DisplayAlert("Login Failed", e.Message, "close");
 
             }
             CircularWaitDisplay = false;

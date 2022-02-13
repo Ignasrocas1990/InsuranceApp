@@ -9,6 +9,9 @@
              x:DataType="viewModels:HomeViewModel"
              Shell.PresentationMode="Modal"
              x:Class="Insurance_app.Pages.HomePage">
+    <ContentPage.BindingContext>
+        <viewModels:HomeViewModel/>
+    </ContentPage.BindingContext>
     
     <ContentPage.Resources>
         <ResourceDictionary>

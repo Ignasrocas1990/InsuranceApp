@@ -32,15 +32,9 @@ namespace Insurance_app
             
             //firstly check here if user is customer or client at welcome screen
             MainPage = new AppShell();//there should be 2 type of AppShells... (customer/client)
-            if (NetConnection() && RealmApp.CurrentUser != null)
-            {
-                 Shell.Current.GoToAsync($"//{nameof(HomePage)}");// for simplicity just make them log in everytime
-            }
-            else
-            {
-                Shell.Current.GoToAsync($"//{nameof(LogInPage)}");
-                //also dont use shell till we know if it is a customer/client so use previous navigation(gihub)
-            }
+            
+            Shell.Current.GoToAsync($"//{nameof(LogInPage)}");
+            //also dont use shell till we know if it is a customer/client so use previous navigation(gihub)
 /*
             if (RealmApp.CurrentUser is null)
             {

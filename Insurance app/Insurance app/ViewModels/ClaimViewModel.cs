@@ -50,14 +50,14 @@ namespace Insurance_app.ViewModels
                 PatientNrDisplay = "";
                 StatusDisplay = "Not Created";
             }
-            CreateEnabled = !IsReadOnly;
+            CreateBtnIsEnabled = !IsReadOnly;
 
-            PreviousButtonEnabled = claimManager.Claims.Count > 1;
+            PreviousBtnIsEnabled = claimManager.Claims.Count > 1;
         }
 
         private async Task GetClaims()
         {
-            var newAddress = await Application.Current.MainPage.Navigation
+            await Application.Current.MainPage.Navigation
                 .ShowPopupAsync(new ExistingClaimsPopup(claimManager.Claims));
         }
         
@@ -69,15 +69,16 @@ namespace Insurance_app.ViewModels
 
             CircularWaitDisplay = true;
             IsReadOnly = true;
-            CreateEnabled = !IsReadOnly;
+            CreateBtnIsEnabled = !IsReadOnly;
 
             await claimManager.CreateClaim(hospitalPostcode, patientNr, type, true,App.RealmApp.CurrentUser);
             
             StatusDisplay = "open";
-            CircularWaitDisplay = false;
+            
             await Shell.Current.DisplayAlert("Message", 
                 "New Claim has been Opened,\n Client will take a look at it shortly",
                 "close");
+            CircularWaitDisplay = false;
         }
 
 
@@ -106,17 +107,23 @@ namespace Insurance_app.ViewModels
             get => wait;
             set => SetProperty(ref wait, value);
         }
-        private bool fieldsEnabled=false;
+        private bool fieldsEnabled;
         public bool IsReadOnly// opposite to this
         {
             get => fieldsEnabled;
             set => SetProperty(ref fieldsEnabled, value);
         }
 
-        public bool CreateEnabled { get; set; }
+        bool createBtnEnabled;
+        public bool CreateBtnIsEnabled
+        {
+            get => createBtnEnabled;
+            set => SetProperty(ref createBtnEnabled, value);
+        }
 
         private bool previousExist;
-        public bool PreviousButtonEnabled
+
+        public bool PreviousBtnIsEnabled
         {
             get => previousExist;
             set => SetProperty(ref previousExist, value);

@@ -5,7 +5,7 @@
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
            xmlns:models1="clr-namespace:Insurance_app.Models"
            xmlns:popups="clr-namespace:Insurance_app.ViewModels.Popups;assembly=Insurance app"
-           x:DataType="popups:EcPopUpViewModel"
+             x:DataType="popups:EcPopUpViewModel"
              IsLightDismissEnabled="False"
              Size="350,500"
              x:Class="Insurance_app.Pages.ExistingClaimsPopup">
@@ -19,6 +19,7 @@
                    <Grid>
                        <Frame>
                            <StackLayout Orientation="Vertical">
+                               
                                <Label TextColor="Black" BackgroundColor="White"
                                       Text="{Binding StartDate, StringFormat='{0:dd/MM/yyyy, HH:mm:ss}'}" />
                                

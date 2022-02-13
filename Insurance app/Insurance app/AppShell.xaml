@@ -7,7 +7,8 @@
              BackgroundColor="LightSteelBlue"
              Title="Welcome"
              x:Class="Insurance_app.AppShell">
-    <Shell.FlyoutHeader>
+    <Shell.FlyoutHeader >
+        <ViewCell Height="200"></ViewCell>
         <!-- header content later  -->
     </Shell.FlyoutHeader>
     
@@ -37,10 +38,6 @@
     <FlyoutItem Title="Claim page" Icon="claimIcon.png">
         <ShellContent ContentTemplate="{DataTemplate pages:ClaimPage}"/>
     </FlyoutItem>
-
-    
-    
-    <MenuItem Text="logout" IconImageSource="logoutIcon.png" Clicked="MenuItem_OnClicked"/>
 
     <Shell.FlyoutFooterTemplate>
             <DataTemplate>

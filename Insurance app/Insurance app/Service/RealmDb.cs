@@ -12,19 +12,17 @@ using Xamarin.Essentials;
 
 namespace Insurance_app.Service
 {
-    public class RealmDb : IDisposable
+    public class RealmDb
     {
         private Realm realm = null;
-        readonly Thread curThread = Thread.CurrentThread;
-        private static RealmDb db = null;
+        //readonly Thread curThread = Thread.CurrentThread;
+        private static RealmDb _db = null;
 
-        private RealmDb()
-        {
-        }
+        private RealmDb() {}
 
         public static RealmDb GetInstance()
         {
-            return db ?? (db = new RealmDb());
+            return _db ?? (_db = new RealmDb());
         }
         
         
@@ -46,14 +44,11 @@ namespace Insurance_app.Service
         
         public async Task AddCustomer(Customer c,User user)
         {
-            await GetRealm(user);
             try
             {
-                if (realm is null)
-                {
-                    Console.WriteLine("Couldn't get realm");
-                    return;
-                }
+                await GetRealm(user);
+                if (realm is null) throw new Exception("AddCustomer, real is null");
+                
                 realm.Write(() =>
                 {
                     realm.Add(c,true);
@@ -69,13 +64,14 @@ namespace Insurance_app.Service
 
         public async Task<Customer> FindCustomer(User user)
         {
+            Customer c = null;
             try
             {
-                Customer c = null;
                 await GetRealm(user);
-                realm?.Write(() =>
+                if (realm is null) throw new Exception("FindCustomer, real is null");
+                realm.Write(() =>
                 {
-                    c = realm.All<Customer>().FirstOrDefault(u => u.Id == user.Id);
+                    c = realm.All<Customer>().FirstOrDefault(u => u.Id == user.Id && u.DelFlag == false);
                 });
                 return c;
             }
@@ -92,18 +88,17 @@ namespace Insurance_app.Service
             try
             {
                await GetRealm(user);
+               if (realm is null) throw new Exception("UpdateCustomer, real is null");
                realm.Write(() =>
                {
                    var customer = realm.All<Customer>().FirstOrDefault(c => c.Id == user.Id);
-                   if (customer!=null)
-                   {
-                       customer.Age = age;
-                       customer.Name = name;
-                       customer.LastName = lastName;
-                       customer.PhoneNr = phoneNr;
-                       customer.Email = email;
-                       customer.Address = address;
-                   }
+                   if (customer == null) return;
+                   customer.Age = age;
+                   customer.Name = name;
+                   customer.LastName = lastName;
+                   customer.PhoneNr = phoneNr;
+                   customer.Email = email;
+                   customer.Address = address;
                });
             }
             catch (Exception e)
@@ -116,17 +111,18 @@ namespace Insurance_app.Service
 // --------------------------- Mov Data  methods --------------------------------     
         public async Task AddMovData(ConcurrentQueue<MovData> movList,User user)
         {
-             await GetRealm(user);
-            if (realm is null)
-            {
-                Console.WriteLine("AddMovData2 realm is null");
-                return;
-            }
             try
             {
+                await GetRealm(user);
+                if (realm is null)
+                {
+                    Console.WriteLine("AddMovData2 realm is null");
+                    return;
+                }
                 realm.Write(() =>
                 {
-                    var reward = realm.All<Reward>().FirstOrDefault(r => r.Partition == user.Id && r.FinDate == null);
+                    var reward = realm.All<Reward>().FirstOrDefault(
+                        r => r.Partition == user.Id && r.FinDate == null && r.DelFlag == false);
                     if (reward != null)
                     {
                         foreach (var mov in movList)
@@ -143,7 +139,6 @@ namespace Insurance_app.Service
         }
         public async Task<Dictionary<string,int>> GetWeeksMovData(User user)
         {
-            //int[] chartEntries = {0,0,0,0,0,0,0};
             Dictionary<string, int> chartEntries = new Dictionary<string, int>();
             try
             {
@@ -163,7 +158,7 @@ namespace Insurance_app.Service
                         var now1 = now;
                         count = realm
                             .All<MovData>().Count(m => m.Partition == user.Id && m.DateTimeStamp <= now1 && 
-                                                       m.DateTimeStamp > prev1);
+                                                       m.DateTimeStamp > prev1 && m.DelFlag == false);
                         chartEntries.Add(now.DayOfWeek.ToString(),count);
                         now = prev;
                         prev = prev.AddHours(-hourDif);
@@ -184,16 +179,16 @@ namespace Insurance_app.Service
 //------------------------------------------------   reward methods ----------------------
         public async Task<Reward> AddNewReward(User user)
         {
-            await GetRealm(user);
-            if (realm is null)
-                throw new Exception("real, AddNewReward, null");
+            Reward reward = null;
             try
             {
-                Reward reward = null;
+                await GetRealm(user);
+                if (realm is null)
+                    throw new Exception("real, AddNewReward, null");
                 realm.Write(()=>
                 {
 
-                    var customer = realm.All<Customer>().FirstOrDefault(c => c.Id == user.Id);
+                    var customer = realm.All<Customer>().FirstOrDefault(c => c.Id == user.Id && c.DelFlag == false);
                     if (customer!=null)
                     {
                         var cost = customer.Policy.Price / 100;
@@ -275,19 +270,19 @@ namespace Insurance_app.Service
         }
         public async Task<List<Claim>> GetClaims(User user)
         {
-            await GetRealm(user);
-            if (realm is null)
-                throw new Exception(" GetClaims realm null");
             List<Claim> claims = new List<Claim>();
             try
             {
-                if (realm !=null)
+                await GetRealm(user);
+                if (realm is null)
+                    throw new Exception(" GetClaims realm null");
+                
+
+                realm.Write(() =>
                 {
-                    realm.Write(() =>
-                    {
-                        claims = realm.All<Claim>().Where(c => c.Partition == user.Id).ToList();
-                    });
-                }
+                    claims = realm.All<Claim>().Where(c => c.Partition == user.Id && c.DelFlag == false).ToList();
+                });
+                
                 
             }
             catch (Exception e)
@@ -352,7 +347,11 @@ namespace Insurance_app.Service
             {
                 if (realm is null) return;
                 realm.SyncSession.Stop();
-                realm.Dispose();
+               
+                if (!realm.IsClosed)
+                {
+                    realm.Dispose();
+                }
                 realm = null;
             }
             catch (Exception e)

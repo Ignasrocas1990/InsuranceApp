@@ -164,7 +164,6 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\claimIcon.png" />
-    <BundleResource Include="Resources\logoutIcon.png" />
     <BundleResource Include="Resources\profileIcon.png" />
     <BundleResource Include="Resources\reportIcon.png" />
     <BundleResource Include="Resources\walkIcon.png" />

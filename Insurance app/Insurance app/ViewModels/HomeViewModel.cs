@@ -72,7 +72,9 @@ namespace Insurance_app.ViewModels
                     if (reward != null)
                     {
                         double movLen = Convert.ToDouble(reward.MovData.Count());
-                        movLen = 6246;//TODO Remove
+                        //TODO uncomment to show
+                        //Random rand = new Random();
+                        //movLen = rand.NextDouble() * 10000;
                         SetUpView(movLen);
                         return;
                     }
@@ -121,7 +123,6 @@ namespace Insurance_app.ViewModels
                     newMovDataList.Enqueue(currMovData);
                     if (newMovDataList.Count > 4)
                     {
-                        //or re-create new Realm (TODO need to change this)
                         await RealmDb.GetInstance().AddMovData(new ConcurrentQueue<MovData>(newMovDataList),App.RealmApp.CurrentUser);
                         newMovDataList = new ConcurrentQueue<MovData>();
                     }

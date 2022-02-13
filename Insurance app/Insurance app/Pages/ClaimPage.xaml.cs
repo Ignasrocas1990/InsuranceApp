@@ -13,8 +13,9 @@ namespace Insurance_app.Pages
         {
             InitializeComponent();
             
-            BindingContext = (ClaimViewModel) ShellViewModel.GetInstance()
-                .GetViewModel(Converter.ClaimViewModel);
+            //BindingContext = (ClaimViewModel) ShellViewModel.GetInstance()
+             //   .GetViewModel(Converter.ClaimViewModel);
+             //BindingContext = new ClaimViewModel();
         }
 
         protected override async void OnAppearing()

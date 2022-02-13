@@ -6,9 +6,12 @@
              Title="Claims"
              x:DataType="viewModels1:ClaimViewModel"
              x:Class="Insurance_app.Pages.ClaimPage">
+       <ContentPage.BindingContext>
+              <viewModels1:ClaimViewModel/>
+       </ContentPage.BindingContext>
     
     
-    <Grid VerticalOptions="Center"  RowSpacing="20" ColumnSpacing="5" Padding="40">
+       <Grid VerticalOptions="Center"  RowSpacing="20" ColumnSpacing="5" Padding="40">
               <Grid.RowDefinitions>
             
                      <RowDefinition Height="Auto"/>
@@ -48,9 +51,9 @@
                    Grid.Column="1" Grid.Row="3" FontSize="20" VerticalTextAlignment="Center" TextColor="Black" BackgroundColor="White" />
 
             <Button Text="Create"  Command="{Binding  CreateClaimCommand}" Padding="10,0,0,0"
-                    Grid.Column="1" Grid.Row="4" IsEnabled="{Binding CreateEnabled}" HorizontalOptions="Fill" />
+                    Grid.Column="1" Grid.Row="4" IsEnabled="{Binding CreateBtnIsEnabled}" HorizontalOptions="Fill" />
 
-            <Button Text="All Claims" Command="{Binding ViewPreviousClaimsCommand}" IsEnabled="{Binding PreviousButtonEnabled}"
+            <Button Text="All Claims" Command="{Binding ViewPreviousClaimsCommand}" IsEnabled="{Binding PreviousBtnIsEnabled}"
                     Grid.Column="0" Grid.Row="4" TextColor="White"  HorizontalOptions="Fill" Padding="0,0,10,0" />
             
             <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}" 

@@ -16,9 +16,9 @@ namespace Insurance_app.Pages
         public ProfilePage()
         {
             InitializeComponent();
-            BindingContext = (ProfileViewModel) ShellViewModel.GetInstance()
-                .GetViewModel(Converter.ProfileViewModel);
-            
+            //BindingContext = (ProfileViewModel) ShellViewModel.GetInstance()
+              //  .GetViewModel(Converter.ProfileViewModel);
+              //BindingContext = new ProfileViewModel();
         }
 
         protected override async void OnAppearing()

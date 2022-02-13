@@ -7,8 +7,11 @@
              x:DataType="viewModels1:ReportViewModel"
              Title="Customer Report"
              x:Class="Insurance_app.Pages.Report">
+    <ContentPage.BindingContext>
+        <viewModels1:ReportViewModel/>
+    </ContentPage.BindingContext>
 
-     <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+    <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
          <ActivityIndicator IsRunning="{Binding CircularDisplay}" HorizontalOptions="Center" VerticalOptions="Center" Color="Gray" />
          <Label FontSize="Medium" Text="Steps per day" TextColor="Black" HorizontalOptions="Center" VerticalOptions="Center"  ></Label>
          <microcharts:ChartView Chart="{Binding LineChart}" WidthRequest="400" HeightRequest="500"/>
