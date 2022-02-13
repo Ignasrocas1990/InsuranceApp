@@ -21,6 +21,7 @@
             </Style>
             
             <Style x:Key="PrimaryBtn" TargetType="Button"
+                   
                    BasedOn="{StaticResource BasicBtn}">
                 <Setter Property="BackgroundColor" Value="ForestGreen"/>
             </Style>
@@ -29,19 +30,43 @@
                    BasedOn="{StaticResource BasicBtn}">
                 <Setter Property="BackgroundColor" Value="{StaticResource  SteelColor}"/>
                 <Setter Property="TextColor" Value="Black"/>
-
+            </Style>
+            <Style x:Key="SmallBtn" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource  SteelColor}"/>
+                <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="FontSize" Value="15"/>
+                <Setter Property="HorizontalOptions" Value="Start"/>
+                <Setter Property="VerticalOptions" Value="Center"/>
+                <Setter Property="WidthRequest" Value="36"/>
+                <Setter Property="HeightRequest" Value="36"/>
+                <Setter Property="CornerRadius" Value="400"/>
+                
             </Style>
             
             <!-- Labels -->
-            <Style x:Key="NormalLabel" TargetType="Label">
+            <Style x:Key="BasicLabel" TargetType="Label">
                 <Setter Property="TextColor" Value="Black"/>
                 <Setter Property="BackgroundColor" Value="{ StaticResource BackColor}"/>
+            </Style>
+            <Style x:Key="NormalLabel" TargetType="Label" BasedOn="{StaticResource BasicLabel}">
                 <Setter Property="VerticalTextAlignment" Value="Center" />
                 <Setter Property="FontSize" Value="20" />
             </Style>
             <Style x:Key="EndLabel" TargetType="Label" BasedOn="{StaticResource NormalLabel}">
                 <Setter Property="HorizontalTextAlignment" Value="End" />
             </Style>
+            
+            <Style x:Key="InfoHLabel" TargetType="Label" BasedOn="{StaticResource BasicLabel}">
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="VerticalTextAlignment" Value="Center"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="FontSize" Value="15"/>
+            </Style>
+            <Style x:Key="InfoDetailLabel" TargetType="Label" BasedOn="{StaticResource BasicLabel}">
+                <Setter Property="FontAttributes" Value="Italic"/>
+                <Setter Property="FontSize" Value="15"/>
+            </Style>
+           
             <!-- Entry -->
             <Style x:Key="NormalEntry" TargetType="Entry">
                 <Setter Property="IsTextPredictionEnabled" Value="True"/>

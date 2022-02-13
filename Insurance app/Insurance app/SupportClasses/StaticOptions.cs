@@ -71,6 +71,37 @@ namespace Insurance_app.SupportClasses
 
             return errors;
         }
+
+        public static string InfoTest(string type)
+        {
+            switch (type)
+            {
+                case "Hospital":
+                    return "Private & Public Hospitals"+
+                           "~Most Hospitals"+
+                           "~Public Hospitals"+
+                           "~Covered by\npublic hospitals\nand hospitals such as\nSt Patrick's University Hospital\nBon Secours Hospital Glasnevin\nand other..." +
+                           "~Covered by\npublic hospitals\nand selected private\nhospitals such as\nHermitage Medical Clinic\nSt Vincents Private Hospital\nand more..." +
+                           "~Covered by\nlocal hospitals\nsuch as St James Hospital\nCappagh National Orthopaedic Hospital\n and other...";
+                case "Cover":
+                    return "Low cover~Medium cover~High cover"+
+                           "~Covers minimum expenses\ntowards the doctor visits."+
+                           "~Covers up to 70%\nof the doctor visits not\nincluding special cases."+
+                           "~Full covers most of\nthe doctor visits";
+                case "Fee":
+                    return "150-300€~51-150€~€0-50€" +
+                           "~You will pay between\n€150 - €300\nper normal hospital admission." +
+                           "~You will pay between\n€51 - €175\nper normal hospital admission." +
+                           "~You will pay between\n€0 - €50\nper normal hospital admission.";
+                case "Plan":
+                    return "Low Plan~Medium Plan~High Plan" +
+                           "~Includes\nConsultants\nScans\nTherapies" +
+                           "~Includes\n(Low Plan)+\nHealth coach\nNutritionist\nOptical\nPhysiotherapy" +
+                           "~Includes\n(Medium Plan)+\nDental\nPersonal GP Online Care";
+                default:
+                    return "";
+            }
+        }
         
 
     }

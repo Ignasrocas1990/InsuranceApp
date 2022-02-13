@@ -14,6 +14,8 @@ using Xamarin.Essentials;
 using Xamarin.Forms;
 using System.Timers;
 using Android.Util;
+using Insurance_app.Pages.Popups;
+using Xamarin.CommunityToolkit.Extensions;
 
 
 namespace Insurance_app.ViewModels
@@ -23,7 +25,6 @@ namespace Insurance_app.ViewModels
         public ICommand GetQuotCommand { get; }
         private bool buttonEnabled = true;
         private int responseCounter = 0;
-
         private InferenceService inf;
         private bool wait;
 
@@ -36,9 +37,10 @@ namespace Insurance_app.ViewModels
         private bool isSmokerChecker=false;
         private readonly Timer timer;
         private string elegalChars = "";
-
-
-
+        public ICommand HospitalInfoCommand { get; }
+        public ICommand CoverInfoCommand { get; }
+        public ICommand FeeInfoCommand { get; }
+        public ICommand PlanInfoCommand { get; }
         public IList<String> HospitalList { get; } = StaticOptions.HospitalsEnum();
         //age
         public IList<String> CoverList { get; } = Enum.GetNames(typeof(StaticOptions.CoverEnum)).ToList();
@@ -51,11 +53,15 @@ namespace Insurance_app.ViewModels
            GetQuotCommand = new AsyncCommand(GetQuote);
            inf = new InferenceService();
            timer.Elapsed += CheckResponseTime;
-
-          
+           HospitalInfoCommand = new AsyncCommand(HospitalInfoPopup);
+           CoverInfoCommand = new AsyncCommand(CoverInfoPopup);
+           FeeInfoCommand = new AsyncCommand(FeeInfoPopup);
+           PlanInfoCommand = new AsyncCommand(PlanInfoPopup);
        }
 
-       private async Task GetQuote()
+
+
+        private async Task GetQuote()
        {
            if (!App.NetConnection())
            {
@@ -129,6 +135,7 @@ namespace Insurance_app.ViewModels
                await Shell.Current.CurrentPage.DisplayAlert("Error",StaticOptions.ConnectionErrorMessage, "close");
            }
        }
+
 //-----------------------------data binding methods ------------------------------------------------
        public bool CircularWaitDisplay
        {
@@ -167,6 +174,8 @@ namespace Insurance_app.ViewModels
         public DateTime MaxDate { get; } = DateTime.Now.AddYears(-18);
         
         private DateTime selectedDate = DateTime.Now.AddYears(-18);
+        
+
         public DateTime SelectedDate
         {
             get => selectedDate;
@@ -184,5 +193,23 @@ namespace Insurance_app.ViewModels
             smoker = value ? 1 : 0;
             return value;
         }
+        //------------------------------ information popups ----------------------------      
+        private async Task HospitalInfoPopup()
+        {
+            await Application.Current.MainPage.Navigation.ShowPopupAsync(new InfoPopup("Hospital"));
+        }
+        private async Task CoverInfoPopup()
+        {
+            await Application.Current.MainPage.Navigation.ShowPopupAsync(new InfoPopup("Cover"));
+        }
+        private async Task FeeInfoPopup()
+        {
+            await Application.Current.MainPage.Navigation.ShowPopupAsync(new InfoPopup("Fee"));
+        }
+        private async Task PlanInfoPopup()
+        {
+            await Application.Current.MainPage.Navigation.ShowPopupAsync(new InfoPopup("Plan"));
+        }
+
     }
 }

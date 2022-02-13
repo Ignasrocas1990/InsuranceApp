@@ -8,7 +8,7 @@
              x:DataType="popups:EcPopUpViewModel"
              IsLightDismissEnabled="False"
              Size="350,500"
-             x:Class="Insurance_app.Pages.ExistingClaimsPopup">
+             x:Class="Insurance_app.Pages.Popups.ExistingClaimsPopup">
     <!--Size = width,height -->
     
     <ListView BackgroundColor="Transparent"

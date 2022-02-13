@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+           xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+           xmlns:popups="clr-namespace:Insurance_app.ViewModels.Popups;assembly=Insurance app"
+           x:DataType="popups:InfoPopupViewModel"
+           Size="350,400"
+           x:Class="Insurance_app.Pages.Popups.InfoPopup">
+
+    <ScrollView>
+           <Grid VerticalOptions="CenterAndExpand" RowSpacing="5" ColumnSpacing="5" Padding="10,0,10,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Label Style="{StaticResource InfoHLabel}" 
+               Grid.Row="0" Grid.Column="0" Text="{Binding InfoDisplayH1}"/>
+        <Label Style="{StaticResource InfoHLabel}" 
+               Grid.Row="0" Grid.Column="1" Text="{Binding InfoDisplayH2}"/>
+        <Label Style="{StaticResource  InfoHLabel}" 
+               Grid.Row="0" Grid.Column="2" Text="{Binding InfoDisplayH3}"/>
+        
+        
+        <Label  Grid.Row="1" Grid.Column="0" 
+                Style="{StaticResource InfoDetailLabel}" Text="{Binding InfoDisplayC1}"/>
+        <Label Grid.Row="1" Grid.Column="1" 
+               Style="{StaticResource InfoDetailLabel}" Text="{Binding InfoDisplayC2}"/>
+        <Label Grid.Row="1" Grid.Column="2" 
+                Style="{StaticResource InfoDetailLabel}" Text="{Binding InfoDisplayC3}"/>
+        
+        <Button Grid.Row="2" Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Center"
+                Grid.ColumnSpan="3" Text="Close" Command="{Binding CloseCommand}" Style="{StaticResource SecondaryBtn}" />
+        
+    </Grid>
+    </ScrollView>
+</xct:Popup>
