@@ -66,6 +66,9 @@
                 <Setter Property="FontAttributes" Value="Italic"/>
                 <Setter Property="FontSize" Value="15"/>
             </Style>
+            <Style x:Key="EClaimsEndLabel" TargetType="Label" BasedOn="{StaticResource InfoDetailLabel}">
+                <Setter Property="HorizontalTextAlignment" Value="End"/>
+            </Style>
            
             <!-- Entry -->
             <Style x:Key="NormalEntry" TargetType="Entry">

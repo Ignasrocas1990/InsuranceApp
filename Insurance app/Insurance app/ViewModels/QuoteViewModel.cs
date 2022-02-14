@@ -41,11 +41,11 @@ namespace Insurance_app.ViewModels
         public ICommand CoverInfoCommand { get; }
         public ICommand FeeInfoCommand { get; }
         public ICommand PlanInfoCommand { get; }
-        public IList<String> HospitalList { get; } = StaticOptions.HospitalsEnum();
+        public IList<String> HospitalList { get; } = StaticOpt.HospitalsEnum();
         //age
-        public IList<String> CoverList { get; } = Enum.GetNames(typeof(StaticOptions.CoverEnum)).ToList();
-        public IList<int> HospitalFeeList { get; } = StaticOptions.ExcessFee();
-        public IList<String> PlanList { get; } = Enum.GetNames(typeof(StaticOptions.PlanEnum)).ToList();
+        public IList<String> CoverList { get; } = Enum.GetNames(typeof(StaticOpt.CoverEnum)).ToList();
+        public IList<int> HospitalFeeList { get; } = StaticOpt.ExcessFee();
+        public IList<String> PlanList { get; } = Enum.GetNames(typeof(StaticOpt.PlanEnum)).ToList();
 
         public QuoteViewModel()
        {
@@ -65,7 +65,7 @@ namespace Insurance_app.ViewModels
        {
            if (!App.NetConnection())
            {
-               await Shell.Current.CurrentPage.DisplayAlert("error",StaticOptions.ConnectionErrorMessage, "close");
+               await Shell.Current.CurrentPage.DisplayAlert("error",StaticOpt.ConnectionErrorMessage, "close");
                return;
            }
            if (elegalChars != "")
@@ -101,7 +101,7 @@ namespace Insurance_app.ViewModels
                 ButtonEnabled = true;
                 timer.Stop();
                 responseCounter = 0;
-                await Shell.Current.CurrentPage.DisplayAlert("Error", StaticOptions.ConnectionErrorMessage, "close");
+                await Shell.Current.CurrentPage.DisplayAlert("Error", StaticOpt.ConnectionErrorMessage, "close");
                return;
            }
            CircularWaitDisplay=false;
@@ -127,12 +127,12 @@ namespace Insurance_app.ViewModels
        private async void CheckResponseTime(object o, ElapsedEventArgs e)
        {
            responseCounter += 1;
-           if (responseCounter == StaticOptions.MaxResponseTime)
+           if (responseCounter == StaticOpt.MaxResponseTime)
            {
                CircularWaitDisplay=false;
                ButtonEnabled = true;
                responseCounter = 0;
-               await Shell.Current.CurrentPage.DisplayAlert("Error",StaticOptions.ConnectionErrorMessage, "close");
+               await Shell.Current.CurrentPage.DisplayAlert("Error",StaticOpt.ConnectionErrorMessage, "close");
            }
        }
 

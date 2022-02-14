@@ -38,13 +38,12 @@ namespace Insurance_app.ViewModels
                 
                 if (chartEntries != null)
                 {
-                    int index = 6;
                     foreach (KeyValuePair<string, int> i in chartEntries)
                     {
                         var label = i.Key;
                         float value = i.Value;
                         //value = r.Next(0, 20000);//TODO To show that it works this can be uncommented
-                        var color = StaticOptions.ChartColors[r.Next(0, StaticOptions.ChartColors.Length - 1)];
+                        var color = StaticOpt.ChartColors[r.Next(0, StaticOpt.ChartColors.Length - 1)];
                         if (today)
                         {
                             label = "Today";
@@ -53,7 +52,7 @@ namespace Insurance_app.ViewModels
                         if (value==0)
                         {
                             value = 0.0001f;
-                            color = StaticOptions.White;
+                            color = StaticOpt.White;
                         }
                         entries.Push(new ChartEntry(value)
                             {

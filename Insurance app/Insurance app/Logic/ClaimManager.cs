@@ -32,7 +32,10 @@ namespace Insurance_app.Logic
         {
             try
             {
-                return Claims.FirstOrDefault(claim => claim.CloseDate == null);
+                var aClaim = Claims.FirstOrDefault(claim => claim.CloseDate == null);
+                if (aClaim is null) return null;
+                Claims.Remove(aClaim);
+                return aClaim;
             }
             catch (Exception e)
             {

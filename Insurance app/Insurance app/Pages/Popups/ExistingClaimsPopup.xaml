@@ -11,16 +11,17 @@
              x:Class="Insurance_app.Pages.Popups.ExistingClaimsPopup">
     <!--Size = width,height -->
     
-    <ListView BackgroundColor="Transparent"
+    <ListView BackgroundColor="Transparent" VerticalOptions="Center" SeparatorColor="{StaticResource SteelColor}"
               ItemsSource="{Binding Claims}" HasUnevenRows="True" Header="Previous Claims">
         <ListView.ItemTemplate>
             <DataTemplate x:DataType="models1:Claim">
                <ViewCell>
                    <Grid>
                        <Frame>
-                           <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
+                           <Grid VerticalOptions="CenterAndExpand" RowSpacing="10" ColumnSpacing="0" Padding="0,0,0,0">
                                <Grid.RowDefinitions>
-            
+                                   <RowDefinition Height="*"/>
+                                   <RowDefinition Height="Auto"/>
                                    <RowDefinition Height="Auto"/>
                                    <RowDefinition Height="Auto"/>
                                    <RowDefinition Height="Auto"/>
@@ -33,29 +34,30 @@
                                    <ColumnDefinition Width="5*"/>
                                </Grid.ColumnDefinitions>
                                
-                               <Label Text="Start Date :" Style = "{ StaticResource EndLabel}"
-                                      Grid.Column="0" Grid.Row="0" />
-                               <Label Text="{Binding StartDate, StringFormat='{0:dd/MM/yyyy, HH:mm:ss}'}"
-                                      Style = "{ StaticResource NormalLabel}"
-                                      Grid.Column="1" Grid.Row="0" />
-                               
-                               <Label Text="Close Date :"
-                                      Grid.Column="0" Grid.Row="1" Style = "{ StaticResource EndLabel}" />
-                               <Label Text="{Binding CloseDate, StringFormat='{0:dd/MM/yyyy, HH:mm:ss}'}"
-                                      Style = "{ StaticResource NormalLabel}"
+                               <Label Text="Start Date : " Style = "{StaticResource EClaimsEndLabel}"
+                                      Grid.Column="0" Grid.Row="1" />
+                               <Label Text="{Binding StartDate, StringFormat='{0:dd/MM/yyyy}'}"
+                                      Style = "{ StaticResource InfoDetailLabel}"
                                       Grid.Column="1" Grid.Row="1" />
                                
-                               <Label Text="Hospital Code :" Style = "{ StaticResource EndLabel}"
-                                      Grid.Column="0" Grid.Row="2" />
-                               <Label Text="{Binding HospitalPostCode}"
-                                      Style = "{ StaticResource NormalLabel}"
+                               <Label Text="Close Date : "
+                                      Grid.Column="0" Grid.Row="2" Style = "{ StaticResource EClaimsEndLabel}" />
+                               <Label Text="{Binding CloseDate, StringFormat='{0:dd/MM/yyyy}'}"
+                                      Style = "{ StaticResource InfoDetailLabel}"
                                       Grid.Column="1" Grid.Row="2" />
                                
-                               <Label Text="Type of Claim :" Style = "{ StaticResource EndLabel}"
+                               <Label Text="Hospital Code : " Style = "{ StaticResource EClaimsEndLabel}"
                                       Grid.Column="0" Grid.Row="3" />
-                               <Label Text="{Binding Type}"
-                                      Style = "{ StaticResource NormalLabel}"
+                               <Label Text="{Binding HospitalPostCode}"
+                                      Style = "{ StaticResource InfoDetailLabel}"
                                       Grid.Column="1" Grid.Row="3" />
+                               
+                               <Label Text="Type of Claim : " Style = "{ StaticResource EClaimsEndLabel}"
+                                      Grid.Column="0" Grid.Row="4" />
+                               <Label Text="{Binding Type}"
+                                      Style = "{ StaticResource InfoDetailLabel}"
+                                      Grid.Column="1" Grid.Row="4" />
+                               
                            </Grid>
                        </Frame>
                    </Grid>
@@ -63,7 +65,7 @@
             </DataTemplate>
         </ListView.ItemTemplate>
         <ListView.Footer>
-            <StackLayout HorizontalOptions="Center">
+            <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Padding="30">
                 <Button Text="close" Command="{Binding CloseCommand}" Style="{StaticResource SecondaryBtn}" />
             </StackLayout>
         </ListView.Footer>

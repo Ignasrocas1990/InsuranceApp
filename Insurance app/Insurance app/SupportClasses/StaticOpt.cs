@@ -8,7 +8,7 @@ using c = SkiaSharp.SKColors;
 
 namespace Insurance_app.SupportClasses
 {
-    public static class StaticOptions
+    public static class StaticOpt
     {
         public static string MyRealmAppId = "application-0-bvutx";
         public static readonly double StepNeeded = 10000;
@@ -71,7 +71,21 @@ namespace Insurance_app.SupportClasses
 
             return errors;
         }
+        public static string IsClaimInfoValid(string hospitalPostcode, string patientNr)
+        {
+            string errors = "";
+            if (hospitalPostcode.Length < 2 || hospitalPostcode.Length > 200)
+            {
+                errors += "Hospital Code is invalid length\n";
+            }
 
+            if (patientNr.Length < 2 || patientNr.Length > 200)
+            {
+                errors += "Patient Nr is invalid length";
+            }
+            return errors;
+        }
+        
         public static string InfoTest(string type)
         {
             switch (type)
@@ -102,7 +116,8 @@ namespace Insurance_app.SupportClasses
                     return "";
             }
         }
-        
 
+
+   
     }
 }

@@ -28,7 +28,7 @@ namespace Insurance_app
 
             
             //RealmDb = new RealmDb();
-            RealmApp = Realms.Sync.App.Create(StaticOptions.MyRealmAppId);
+            RealmApp = Realms.Sync.App.Create(StaticOpt.MyRealmAppId);
             
             //firstly check here if user is customer or client at welcome screen
             MainPage = new AppShell();//there should be 2 type of AppShells... (customer/client)

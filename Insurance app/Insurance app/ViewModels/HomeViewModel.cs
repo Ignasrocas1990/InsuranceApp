@@ -38,7 +38,7 @@ namespace Insurance_app.ViewModels
         private double stepsDisplayValue = 0;
         private double currentProgressBars = 0.0;
         private double max = 0 ;
-        private double min = StaticOptions.StepNeeded;
+        private double min = StaticOpt.StepNeeded;
         
         public HomeViewModel()
         {
@@ -80,7 +80,7 @@ namespace Insurance_app.ViewModels
                     }
                 }
                 await customer.CreateReward();
-                ProgressBarDisplay = StaticOptions.StepNeeded;
+                ProgressBarDisplay = StaticOpt.StepNeeded;
 
             }
             catch (Exception e)
@@ -167,7 +167,7 @@ namespace Insurance_app.ViewModels
 
         private void SetUpView(double steps)
         {
-            ProgressBarDisplay = StaticOptions.StepNeeded - steps;
+            ProgressBarDisplay = StaticOpt.StepNeeded - steps;
             StepsDisplayLabel = steps;
 
             /*
@@ -180,7 +180,7 @@ namespace Insurance_app.ViewModels
 // reset 
         private void ResetRewardDisplay()
         {
-            ProgressBarDisplay = StaticOptions.StepNeeded;
+            ProgressBarDisplay = StaticOpt.StepNeeded;
             stepsDisplayValue = 0;
             StepsDisplayLabel = 0;
 
@@ -193,7 +193,7 @@ namespace Insurance_app.ViewModels
             StepsDisplayLabel=stepsDisplayValue+1;
             if (ProgressBarDisplay < max)
             {
-                ProgressBarDisplay = StaticOptions.StepNeeded;
+                ProgressBarDisplay = StaticOpt.StepNeeded;
                 //stepsDisplayValue = 0;
                 StepsDisplayLabel = 0;
             }
@@ -212,7 +212,7 @@ namespace Insurance_app.ViewModels
         public double StepsDisplayLabel //the percentages label in the middle
         {
             
-            get => stepsDisplayValue / StaticOptions.StepNeeded * 100;
+            get => stepsDisplayValue / StaticOpt.StepNeeded * 100;
             set => SetProperty(ref  stepsDisplayValue, value);
         }
 

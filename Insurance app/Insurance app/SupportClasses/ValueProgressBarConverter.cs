@@ -10,7 +10,7 @@ namespace Insurance_app.SupportClasses
         {
             try
             {
-                return (double) value / StaticOptions.StepNeeded;
+                return (double) value / StaticOpt.StepNeeded;
 
             }
             catch (Exception e)

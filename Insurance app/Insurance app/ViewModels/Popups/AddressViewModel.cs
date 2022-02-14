@@ -49,7 +49,7 @@ namespace Insurance_app.ViewModels.Popups
             {
                 errors += "Inputs are invalid length \n";
             }
-            if (StaticOptions.HasNumbers(city) || StaticOptions.HasNumbers(country) || StaticOptions.HasNumbers(county))
+            if (StaticOpt.HasNumbers(city) || StaticOpt.HasNumbers(country) || StaticOpt.HasNumbers(county))
             {
                 errors = "City,Country,County cant have numbers";
             }

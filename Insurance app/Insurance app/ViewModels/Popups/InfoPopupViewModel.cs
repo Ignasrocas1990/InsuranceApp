@@ -27,7 +27,7 @@ namespace Insurance_app.ViewModels.Popups
 
         private void InfoPicker(string type)
         {
-            string longInfoString = StaticOptions.InfoTest(type);
+            string longInfoString = StaticOpt.InfoTest(type);
             var splitInfo = longInfoString.Split('~');
             InfoDisplayH1 = splitInfo[0];
             InfoDisplayH2 = splitInfo[1];

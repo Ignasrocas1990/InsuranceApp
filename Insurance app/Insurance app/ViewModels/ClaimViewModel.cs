@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Insurance_app.Logic;
 using Insurance_app.Pages;
 using Insurance_app.Pages.Popups;
+using Insurance_app.SupportClasses;
 using Java.Lang.Reflect;
 using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.CommunityToolkit.ObjectModel;
@@ -21,7 +22,7 @@ namespace Insurance_app.ViewModels
         private string hospitalPostcode="";
         private string patientNr="";
         private string status = "Not Created";
-        private string type = "health";//If application extended, this has to be moved to App
+        private const string Type = "health"; //If application extended, this has to be moved to App
 
         public ClaimViewModel()
         {
@@ -60,7 +61,7 @@ namespace Insurance_app.ViewModels
             }
             CreateBtnIsEnabled = !IsReadOnly;
 
-            PreviousBtnIsEnabled = claimManager.Claims.Count > 1;
+            PreviousBtnIsEnabled = claimManager.Claims.Count > 0;
         }
 
         private async Task GetClaims()
@@ -71,7 +72,13 @@ namespace Insurance_app.ViewModels
         
         private async Task CreateClaim()
         {
-           bool answer = await Shell.Current.DisplayAlert("Notice",
+            var errors = StaticOpt.IsClaimInfoValid(hospitalPostcode, patientNr);
+            if (errors.Length > 2)
+            {
+                await Shell.Current.DisplayAlert("Error", errors, "close");
+                return;
+            }
+            bool answer = await Shell.Current.DisplayAlert("Notice",
                "Are you sure to open new Claim?", "create", "cancel");
            if (!answer) return;
 
@@ -79,12 +86,12 @@ namespace Insurance_app.ViewModels
             IsReadOnly = true;
             CreateBtnIsEnabled = !IsReadOnly;
 
-            await claimManager.CreateClaim(hospitalPostcode, patientNr, type, true,App.RealmApp.CurrentUser);
+            await claimManager.CreateClaim(hospitalPostcode, patientNr, Type, true,App.RealmApp.CurrentUser);
             
             StatusDisplay = "open";
             
             await Shell.Current.DisplayAlert("Message", 
-                "New Claim has been Opened,\n Client will take a look at it shortly",
+                "New Claim has been Opened.\nClient will take a look at it shortly",
                 "close");
             CircularWaitDisplay = false;
         }
