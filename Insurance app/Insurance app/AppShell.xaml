@@ -8,7 +8,7 @@
              Title="Welcome"
              x:Class="Insurance_app.AppShell">
     <Shell.FlyoutHeader >
-        <ViewCell Height="200"></ViewCell>
+        <ViewCell Height="300"/>
         <!-- header content later  -->
     </Shell.FlyoutHeader>
     
@@ -28,7 +28,6 @@
     <FlyoutItem Title="Home page" Icon="walkIcon.png" Route="HomePage">
         <ShellContent ContentTemplate="{DataTemplate pages:HomePage}" />
     </FlyoutItem>
-    
     <FlyoutItem Title="Profile page" Icon="profileIcon.png">
         <ShellContent ContentTemplate="{DataTemplate pages:ProfilePage}" />
     </FlyoutItem>
@@ -37,6 +36,9 @@
     </FlyoutItem>
     <FlyoutItem Title="Claim page" Icon="claimIcon.png">
         <ShellContent ContentTemplate="{DataTemplate pages:ClaimPage}"/>
+    </FlyoutItem>
+    <FlyoutItem Title="Policy page" Icon="profileIcon.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:PolicyPage}"/>
     </FlyoutItem>
 
     <Shell.FlyoutFooterTemplate>

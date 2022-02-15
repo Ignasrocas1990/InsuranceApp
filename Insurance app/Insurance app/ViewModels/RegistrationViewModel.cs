@@ -71,7 +71,7 @@ namespace Insurance_app.ViewModels
                        throw new Exception("registration failed");
                    }
                    customer.Policy.Add(policyManager.CreatePolicy(price, quote["Cover"], quote["Hospital_Excess"],
-                       quote["Hospitals"], quote["Plan"], quote["Smoker"], false, DateTimeOffset.Now.DateTime,user.Id));
+                       quote["Hospitals"], quote["Plan"], quote["Smoker"], false, DateTimeOffset.Now,user.Id,DateTimeOffset.Now));
 
                    await userManager.AddCustomer(customer, App.RealmApp.CurrentUser);
                    await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);

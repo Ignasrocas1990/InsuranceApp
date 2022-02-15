@@ -19,7 +19,8 @@ namespace Insurance_app.Models
         public int? Smoker { get; set; }
 
         public DateTimeOffset? StartDate { get; set; } = DateTimeOffset.Now.DateTime;
-        public bool? Updating { get; set; }
+        public bool? UnderReview { get; set; }
+        public DateTimeOffset? UpdateDate { get; set; }
 
         [MapTo("_partition")] [Required] public string Partition { get; set; } = App.RealmApp.CurrentUser.Id;
 

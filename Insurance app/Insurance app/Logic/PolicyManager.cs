@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Insurance_app.Models;
 using Insurance_app.Service;
@@ -14,14 +15,15 @@ namespace Insurance_app.Logic
         {
             
         }
-        public PersonalPolicy CreatePolicy(string price, int cover, int fee, int hospitals, int plan, int smoker, bool updating, DateTime date,string partition)
+        public PersonalPolicy CreatePolicy(string price, int cover, int fee, int hospitals, int plan, int smoker, bool underReview, 
+            DateTimeOffset date,string partition,DateTimeOffset? dt)
         {
             
             return new PersonalPolicy()
             {
-                Price = Converter.GetPrice(price), Cover = cover, HospitalFee = fee, 
+                Price = Converter.GetPrice(price), Cover = cover, HospitalFee = fee, UpdateDate = dt,
                 Hospitals = hospitals, Plan = plan, Smoker = smoker,
-                Updating = updating, StartDate = date,Partition = partition
+                UnderReview = underReview, StartDate = date,Partition = partition
             };
         }
 
@@ -30,7 +32,7 @@ namespace Insurance_app.Logic
             await RealmDb.GetInstance().UpdatePolicy(user, newPolicy);
         }
 
-        public async Task<PersonalPolicy> FindPolicy(User user)
+        public async Task<Dictionary<int,PersonalPolicy>> FindPolicy(User user)
         {
             return await RealmDb.GetInstance().FindPolicy(user);
         }

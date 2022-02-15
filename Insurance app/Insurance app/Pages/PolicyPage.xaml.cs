@@ -17,12 +17,10 @@ namespace Insurance_app.Pages
             InitializeComponent();
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             var vm = (PolicyViewModel)BindingContext;
-            vm.CircularWaitDisplay = true;
-            vm.Setup();
-            vm.CircularWaitDisplay = false;
+            await vm.Setup();
             base.OnAppearing();
         }
     }

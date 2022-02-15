@@ -11,7 +11,7 @@
              Size="350,500"
              x:Class="Insurance_app.Pages.Popups.AddressPopup">
         <!--Size = width,height -->
-        <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5">
+        <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="10,0,10,0">
         <Grid.RowDefinitions>
             
             <RowDefinition Height="Auto"/>

@@ -15,9 +15,10 @@
                 </ResourceDictionary>
         </ContentPage.Resources>
         
-        <Grid VerticalOptions="CenterAndExpand" RowSpacing="25" ColumnSpacing="0" Padding="30,0,30,0">
+        <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="10" Padding="30,0,30,0">
          <Grid.RowDefinitions>
             
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -35,62 +36,67 @@
         </Grid.ColumnDefinitions>
                 
                 
-         <Label Text="{Binding }" IsVisible="{Binding Updating}"
+         <Label Text="Update Currently under review" FontAttributes="Italic" 
+                IsVisible="{Binding UpdatingDisplay}" HorizontalTextAlignment="Center"
                 Style="{StaticResource NormalLabel}" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" />        
                 
         <Label Text="StartDate :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" />
-        <Label Text="{Binding StartDateDisplay}" 
-               IsEnabled="{Binding Updating,Converter={StaticResource InvertedBoolConverter}}"
-               FontSize="20" TextColor="Black" BackgroundColor="White" Grid.Column="1" Grid.Row="1" />
+        <Label Text="{Binding StartDateDisplay}"
+               IsEnabled="{Binding UpdatingDisplay,Converter={StaticResource InvertedBoolConverter}}"
+               Style="{StaticResource NormalLabel}" Grid.Column="1" Grid.Row="1" />
         
         <Label Text="Hospital :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" />
         <Button Grid.Column="0" Grid.Row="2" Text="?" Command="{Binding HospitalInfoCommand}"
-                IsVisible="{Binding Updating,Converter={StaticResource InvertedBoolConverter}}"
+                IsVisible="{Binding UpdatingDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Style="{StaticResource SmallBtn}" />
         <Picker Title="Select Hospital" Grid.Column="1" Grid.Row="2"
-                IsEnabled="{Binding Updating,Converter={StaticResource InvertedBoolConverter}}"
-                ItemsSource="{Binding HospitalList}" Style="{StaticResource NormalPicker}"
+                IsEnabled="{Binding UpdatingDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                ItemsSource="{Binding HospitalList,Mode=TwoWay}" Style="{StaticResource NormalPicker}"
                 SelectedIndex="{Binding SelectedHospital}" />
         
 
         <Label Text="Cover :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="3" />
         <Button Grid.Column="0" Grid.Row="3" Text="?" Command="{Binding CoverInfoCommand}"
-                IsVisible="{Binding Updating,Converter={StaticResource InvertedBoolConverter}}"
+                IsVisible="{Binding UpdatingDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Style="{StaticResource SmallBtn}" />
-        <Picker IsEnabled="{Binding Updating,Converter={StaticResource InvertedBoolConverter}}"
+        <Picker IsEnabled="{Binding UpdatingDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Title="Select Hospital" Grid.Column="1" Grid.Row="3" Style="{StaticResource NormalPicker}"
-                ItemsSource="{Binding CoverList}" SelectedIndex="{Binding SelectedCover}" />
+                ItemsSource="{Binding CoverList}" SelectedIndex="{Binding SelectedCover,Mode=TwoWay}" />
         
         <Label Text="Fee :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="4" />
         <Button Grid.Column="0" Grid.Row="4" Text="?" Command="{Binding FeeInfoCommand}"
-                IsVisible="{Binding Updating,Converter={StaticResource InvertedBoolConverter}}"
+                IsVisible="{Binding UpdatingDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Style="{StaticResource SmallBtn}" />
         <Picker Title="Hospital Fee" Grid.Column="1" Grid.Row="4" Style="{StaticResource NormalPicker}"
-                IsEnabled="{Binding Updating,Converter={StaticResource InvertedBoolConverter}}"
+                IsEnabled="{Binding UpdatingDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 ItemsSource="{Binding HospitalFeeList}" 
-                SelectedItem="{Binding SelectedHospitalExcess}" />
+                SelectedItem="{Binding SelectedHospitalExcess,Mode=TwoWay}" />
 
         <Label Text="Plan :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="5" />
         <Button Grid.Column="0" Grid.Row="5" Text="?" Command="{Binding PlanInfoCommand}"
-                IsVisible="{Binding Updating,Converter={StaticResource InvertedBoolConverter}}"
+                IsVisible="{Binding UpdatingDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Style="{StaticResource SmallBtn}" />
         <Picker Title="Select Hospital Fee" Style="{StaticResource NormalPicker}" Grid.Column="1" Grid.Row="5"
-                IsEnabled="{Binding Updating,Converter={StaticResource InvertedBoolConverter}}"
-                ItemsSource="{Binding PlanList}"
+                IsEnabled="{Binding UpdatingDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                ItemsSource="{Binding PlanList,Mode=TwoWay}"
                 SelectedIndex="{Binding SelectedPlan}" />
 
         <Label Text="Smoker :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="6" />
-        <CheckBox IsChecked="{Binding IsSmoker}"
-                  IsEnabled="{Binding Updating,Converter={StaticResource InvertedBoolConverter}}"
+        <CheckBox IsChecked="{Binding IsSmokerDisplay}"
+                  IsEnabled="{Binding UpdatingDisplay,Converter={StaticResource InvertedBoolConverter}}"
                   Grid.Column="1" Grid.Row="6" />
+         
+         <Label Text="Price :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="7" />
+         <Label Text="{Binding PriceDisplay}"
+                Style="{StaticResource  NormalLabel}" Grid.Column="1" Grid.Row="7" />
         
-        <Button Text= "Update" Style="{StaticResource PrimaryBtn}"
-                IsEnabled="{Binding Updating,Converter={StaticResource InvertedBoolConverter}}"
-                Command="{Binding UpdatePolicy}" Grid.Column="0" Grid.Row="7"  Grid.ColumnSpan="2"/>
+        <Button Text= "Update" Style="{StaticResource PrimaryBtn}" HorizontalOptions="Center"
+                IsEnabled="{Binding UpdatingDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                Command="{Binding UpdatePolicy}" Grid.Column="0" Grid.Row="8"  Grid.ColumnSpan="2"/>
         
         <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}"
                            Style="{StaticResource NormalCircularWait}"
-                           Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="2" />
+                           Grid.Column="0" Grid.Row="9" Grid.ColumnSpan="2" />
 
     </Grid>
 </ContentPage>

@@ -188,8 +188,10 @@ namespace Insurance_app.Service
                 {
 
                     var customer = realm.All<Customer>().FirstOrDefault(c => c.Id == user.Id && c.DelFlag == false);
-                    var policy = customer?.Policy.FirstOrDefault(p => p.Updating == false);
-                    if (policy == null) return;
+                    if (customer == null) return;
+                    var policies = customer.Policy
+                        .Where(p=> p.DelFlag == false).ToList();
+                    var policy = policies.OrderByDescending(z => z.UpdateDate).First();
                     var cost = policy.Price / 100;
                     var r = realm.Add(new Reward()
                     {
@@ -199,6 +201,7 @@ namespace Insurance_app.Service
                    
                     customer.Reward.Add(r);
                     reward = realm.Find<Reward>(r.Id);
+
                 });
                 return reward;
             }
@@ -291,33 +294,38 @@ namespace Insurance_app.Service
             return claims;
         }
 //-------------------- policy methods -----------------------
-        public async Task<PersonalPolicy> FindPolicy(User user)
+        public async Task<Dictionary<int,PersonalPolicy>> FindPolicy(User user)
         {
            await GetRealm(user);
            if (realm is null) throw new Exception("FindPolicy realm null");
-           PersonalPolicy policy=null;
+
+           Dictionary<int,PersonalPolicy> policy = new Dictionary<int, PersonalPolicy>();
            realm.Write(() =>
            {
-               policy = realm.All<PersonalPolicy>()
-                   .FirstOrDefault(p => p.Partition == user.Id && p.Updating == false);
-
-           });
+               var customer = realm.Find<Customer>(user.Id);
+              
+               var policies = customer.Policy
+                   .Where(p=> p.DelFlag == false).ToList();
+               var currentPolicy = policies.OrderByDescending(z => z.UpdateDate).First();
+               var updatingPolicy = policies.FirstOrDefault(p => p.UnderReview == true);
+               policy.Add(updatingPolicy is null ? 1 : 0, currentPolicy);// return 1 if under reviewed already
+           }); 
            return policy;
         }
 
         public async Task UpdatePolicy(User user,PersonalPolicy newPolicy)
         {
+            // TODO surround in try catch
             await GetRealm(user);
             if (realm is null) throw new Exception("UpdatePolicy realm null");
             realm.Write(() =>
             {
                 var customer = realm.Find<Customer>(user.Id);
-                var oldPolicy = customer.Policy.FirstOrDefault(p => p.Updating == false);
-                if (oldPolicy != null)
-                {
-                    oldPolicy.Updating = true;
-                    oldPolicy.DelFlag = true;
-                }
+                var policies = customer.Policy
+                    .Where(p=> p.DelFlag == false).ToList();
+                var oldPolicy = policies.OrderByDescending(z => z.UpdateDate).First();
+
+                oldPolicy.UnderReview = true;
                 realm.Add(newPolicy);
                 customer.Policy.Add(newPolicy);
             });
