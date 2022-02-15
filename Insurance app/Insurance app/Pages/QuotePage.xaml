@@ -40,8 +40,8 @@
         
         
         <Label Text="Hospital :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" />
-        <Button Grid.Column="0" Grid.Row="1" Text="?" Command="{Binding HospitalInfoCommand}" Style="{StaticResource SmallBtn}" />
-        <Picker Title="Select Hospital" Grid.Column="1" Grid.Row="1"
+        <Button  Grid.Column="0" Grid.Row="1" Text="?" Command="{Binding HospitalInfoCommand}" Style="{StaticResource SmallBtn}" />
+        <Picker IsEnabled="{Binding IsEnabled}" Title="Select Hospital" Grid.Column="1" Grid.Row="1"
                 ItemsSource="{Binding HospitalList}" Style="{StaticResource NormalPicker}"
                 SelectedIndex="{Binding SelectedHospital}" />
         

@@ -12,18 +12,29 @@ namespace Insurance_app.Logic
 
         public PolicyManager()
         {
+            
         }
-        
-        public PersonalPolicy CreatePolicy(string price, int cover, int fee, int hospitals, int plan, int smoker, bool status, DateTime utcNow,string partition)
+        public PersonalPolicy CreatePolicy(string price, int cover, int fee, int hospitals, int plan, int smoker, bool updating, DateTime date,string partition)
         {
             
             return new PersonalPolicy()
             {
                 Price = Converter.GetPrice(price), Cover = cover, HospitalFee = fee, 
                 Hospitals = hospitals, Plan = plan, Smoker = smoker,
-                Status = status, StartDate = utcNow,Partition = partition
+                Updating = updating, StartDate = date,Partition = partition
             };
         }
+
+        public async Task AddPolicy(User user,PersonalPolicy newPolicy)
+        {
+            await RealmDb.GetInstance().UpdatePolicy(user, newPolicy);
+        }
+
+        public async Task<PersonalPolicy> FindPolicy(User user)
+        {
+            return await RealmDb.GetInstance().FindPolicy(user);
+        }
+        
 
         public void Dispose()
         {

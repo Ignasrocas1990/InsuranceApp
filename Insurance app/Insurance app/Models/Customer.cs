@@ -20,7 +20,7 @@ namespace Insurance_app.Models
         public string PhoneNr { get;set; }
         public string Email { get; set; }
         
-        public PersonalPolicy Policy { get; set; }
+        public IList<PersonalPolicy> Policy { get; }
         public IList<Reward> Reward { get; }
         public IList<Claim> Claim { get; }
 

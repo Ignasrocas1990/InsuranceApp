@@ -29,7 +29,6 @@ namespace Insurance_app.ViewModels
         private bool wait;
 
         private int hospitals;
-        private DateTime dob;
         private int cover;
         private int hospitalExcess;
         private int plan;
@@ -182,7 +181,6 @@ namespace Insurance_app.ViewModels
             set => SetProperty(ref selectedDate, value);
         }
         
-
         public bool IsSmoker
         {
             get => isSmokerChecker;
@@ -193,6 +191,14 @@ namespace Insurance_app.ViewModels
             smoker = value ? 1 : 0;
             return value;
         }
+        
+        private bool enabled=true;
+        public bool IsEnabled
+        {
+            get => enabled;
+            set => SetProperty(ref enabled, value);
+        }
+
         //------------------------------ information popups ----------------------------      
         private async Task HospitalInfoPopup()
         {

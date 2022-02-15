@@ -1,4 +1,6 @@
 ﻿
+using System;
+using Insurance_app.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Insurance_app.Models;
+using Java.Security;
 using Realms;
 using Realms.Exceptions;
 using Realms.Sync;
@@ -187,18 +188,17 @@ namespace Insurance_app.Service
                 {
 
                     var customer = realm.All<Customer>().FirstOrDefault(c => c.Id == user.Id && c.DelFlag == false);
-                    if (customer!=null)
+                    var policy = customer?.Policy.FirstOrDefault(p => p.Updating == false);
+                    if (policy == null) return;
+                    var cost = policy.Price / 100;
+                    var r = realm.Add(new Reward()
                     {
-                        var cost = customer.Policy.Price / 100;
-                        var r = realm.Add(new Reward()
-                        {
-                            Partition = user.Id,
-                            Cost = cost
-                        });
+                        Partition = user.Id,
+                        Cost = cost
+                    });
                    
-                        customer.Reward.Add(r);
-                        reward = realm.Find<Reward>(r.Id);
-                    }
+                    customer.Reward.Add(r);
+                    reward = realm.Find<Reward>(r.Id);
                 });
                 return reward;
             }
@@ -290,6 +290,39 @@ namespace Insurance_app.Service
 
             return claims;
         }
+//-------------------- policy methods -----------------------
+        public async Task<PersonalPolicy> FindPolicy(User user)
+        {
+           await GetRealm(user);
+           if (realm is null) throw new Exception("FindPolicy realm null");
+           PersonalPolicy policy=null;
+           realm.Write(() =>
+           {
+               policy = realm.All<PersonalPolicy>()
+                   .FirstOrDefault(p => p.Partition == user.Id && p.Updating == false);
+
+           });
+           return policy;
+        }
+
+        public async Task UpdatePolicy(User user,PersonalPolicy newPolicy)
+        {
+            await GetRealm(user);
+            if (realm is null) throw new Exception("UpdatePolicy realm null");
+            realm.Write(() =>
+            {
+                var customer = realm.Find<Customer>(user.Id);
+                var oldPolicy = customer.Policy.FirstOrDefault(p => p.Updating == false);
+                if (oldPolicy != null)
+                {
+                    oldPolicy.Updating = true;
+                    oldPolicy.DelFlag = true;
+                }
+                realm.Add(newPolicy);
+                customer.Policy.Add(newPolicy);
+            });
+        }
+        
 // -------------------------------- support methods ---------------------------------        
         public async Task CleanDatabase(User user)//TODO remove this when submitting
         {
