@@ -8,6 +8,7 @@
             x:DataType="popups:AddressViewModel"
              x:TypeArguments="local:Address"
              IsLightDismissEnabled="False"
+             BackgroundColor="{StaticResource BackColor}"
              Size="350,500"
              x:Class="Insurance_app.Pages.Popups.AddressPopup">
         <!--Size = width,height -->

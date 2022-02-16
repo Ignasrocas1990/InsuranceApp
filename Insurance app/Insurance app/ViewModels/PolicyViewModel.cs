@@ -58,22 +58,32 @@ namespace Insurance_app.ViewModels
                 var policy = policyDic.FirstOrDefault(u => u.Key == 1).Value;//try to see if under review
                 if (policy is null)
                 {
-                    UpdatingDisplay = true;
                     policy = policyDic[0];
+                    UnderReviewDisplay = false;
+                    if (policy.Price != null)
+                    {
+                        price = (float) policy.Price;
+                        PriceDisplay = (Math.Round(price * 100f) / 100f).ToString(CultureInfo.InvariantCulture);
+                        DisableColour = Color.SteelBlue;
+                    }
+                }
+                else
+                {
+                    UnderReviewDisplay = true;
+                    PriceDisplay = "Under Review";
                 }
                 if (policy.Hospitals != null) SelectedHospital = (int) policy.Hospitals;
                 if (policy.Cover != null) SelectedCover = (int) policy.Cover;
-                if (policy.HospitalFee != null) SelectedHospitalExcess = HospitalFeeList.IndexOf((int) policy.HospitalFee);
+                if (policy.HospitalFee != null) SelectedItemHospitalFee = (int) policy.HospitalFee;
                 if (policy.Plan != null) SelectedPlan = (int) policy.Plan;
                 IsSmokerDisplay = Convert.ToBoolean(policy.Smoker);
-                if (policy.UnderReview != null) UpdatingDisplay = (bool) policy.UnderReview;
                 if (policy.StartDate != null)
                 {
                     StartDateDisplay = policy.StartDate.Value.Date.ToString("d");
                     date = (DateTimeOffset) policy.StartDate;
                 }
 
-                if (policy.Price != null) PriceDisplay = (float) policy.Price;
+               
             }
             catch (Exception e)
             {
@@ -91,13 +101,15 @@ namespace Insurance_app.ViewModels
                 var answer = await Shell.Current.CurrentPage.DisplayAlert(
                     "Notice","You about to request to update the policy", "save", "cancel");
                 if (!answer) return;
-                UpdatingDisplay = true;
+                UnderReviewDisplay = true;
                 CircularWaitDisplay = true;
                 var newPolicy = policyManager.CreatePolicy(price.ToString(CultureInfo.InvariantCulture), 
-                    cover, fee, hospitals, plan, smoker, false, date, App.RealmApp.CurrentUser.Id,DateTimeOffset.Now);
+                    cover, fee, hospitals, plan, smoker, false, date, 
+                    App.RealmApp.CurrentUser.Id,DateTimeOffset.Now);
                 await policyManager.AddPolicy(App.RealmApp.CurrentUser, newPolicy);
                 CircularWaitDisplay = false;
-           
+                
+                DisableColour = Color.SteelBlue;
                 await Shell.Current.DisplayAlert("Message", "Update requested successfully", "close");
             }
             catch (Exception e)
@@ -123,7 +135,7 @@ namespace Insurance_app.ViewModels
             get => cover;
             set => SetProperty(ref cover, value);
         }
-        public int SelectedHospitalExcess
+        public int SelectedItemHospitalFee
         {
             get => fee;
             set => SetProperty(ref fee, value);
@@ -147,7 +159,7 @@ namespace Insurance_app.ViewModels
             return value;
         }
         private bool updating;
-        public bool UpdatingDisplay
+        public bool UnderReviewDisplay
         {
             get => updating;
             set => SetProperty(ref updating, value);
@@ -160,12 +172,21 @@ namespace Insurance_app.ViewModels
             set => SetProperty(ref startDate, value);
         }
 
-        public float PriceDisplay
+        private string priceString;
+        
+
+        public string PriceDisplay
         {
-            get => price;
-            set => SetProperty(ref price, value);
+            get => priceString;
+            set => SetProperty(ref priceString, value);
         }
 
+        private Color dColor = Color.White;
+        public Color DisableColour
+        {
+            get => dColor;
+            set => SetProperty(ref dColor,value);
+        }
         //------------------------------ information popups ----------------------------      
         private async Task HospitalInfoPopup()
         {

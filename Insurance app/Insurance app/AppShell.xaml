@@ -7,10 +7,22 @@
              BackgroundColor="LightSteelBlue"
              Title="Welcome"
              x:Class="Insurance_app.AppShell">
-    <Shell.FlyoutHeader >
-        <ViewCell Height="300"/>
-        <!-- header content later  -->
-    </Shell.FlyoutHeader>
+    <Shell.FlyoutHeaderTemplate>
+        <DataTemplate>
+            <Grid BackgroundColor="Black"
+                  HeightRequest="200">
+                <Image Aspect="AspectFill"
+                       BackgroundColor="White"
+                       Source="image.jpg"
+                       Opacity="0.6" />
+                <Label Text="Logo"
+                       TextColor="Black"
+                       FontAttributes="Bold"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="Center" />
+            </Grid>            
+        </DataTemplate>
+    </Shell.FlyoutHeaderTemplate>
     
     <ShellItem FlyoutItemIsVisible="False" Route="LogInPage">
         <ShellContent ContentTemplate="{DataTemplate pages:LogInPage}"/>
@@ -37,14 +49,14 @@
     <FlyoutItem Title="Claim page" Icon="claimIcon.png">
         <ShellContent ContentTemplate="{DataTemplate pages:ClaimPage}"/>
     </FlyoutItem>
-    <FlyoutItem Title="Policy page" Icon="profileIcon.png">
+    <FlyoutItem Title="Policy page" Icon="policyIcon.png">
         <ShellContent ContentTemplate="{DataTemplate pages:PolicyPage}"/>
     </FlyoutItem>
 
     <Shell.FlyoutFooterTemplate>
             <DataTemplate>
-                <StackLayout >
-                    <Label Text="Current time"
+                <StackLayout Padding="0,0,0,10">
+                    <Label Text="Current Date"
                            TextColor="Black"
                            FontAttributes="Bold"
                            HorizontalOptions="Center" />

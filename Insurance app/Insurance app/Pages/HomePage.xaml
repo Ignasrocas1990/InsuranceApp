@@ -6,6 +6,7 @@
              xmlns:viewModels="clr-namespace:Insurance_app.ViewModels"
              xmlns:supportClasses1="clr-namespace:Insurance_app.SupportClasses"
              Title="Home Page"
+             BackgroundColor="{StaticResource BackColor}"
              x:DataType="viewModels:HomeViewModel"
              Shell.PresentationMode="Modal"
              x:Class="Insurance_app.Pages.HomePage">

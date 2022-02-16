@@ -5,6 +5,7 @@
              xmlns:microcharts="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms" 
              xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
              x:DataType="viewModels1:ReportViewModel"
+             BackgroundColor="{StaticResource BackColor}"
              Title="Customer Report"
              x:Class="Insurance_app.Pages.Report">
     <ContentPage.BindingContext>

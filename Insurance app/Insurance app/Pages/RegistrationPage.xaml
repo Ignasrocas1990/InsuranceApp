@@ -6,6 +6,7 @@
              x:DataType="viewModels1:RegistrationViewModel"
              Shell.FlyoutBehavior="Disabled"
              Title="Customer Registration"
+             BackgroundColor="{StaticResource BackColor}"
              x:Class="Insurance_app.Pages.RegistrationPage">
        
        <ContentPage.BindingContext>

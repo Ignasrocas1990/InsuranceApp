@@ -5,6 +5,7 @@
              xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
              Title="Claims"
              x:DataType="viewModels1:ClaimViewModel"
+             BackgroundColor="{StaticResource BackColor}"
              x:Class="Insurance_app.Pages.ClaimPage">
        <ContentPage.BindingContext>
               <viewModels1:ClaimViewModel/>

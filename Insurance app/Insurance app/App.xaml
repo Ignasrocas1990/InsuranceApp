@@ -7,7 +7,9 @@
             <!-- colors -->
             <Color x:Key="StrongColor">Orange</Color>
             <Color x:Key="SteelColor">LightSteelBlue</Color>
-            <Color x:Key="BackColor">Transparent</Color>
+            <Color x:Key="BackColor">White</Color>
+            <Color x:Key="Transparent">Transparent</Color>
+            <Color x:Key="EntryColor">White</Color>
             <!-- indicator -->
             <Style x:Key="NormalCircularWait" TargetType="ActivityIndicator" >
                 <Setter Property="HorizontalOptions" Value="Center"/>
@@ -17,7 +19,7 @@
             <!-- buttons -->
             <Style x:Key="BasicBtn" TargetType="Button">
                 <Setter Property="CornerRadius" Value="10"/>
-                <Setter Property="TextColor" Value="White"/>
+                <Setter Property="TextColor" Value="{StaticResource BackColor}"/>
             </Style>
             
             <Style x:Key="PrimaryBtn" TargetType="Button"
@@ -46,7 +48,7 @@
             <!-- Labels -->
             <Style x:Key="BasicLabel" TargetType="Label">
                 <Setter Property="TextColor" Value="Black"/>
-                <Setter Property="BackgroundColor" Value="{ StaticResource BackColor}"/>
+                <Setter Property="BackgroundColor" Value="{ StaticResource Transparent}"/>
             </Style>
             <Style x:Key="NormalLabel" TargetType="Label" BasedOn="{StaticResource BasicLabel}">
                 <Setter Property="VerticalTextAlignment" Value="Center" />
@@ -83,7 +85,7 @@
             <!-- picker -->
             <Style x:Key="NormalPicker" TargetType="Picker">
                 <Setter Property="TextColor" Value="Black"/>
-                <Setter Property="BackgroundColor" Value="{StaticResource BackColor}"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource Transparent}"/>
                 <Setter Property="VerticalTextAlignment" Value="Center" />
                 <Setter Property="FontSize" Value="20" />
             </Style>

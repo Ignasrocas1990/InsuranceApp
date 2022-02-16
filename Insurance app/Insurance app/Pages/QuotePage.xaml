@@ -5,6 +5,7 @@
              xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
              x:DataType="viewModels1:QuoteViewModel"
              Shell.FlyoutBehavior="Disabled"
+             BackgroundColor="{StaticResource BackColor}"
              Title="Get a Quote"
              x:Class="Insurance_app.Pages.QuotePage">
     <ContentPage.BindingContext>

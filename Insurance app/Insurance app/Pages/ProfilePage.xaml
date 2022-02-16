@@ -5,6 +5,7 @@
              xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
              x:DataType="viewModels:ProfileViewModel"
              Title="Customer Profile"
+             BackgroundColor="{StaticResource BackColor}"
              x:Class="Insurance_app.Pages.ProfilePage">
        <ContentPage.BindingContext>
               <viewModels:ProfileViewModel/>

@@ -308,7 +308,7 @@ namespace Insurance_app.Service
                    .Where(p=> p.DelFlag == false).ToList();
                var currentPolicy = policies.OrderByDescending(z => z.UpdateDate).First();
                var updatingPolicy = policies.FirstOrDefault(p => p.UnderReview == true);
-               policy.Add(updatingPolicy is null ? 1 : 0, currentPolicy);// return 1 if under reviewed already
+               policy.Add(updatingPolicy is null ? 0 : 1, currentPolicy);// return 1 if under reviewed already
            }); 
            return policy;
         }

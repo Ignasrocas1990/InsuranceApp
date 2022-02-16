@@ -6,6 +6,7 @@
              x:DataType="viewModels1:LogInViewModel"
              Shell.FlyoutBehavior="Disabled"
              Title="Welcome to Dynamic Insurance"
+             BackgroundColor="{StaticResource BackColor}"
              x:Class="Insurance_app.Pages.LogInPage">
     <ContentPage.BindingContext>
         <viewModels1:LogInViewModel/>

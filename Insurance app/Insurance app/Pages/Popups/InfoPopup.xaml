@@ -6,6 +6,7 @@
            xmlns:popups="clr-namespace:Insurance_app.ViewModels.Popups;assembly=Insurance app"
            x:DataType="popups:InfoPopupViewModel"
            Size="350,400"
+           BackgroundColor="{StaticResource BackColor}"
            x:Class="Insurance_app.Pages.Popups.InfoPopup">
 
     <ScrollView>

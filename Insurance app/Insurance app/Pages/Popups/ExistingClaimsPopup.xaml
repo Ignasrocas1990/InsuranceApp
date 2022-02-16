@@ -8,6 +8,7 @@
              x:DataType="popups:EcPopUpViewModel"
              IsLightDismissEnabled="False"
              Size="350,500"
+             BackgroundColor="{StaticResource BackColor}"
              x:Class="Insurance_app.Pages.Popups.ExistingClaimsPopup">
     <!--Size = width,height -->
     
