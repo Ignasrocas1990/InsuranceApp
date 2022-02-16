@@ -30,8 +30,6 @@ namespace Insurance_app.ViewModels
         private RewardManager rewardManager;
         private ConcurrentQueue<MovData> newMovDataList;
         //private Customer customer;
-        private bool FirstRun = true;
-
 
 
 
@@ -51,8 +49,6 @@ namespace Insurance_app.ViewModels
 
         public async Task Setup()
         {
-            if (!FirstRun) return;
-            FirstRun = false;
             try
             {
                 newMovDataList = new ConcurrentQueue<MovData>();
@@ -65,6 +61,7 @@ namespace Insurance_app.ViewModels
                     await Shell.Current.GoToAsync($"//{nameof(LogInPage)}",false);
                     return;
                 }
+                
 
                 if (customer.Reward.Count > 0)//TODO need to test this (when has more then 1 reward)
                 {

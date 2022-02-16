@@ -68,6 +68,9 @@ namespace watch
                     {
                         timer.Stop();
                         curDisconnectCounter = 0;
+                        
+                        //sensorManager.sendDataCounter = 0;//TODO remove from here --------------------------------
+                        //sensorManager.SendTestData();//TODO remove from here -------------------------------------
                     }
                     sensorManager.ToggleSensors(e.State);
                     Log.Verbose(TAG, $" is monitoring ? : {sensorManager.isMonitoring()}");
@@ -144,7 +147,6 @@ namespace watch
         {
             return null;
         }
-
         public override void OnDestroy()
         {
             bleServer.StopAdvertising();
@@ -153,7 +155,6 @@ namespace watch
             timer.Dispose();
             StopForeground(true);
             StopSelf();
-            
         }
     }
     
