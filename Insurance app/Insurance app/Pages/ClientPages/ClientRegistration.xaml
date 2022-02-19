@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:clientViewModels="clr-namespace:Insurance_app.ViewModels.ClientViewModels;assembly=Insurance app"
+             xmlns:behaviors="http://xamarin.com/schemas/2020/toolkit"
+             x:DataType="clientViewModels:ClientRegViewModel"
+             BackgroundColor="{StaticResource BackColor}"
+             x:Class="Insurance_app.Pages.ClientPages.ClientRegistration">
+    <ContentPage.BindingContext>
+        <clientViewModels:ClientRegViewModel/>
+    </ContentPage.BindingContext>
+    
+    <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
+        <Grid.RowDefinitions>
+            
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
+
+        </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+        
+        
+        <Label Text="Email :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="0" />
+        <Entry  Keyboard="Email" Text="{Binding EmailDisplay}" 
+                Placeholder="__@gmail.com"
+                Grid.Column="1" Grid.Row="0">
+            <Entry.Behaviors>
+                <behaviors:EmailValidationBehavior ValidStyle="{StaticResource NormalEntry}" DecorationFlags="TrimEnd" x:Name="EmailValidation"
+                                              InvalidStyle="{StaticResource InvalidEntry}" Flags="ValidateOnValueChanging"/> 
+            </Entry.Behaviors>
+        </Entry>
+                
+        <Label Text="Password :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" />
+        <Entry  Text="{Binding PassDisplay}" 
+                Placeholder="Pass1!" IsPassword="True"
+                Style="{StaticResource NormalEntry}"
+                Grid.Column="1" Grid.Row="1">
+            <Entry.Behaviors>
+                <behaviors:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
+                                                   Flags="ValidateOnValueChanging" x:Name="PasswordValidator"
+                                              InvalidStyle="{StaticResource InvalidEntry}">
+                    <behaviors:TextValidationBehavior MinimumLength="6" behaviors:MultiValidationBehavior.Error="Password must be at least 6 chars long" />
+                <behaviors:CharactersValidationBehavior CharacterType="Digit" MinimumCharacterCount="1" behaviors:MultiValidationBehavior.Error="Password needs 1 digit" />
+                <behaviors:CharactersValidationBehavior CharacterType="LowercaseLetter" MinimumCharacterCount="1" behaviors:MultiValidationBehavior.Error="Password needs 1 lower case char"/>
+                <behaviors:CharactersValidationBehavior CharacterType="UppercaseLetter" MinimumCharacterCount="1" behaviors:MultiValidationBehavior.Error="Password needs 1 upper case char"/>
+                <behaviors:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MinimumCharacterCount="1" behaviors:MultiValidationBehavior.Error="Password needs special char" />
+                <behaviors:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" behaviors:MultiValidationBehavior.Error="Password Has spaces" />
+        </behaviors:MultiValidationBehavior>
+            </Entry.Behaviors>
+        </Entry>
+                
+        <Label Text="First Name :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" />
+        <Entry Keyboard="Text" Text="{Binding FNameDisplay}" 
+               Placeholder="Jonny" Style="{StaticResource NormalEntry}"
+               
+               Grid.Column="1" Grid.Row="2">
+            <Entry.Behaviors>
+                <behaviors:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
+                                              Flags="ValidateOnValueChanging" x:Name="NameValidator"
+                                              InvalidStyle="{StaticResource InvalidEntry}">
+                    <behaviors:TextValidationBehavior MinimumLength="3" behaviors:MultiValidationBehavior.Error="Name less then 3 chars" />
+                    <behaviors:CharactersValidationBehavior CharacterType="Digit" MaximumCharacterCount="0" behaviors:MultiValidationBehavior.Error="Name has digits" />
+                    <behaviors:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" behaviors:MultiValidationBehavior.Error="Name has Special characters" />
+                    <behaviors:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" behaviors:MultiValidationBehavior.Error="Name has spaces" />
+                </behaviors:MultiValidationBehavior>
+            </Entry.Behaviors>
+        </Entry>
+                
+        <Label Text="Last Name :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="3" />
+        <Entry Keyboard="Text" Text="{Binding LNameDisplay}" 
+               Placeholder="Bravo" Style="{StaticResource NormalEntry}"
+               Grid.Column="1" Grid.Row="3">
+            <Entry.Behaviors>
+                <behaviors:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
+                                              Flags="ValidateOnValueChanging" x:Name="LNameValidator"
+                                              InvalidStyle="{StaticResource InvalidEntry}">
+                    <behaviors:TextValidationBehavior MinimumLength="3" behaviors:MultiValidationBehavior.Error="L.Name less then 3 chars" />
+                    <behaviors:CharactersValidationBehavior CharacterType="Digit" MaximumCharacterCount="0" behaviors:MultiValidationBehavior.Error="L.Name has digits" />
+                    <behaviors:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" behaviors:MultiValidationBehavior.Error="L.Name has Special characters" />
+                    <behaviors:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" behaviors:MultiValidationBehavior.Error="L.Name has spaces" />
+                </behaviors:MultiValidationBehavior>
+            </Entry.Behaviors>
+        </Entry>
+        
+        
+        <Label Text="Reg.Code :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="4" />
+        <Entry Keyboard="Text" Text="{Binding CodeDisplay}" IsReadOnly="{Binding CodeReadOnly}"
+               Placeholder="s2ff1a21" Style="{StaticResource NormalEntry}"
+               Grid.Column="1" Grid.Row="4">
+            <Entry.Behaviors>
+                <behaviors:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
+                                                   Flags="ValidateOnValueChanging" x:Name="CodeValidator"
+                                                   InvalidStyle="{StaticResource InvalidEntry}">
+                    <behaviors:TextValidationBehavior MinimumLength="1"  behaviors:MultiValidationBehavior.Error="Code is empty" />
+                    <behaviors:TextValidationBehavior MaximumLength="20"  behaviors:MultiValidationBehavior.Error="Code has too many chars" />
+                    <behaviors:CharactersValidationBehavior CharacterType="Digit" MaximumCharacterCount="0" behaviors:MultiValidationBehavior.Error="Code cant have digits" />
+                    <behaviors:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" behaviors:MultiValidationBehavior.Error="Code cant have Special chars" />
+                    <behaviors:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" behaviors:MultiValidationBehavior.Error="Code cant have spaces" />
+                </behaviors:MultiValidationBehavior>
+            </Entry.Behaviors>
+        </Entry>
+        
+        <Button Text="Register" Clicked="OnClickedRegister"
+                Style="{StaticResource PrimaryBtn}" 
+                IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" HorizontalOptions="Center" />
+              
+        <ActivityIndicator
+            IsRunning="{Binding CircularWaitDisplay}" 
+            Style="{StaticResource NormalCircularWait}"
+            Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" />
+    
+    </Grid>
+    
+    
+    
+    
+    
+</ContentPage>

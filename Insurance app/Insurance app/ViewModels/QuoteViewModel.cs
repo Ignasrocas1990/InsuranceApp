@@ -61,7 +61,7 @@ namespace Insurance_app.ViewModels
        {
            if (!App.NetConnection())
            {
-               await Application.Current.MainPage.DisplayAlert("error",StaticOpt.ConnectionErrorMessage, "close");
+               await Application.Current.MainPage.DisplayAlert("error",StaticOpt.NCE, "close");
                return;
            }
            if (elegalChars != "")
@@ -97,7 +97,7 @@ namespace Insurance_app.ViewModels
                 ButtonEnabled = true;
                 timer.Stop();
                 responseCounter = 0;
-                await Application.Current.MainPage.DisplayAlert("Error", StaticOpt.ConnectionErrorMessage, "close");
+                await Application.Current.MainPage.DisplayAlert("Error", StaticOpt.NCE, "close");
                return;
            }
            CircularWaitDisplay=false;
@@ -129,7 +129,7 @@ namespace Insurance_app.ViewModels
                CircularWaitDisplay=false;
                ButtonEnabled = true;
                responseCounter = 0;
-               await Application.Current.MainPage.DisplayAlert("Error",StaticOpt.ConnectionErrorMessage, "close");
+               await Application.Current.MainPage.DisplayAlert("Error",StaticOpt.NCE, "close");
            }
        }
 

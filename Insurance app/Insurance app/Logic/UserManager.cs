@@ -78,5 +78,10 @@ namespace Insurance_app.Logic
            await RealmDb.GetInstance().UpdateCustomer(name, lastName,
                 phoneNr,  address, user);
         }
+
+        public async Task<bool> CreateClient(User user, string email, string fname, string lname, string code)
+        {
+            return await RealmDb.GetInstance().CreateClient(user, email, fname, lname, code);
+        }
     }
 }

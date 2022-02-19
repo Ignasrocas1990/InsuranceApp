@@ -80,6 +80,12 @@
                 <Setter Property="PlaceholderColor" Value="Gray" />
                 <Setter Property="FontSize" Value="20" />
             </Style>
+            <Style x:Key="InvalidEntry" TargetType="Entry" BasedOn="{StaticResource NormalEntry}">
+                <Setter Property="TextColor" Value="Red"/>
+            </Style>
+            <Style x:Key="ValidEntry" TargetType="Entry">
+                <Setter Property="TextColor" Value="Black"/>
+            </Style>
             
             <!-- picker -->
             <Style x:Key="NormalPicker" TargetType="Picker">
@@ -88,7 +94,7 @@
                 <Setter Property="VerticalTextAlignment" Value="Center" />
                 <Setter Property="FontSize" Value="20" />
             </Style>
-            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

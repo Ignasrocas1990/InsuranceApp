@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Insurance_app.Models;
 using SkiaSharp;
-
+using Xamarin.Forms;
 using c = SkiaSharp.SKColors;
 
 namespace Insurance_app.SupportClasses
@@ -19,7 +21,7 @@ namespace Insurance_app.SupportClasses
         public static readonly int MovUpdateArraySize = 5;
         public static readonly int MaxResponseTime = 60;
         public static readonly string AgeLimitErrorMessage = "The age limit is between 18 and 65";
-        public static readonly string ConnectionErrorMessage = "Network connectivity not available";
+        public static readonly string NCE = "Network connectivity is not available";
         public static readonly int MaxNameLen = 20;
         public static readonly int blockTime = 180;
         public static Func<string, bool> HasNumbers => s => s.Any(char.IsDigit);
@@ -76,6 +78,7 @@ namespace Insurance_app.SupportClasses
 
             return errors;
         }
+        
         public static string IsClaimInfoValid(string hospitalPostcode, string patientNr)
         {
             string errors = "";
@@ -90,7 +93,6 @@ namespace Insurance_app.SupportClasses
             }
             return errors;
         }
-        
         public static string InfoTest(string type)
         {
             switch (type)
@@ -122,7 +124,14 @@ namespace Insurance_app.SupportClasses
             }
         }
 
-
-   
+        public static string CodeIsValid(string code)
+        {
+            var regexItem = new Regex("[a-zA-Z0-9]");
+            if (code.Length > 5 && regexItem.IsMatch(code))
+            {
+                return "";
+            }
+            return "Code is invalid\nPlease check with provider";
+        }
     }
 }

@@ -17,8 +17,6 @@ namespace Insurance_app.Communications
 
         
         private HttpClient client;
-        private Stopwatch w = new Stopwatch();
-        private StringContent content=null;
         //Func<String,double>convertToDouble =  x => double.Parse(x, CultureInfo.InvariantCulture);
         public InferenceService()
         {
@@ -30,11 +28,11 @@ namespace Insurance_app.Communications
         {
             if (!App.NetConnection())return null;
             
-            content = new StringContent(JsonConvert
+            var content = new StringContent(JsonConvert
                 .SerializeObject(new Dictionary<string,string>(){{"email",email}})
                 ,Encoding.UTF8, "application/json");
             
-            if (content!=null && App.NetConnection())
+            if (App.NetConnection())
             {
                 try
                 {
@@ -60,11 +58,11 @@ namespace Insurance_app.Communications
         public Task<HttpResponseMessage> CheckCompanyCode(string code)
         {
             if (!App.NetConnection()) return null;
-            content = new StringContent(JsonConvert
+            var content = new StringContent(JsonConvert
                     .SerializeObject(new Dictionary<string,string>(){{"code",code}})
                 ,Encoding.UTF8, "application/json");
             
-            if (content!=null && App.Connected)
+            if (App.Connected)
             {
                 try
                 {
@@ -93,8 +91,8 @@ namespace Insurance_app.Communications
         {
             if (!App.NetConnection()) return null;
 
-            content = new StringContent(JsonConvert.SerializeObject(quote),Encoding.UTF8, "application/json");
-            if (content!=null && App.NetConnection())
+            var content = new StringContent(JsonConvert.SerializeObject(quote),Encoding.UTF8, "application/json");
+            if (App.NetConnection())
             {
                 try
                 {

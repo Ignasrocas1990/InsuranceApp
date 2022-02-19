@@ -330,7 +330,32 @@ namespace Insurance_app.Service
                 customer.Policy.Add(newPolicy);
             });
         }
-        
+//--------------------------------- client methods -------------------------------
+        public async Task<bool> CreateClient(User user, string email, string fname, string lname, string code)
+        {
+            try
+            {
+                await GetRealm(user);
+                if (realm is null) throw new Exception("CreateClient:realm was null\n/Client create failed");
+                realm.Write(() =>
+                {
+                    realm.Add(new Client()
+                    {
+                        Email = email,
+                        FirstName = fname,
+                        LastName = lname,
+                        CompanyCode = code
+                    });
+                });
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return false;
+        }
 // -------------------------------- support methods ---------------------------------        
         public async Task CleanDatabase(User user)//TODO remove this when submitting
         {
