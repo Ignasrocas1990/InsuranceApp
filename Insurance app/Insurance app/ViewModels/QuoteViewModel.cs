@@ -57,19 +57,16 @@ namespace Insurance_app.ViewModels
            FeeInfoCommand = new AsyncCommand(FeeInfoPopup);
            PlanInfoCommand = new AsyncCommand(PlanInfoPopup);
        }
-
-
-
         private async Task GetQuote()
        {
            if (!App.NetConnection())
            {
-               await Shell.Current.CurrentPage.DisplayAlert("error",StaticOpt.ConnectionErrorMessage, "close");
+               await Application.Current.MainPage.DisplayAlert("error",StaticOpt.ConnectionErrorMessage, "close");
                return;
            }
            if (elegalChars != "")
            {
-               await Shell.Current.CurrentPage.DisplayAlert("Error",elegalChars , "close");
+               await Application.Current.MainPage.DisplayAlert("Error",elegalChars , "close");
                return;
            }
 
@@ -100,21 +97,22 @@ namespace Insurance_app.ViewModels
                 ButtonEnabled = true;
                 timer.Stop();
                 responseCounter = 0;
-                await Shell.Current.CurrentPage.DisplayAlert("Error", StaticOpt.ConnectionErrorMessage, "close");
+                await Application.Current.MainPage.DisplayAlert("Error", StaticOpt.ConnectionErrorMessage, "close");
                return;
            }
            CircularWaitDisplay=false;
            ButtonEnabled = true;
            timer.Stop();
            responseCounter = 0;
-            bool action = await Shell.Current.CurrentPage.DisplayAlert("Price",price,  "Accept","Deny");
+            bool action = await Application.Current.MainPage.DisplayAlert("Price",price,  "Accept","Deny");
            if (action)
            {
                try
                {   
                    tempQuote.Add(selectedDate.ToString("d"),-1);
-                   var jsonQuote = JsonConvert.SerializeObject(tempQuote);
-                   await Shell.Current.GoToAsync($"//{nameof(RegistrationPage)}?PriceDisplay={price}&TempQuote={jsonQuote}");
+                   //var jsonQuote = JsonConvert.SerializeObject(tempQuote);
+                   //await Shell.Current.GoToAsync($"//{nameof(RegistrationPage)}?PriceDisplay={price}&TempQuote={jsonQuote}");
+                   await Application.Current.MainPage.Navigation.PushAsync(new RegistrationPage(tempQuote,price));
                }
                catch (Exception e)
                {
@@ -131,7 +129,7 @@ namespace Insurance_app.ViewModels
                CircularWaitDisplay=false;
                ButtonEnabled = true;
                responseCounter = 0;
-               await Shell.Current.CurrentPage.DisplayAlert("Error",StaticOpt.ConnectionErrorMessage, "close");
+               await Application.Current.MainPage.DisplayAlert("Error",StaticOpt.ConnectionErrorMessage, "close");
            }
        }
 

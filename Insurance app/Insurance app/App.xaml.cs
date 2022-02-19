@@ -20,36 +20,22 @@ namespace Insurance_app
         public App()
         {
             InitializeComponent();
+            // await Application.Current.MainPage.Navigation.PushAsync(new QuotePage());
+
         }
 
         protected override void OnStart()
         {
             Connected=NetConnection();
-
-            
-            //RealmDb = new RealmDb();
-            RealmApp = Realms.Sync.App.Create(StaticOpt.MyRealmAppId);
-            
-            //firstly check here if user is customer or client at welcome screen
-            MainPage = new AppShell();//there should be 2 type of AppShells... (customer/client)
-            
-            Shell.Current.GoToAsync($"//{nameof(LogInPage)}");
-            //also dont use shell till we know if it is a customer/client so use previous navigation(gihub)
-/*
-            if (RealmApp.CurrentUser is null)
+            try
             {
-                Shell.Current.GoToAsync($"//{nameof(LogInPage)}");
+                RealmApp = Realms.Sync.App.Create(StaticOpt.MyRealmAppId);
+                MainPage = new NavigationPage(new LogInPage());
             }
-            else
+            catch (Exception e)
             {
-                RealmDb.user = RealmApp.CurrentUser;
+                MainPage.DisplayAlert("error", "Application server is down\nPlease try again later","close");
             }
- */           
-            
-
-
-           //sModel.AddViewModel(nameof(LogInViewModel),new LogInViewModel());
-           //sModel.AddViewModel(nameof(QuoteViewModel), new QuoteViewModel());
         }
 
         protected override void OnSleep()

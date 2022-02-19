@@ -10,6 +10,10 @@ namespace Insurance_app.SupportClasses
 {
     public static class StaticOpt
     {
+        //public const string Url = "http://ec2-34-251-148-246.eu-west-1.compute.amazonaws.com/predict";
+        public const string PredictUrl = "https://testRESTapi.pythonanywhere.com/predict";
+        public const string EmailUrl = "https://testRESTapi.pythonanywhere.com/email";
+        public const string CompanyCodeUrl = "https://testRESTapi.pythonanywhere.com/CompanyCode";
         public static string MyRealmAppId = "application-0-bvutx";
         public static readonly double StepNeeded = 10000;
         public static readonly int MovUpdateArraySize = 5;
@@ -17,6 +21,7 @@ namespace Insurance_app.SupportClasses
         public static readonly string AgeLimitErrorMessage = "The age limit is between 18 and 65";
         public static readonly string ConnectionErrorMessage = "Network connectivity not available";
         public static readonly int MaxNameLen = 20;
+        public static readonly int blockTime = 180;
         public static Func<string, bool> HasNumbers => s => s.Any(char.IsDigit);
 
         public static readonly SKColor White = c.WhiteSmoke;

@@ -17,11 +17,11 @@ using Xamarin.CommunityToolkit.Extensions;
 
 
 namespace Insurance_app.ViewModels
-{    [QueryProperty(nameof(PriceDisplay),nameof(PriceDisplay))]
-    [QueryProperty(nameof(TempQuote),nameof(TempQuote))]
+{    //[QueryProperty(nameof(PriceDisplay),nameof(PriceDisplay))]
+    //[QueryProperty(nameof(TempQuote),nameof(TempQuote))]
     public class RegistrationViewModel : ObservableObject
     {
-        private Dictionary<string, int> quote;
+        private readonly Dictionary<string, int> quote;
         public ICommand RegisterCommand { get; }
         private bool wait;
         private string price="";
@@ -30,14 +30,14 @@ namespace Insurance_app.ViewModels
         private string fName="";
         private string lName="";
         private string phoneNr="";
-        private string qString="";
+        //private string qString="";
         private string addressText = "Add address";
         private readonly UserManager userManager;
         private readonly PolicyManager policyManager;
         private Address address;
         public ICommand AddressCommand { get; }
 
-
+/*
         public RegistrationViewModel()
         {
             address = new Address();
@@ -46,7 +46,18 @@ namespace Insurance_app.ViewModels
             RegisterCommand = new AsyncCommand(Register);
             AddressCommand = new AsyncCommand(GetAddress);
         }
-        
+*/
+        public RegistrationViewModel(Dictionary<string, int> tempQuote, string price)
+        {
+            address = new Address();
+            userManager = new UserManager();
+            policyManager = new PolicyManager();
+            RegisterCommand = new AsyncCommand(Register);
+            AddressCommand = new AsyncCommand(GetAddress);
+            PriceDisplay = price;
+            quote = tempQuote;
+        }
+
         private async Task Register()
         {
             try
@@ -55,7 +66,7 @@ namespace Insurance_app.ViewModels
                 errors += "";//StaticOptions.IsPasswordValid(password);
                 if (errors.Length > 2)
                 {
-                    await Shell.Current.CurrentPage.DisplayAlert("Error", errors, "close");
+                    await Application.Current.MainPage.DisplayAlert("Error", errors, "close");
                     return;
                 }
                 CircularWaitDisplay = true;
@@ -84,23 +95,23 @@ namespace Insurance_app.ViewModels
                    {
                        Console.WriteLine("user longed out");
                    }
-                   CircularWaitDisplay = false;
                    
                    await Application.Current.MainPage.DisplayAlert("Notice", "Registration completed successfully", "Close");
-                   await Shell.Current.GoToAsync($"//{nameof(LogInPage)}",false);
+                   await Application.Current.MainPage.Navigation.PushModalAsync(new LogInPage());
                 }
                 else
                 {
-                    CircularWaitDisplay = false;
-                    await Shell.Current.DisplayAlert("error", $"{registered}", "close");
+                    
+                    await Application.Current.MainPage.DisplayAlert("error", $"{registered}", "close");
                 }
+                
             }
             catch (Exception e)
             {
-                CircularWaitDisplay = false;
-                await Shell.Current.DisplayAlert("error", "registration failed", "close");
+                await Application.Current.MainPage.DisplayAlert("error", "registration failed", "close");
                 Console.WriteLine(e);
             }
+            CircularWaitDisplay = false;
         }
 
         private DateTimeOffset GetDob()
@@ -166,7 +177,13 @@ namespace Insurance_app.ViewModels
             get => addressText;
             set => SetProperty(ref addressText, value);
         }
-
+        public string PriceDisplay
+        {
+            get => price;
+            set => SetProperty(ref price, value);
+        }
+        
+/*
         public string TempQuote
         {
             get => qString;
@@ -177,6 +194,7 @@ namespace Insurance_app.ViewModels
             } 
         }
 
+
         public string PriceDisplay
         {
             get => price;
@@ -186,7 +204,7 @@ namespace Insurance_app.ViewModels
                 
             } 
         
-        }
+        }*/
         
     }
 }

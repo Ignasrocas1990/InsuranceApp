@@ -15,5 +15,12 @@ namespace Insurance_app.Pages
         {
             InitializeComponent();
         }
+
+        protected override async void OnAppearing()
+        {
+            var vm = (LogInViewModel)BindingContext;
+            await vm.CheckIfUserExist();
+            base.OnAppearing();
+        }
     }
 }

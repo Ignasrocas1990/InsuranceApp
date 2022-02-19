@@ -4,7 +4,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
              xmlns:sys="clr-namespace:System;assembly=netstandard"
-             BackgroundColor="LightSteelBlue"
+             BackgroundColor="{StaticResource SecondaryColor}"
+             TitleColor="White"
              Title="Welcome"
              x:Class="Insurance_app.AppShell">
     <Shell.FlyoutHeaderTemplate>

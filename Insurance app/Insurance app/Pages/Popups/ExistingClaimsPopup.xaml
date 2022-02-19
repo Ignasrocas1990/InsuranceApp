@@ -12,7 +12,7 @@
              x:Class="Insurance_app.Pages.Popups.ExistingClaimsPopup">
     <!--Size = width,height -->
     
-    <ListView BackgroundColor="Transparent" VerticalOptions="Center" SeparatorColor="{StaticResource SteelColor}"
+    <ListView BackgroundColor="Transparent" VerticalOptions="Center" SeparatorColor="{StaticResource SecondaryColor}"
               ItemsSource="{Binding Claims}" HasUnevenRows="True" Header="Previous Claims">
         <ListView.ItemTemplate>
             <DataTemplate x:DataType="models1:Claim">

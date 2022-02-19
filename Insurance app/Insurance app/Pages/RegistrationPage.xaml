@@ -8,13 +8,8 @@
              Title="Customer Registration"
              BackgroundColor="{StaticResource BackColor}"
              x:Class="Insurance_app.Pages.RegistrationPage">
-       
-       <ContentPage.BindingContext>
-              <viewModels1:RegistrationViewModel/>
-       </ContentPage.BindingContext>
-
-       
-       <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
+    
+    <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
               <Grid.RowDefinitions>
             
                      <RowDefinition Height="Auto"/>
@@ -70,7 +65,7 @@
                       Style="{StaticResource PrimaryBtn}"
                       Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" HorizontalOptions="Center" />
               
-                <ActivityIndicator
+              <ActivityIndicator
                        IsRunning="{Binding CircularWaitDisplay}" 
                        Style="{StaticResource NormalCircularWait}"
                        Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" />

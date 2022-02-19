@@ -17,6 +17,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="2*"/>
             
         </Grid.RowDefinitions>
@@ -33,10 +34,17 @@
                IsPassword="True" Keyboard="Plain" Style="{StaticResource NormalEntry}"
                Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
         
-        <Button Text="Log In" Command="{Binding LogInCommand}" HorizontalOptions="Fill" Style="{StaticResource PrimaryBtn}"
+        <Button Text="Log In" IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                Command="{Binding LogInCommand}" HorizontalOptions="Fill" Style="{StaticResource PrimaryBtn}"
                 Grid.Column="1" Grid.Row="2"/>
-        <Button Text="Get a Quote" Command="{Binding QuoteCommand}" HorizontalOptions="Fill" Style="{StaticResource SecondaryBtn}"
-                Grid.Column="0" Grid.Row="2"/>
+        <Button  Text="Client Reg." IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                 Command="{Binding ClientRegCommand}" HorizontalOptions="Fill" Style="{StaticResource SecondaryBtn}"
+                 BackgroundColor="{StaticResource ClientBtnColor}"
+                 Grid.Column="0" Grid.Row="2"/>
+        
+        <Button Text="Get a Quote" IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                Command="{Binding QuoteCommand}" HorizontalOptions="Fill" Style="{StaticResource SecondaryBtn}"
+                Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2"/>
         
         <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}" 
                            Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2"

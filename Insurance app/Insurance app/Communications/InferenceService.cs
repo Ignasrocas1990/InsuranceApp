@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Insurance_app.SupportClasses;
 using Newtonsoft.Json;
 
 namespace Insurance_app.Communications
@@ -13,16 +14,12 @@ namespace Insurance_app.Communications
     public class InferenceService
     {
         
-        //private const string Url = "http://ec2-34-251-148-246.eu-west-1.compute.amazonaws.com/predict";
-        private const string PredictUrl = "https://testRESTapi.pythonanywhere.com/predict";
-        //private const string EmailUrl = "https://testRESTapi.pythonanywhere.com/email";
-        private const string SecretCode = "#F12sd1";
 
+        
         private HttpClient client;
         private Stopwatch w = new Stopwatch();
         private StringContent content=null;
         //Func<String,double>convertToDouble =  x => double.Parse(x, CultureInfo.InvariantCulture);
-
         public InferenceService()
         {
             client = new HttpClient();
@@ -31,20 +28,17 @@ namespace Insurance_app.Communications
 
         public Task<HttpResponseMessage> Email(String email)
         {
-            if (!App.Connected)return null;
+            if (!App.NetConnection())return null;
             
             content = new StringContent(JsonConvert
-                .SerializeObject(new Dictionary<string,string>(){{"email",email},{SecretCode,"#F12sd1"}})
+                .SerializeObject(new Dictionary<string,string>(){{"email",email}})
                 ,Encoding.UTF8, "application/json");
             
-            if (content!=null && App.Connected)
+            if (content!=null && App.NetConnection())
             {
                 try
                 {
-                    //HttpResponseMessage response = await client.PostAsync(Url, content);
-                    return client.PostAsync(PredictUrl, content);
-                    //return Task.FromResult(response);
-                    //finRequest?.Invoke(this,response);
+                    return client.PostAsync(StaticOpt.EmailUrl, content);
                 }
                 catch (Exception e)
                 {
@@ -62,6 +56,35 @@ namespace Insurance_app.Communications
             
             
         }
+
+        public Task<HttpResponseMessage> CheckCompanyCode(string code)
+        {
+            if (!App.NetConnection()) return null;
+            content = new StringContent(JsonConvert
+                    .SerializeObject(new Dictionary<string,string>(){{"code",code}})
+                ,Encoding.UTF8, "application/json");
+            
+            if (content!=null && App.Connected)
+            {
+                try
+                {
+                    //HttpResponseMessage response = await client.PostAsync(Url, content);
+                    return client.PostAsync(StaticOpt.CompanyCodeUrl, content);
+                    //return Task.FromResult(response);
+                    //finRequest?.Invoke(this,response);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"fail to send { e }");
+                    App.Connected = false;
+                }
+            }
+            else
+            {
+                Console.WriteLine("error not connected");
+            }
+            return null;
+        }
         /**
          * Take raw data from sensor and pass it by http to predict
          * if customer walking
@@ -75,7 +98,7 @@ namespace Insurance_app.Communications
             {
                 try
                 {
-                    return client.PostAsync(PredictUrl, content);
+                    return client.PostAsync(StaticOpt.PredictUrl, content);
 
                 }
                 catch (Exception e)

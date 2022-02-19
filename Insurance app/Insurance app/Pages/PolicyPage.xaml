@@ -11,11 +11,6 @@
         <ContentPage.BindingContext>
                 <viewModels:PolicyViewModel/>
         </ContentPage.BindingContext>
-        <ContentPage.Resources>
-                <ResourceDictionary>
-                        <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
-                </ResourceDictionary>
-        </ContentPage.Resources>
         
         <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="10" Padding="30,0,30,0">
          <Grid.RowDefinitions>

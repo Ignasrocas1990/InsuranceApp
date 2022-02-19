@@ -1,15 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="http://xamarin.com/schemas/2020/toolkit"
              x:Class="Insurance_app.App">
     <Application.Resources>
         <ResourceDictionary>
             <!-- colors -->
             <Color x:Key="StrongColor">Orange</Color>
-            <Color x:Key="SteelColor">LightSteelBlue</Color>
+            <Color x:Key="SecondaryColor">DodgerBlue</Color>
+            <Color x:Key="ClientBtnColor">Plum</Color>
             <Color x:Key="BackColor">White</Color>
             <Color x:Key="Transparent">Transparent</Color>
-            <Color x:Key="EntryColor">White</Color>
             <!-- indicator -->
             <Style x:Key="NormalCircularWait" TargetType="ActivityIndicator" >
                 <Setter Property="HorizontalOptions" Value="Center"/>
@@ -23,19 +24,17 @@
             </Style>
             
             <Style x:Key="PrimaryBtn" TargetType="Button"
-                   
                    BasedOn="{StaticResource BasicBtn}">
                 <Setter Property="BackgroundColor" Value="ForestGreen"/>
             </Style>
             
             <Style x:Key="SecondaryBtn" TargetType="Button"
                    BasedOn="{StaticResource BasicBtn}">
-                <Setter Property="BackgroundColor" Value="{StaticResource  SteelColor}"/>
-                <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource  SecondaryColor}"/>
             </Style>
             <Style x:Key="SmallBtn" TargetType="Button">
-                <Setter Property="BackgroundColor" Value="{StaticResource  SteelColor}"/>
-                <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource  SecondaryColor}"/>
+                <Setter Property="TextColor" Value="White"/>
                 <Setter Property="FontSize" Value="15"/>
                 <Setter Property="HorizontalOptions" Value="Start"/>
                 <Setter Property="VerticalOptions" Value="Center"/>
@@ -78,7 +77,7 @@
                 <Setter Property="IsSpellCheckEnabled" Value="True"/>
                 <Setter Property="TextColor" Value="Black"/>
                 <Setter Property="BackgroundColor" Value="{StaticResource BackColor}"/>
-                <Setter Property="PlaceholderColor" Value="LightGray" />
+                <Setter Property="PlaceholderColor" Value="Gray" />
                 <Setter Property="FontSize" Value="20" />
             </Style>
             
@@ -89,7 +88,7 @@
                 <Setter Property="VerticalTextAlignment" Value="Center" />
                 <Setter Property="FontSize" Value="20" />
             </Style>
-            
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
