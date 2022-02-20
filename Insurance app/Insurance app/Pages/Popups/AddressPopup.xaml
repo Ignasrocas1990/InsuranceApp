@@ -3,6 +3,7 @@
 <xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:xct="clr-namespace:Xamarin.CommunityToolkit.UI.Views;assembly=Xamarin.CommunityToolkit"
+             xmlns:xctV="http://xamarin.com/schemas/2020/toolkit"
             xmlns:local="clr-namespace:Insurance_app.Models;assembly=Insurance app"
             xmlns:popups="clr-namespace:Insurance_app.ViewModels.Popups;assembly=Insurance app"
             x:DataType="popups:AddressViewModel"
@@ -33,40 +34,90 @@
         <Label Text="House Nr :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="0" />
         <Entry  Keyboard="Numeric" Text="{Binding HouseNDisplay}"
                 Placeholder="a number" Style="{StaticResource NormalEntry}"
-                Grid.Column="1" Grid.Row="0"/>
+                Grid.Column="1" Grid.Row="0">
+                <xctV:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
+                                             Flags="ValidateOnValueChanging" x:Name="HouseNrValidator"
+                                             InvalidStyle="{StaticResource InvalidEntry}">
+                        <xctV:TextValidationBehavior MinimumLength="1" MaximumLength="10" xctV:MultiValidationBehavior.Error="1 &lt; HouseNr &lt; 10 in length" />
+                        <xctV:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xctV:MultiValidationBehavior.Error="HouseNr has spaces" DecorationFlags="TrimEnd" />
+                        <xctV:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xctV:MultiValidationBehavior.Error="HouseNr special char's" DecorationFlags="TrimEnd" />
+                </xctV:MultiValidationBehavior>
+        </Entry>
         
         <Entry  Text="{Binding StreetDisplay}" 
                 Placeholder="Enter your street name here" HorizontalTextAlignment="Center"
                 Style="{StaticResource NormalEntry}"
-                Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
+                Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
+                <xctV:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
+                                              Flags="ValidateOnValueChanging" x:Name="StreetValidator" InvalidStyle="{StaticResource InvalidEntry}">
+                    <xctV:TextValidationBehavior MinimumLength="4" MaximumLength="100" xctV:MultiValidationBehavior.Error="4 &lt; Street &lt; 100 in length" />
+                    <xctV:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xctV:MultiValidationBehavior.Error="Street special char's" DecorationFlags="TrimEnd" />
+                </xctV:MultiValidationBehavior>
+        </Entry>
         
         <Label Text="County :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" />
         <Entry  Text="{Binding CountyDisplay}" 
                 Placeholder="co.Dublin"
                 Style="{StaticResource NormalEntry}"
-                Grid.Column="1" Grid.Row="2"/>
+                Grid.Column="1" Grid.Row="2">
+                <xctV:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
+                                              Flags="ValidateOnValueChanging" x:Name="CountyValidator"
+                                              InvalidStyle="{StaticResource InvalidEntry}">
+                    <xctV:TextValidationBehavior MaximumLength="30" xctV:MultiValidationBehavior.Error="County &lt; 30 in length" />
+                        <xctV:CharactersValidationBehavior CharacterType="Digit" MaximumCharacterCount="0" xctV:MultiValidationBehavior.Error="County cant have numbers" />
+                    <xctV:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xctV:MultiValidationBehavior.Error="County special char's" DecorationFlags="TrimEnd" />
+                </xctV:MultiValidationBehavior>
+        </Entry>
         
         <Label Text="City :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="3" />
         <Entry  Text="{Binding CityDisplay}" Placeholder="Dublin"
                 Style="{StaticResource NormalEntry}"
-                Grid.Column="1" Grid.Row="3"/>
+                Grid.Column="1" Grid.Row="3">
+            <xctV:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
+                                          Flags="ValidateOnValueChanging" x:Name="CityValidator"
+                                          InvalidStyle="{StaticResource InvalidEntry}">
+                    <xctV:TextValidationBehavior MinimumLength="3"  MaximumLength="50" xctV:MultiValidationBehavior.Error="3 &lt; County &lt; 50 in length" />
+                    <xctV:CharactersValidationBehavior CharacterType="Digit" MaximumCharacterCount="0" xctV:MultiValidationBehavior.Error="City Cant have numbers" />
+                <xctV:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xctV:MultiValidationBehavior.Error="City special char's" DecorationFlags="TrimEnd" />
+                
+            </xctV:MultiValidationBehavior>
+        </Entry>
         
         <Label Text="Country :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="4" />
         <Entry  Text="{Binding CountryDisplay}" 
                 Placeholder="4 length"
                 Style="{StaticResource NormalEntry}"
-                Grid.Column="1" Grid.Row="4"/>
+                Grid.Column="1" Grid.Row="4">
+                <Entry.Behaviors>
+                        <xctV:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
+                                                     Flags="ValidateOnValueChanging" x:Name="CountryValidator"
+                                                     InvalidStyle="{StaticResource InvalidEntry}">
+                                <xctV:TextValidationBehavior MinimumLength="4" MaximumLength="56" xctV:MultiValidationBehavior.Error="4 &lt; Country &lt; 56 in length" />
+                                <xctV:CharactersValidationBehavior CharacterType="Digit" MaximumCharacterCount="0" xctV:MultiValidationBehavior.Error="Country cant have digits" />
+                                <xctV:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xctV:MultiValidationBehavior.Error="Country cant have Special chars" />
+                        </xctV:MultiValidationBehavior>
+                </Entry.Behaviors>
+        </Entry>
         
-        <Label Text="Post Code :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="5" />
+        <Label Text="Zip/Post Code :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="5" />
         <Entry  Text="{Binding PostCodeDisplay}" 
-                Placeholder="6 length"
+                Placeholder="R91 VNX5"
                 Style="{StaticResource NormalEntry}"
-                Grid.Column="1" Grid.Row="5"/>
+                Grid.Column="1" Grid.Row="5">
+            <Entry.Behaviors>
+                <xctV:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
+                                              Flags="ValidateOnValueChanging" x:Name="PostValidator"
+                                              InvalidStyle="{StaticResource InvalidEntry}">
+                    <xctV:TextValidationBehavior MinimumLength="6" MaximumLength="20" xctV:MultiValidationBehavior.Error="6 &lt; Zip/Post Code &lt; 20 in length" />
+                    <xctV:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xctV:MultiValidationBehavior.Error="Zip/Post Code cant have Special chars" />
+                </xctV:MultiValidationBehavior>
+            </Entry.Behaviors>
+        </Entry>
         
         <Button Grid.Column="0" Grid.Row="6" Text="Cancel" Style="{StaticResource  SecondaryBtn}"
                 HorizontalOptions="Center" VerticalOptions="Center" Command="{Binding  CancelCommand}"/>
         <Button Grid.Column="1" Grid.Row="6" Text="Save" Style="{StaticResource  PrimaryBtn}"
-                HorizontalOptions="Center" VerticalOptions="Center" Command="{Binding SaveCommand}"/>
+                HorizontalOptions="Center" VerticalOptions="Center" Clicked="Button_OnClicked"  />
     </Grid>
    
 </xct:Popup>

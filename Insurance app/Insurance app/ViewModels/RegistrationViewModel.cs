@@ -22,7 +22,7 @@ namespace Insurance_app.ViewModels
     public class RegistrationViewModel : ObservableObject
     {
         private readonly Dictionary<string, int> quote;
-        public ICommand RegisterCommand { get; }
+        public readonly string AddressSText = "Address saved";
         private bool wait;
         private string price="";
         private string email="";
@@ -31,7 +31,7 @@ namespace Insurance_app.ViewModels
         private string lName="";
         private string phoneNr="";
         //private string qString="";
-        private string addressText = "Add address";
+        public string AddressText = "Add address please";
         private readonly UserManager userManager;
         private readonly PolicyManager policyManager;
         private Address address;
@@ -52,23 +52,15 @@ namespace Insurance_app.ViewModels
             address = new Address();
             userManager = new UserManager();
             policyManager = new PolicyManager();
-            RegisterCommand = new AsyncCommand(Register);
             AddressCommand = new AsyncCommand(GetAddress);
             PriceDisplay = price;
             quote = tempQuote;
         }
 
-        private async Task Register()
+        public async Task Register()
         {
             try
             {
-                var errors = "";//StaticOptions.IsValid(fName, lName, phoneNr, email);//TODO uncomment
-                errors += "";//StaticOptions.IsPasswordValid(password);
-                if (errors.Length > 2)
-                {
-                    await Application.Current.MainPage.DisplayAlert("Error", errors, "close");
-                    return;
-                }
                 CircularWaitDisplay = true;
                 var registered = await userManager.Register(email, password);
 
@@ -133,7 +125,7 @@ namespace Insurance_app.ViewModels
            var newAddress = await Application.Current.MainPage.Navigation.ShowPopupAsync<Address>(new AddressPopup(address));
             if (newAddress!=null)
             {
-                AddressDisplay = "Address saved";
+                AddressDisplay = AddressSText;
                 address = newAddress;
             }
         }
@@ -174,8 +166,8 @@ namespace Insurance_app.ViewModels
 
         public string AddressDisplay
         {
-            get => addressText;
-            set => SetProperty(ref addressText, value);
+            get => AddressText;
+            set => SetProperty(ref AddressText, value);
         }
         public string PriceDisplay
         {

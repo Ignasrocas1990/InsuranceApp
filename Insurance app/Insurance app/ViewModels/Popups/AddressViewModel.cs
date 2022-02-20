@@ -12,25 +12,22 @@ namespace Insurance_app.ViewModels.Popups
 {
     public class AddressViewModel : ObservableObject
     {
-        private AddressPopup popup;
+        private readonly AddressPopup popup;
         private int houseN;
         private string street;
         private string city; 
         private string county;
         private string country; 
         private string postCode;
-        private string errors="";
 
         public ICommand CancelCommand { get; }
-        public ICommand SaveCommand { get; }
-
         public AddressViewModel(AddressPopup popup, Address address)
         {
             this.popup = popup;
             Init(address);
-            SaveCommand = new AsyncCommand(Save);
             CancelCommand = new Command(Close);
         }
+
 
         private void Init(Address address)
         {
@@ -42,26 +39,8 @@ namespace Insurance_app.ViewModels.Popups
             PostCodeDisplay = address.PostCode;
         }
 
-        private async Task Save()
+        public void Save()
         {
-            
-            if (postCode.Length < 4 || country.Length < 3 || street.Length < 5 || 0 > houseN )
-            {
-                errors += "Inputs are invalid length \n";
-            }
-            if (StaticOpt.HasNumbers(city) || StaticOpt.HasNumbers(country) || StaticOpt.HasNumbers(county))
-            {
-                errors = "City,Country,County cant have numbers";
-            }
-
-            if (errors.Length > 2)
-            {
-                await Shell.Current.CurrentPage.DisplayAlert("Error", errors, "close");
-                errors = "";
-                return;
-
-            }
-
             popup.Dismiss(new Address()
             {
                 HouseN = houseN,

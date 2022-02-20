@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Insurance_app.Models;
+using Insurance_app.SupportClasses;
 using Java.Security;
 using Realms;
 using Realms.Exceptions;
@@ -355,6 +356,34 @@ namespace Insurance_app.Service
             }
 
             return false;
+        }
+        public async Task<string> FindTypeUser(User user)
+        {
+            string userType = "";
+            try
+            {
+                await GetRealm(user);
+                if (realm is null) throw new Exception("FindTpeUser,Realm return null");
+                
+                realm.Write(() =>
+                {
+                    var customer = realm.Find<Customer>(user.Id);
+                    if (customer != null)
+                    {
+                        userType = "Customer";
+                    }else
+                    {
+                        var client = realm.Find<Client>(user.Id);
+                        if (client != null) userType = "Client";
+                    }
+                });
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return userType;
         }
 // -------------------------------- support methods ---------------------------------        
         public async Task CleanDatabase(User user)//TODO remove this when submitting

@@ -83,5 +83,10 @@ namespace Insurance_app.Logic
         {
             return await RealmDb.GetInstance().CreateClient(user, email, fname, lname, code);
         }
+
+        public Task<string> FindTypeUser(User user)
+        {
+            return RealmDb.GetInstance().FindTypeUser(user);
+        }
     }
 }

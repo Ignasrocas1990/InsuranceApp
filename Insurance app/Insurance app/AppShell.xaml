@@ -24,7 +24,7 @@
             </Grid>            
         </DataTemplate>
     </Shell.FlyoutHeaderTemplate>
-    
+    <!--
     <ShellItem FlyoutItemIsVisible="False" Route="LogInPage">
         <ShellContent ContentTemplate="{DataTemplate pages:LogInPage}"/>
     </ShellItem>
@@ -36,10 +36,11 @@
     <ShellItem FlyoutItemIsVisible="False" Route="RegistrationPage">
         <ShellContent ContentTemplate="{DataTemplate pages:RegistrationPage}"/>
     </ShellItem>
+    -->
     
     <!--    side Flyout menu navigation                    -->
     <FlyoutItem Title="Home page" Icon="walkIcon.png" Route="HomePage">
-        <ShellContent ContentTemplate="{DataTemplate pages:HomePage}" />
+        <ShellContent ContentTemplate="{DataTemplate pages:HomePage}"/>
     </FlyoutItem>
     <FlyoutItem Title="Profile page" Icon="profileIcon.png">
         <ShellContent ContentTemplate="{DataTemplate pages:ProfilePage}" />

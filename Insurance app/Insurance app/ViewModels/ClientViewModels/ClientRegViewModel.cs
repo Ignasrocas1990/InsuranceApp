@@ -5,6 +5,7 @@ using System.Timers;
 using System.Windows.Input;
 using Insurance_app.Communications;
 using Insurance_app.Logic;
+using Insurance_app.Pages;
 using Insurance_app.Pages.Popups;
 using Insurance_app.SupportClasses;
 using Realms.Sync;
@@ -55,14 +56,14 @@ namespace Insurance_app.ViewModels.ClientViewModels
                         await App.RealmApp.CurrentUser.LogOutAsync();
                     }
                     userManager.Dispose();
-
+                    
+                    await Application.Current.MainPage.DisplayAlert("notice", "Successfully registered", "close");
+                    await Application.Current.MainPage.Navigation.PopModalAsync();
                 }
                 catch (Exception e)
                 {
                     await Application.Current.MainPage.DisplayAlert("notice", e.Message, "close");
                 }
-                await Application.Current.MainPage.DisplayAlert("notice", "Successfully registered", "close");
-
             }
             CircularWaitDisplay = false;
         }

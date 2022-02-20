@@ -19,6 +19,7 @@ using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Exception = System.Exception;
+using UserManager = Insurance_app.Logic.UserManager;
 
 namespace Insurance_app.ViewModels
 {
@@ -27,6 +28,7 @@ namespace Insurance_app.ViewModels
     {
         private string email=""; 
         private string password="";
+        private UserManager userManager;
 
         public ICommand LogInCommand { get; }
         public ICommand QuoteCommand { get; }
@@ -42,6 +44,7 @@ namespace Insurance_app.ViewModels
             {
                 App.Connected =  (e.NetworkAccess ==  NetworkAccess.Internet);
             };
+            userManager = new UserManager();
         }
 
         private async Task ClientRegister()
@@ -92,18 +95,27 @@ namespace Insurance_app.ViewModels
                 {
                     if (email.Length < 1 || password.Length < 6 )
                     {
-                        await Application.Current.MainPage.DisplayAlert("Error", "Email or Password fields left blank",
-                            "close");
-                        return;
+                        throw new Exception("Email or Password fields are invalid");
                     }
-                    await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
-                    //await CleanDatabase();//TODO remove when submitting 
-                    //return;
-                    //find customer if no customer found, find client. (What ever is found will set Shell)
-                    //customer found below
-                    Application.Current.MainPage = new AppShell();
-                    await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
-
+                    var user = await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
+                    if (user is null) throw new Exception("User fail log in");
+                     var typeUser = await TypeUser(user);
+                     if (typeUser.Equals($"{UserType.Customer}"))
+                     {
+                         Application.Current.MainPage = new AppShell();
+                         await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
+                     }else if (typeUser.Equals($"{UserType.Client}"))
+                     {
+                         Application.Current.MainPage = new ClientShell();
+                         await Shell.Current.GoToAsync($"//{nameof(CustomersPage)}");
+                     }
+                     else
+                     {
+                         await CheckIfUserExist();
+                         throw new Exception("User has not been found");
+                     }
+                     
+                        //await CleanDatabase();//TODO remove when submitting 
                 }
                 else
                 {
@@ -113,11 +125,15 @@ namespace Insurance_app.ViewModels
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                await Shell.Current.DisplayAlert("Login Failed", e.Message, "close");
+                await Application.Current.MainPage.DisplayAlert("Login Failed", e.Message, "close");
 
             }
             CircularWaitDisplay = false;
 
+        }
+        private async Task<string> TypeUser(User user)
+        {
+            return await userManager.FindTypeUser(user);
         }
        
 

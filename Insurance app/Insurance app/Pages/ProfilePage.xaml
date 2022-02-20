@@ -4,6 +4,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
              x:DataType="viewModels:ProfileViewModel"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              Title="Customer Profile"
              BackgroundColor="{StaticResource BackColor}"
              x:Class="Insurance_app.Pages.ProfilePage">
@@ -31,25 +32,34 @@
               <Label Text="First Name :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="0" />
               <Entry Keyboard="Text" Text="{Binding NameDisplay}" 
                      Placeholder="Jonny" Style="{StaticResource NormalEntry}"
-                     Grid.Column="1" Grid.Row="0"/>
+                     Grid.Column="1" Grid.Row="0">
+                     
+              </Entry>
                 
               <Label Text="Last Name :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" />
               <Entry Keyboard="Text" Text="{Binding  LastNameDisplay}" 
                      Placeholder="Bravo" Style="{StaticResource NormalEntry}"
-                     Grid.Column="1" Grid.Row="1"/>
+                     Grid.Column="1" Grid.Row="1">
+                     
+              </Entry>
                 
               <Label Text="Phone Nr :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" />
               <Entry  Keyboard="Numeric" Text="{Binding PhoneNrDisplay}"
                       Placeholder= "0852827820" Style="{StaticResource NormalEntry}"
-                      Grid.Column="1" Grid.Row="2"/>
+                      Grid.Column="1" Grid.Row="2">
+                     
+              </Entry>
               
               <Button Command="{Binding AddressCommand}" TextTransform="None" TextColor="Black"
                       Text="{Binding AddressDisplay}" BackgroundColor="WhiteSmoke"
-                     Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" IsEnabled="{Binding IsEnabled}" />
+                      IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                      Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" />
               
               
               <Button  Text="Update" Command="{Binding UpdateCommand}" Style="{StaticResource PrimaryBtn}"
-                      Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" HorizontalOptions="Center" IsEnabled="{Binding IsEnabled}" />
+                       IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}" 
+                       Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" HorizontalOptions="Center"/>
+              
                 <ActivityIndicator
                        IsRunning="{Binding CircularWaitDisplay}" Style="{StaticResource NormalCircularWait}"
                        Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" />
