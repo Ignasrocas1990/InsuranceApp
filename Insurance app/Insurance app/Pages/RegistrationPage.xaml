@@ -97,6 +97,7 @@
               <Entry  Keyboard="Numeric" Text="{Binding PhoneNrDisplay}"
                       Placeholder= "only numbers" Style="{StaticResource NormalEntry}"
                       Grid.Column="1" Grid.Row="4">
+                  <Entry.Behaviors>
                   <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
                                                Flags="ValidateOnValueChanging" x:Name="PhoneNrValidator"
                                                InvalidStyle="{StaticResource InvalidEntry}">
@@ -107,6 +108,7 @@
                       <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" 
                                                         xct:MultiValidationBehavior.Error="PhoneNr special char's" DecorationFlags="TrimEnd" />
                   </xct:MultiValidationBehavior>
+                  </Entry.Behaviors>
               </Entry>
               
               <Button Command="{Binding AddressCommand}" x:Name="AddressValidator"

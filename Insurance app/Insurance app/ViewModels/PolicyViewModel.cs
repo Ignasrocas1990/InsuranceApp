@@ -104,8 +104,7 @@ namespace Insurance_app.ViewModels
                 UnderReviewDisplay = true;
                 CircularWaitDisplay = true;
                 var newPolicy = policyManager.CreatePolicy(price.ToString(CultureInfo.InvariantCulture), 
-                    cover, fee, hospitals, plan, smoker, false, date, 
-                    App.RealmApp.CurrentUser.Id,DateTimeOffset.Now);
+                    cover, fee, hospitals, plan, smoker, false, date,DateTimeOffset.Now,App.RealmApp.CurrentUser.Id);
                 await policyManager.AddPolicy(App.RealmApp.CurrentUser, newPolicy);
                 CircularWaitDisplay = false;
                 

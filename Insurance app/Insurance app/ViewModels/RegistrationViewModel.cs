@@ -74,7 +74,7 @@ namespace Insurance_app.ViewModels
                        throw new Exception("registration failed");
                    }
                    customer.Policy.Add(policyManager.CreatePolicy(price, quote["Cover"], quote["Hospital_Excess"],
-                       quote["Hospitals"], quote["Plan"], quote["Smoker"], false, DateTimeOffset.Now,user.Id,DateTimeOffset.Now));
+                       quote["Hospitals"], quote["Plan"], quote["Smoker"], false, DateTimeOffset.Now,DateTimeOffset.Now,user.Id));
 
                    await userManager.AddCustomer(customer, App.RealmApp.CurrentUser);
                    await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
@@ -89,7 +89,7 @@ namespace Insurance_app.ViewModels
                    }
                    
                    await Application.Current.MainPage.DisplayAlert("Notice", "Registration completed successfully", "Close");
-                   await Application.Current.MainPage.Navigation.PushModalAsync(new LogInPage());
+                   await Application.Current.MainPage.Navigation.PopToRootAsync();
                 }
                 else
                 {

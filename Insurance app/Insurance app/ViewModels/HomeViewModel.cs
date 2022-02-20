@@ -88,7 +88,7 @@ namespace Insurance_app.ViewModels
 
         public async Task SetUpEarningsDisplay()
         {
-            TotalEarnedDisplay = $"{await rewardManager.getTotalRewards(App.RealmApp.CurrentUser)}";
+            TotalEarnedDisplay = $"{await rewardManager.getTotalRewards(App.RealmApp.CurrentUser,App.RealmApp.CurrentUser.Id)}";
         }
         
         private void InferredRawData(object s, RawDataArgs e)

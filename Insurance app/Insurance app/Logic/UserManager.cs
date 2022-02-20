@@ -73,10 +73,10 @@ namespace Insurance_app.Logic
         }
 
         public async Task updateCustomer(string name, string lastName, 
-            string phoneNr,Address address, User user)
+            string phoneNr,Address address, User user,string customerId)
         {
            await RealmDb.GetInstance().UpdateCustomer(name, lastName,
-                phoneNr,  address, user);
+                phoneNr,  address, user,customerId);
         }
 
         public async Task<bool> CreateClient(User user, string email, string fname, string lname, string code)

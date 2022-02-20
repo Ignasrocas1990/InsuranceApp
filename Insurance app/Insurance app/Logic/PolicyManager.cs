@@ -16,14 +16,14 @@ namespace Insurance_app.Logic
             
         }
         public PersonalPolicy CreatePolicy(string price, int cover, int fee, int hospitals, int plan, int smoker, bool underReview, 
-            DateTimeOffset date,string partition,DateTimeOffset? dt)
+            DateTimeOffset date,DateTimeOffset? dt,string owner)
         {
             
             return new PersonalPolicy()
             {
                 Price = Converter.GetPrice(price), Cover = cover, HospitalFee = fee, UpdateDate = dt,
                 Hospitals = hospitals, Plan = plan, Smoker = smoker,
-                UnderReview = underReview, StartDate = date,Partition = partition
+                UnderReview = underReview, StartDate = date,Owner = owner
             };
         }
 

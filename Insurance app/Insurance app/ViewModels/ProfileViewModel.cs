@@ -28,6 +28,7 @@ namespace Insurance_app.ViewModels
         private string country="";
         private string city="";
         private Address address;
+        private string customerId;
 
         public ICommand UpdateCommand { get; }
         public ICommand AddressCommand { get; }
@@ -49,6 +50,7 @@ namespace Insurance_app.ViewModels
                     NameDisplay = customer.Name;
                     LastNameDisplay = customer.LastName;
                     PhoneNrDisplay = customer.PhoneNr;
+                    customerId = customer.Id;
                     
                     //address backing fields
                     houseN = customer.Address.HouseN;
@@ -111,7 +113,7 @@ namespace Insurance_app.ViewModels
                 IsEnabled = false;
                 CircularWaitDisplay = true;
                 
-               await userManager.updateCustomer(name,lastName,phoneNr,address, App.RealmApp.CurrentUser);
+               await userManager.updateCustomer(name,lastName,phoneNr,address, App.RealmApp.CurrentUser,customerId);
                //await App.RealmApp.EmailPasswordAuth.CallResetPasswordFunctionAsync(email, password); make it separate screen
                
                CircularWaitDisplay = false;

@@ -39,7 +39,7 @@
                 
         <Label Text="Currently under review" Style="{StaticResource NormalLabel}" FontAttributes="Italic"
                IsVisible="{Binding UnderReviewDisplay}" HorizontalTextAlignment="Center"
-                Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" />
+                Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" TextColor="{StaticResource StrongColor}" />
         
         <Label Text="StartDate :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" />
         <Label Text="{Binding StartDateDisplay}"
@@ -88,7 +88,7 @@
                 Style="{StaticResource  NormalLabel}" Grid.Column="1" Grid.Row="7" />
         
         <Button Text= "Update" Style="{StaticResource PrimaryBtn}" HorizontalOptions="Center"
-                IsEnabled="{Binding UnderReviewDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                IsVisible="{Binding UnderReviewDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Command="{Binding UpdatePolicy}" Grid.Column="0" Grid.Row="8"  Grid.ColumnSpan="2"/>
         
         <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}"

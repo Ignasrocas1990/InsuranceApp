@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
+using Android.Content.Res;
 using Android.OS;
 using Insurance_app.Communications;
 using Insurance_app.Models;
@@ -55,6 +57,7 @@ namespace Insurance_app.ViewModels
         }
         public async Task CheckIfUserExist()
         {
+ 
             CircularWaitDisplay = true;
             try
             {
@@ -93,12 +96,16 @@ namespace Insurance_app.ViewModels
                 CircularWaitDisplay = true;
                 if (App.NetConnection())
                 {
-                    if (email.Length < 1 || password.Length < 6 )
+                    if (!emailIsValid || !passIsValid )
                     {
-                        throw new Exception("Email or Password fields are invalid");
+                        throw new Exception("Log in details are not invalid");
                     }
+
                     var user = await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
                     if (user is null) throw new Exception("User fail log in");
+                    
+                    //await CleanDatabase();//TODO remove when submitting 
+                    
                      var typeUser = await TypeUser(user);
                      if (typeUser.Equals($"{UserType.Customer}"))
                      {
@@ -115,7 +122,7 @@ namespace Insurance_app.ViewModels
                          throw new Exception("User has not been found");
                      }
                      
-                        //await CleanDatabase();//TODO remove when submitting 
+                       
                 }
                 else
                 {
@@ -149,6 +156,7 @@ namespace Insurance_app.ViewModels
         }
 
         private bool circularWaitDisplay;
+        
 
         public bool CircularWaitDisplay
         {
@@ -156,6 +164,19 @@ namespace Insurance_app.ViewModels
             set => SetProperty(ref circularWaitDisplay, value);
         }
 
+        private bool passIsValid;
+        public bool PassIsValid
+        {
+            get => passIsValid;
+            set => SetProperty(ref passIsValid, value);
+        }
+        private bool emailIsValid;
+
+        public bool EmailIsValid
+        {
+            get => emailIsValid;
+            set => SetProperty(ref emailIsValid, value);
+        }
         private async Task CleanDatabase()//TODO Remove when submitting
         {
             await RealmDb.GetInstance().CleanDatabase(App.RealmApp.CurrentUser);

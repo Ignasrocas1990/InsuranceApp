@@ -27,9 +27,9 @@
        
        
 <!--      =====    Pages    ====                        -->       
-<ShellItem FlyoutItemIsVisible="False" Route="CustomersPage">
+<!--ShellItem FlyoutItemIsVisible="False" Route="CustomersPage">
        <ShellContent ContentTemplate="{DataTemplate clientPages:CustomersPage}"/>
-</ShellItem>
+</ShellItem-->
 
 <FlyoutItem Title="Customers Page" Icon="CustomersIcon.png" Route="CustomersPage">
        <ShellContent ContentTemplate="{DataTemplate clientPages:CustomersPage}"/>

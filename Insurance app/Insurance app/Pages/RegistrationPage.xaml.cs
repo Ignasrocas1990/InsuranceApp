@@ -42,7 +42,7 @@ namespace Insurance_app.Pages
                  else
                  {
                      var errBuilder = new StringBuilder();
-                     if (!EmailValidation.IsNotValid)
+                     if (EmailValidation.IsNotValid)
                      {
                          errBuilder.AppendLine("Email is not valid");
                      }

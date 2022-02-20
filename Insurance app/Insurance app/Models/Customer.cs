@@ -25,16 +25,11 @@ namespace Insurance_app.Models
         public IList<Claim> Claim { get; }
 
         public bool? DelFlag { get; set; } = false;
-        [MapTo("_partition")] [Required] public string Partition { get; set; } = App.RealmApp.CurrentUser.Id;
+        [MapTo("_partition")] [Required] public string Partition { get; set; } = "CustomerPartition";
 
         public async Task<Reward> CreateReward()
         {
            return await RealmDb.GetInstance().AddNewReward(App.RealmApp.CurrentUser);
-        }
-
-        public async Task CreateClaim(string hospitalCode,string patientNr,string type,bool status)
-        { 
-            await RealmDb.GetInstance().AddClaim( hospitalCode, patientNr,type,status,App.RealmApp.CurrentUser);
         }
 
 

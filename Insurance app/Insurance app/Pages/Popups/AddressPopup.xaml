@@ -35,24 +35,28 @@
         <Entry  Keyboard="Numeric" Text="{Binding HouseNDisplay}"
                 Placeholder="a number" Style="{StaticResource NormalEntry}"
                 Grid.Column="1" Grid.Row="0">
-                <xctV:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
-                                             Flags="ValidateOnValueChanging" x:Name="HouseNrValidator"
-                                             InvalidStyle="{StaticResource InvalidEntry}">
+            <Entry.Behaviors>
+            <xctV:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
+                                          Flags="ValidateOnValueChanging" x:Name="HouseNrValidator"
+                                          InvalidStyle="{StaticResource InvalidEntry}">
                         <xctV:TextValidationBehavior MinimumLength="1" MaximumLength="10" xctV:MultiValidationBehavior.Error="1 &lt; HouseNr &lt; 10 in length" />
                         <xctV:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xctV:MultiValidationBehavior.Error="HouseNr has spaces" DecorationFlags="TrimEnd" />
                         <xctV:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xctV:MultiValidationBehavior.Error="HouseNr special char's" DecorationFlags="TrimEnd" />
                 </xctV:MultiValidationBehavior>
+            </Entry.Behaviors>
         </Entry>
         
         <Entry  Text="{Binding StreetDisplay}" 
                 Placeholder="Enter your street name here" HorizontalTextAlignment="Center"
                 Style="{StaticResource NormalEntry}"
                 Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
-                <xctV:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
-                                              Flags="ValidateOnValueChanging" x:Name="StreetValidator" InvalidStyle="{StaticResource InvalidEntry}">
+            <Entry.Behaviors>
+            <xctV:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
+                                          Flags="ValidateOnValueChanging" x:Name="StreetValidator" InvalidStyle="{StaticResource InvalidEntry}">
                     <xctV:TextValidationBehavior MinimumLength="4" MaximumLength="100" xctV:MultiValidationBehavior.Error="4 &lt; Street &lt; 100 in length" />
                     <xctV:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xctV:MultiValidationBehavior.Error="Street special char's" DecorationFlags="TrimEnd" />
                 </xctV:MultiValidationBehavior>
+            </Entry.Behaviors>    
         </Entry>
         
         <Label Text="County :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" />
@@ -60,19 +64,22 @@
                 Placeholder="co.Dublin"
                 Style="{StaticResource NormalEntry}"
                 Grid.Column="1" Grid.Row="2">
-                <xctV:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
-                                              Flags="ValidateOnValueChanging" x:Name="CountyValidator"
-                                              InvalidStyle="{StaticResource InvalidEntry}">
+            <Entry.Behaviors>
+            <xctV:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
+                                          Flags="ValidateOnValueChanging" x:Name="CountyValidator"
+                                          InvalidStyle="{StaticResource InvalidEntry}">
                     <xctV:TextValidationBehavior MaximumLength="30" xctV:MultiValidationBehavior.Error="County &lt; 30 in length" />
                         <xctV:CharactersValidationBehavior CharacterType="Digit" MaximumCharacterCount="0" xctV:MultiValidationBehavior.Error="County cant have numbers" />
                     <xctV:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xctV:MultiValidationBehavior.Error="County special char's" DecorationFlags="TrimEnd" />
                 </xctV:MultiValidationBehavior>
+            </Entry.Behaviors>
         </Entry>
         
         <Label Text="City :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="3" />
         <Entry  Text="{Binding CityDisplay}" Placeholder="Dublin"
                 Style="{StaticResource NormalEntry}"
                 Grid.Column="1" Grid.Row="3">
+            <Entry.Behaviors>
             <xctV:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
                                           Flags="ValidateOnValueChanging" x:Name="CityValidator"
                                           InvalidStyle="{StaticResource InvalidEntry}">
@@ -81,6 +88,7 @@
                 <xctV:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xctV:MultiValidationBehavior.Error="City special char's" DecorationFlags="TrimEnd" />
                 
             </xctV:MultiValidationBehavior>
+            </Entry.Behaviors>
         </Entry>
         
         <Label Text="Country :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="4" />

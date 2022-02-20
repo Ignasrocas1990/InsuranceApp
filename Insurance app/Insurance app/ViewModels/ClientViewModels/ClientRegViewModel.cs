@@ -58,7 +58,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
                     userManager.Dispose();
                     
                     await Application.Current.MainPage.DisplayAlert("notice", "Successfully registered", "close");
-                    await Application.Current.MainPage.Navigation.PopModalAsync();
+                    await Application.Current.MainPage.Navigation.PopToRootAsync();
                 }
                 catch (Exception e)
                 {

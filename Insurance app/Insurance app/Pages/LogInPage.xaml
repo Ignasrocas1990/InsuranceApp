@@ -3,8 +3,10 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              x:DataType="viewModels1:LogInViewModel"
              Shell.FlyoutBehavior="Disabled"
+             IsTabStop="True"
              Title="Welcome to Dynamic Insurance"
              BackgroundColor="{StaticResource BackColor}"
              x:Class="Insurance_app.Pages.LogInPage">
@@ -28,11 +30,31 @@
         
         <Entry Text="{Binding EmailDisplay}" Placeholder="email@gmail.com" HorizontalTextAlignment="Center"
                Keyboard="Plain" Style="{StaticResource NormalEntry}"
-               Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"/>
+               Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
+            
+            <Entry.Behaviors>
+                <xct:EmailValidationBehavior ValidStyle="{StaticResource NormalEntry}" IsValid="{Binding EmailIsValid}"
+                                             InvalidStyle="{StaticResource InvalidEntry}" Flags="ValidateOnValueChanging"/> 
+            </Entry.Behaviors>
+        </Entry>
         
         <Entry Text= "{Binding PasswordDisplay}" Placeholder="password" HorizontalTextAlignment="Center"
                IsPassword="True" Keyboard="Plain" Style="{StaticResource NormalEntry}"
-               Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
+               Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
+            <Entry.Behaviors>
+                <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
+                                             IsValid="{Binding PassIsValid}"
+                                             Flags="ValidateOnValueChanging"
+                                             InvalidStyle="{StaticResource InvalidEntry}">
+                    <xct:TextValidationBehavior MinimumLength="6" />
+                    <xct:CharactersValidationBehavior CharacterType="Digit" MinimumCharacterCount="1"  />
+                    <xct:CharactersValidationBehavior CharacterType="LowercaseLetter" MinimumCharacterCount="1"/>
+                    <xct:CharactersValidationBehavior CharacterType="UppercaseLetter" MinimumCharacterCount="1"/>
+                    <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MinimumCharacterCount="1" />
+                    <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" />
+                </xct:MultiValidationBehavior>
+            </Entry.Behaviors>
+        </Entry>
         
         <Button Text="Log In" IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Command="{Binding LogInCommand}" HorizontalOptions="Fill" Style="{StaticResource PrimaryBtn}"

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using MongoDB.Bson;
 using Realms;
 
@@ -22,7 +23,9 @@ namespace Insurance_app.Models
         public bool? UnderReview { get; set; }
         public DateTimeOffset? UpdateDate { get; set; }
 
-        [MapTo("_partition")] [Required] public string Partition { get; set; } = App.RealmApp.CurrentUser.Id;
+        public string Owner { get; set; }
+
+        [MapTo("_partition")] [Required] public string Partition { get; set; } = "CustomerPartition";
 
     }
    
