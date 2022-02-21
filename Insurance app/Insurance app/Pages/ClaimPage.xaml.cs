@@ -35,7 +35,7 @@ namespace Insurance_app.Pages
                 var vm = (ClaimViewModel) BindingContext;
                 if (HospitalCodeValidator.IsValid && PatientNrValidator.IsValid)
                 {
-                    vm.CreateClaimCommand.Execute(vm.CreateClaim());
+                    vm.CreateClaimCommand.Execute(null);
                 }
                 else
                 {

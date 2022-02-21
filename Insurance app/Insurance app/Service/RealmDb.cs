@@ -11,6 +11,7 @@ using Realms;
 using Realms.Exceptions;
 using Realms.Sync;
 using Xamarin.Essentials;
+using Policy =Insurance_app.Models.Policy;
 
 namespace Insurance_app.Service
 {
@@ -54,8 +55,7 @@ namespace Insurance_app.Service
                 
                 realm.Write(() =>
                 {
-                    realm.Add(c,true);
-                    
+                     realm.Add(c,true);
                 });
                 Console.WriteLine("customer added");
             }
@@ -295,12 +295,12 @@ namespace Insurance_app.Service
             return claims;
         }
 //-------------------- policy methods -----------------------
-        public async Task<Dictionary<int,PersonalPolicy>> FindPolicy(User user)
+        public async Task<Dictionary<int,Policy>> FindPolicy(User user)
         {
            await GetRealm(partition,user);
            if (realm is null) throw new Exception("FindPolicy realm null");
 
-           Dictionary<int,PersonalPolicy> policy = new Dictionary<int, PersonalPolicy>();
+           Dictionary<int,Policy> policy = new Dictionary<int, Policy>();
            realm.Write(() =>
            {
                var customer = realm.Find<Customer>(user.Id);
@@ -314,7 +314,7 @@ namespace Insurance_app.Service
            return policy;
         }
 
-        public async Task UpdatePolicy(User user,PersonalPolicy newPolicy)
+        public async Task UpdatePolicy(User user,Policy newPolicy)
         {
             try
             {
@@ -457,9 +457,10 @@ namespace Insurance_app.Service
             }
             catch (Exception e)
             {
-                return null;
                 Console.WriteLine($"GetRealm,realm error : \n {e.Message}");
                 Console.WriteLine($"GetRealm, inner exception : {e.InnerException}");
+                return null;
+
             }
         }
         public void Dispose()

@@ -6,7 +6,7 @@ using Realms;
 
 namespace Insurance_app.Models
 {
-    public class PersonalPolicy : RealmObject
+    public class Policy : RealmObject
     {
         [PrimaryKey] [MapTo("_id")]
         public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
@@ -25,7 +25,7 @@ namespace Insurance_app.Models
 
         public string Owner { get; set; }
 
-        [MapTo("_partition")] [Required] public string Partition { get; set; } = "CustomerPartition";
+        [MapTo("_partition")] public string Partition { get; set; } = "CustomerPartition";
 
     }
    

@@ -32,7 +32,7 @@ namespace Insurance_app.Pages
                 var vm = (ProfileViewModel) BindingContext;
                 if (NameValidator.IsValid && LNameValidator.IsValid && PhoneNrValidator.IsValid)
                 {
-                    vm.UpdateCommand.Execute(vm.Update());//TODO see if it works
+                    vm.UpdateCommand.Execute(null);
                 }
                 else
                 {

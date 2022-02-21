@@ -51,16 +51,18 @@ namespace Insurance_app.ViewModels
 
         public async Task Setup()
         {
+            bool tempUpdate=false;
             try
             {
                 SetUpWaitDisplay = true;
-                UnderReviewDisplay = true;
-                var policyDic = await policyManager.FindPolicy(App.RealmApp.CurrentUser);//return <0,.>if under review
+                UnderReviewDisplay = false;
+                InfoIsVisible = false;
+                var policyDic = await policyManager.FindPolicy(App.RealmApp.CurrentUser);//return <1,.>if under review
                 var policy = policyDic.FirstOrDefault(u => u.Key == 1).Value;//try to see if under review
                 if (policy is null)
                 {
                     policy = policyDic[0];
-                    updating = false;
+                    tempUpdate = false;
                     if (policy.Price != null)
                     {
                         price = (float) policy.Price;
@@ -70,7 +72,7 @@ namespace Insurance_app.ViewModels
                 }
                 else
                 {
-                    updating = true;
+                    tempUpdate = true;
                     PriceDisplay = "Under Review";
                 }
                 if (policy.Hospitals != null) SelectedHospital = (int) policy.Hospitals;
@@ -90,7 +92,8 @@ namespace Insurance_app.ViewModels
             {
                 Console.WriteLine($"policy setup problem: \n {e}");
             }
-            UnderReviewDisplay = updating;
+            UnderReviewDisplay = tempUpdate;
+            InfoIsVisible = !tempUpdate;
             SetUpWaitDisplay = false;
         }
 
@@ -103,6 +106,7 @@ namespace Insurance_app.ViewModels
                     "Notice","You about to request to update the policy", "save", "cancel");
                 if (!answer) return;
                 UnderReviewDisplay = true;
+                InfoIsVisible = !UnderReviewDisplay;
                 CircularWaitDisplay = true;
                 var newPolicy = policyManager.CreatePolicy(price.ToString(CultureInfo.InvariantCulture), 
                     cover, fee, hospitals, plan, smoker, false, date,DateTimeOffset.Now,App.RealmApp.CurrentUser.Id);
@@ -193,6 +197,15 @@ namespace Insurance_app.ViewModels
             get => setUpWait;
             set => SetProperty(ref setUpWait, value);
         }
+
+        private bool infoIsVisible;
+        public bool InfoIsVisible
+        {
+            get => infoIsVisible;
+            set => SetProperty(ref infoIsVisible, value);
+
+        }
+
         //------------------------------ information popups ----------------------------      
         private async Task HospitalInfoPopup()
         {

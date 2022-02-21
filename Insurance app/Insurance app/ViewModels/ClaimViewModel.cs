@@ -70,7 +70,7 @@ namespace Insurance_app.ViewModels
                 .ShowPopupAsync(new ExistingClaimsPopup(claimManager.Claims));
         }
         
-        public async Task CreateClaim()
+        private async Task CreateClaim()
         {
             bool answer = await Shell.Current.DisplayAlert("Notice",
                "Are you sure to open new Claim?", "create", "cancel");

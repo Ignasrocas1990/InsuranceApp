@@ -7,7 +7,7 @@ namespace Insurance_app.Models
     public class Claim : RealmObject
     {
         [PrimaryKey] [MapTo("_id")] public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
-        [MapTo("_partition")] [Required] public string Partition { get; set; } = "CustomerPartition";
+        [MapTo("_partition")] public string Partition { get; set; } = "CustomerPartition";
         public DateTimeOffset? StartDate { get; set; } = DateTimeOffset.Now.DateTime;
         public bool OpenStatus { get; set; } = true;
         public bool? DelFlag { get; set; } = false;

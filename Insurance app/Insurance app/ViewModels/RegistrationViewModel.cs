@@ -68,17 +68,19 @@ namespace Insurance_app.ViewModels
                 {
                     var user =  await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
                     
+                    if (user is null)throw new Exception("registration failed");
+                        
                    var customer = userManager.CreateCustomer(GetDob(),fName, lName,phoneNr,email,address);
-                   if (customer is null)
-                   {
-                       throw new Exception("registration failed");
-                   }
+                        
+                   if (customer is null)throw new Exception("registration failed");
+                   
                    customer.Policy.Add(policyManager.CreatePolicy(price, quote["Cover"], quote["Hospital_Excess"],
-                       quote["Hospitals"], quote["Plan"], quote["Smoker"], false, DateTimeOffset.Now,DateTimeOffset.Now,user.Id));
+                       quote["Hospitals"], quote["Plan"], quote["Smoker"], false,DateTimeOffset.Now, null,user.Id));
 
                    await userManager.AddCustomer(customer, App.RealmApp.CurrentUser);
                    await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
                    userManager.Dispose();
+
                    if (App.RealmApp.CurrentUser != null)
                    {
                        await App.RealmApp.CurrentUser.LogOutAsync();

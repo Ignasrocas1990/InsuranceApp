@@ -20,6 +20,7 @@ namespace Insurance_app.ViewModels
         
         public async Task SetUp()
         {
+            int emptyDaysCount = 0;
             var entries = new Stack<ChartEntry>();
             
             var r = new Random();
@@ -29,13 +30,7 @@ namespace Insurance_app.ViewModels
                 
                 if (chartEntries != null)
                 {
-                    if (chartEntries.Count == 0)
-                    {
-                        WeekChartLabel = "No step has been taken yet";
-                        WeekChartIsVisible = false;
-                        return;
-                    }
-                        
+
                     foreach (KeyValuePair<string, int> i in chartEntries)
                     {
                         var label = i.Key;
@@ -51,6 +46,7 @@ namespace Insurance_app.ViewModels
                         {
                             value = 0.0001f;
                             color = StaticOpt.White;
+                            emptyDaysCount++;
                         }
                         entries.Push(new ChartEntry(value)
                             {
@@ -59,6 +55,12 @@ namespace Insurance_app.ViewModels
                                 Label = label
                             });
                     }
+                }
+                if (emptyDaysCount==7)
+                {
+                    WeekChartLabel = "No step has been taken yet this week";
+                    WeekChartIsVisible = false;
+                    return;
                 }
                 LineChart = new LineChart()
                     {Entries = entries, LabelTextSize = 30f,ValueLabelTextSize = 30f};

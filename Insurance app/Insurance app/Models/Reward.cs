@@ -12,8 +12,7 @@ namespace Insurance_app.Models
 {
     public class Reward : RealmObject
     {
-        [PrimaryKey] [MapTo("_id")]
-        public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
+        [PrimaryKey] [MapTo("_id")] public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
 
         public bool IsFinish { get; set; }
         public float? Cost { get; set; }
@@ -22,7 +21,7 @@ namespace Insurance_app.Models
         public bool? DelFlag { get; set; } = false;
         public IList<MovData> MovData { get; }
         
-        [MapTo("_partition")] [Required] public string Partition { get; set; } = "CustomerPartition";
+        [MapTo("_partition")] public string Partition { get; set; } = "CustomerPartition";
         
     }
 }

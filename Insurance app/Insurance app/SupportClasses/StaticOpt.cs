@@ -16,7 +16,7 @@ namespace Insurance_app.SupportClasses
         public const string PredictUrl = "https://testRESTapi.pythonanywhere.com/predict";
         public const string EmailUrl = "https://testRESTapi.pythonanywhere.com/email";
         public const string CompanyCodeUrl = "https://testRESTapi.pythonanywhere.com/CompanyCode";
-        public static string MyRealmAppId = "application-0-bvutx";
+        public static string MyRealmAppId = "application-1-luybv";
         public static readonly double StepNeeded = 10000;
         public static readonly int MovUpdateArraySize = 5;
         public static readonly int MaxResponseTime = 60;

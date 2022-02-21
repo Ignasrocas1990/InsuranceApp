@@ -8,7 +8,7 @@ namespace Insurance_app.Models
     public class MovData : RealmObject
     {
         [PrimaryKey] [MapTo("_id")] public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
-        [MapTo("_partition")] [Required] public string Partition { get; set; } = "CustomerPartition";
+        [MapTo("_partition")] public string Partition { get; set; } = "CustomerPartition";
         public DateTimeOffset? DateTimeStamp { get; set; } = DateTimeOffset.Now.DateTime;
         public bool? DelFlag { get; set; } = false;
 

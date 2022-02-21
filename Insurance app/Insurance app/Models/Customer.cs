@@ -20,12 +20,12 @@ namespace Insurance_app.Models
         public string PhoneNr { get;set; }
         public string Email { get; set; }
         
-        public IList<PersonalPolicy> Policy { get; }
+        public IList<Policy> Policy { get; }
         public IList<Reward> Reward { get; }
         public IList<Claim> Claim { get; }
 
         public bool? DelFlag { get; set; } = false;
-        [MapTo("_partition")] [Required] public string Partition { get; set; } = "CustomerPartition";
+        [MapTo("_partition")] public string Partition { get; set; } = "CustomerPartition";
 
         public async Task<Reward> CreateReward()
         {

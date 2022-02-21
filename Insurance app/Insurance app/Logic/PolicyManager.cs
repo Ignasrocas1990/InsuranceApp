@@ -15,24 +15,24 @@ namespace Insurance_app.Logic
         {
             
         }
-        public PersonalPolicy CreatePolicy(string price, int cover, int fee, int hospitals, int plan, int smoker, bool underReview, 
+        public Policy CreatePolicy(string price, int cover, int fee, int hospitals, int plan, int smoker, bool underReview, 
             DateTimeOffset date,DateTimeOffset? dt,string owner)
         {
             
-            return new PersonalPolicy()
+            return new Policy()
             {
-                Price = Converter.GetPrice(price), Cover = cover, HospitalFee = fee, UpdateDate = dt,
+                Price = Converter.GetPrice(price), Cover = cover, HospitalFee = fee,
                 Hospitals = hospitals, Plan = plan, Smoker = smoker,
-                UnderReview = underReview, StartDate = date,Owner = owner
+                UnderReview = underReview,Owner = owner
             };
         }
 
-        public async Task AddPolicy(User user,PersonalPolicy newPolicy)
+        public async Task AddPolicy(User user,Policy newPolicy)
         {
             await RealmDb.GetInstance().UpdatePolicy(user, newPolicy);
         }
 
-        public async Task<Dictionary<int,PersonalPolicy>> FindPolicy(User user)
+        public async Task<Dictionary<int,Policy>> FindPolicy(User user)
         {
             return await RealmDb.GetInstance().FindPolicy(user);
         }
