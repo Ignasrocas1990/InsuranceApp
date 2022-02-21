@@ -41,59 +41,75 @@
                IsVisible="{Binding UnderReviewDisplay}" HorizontalTextAlignment="Center"
                 Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" TextColor="{StaticResource StrongColor}" />
         
-        <Label Text="StartDate :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" />
-        <Label Text="{Binding StartDateDisplay}"
+        <Label Text="StartDate :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}" />
+        <Label Text="{Binding StartDateDisplay}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                Style="{StaticResource NormalLabel}" Grid.Column="1" Grid.Row="1" />
         
-        <Label Text="Hospital :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" />
+        <Label Text="Hospital :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}" />
         <Button Grid.Column="0" Grid.Row="2" Text="?" Command="{Binding HospitalInfoCommand}"
                 IsVisible="{Binding UnderReviewDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Style="{StaticResource SmallBtn}" />
         <Picker Title="Select Hospital" Grid.Column="1" Grid.Row="2"
+                IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                 ItemsSource="{Binding HospitalList}" Style="{StaticResource NormalPicker}"
                 SelectedIndex="{Binding SelectedHospital,Mode=TwoWay}" />
         
 
-        <Label Text="Cover :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="3" />
+        <Label Text="Cover :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="3"
+               IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"/>
         <Button Grid.Column="0" Grid.Row="3" Text="?" Command="{Binding CoverInfoCommand}"
                 IsVisible="{Binding UnderReviewDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Style="{StaticResource SmallBtn}" />
         <Picker Title="Select Hospital" Grid.Column="1" Grid.Row="3" Style="{StaticResource NormalPicker}"
+                IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                 ItemsSource="{Binding CoverList}"
                 SelectedIndex="{Binding SelectedCover,Mode=TwoWay}" />
         
-        <Label Text="Fee :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="4" />
+        <Label Text="Fee :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="4"
+               IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"/>
         <Button Grid.Column="0" Grid.Row="4" Text="?" Command="{Binding FeeInfoCommand}"
                 IsVisible="{Binding UnderReviewDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Style="{StaticResource SmallBtn}" />
         <Picker Title="Hospital Fee" Grid.Column="1" Grid.Row="4" Style="{StaticResource NormalPicker}"
-                ItemsSource="{Binding HospitalFeeList}" 
+                ItemsSource="{Binding HospitalFeeList}"
+                IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                 SelectedItem="{Binding SelectedItemHospitalFee,Mode=TwoWay}" />
 
-        <Label Text="Plan :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="5" />
+        <Label Text="Plan :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="5"
+               IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"/>
         <Button Grid.Column="0" Grid.Row="5" Text="?" Command="{Binding PlanInfoCommand}"
                 IsVisible="{Binding UnderReviewDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Style="{StaticResource SmallBtn}" />
         <Picker Title="Select Hospital Fee" Style="{StaticResource NormalPicker}" Grid.Column="1" Grid.Row="5"
                 ItemsSource="{Binding PlanList}"
+                IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                 SelectedIndex="{Binding SelectedPlan,Mode=TwoWay}" />
 
-        <Label Text="Smoker :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="6" />
+        <Label Text="Smoker :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="6"
+               IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"/>
         <CheckBox IsChecked="{Binding IsSmokerDisplay}"
+                  IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                   IsEnabled="{Binding UnderReviewDisplay,Converter={StaticResource InvertedBoolConverter}}"
                   Grid.Column="1" Grid.Row="6" />
          
-         <Label Text="Price :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="7" />
+         <Label Text="Price :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="7"
+                IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"/>
          <Label Text="{Binding PriceDisplay}" FontAttributes="Italic"
+                IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                 Style="{StaticResource  NormalLabel}" Grid.Column="1" Grid.Row="7" />
         
         <Button Text= "Update" Style="{StaticResource PrimaryBtn}" HorizontalOptions="Center"
-                IsVisible="{Binding UnderReviewDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                IsEnabled="{Binding UnderReviewDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                 Command="{Binding UpdatePolicy}" Grid.Column="0" Grid.Row="8"  Grid.ColumnSpan="2"/>
         
         <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}"
                            Style="{StaticResource NormalCircularWait}"
                            Grid.Column="0" Grid.Row="9" Grid.ColumnSpan="2" />
+        
+        <ActivityIndicator IsRunning="{Binding SetUpWaitDisplay}" 
+                           Style="{StaticResource NormalCircularWait}"
+                           Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2"/>
 
     </Grid>
 </ContentPage>

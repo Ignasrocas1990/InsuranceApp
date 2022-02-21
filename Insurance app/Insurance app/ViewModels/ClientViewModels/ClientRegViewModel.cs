@@ -83,24 +83,18 @@ namespace Insurance_app.ViewModels.ClientViewModels
                         "You have been blocked for 3min\nToo many attempts", "close");
                     return;
                 }
-                if (App.NetConnection())
+                var response = await inf.CheckCompanyCode(code);
+                var sResponse = await response.Content.ReadAsStringAsync();
+                if (sResponse.Equals("ok"))
                 {
-                    
-                    var response = await inf.CheckCompanyCode(code);
-                    var sResponse = await response.Content.ReadAsStringAsync();
-                    if (sResponse.Equals("ok"))
-                    {
-                        CodeReadOnly = true;
-                    }
-                    else
-                    {
-                        CheckAttempt();
-                        await Application.Current.MainPage.DisplayAlert("Error", "The code provided is inValid",
-                            "close");
-                    }
-                    return;
+                    CodeReadOnly = true;
                 }
-                await Application.Current.MainPage.DisplayAlert("Notice", StaticOpt.NCE, "close");
+                else
+                {
+                    CheckAttempt();
+                    await Application.Current.MainPage.DisplayAlert("Error", "The code provided is inValid",
+                        "close");
+                }
             }
             catch (Exception e)
             {

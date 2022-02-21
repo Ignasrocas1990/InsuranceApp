@@ -12,32 +12,30 @@ namespace Insurance_app.ViewModels
 {
     public class ReportViewModel : ObservableObject,IDisposable
     {
-       // private Dictionary<string, int> chartEntries = null;
-       
-        private bool firstSetup = true;
-
         private readonly ReportManager reportManager;
-
         public ReportViewModel()
         {
             reportManager = new ReportManager();
         }
-
-
+        
         public async Task SetUp()
         {
             var entries = new Stack<ChartEntry>();
             
-            if (!firstSetup) return;
-            firstSetup = false;
             var r = new Random();
             bool today = true;
-            CircularDisplay = true;
-
+            
             var chartEntries = await reportManager.GetWeeksMovData(App.RealmApp.CurrentUser);
                 
                 if (chartEntries != null)
                 {
+                    if (chartEntries.Count == 0)
+                    {
+                        WeekChartLabel = "No step has been taken yet";
+                        WeekChartIsVisible = false;
+                        return;
+                    }
+                        
                     foreach (KeyValuePair<string, int> i in chartEntries)
                     {
                         var label = i.Key;
@@ -59,14 +57,15 @@ namespace Insurance_app.ViewModels
                                 Color = color,
                                 ValueLabel = $"{(int)value}",
                                 Label = label
-
                             });
                     }
                 }
-                CircularDisplay = false;
                 LineChart = new LineChart()
                     {Entries = entries, LabelTextSize = 30f,ValueLabelTextSize = 30f};
-
+                
+                WeekChartLabel = "Step done last 7 days";
+                WeekChartIsVisible = true;
+            
         }
        
         private LineChart lineChart;
@@ -82,7 +81,27 @@ namespace Insurance_app.ViewModels
             get => isRunning;
             set => SetProperty(ref isRunning, value);
         }
+        private bool setUpWait;
+        public bool SetUpWaitDisplay
+        {
+            get => setUpWait;
+            set => SetProperty(ref setUpWait, value);
+        }
 
+        private string weekChartLabel;
+        public string WeekChartLabel
+        {
+            get => weekChartLabel;
+            set => SetProperty(ref weekChartLabel, value);
+
+        }
+
+        private bool weekChartIsVisible;
+        public bool WeekChartIsVisible
+        {
+            get => weekChartIsVisible;
+            set => SetProperty(ref weekChartIsVisible, value);
+        }
 
         public void Dispose()
         {

@@ -53,13 +53,14 @@ namespace Insurance_app.ViewModels
         {
             try
             {
-                CircularWaitDisplay = true;
+                SetUpWaitDisplay = true;
+                UnderReviewDisplay = true;
                 var policyDic = await policyManager.FindPolicy(App.RealmApp.CurrentUser);//return <0,.>if under review
                 var policy = policyDic.FirstOrDefault(u => u.Key == 1).Value;//try to see if under review
                 if (policy is null)
                 {
                     policy = policyDic[0];
-                    UnderReviewDisplay = false;
+                    updating = false;
                     if (policy.Price != null)
                     {
                         price = (float) policy.Price;
@@ -69,7 +70,7 @@ namespace Insurance_app.ViewModels
                 }
                 else
                 {
-                    UnderReviewDisplay = true;
+                    updating = true;
                     PriceDisplay = "Under Review";
                 }
                 if (policy.Hospitals != null) SelectedHospital = (int) policy.Hospitals;
@@ -89,8 +90,8 @@ namespace Insurance_app.ViewModels
             {
                 Console.WriteLine($"policy setup problem: \n {e}");
             }
-
-            CircularWaitDisplay = false;
+            UnderReviewDisplay = updating;
+            SetUpWaitDisplay = false;
         }
 
         private async Task Update()
@@ -185,6 +186,12 @@ namespace Insurance_app.ViewModels
         {
             get => dColor;
             set => SetProperty(ref dColor,value);
+        }
+        private bool setUpWait;
+        public bool SetUpWaitDisplay
+        {
+            get => setUpWait;
+            set => SetProperty(ref setUpWait, value);
         }
         //------------------------------ information popups ----------------------------      
         private async Task HospitalInfoPopup()

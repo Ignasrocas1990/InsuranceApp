@@ -29,8 +29,7 @@ namespace Insurance_app.Pages.ClientPages
                     vm.CircularWaitDisplay = false;
                 }
 
-                if (EmailValidation.IsValid && PasswordValidator.IsValid && NameValidator.IsValid &&
-                    LNameValidator.IsValid)
+                if (EmailValidation.IsValid && PasswordValidator.IsValid && NameValidator.IsValid && LNameValidator.IsValid)
                 {
                     await vm.Register();
                 }

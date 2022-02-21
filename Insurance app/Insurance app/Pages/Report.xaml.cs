@@ -27,18 +27,9 @@ namespace Insurance_app.Pages
         protected override async void OnAppearing()
         {
             var vm = (ReportViewModel) BindingContext;
+            vm.SetUpWaitDisplay = true;
             await vm.SetUp();
-            /*
-            MyChartView.Chart = new BarChart()
-            {
-                Entries = vm.Entries,
-                LabelOrientation = Orientation.Vertical, 
-                ValueLabelOrientation = Orientation.Horizontal,
-                LabelTextSize = 30, 
-            };
-            CircularWait.IsRunning = false;
-            */
-            
+            vm.SetUpWaitDisplay = false;
             base.OnAppearing();
 
         }

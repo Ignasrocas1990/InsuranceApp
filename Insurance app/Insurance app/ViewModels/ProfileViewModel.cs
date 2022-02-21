@@ -94,7 +94,7 @@ namespace Insurance_app.ViewModels
                 address = newAddress;
             }
         }
-        private async Task Update()
+        public async Task Update()
         {
             var answer = await Shell.Current.CurrentPage.DisplayAlert(
                 "Notice","You about to update details", "save", "cancel");
@@ -103,30 +103,16 @@ namespace Insurance_app.ViewModels
             //save to database
             try
             {
-                var errors = ""; //StaticOptions.IsValid(name, lastName, phoneNr, email);//TODO uncomment for submission
-                if (errors.Length > 2)
-                {
-                    await Shell.Current.CurrentPage.DisplayAlert("Error", errors, "close");
-                    return;
-                }
-
-                IsEnabled = false;
                 CircularWaitDisplay = true;
                 
                await userManager.updateCustomer(name,lastName,phoneNr,address, App.RealmApp.CurrentUser,customerId);
                //await App.RealmApp.EmailPasswordAuth.CallResetPasswordFunctionAsync(email, password); make it separate screen
-               
-               CircularWaitDisplay = false;
-               IsEnabled = true;
-
             }
             catch (Exception e)
             {
-                CircularWaitDisplay = false;
-                IsEnabled = true;
                 Console.WriteLine(e);
             }
-
+            CircularWaitDisplay = false;
             await Shell.Current.DisplayAlert("Message", "Details updated", "close");
         }
 
@@ -157,14 +143,6 @@ namespace Insurance_app.ViewModels
             get => wait;
             set => SetProperty(ref wait, value);
         }
-        
-        private bool enabled = true;
-        public bool IsEnabled
-        {
-            get => enabled;
-            set => SetProperty(ref enabled, value);
-        }
-
         public void Dispose()
         {
             address = null;

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Insurance_app.Models;
@@ -27,8 +29,6 @@ namespace Insurance_app.ViewModels.Popups
             Init(address);
             CancelCommand = new Command(Close);
         }
-
-
         private void Init(Address address)
         {
             if (address.HouseN != null) HouseNDisplay =  (int) address.HouseN;
@@ -37,6 +37,7 @@ namespace Insurance_app.ViewModels.Popups
             CountyDisplay = address.County;
             CountryDisplay = address.Country;
             PostCodeDisplay = address.PostCode;
+            
         }
 
         public void Save()
@@ -55,6 +56,7 @@ namespace Insurance_app.ViewModels.Popups
         private void Close()
         {
             popup.Dismiss(null);
+            
         }
 
         public string CityDisplay

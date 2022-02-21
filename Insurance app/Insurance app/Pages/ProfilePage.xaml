@@ -33,21 +33,50 @@
               <Entry Keyboard="Text" Text="{Binding NameDisplay}" 
                      Placeholder="Jonny" Style="{StaticResource NormalEntry}"
                      Grid.Column="1" Grid.Row="0">
-                     
+                     <Entry.Behaviors>
+                            <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
+                                                         Flags="ValidateOnValueChanging" x:Name="NameValidator"
+                                                         InvalidStyle="{StaticResource InvalidEntry}">
+                                   <xct:TextValidationBehavior MinimumLength="3" MaximumLength="20" xct:MultiValidationBehavior.Error="3 &lt; F.Name &lt; 20 in length" />
+                                   <xct:CharactersValidationBehavior CharacterType="Digit" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Name has digits" />
+                                   <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Name has Special characters" />
+                                   <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Name has spaces" DecorationFlags="TrimEnd" />
+                            </xct:MultiValidationBehavior>
+                     </Entry.Behaviors>
               </Entry>
                 
               <Label Text="Last Name :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" />
               <Entry Keyboard="Text" Text="{Binding  LastNameDisplay}" 
                      Placeholder="Bravo" Style="{StaticResource NormalEntry}"
                      Grid.Column="1" Grid.Row="1">
-                     
+                     <Entry.Behaviors>
+                            <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
+                                                         Flags="ValidateOnValueChanging" x:Name="LNameValidator"
+                                                         InvalidStyle="{StaticResource InvalidEntry}">
+                                   <xct:TextValidationBehavior MinimumLength="3" MaximumLength="20" xct:MultiValidationBehavior.Error="3 &lt; L.Name &lt; 20 in length" />
+                                   <xct:CharactersValidationBehavior CharacterType="Digit" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="L.Name has digits" />
+                                   <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="L.Name has Special chars" />
+                                   <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="L.Name has spaces" />
+                            </xct:MultiValidationBehavior>
+                     </Entry.Behaviors>
               </Entry>
                 
               <Label Text="Phone Nr :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" />
               <Entry  Keyboard="Numeric" Text="{Binding PhoneNrDisplay}"
                       Placeholder= "0852827820" Style="{StaticResource NormalEntry}"
                       Grid.Column="1" Grid.Row="2">
-                     
+                     <Entry.Behaviors>
+                            <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
+                                                         Flags="ValidateOnValueChanging" x:Name="PhoneNrValidator"
+                                                         InvalidStyle="{StaticResource InvalidEntry}">
+                                   <xct:TextValidationBehavior MinimumLength="8" MaximumLength="20" 
+                                                               xct:MultiValidationBehavior.Error="8 &lt; PhoneNr &lt; 20 in length" />
+                                   <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" 
+                                                                     xct:MultiValidationBehavior.Error="PhoneNr has spaces" DecorationFlags="TrimEnd" />
+                                   <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" 
+                                                                     xct:MultiValidationBehavior.Error="PhoneNr special char's" DecorationFlags="TrimEnd" />
+                            </xct:MultiValidationBehavior>
+                     </Entry.Behaviors>
               </Entry>
               
               <Button Command="{Binding AddressCommand}" TextTransform="None" TextColor="Black"
@@ -56,7 +85,7 @@
                       Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" />
               
               
-              <Button  Text="Update" Command="{Binding UpdateCommand}" Style="{StaticResource PrimaryBtn}"
+              <Button  Text="Update" Clicked="Button_OnClicked" Style="{StaticResource PrimaryBtn}"
                        IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}" 
                        Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" HorizontalOptions="Center"/>
               

@@ -22,32 +22,37 @@
     
 
     <StackLayout>
-        <StackLayout Padding="20" HorizontalOptions="Center">
+        <StackLayout Orientation="Horizontal" Padding="20" HorizontalOptions="Center" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}">
             <Switch x:Name="Switch" ThumbColor="{StaticResource StrongColor}" Scale="1.5" Toggled="Switch_OnToggled" IsToggled="{Binding ToggleStateDisplay,Mode=TwoWay}" />
             <Label  Text="Step Tracker" Style="{StaticResource NormalLabel}"/>
         </StackLayout>
         
         
         <Grid  VerticalOptions="CenterAndExpand">
-            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}">
                 <Label Style="{StaticResource NormalLabel}"
                        Text="{Binding StepsDisplayLabel, StringFormat='{0}% Completed'}"  />
             </StackLayout>
 
 
             <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-                <plugin:ProgressRing HeightRequest="150" RingBaseColor="{StaticResource StrongColor}" RingProgressColor="WhiteSmoke" 
-                                      Scale="2" WidthRequest="150"  RingThickness="10"  
+                <plugin:ProgressRing HeightRequest="150" RingBaseColor="{StaticResource StrongColor}" RingProgressColor="LightGray" 
+                                      Scale="2" WidthRequest="150"  RingThickness="10"
+                                      IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                                       Progress="{Binding ProgressBarDisplay 
                                       , Converter={StaticResource ValueProgressBar},Mode=TwoWay}"/>
             </StackLayout>
             <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}"
                                Style="{StaticResource NormalCircularWait}" />
+            
+            <ActivityIndicator IsRunning="{Binding SetUpWaitDisplay}" 
+                               Style="{StaticResource NormalCircularWait}"/>
 
         </Grid>
 
         <StackLayout HorizontalOptions="Center">
-            <Label Text="{Binding TotalEarnedDisplay}" Style="{StaticResource NormalLabel}" />
+            <Label Text="{Binding TotalEarnedDisplay}" Style="{StaticResource NormalLabel}"
+                   IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"/>
         </StackLayout>
         
     </StackLayout>

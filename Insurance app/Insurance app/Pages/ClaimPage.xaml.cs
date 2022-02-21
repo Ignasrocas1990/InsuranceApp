@@ -1,4 +1,7 @@
 ﻿
+using System;
+using System.Linq;
+using System.Text;
 using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
 using Xamarin.Forms;
@@ -21,10 +24,44 @@ namespace Insurance_app.Pages
         protected override async void OnAppearing()
         {
             var vm = (ClaimViewModel)BindingContext;
-            vm.CircularWaitDisplay = true;
              await vm.SetUp();
-            vm.CircularWaitDisplay = false;
             base.OnAppearing();
+        }
+
+        private async void Button_OnClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                var vm = (ClaimViewModel) BindingContext;
+                if (HospitalCodeValidator.IsValid && PatientNrValidator.IsValid)
+                {
+                    vm.CreateClaimCommand.Execute(vm.CreateClaim());
+                }
+                else
+                {
+                    var errBuilder = new StringBuilder();
+                    if (HospitalCodeValidator.IsNotValid && HospitalCodeValidator.Errors != null)
+                    {
+                        foreach (var err in HospitalCodeValidator.Errors.OfType<string>())
+                        {
+                            errBuilder.AppendLine(err);
+                        }
+                    }
+                    if (PatientNrValidator.IsNotValid && PatientNrValidator.Errors != null)
+                    {
+                        foreach (var err in PatientNrValidator.Errors.OfType<string>())
+                        {
+                            errBuilder.AppendLine(err);
+                        }
+                    }
+                    await Application.Current.MainPage.DisplayAlert("Error", errBuilder.ToString(), "close");
+                }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+            }
+           
         }
     }
 }

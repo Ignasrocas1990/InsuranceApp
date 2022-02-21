@@ -16,9 +16,6 @@ namespace Insurance_app.Pages
         public ProfilePage()
         {
             InitializeComponent();
-            //BindingContext = (ProfileViewModel) ShellViewModel.GetInstance()
-              //  .GetViewModel(Converter.ProfileViewModel);
-              //BindingContext = new ProfileViewModel();
         }
 
         protected override async void OnAppearing()
@@ -26,6 +23,55 @@ namespace Insurance_app.Pages
             var vm = (ProfileViewModel) BindingContext;
             await vm.Setup();
             base.OnAppearing();
+        }
+
+        private async void Button_OnClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                var vm = (ProfileViewModel) BindingContext;
+                if (NameValidator.IsValid && LNameValidator.IsValid && PhoneNrValidator.IsValid)
+                {
+                    vm.UpdateCommand.Execute(vm.Update());//TODO see if it works
+                }
+                else
+                {
+                    var errBuilder = new StringBuilder();
+                    
+                    if (NameValidator.IsNotValid)
+                    {
+                        if (NameValidator.Errors != null)
+                            foreach (var err in NameValidator.Errors.OfType<string>())
+                            {
+                                errBuilder.AppendLine(err);
+                            }
+                    }
+
+                    if (LNameValidator.IsNotValid)
+                    {
+                        if (LNameValidator.Errors != null)
+                            foreach (var err in LNameValidator.Errors.OfType<string>())
+                            {
+                                errBuilder.AppendLine(err);
+                            }
+                    }
+
+                    if (PhoneNrValidator.IsNotValid)
+                    {
+                        if (PhoneNrValidator.Errors != null)
+                            foreach (var err in PhoneNrValidator.Errors.OfType<string>())
+                            {
+                                errBuilder.AppendLine(err);
+                            }
+                    }
+
+                    await Application.Current.MainPage.DisplayAlert("Error", errBuilder.ToString(), "close");
+                }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+            }
         }
     }
 }

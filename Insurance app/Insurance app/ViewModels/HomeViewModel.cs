@@ -23,7 +23,6 @@ namespace Insurance_app.ViewModels
     public class HomeViewModel : ObservableObject,IDisposable
     {
 
-        public ICommand StepCommand { get; }
         private bool ToggleState = false;
         private BleManager bleManager;
         private UserManager userManager;
@@ -40,7 +39,6 @@ namespace Insurance_app.ViewModels
         
         public HomeViewModel()
         {
-            StepCommand = new Command(ResetRewardDisplay);//dont need that
             bleManager = BleManager.GetInstance();
             bleManager.InfferEvent += InferredRawData;
             userManager = new UserManager();
@@ -166,13 +164,6 @@ namespace Insurance_app.ViewModels
         {
             ProgressBarDisplay = StaticOpt.StepNeeded - steps;
             StepsDisplayLabel = steps;
-
-            /*
-        while (steps !=0)
-        {
-            steps--;
-            Step();
-        }*/
         }
 // reset 
         private void ResetRewardDisplay()
@@ -226,10 +217,14 @@ namespace Insurance_app.ViewModels
             get => $"Total Earned : {totalEarnedDisplay}";
             set => SetProperty(ref totalEarnedDisplay, value);
         }
-
-        //private double temp = 0;
-
-
+        
+        private bool setUpWait;
+        public bool SetUpWaitDisplay
+        {
+            get => setUpWait;
+            set => SetProperty(ref setUpWait, value);
+        }
+        
         public void Dispose()
         {
             userManager.Dispose();

@@ -34,6 +34,7 @@ namespace Insurance_app.ViewModels
 
         public async Task SetUp()
         {
+            SetUpWaitDisplay = true;
             await claimManager.GetClaims(App.RealmApp.CurrentUser);
             var claim = claimManager.GetCurrentClaim();
             if (claim != null)
@@ -59,9 +60,8 @@ namespace Insurance_app.ViewModels
                 PatientNrDisplay = "";
                 StatusDisplay = "Not Created";
             }
-            CreateBtnIsEnabled = !IsReadOnly;
-
             PreviousBtnIsEnabled = claimManager.Claims.Count > 0;
+            SetUpWaitDisplay = false;
         }
 
         private async Task GetClaims()
@@ -70,21 +70,14 @@ namespace Insurance_app.ViewModels
                 .ShowPopupAsync(new ExistingClaimsPopup(claimManager.Claims));
         }
         
-        private async Task CreateClaim()
+        public async Task CreateClaim()
         {
-            var errors = StaticOpt.IsClaimInfoValid(hospitalPostcode, patientNr);
-            if (errors.Length > 2)
-            {
-                await Shell.Current.DisplayAlert("Error", errors, "close");
-                return;
-            }
             bool answer = await Shell.Current.DisplayAlert("Notice",
                "Are you sure to open new Claim?", "create", "cancel");
            if (!answer) return;
 
             CircularWaitDisplay = true;
             IsReadOnly = true;
-            CreateBtnIsEnabled = !IsReadOnly;
 
             await claimManager.CreateClaim(hospitalPostcode, patientNr, Type, true,App.RealmApp.CurrentUser);
             
@@ -128,16 +121,8 @@ namespace Insurance_app.ViewModels
             get => fieldsEnabled;
             set => SetProperty(ref fieldsEnabled, value);
         }
-
-        bool createBtnEnabled;
-        public bool CreateBtnIsEnabled
-        {
-            get => createBtnEnabled;
-            set => SetProperty(ref createBtnEnabled, value);
-        }
-
+        
         private bool previousExist;
-
         public bool PreviousBtnIsEnabled
         {
             get => previousExist;
@@ -148,6 +133,13 @@ namespace Insurance_app.ViewModels
         {
             get => dateString;
             set => SetProperty(ref dateString, value);
+        }
+
+        private bool setUpWait;
+        public bool SetUpWaitDisplay
+        {
+            get => setUpWait;
+            set => SetProperty(ref setUpWait, value);
         }
 
         public void Dispose()

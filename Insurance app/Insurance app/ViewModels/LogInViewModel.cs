@@ -58,7 +58,7 @@ namespace Insurance_app.ViewModels
         public async Task CheckIfUserExist()
         {
  
-            CircularWaitDisplay = true;
+            SetUpWaitDisplay = true;
             try
             {
                 if (App.RealmApp.CurrentUser != null)
@@ -73,15 +73,17 @@ namespace Insurance_app.ViewModels
                 Console.WriteLine(e);
             }
 
-            CircularWaitDisplay = false;
+            SetUpWaitDisplay = false;
         }
 
         private async Task NavigateToQuote()
         {
             try
             {
+                CircularWaitDisplay = true;
                 //await Shell.Current.GoToAsync($"//{nameof(QuotePage)}");
                 await Application.Current.MainPage.Navigation.PushAsync(new QuotePage());
+                CircularWaitDisplay = false;
             }
             catch (Exception e)
             {
@@ -121,8 +123,6 @@ namespace Insurance_app.ViewModels
                          await CheckIfUserExist();
                          throw new Exception("User has not been found");
                      }
-                     
-                       
                 }
                 else
                 {
@@ -136,7 +136,6 @@ namespace Insurance_app.ViewModels
 
             }
             CircularWaitDisplay = false;
-
         }
         private async Task<string> TypeUser(User user)
         {
@@ -177,6 +176,14 @@ namespace Insurance_app.ViewModels
             get => emailIsValid;
             set => SetProperty(ref emailIsValid, value);
         }
+
+        private bool setUpWait;
+        public bool SetUpWaitDisplay
+        {
+            get => setUpWait;
+            set => SetProperty(ref setUpWait, value);
+        }
+
         private async Task CleanDatabase()//TODO Remove when submitting
         {
             await RealmDb.GetInstance().CleanDatabase(App.RealmApp.CurrentUser);
