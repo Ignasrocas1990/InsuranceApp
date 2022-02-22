@@ -11,6 +11,7 @@
         <ContentPage.BindingContext>
                 <viewModels:PolicyViewModel/>
         </ContentPage.BindingContext>
+        
         <ContentPage.Resources>
                 <ResourceDictionary>
                         <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />

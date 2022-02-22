@@ -6,7 +6,7 @@ namespace Insurance_app.Models
     {
         public Client() { }
         [PrimaryKey] [MapTo("_id")] public string Id { get; set; } = App.RealmApp.CurrentUser.Id;
-        [MapTo("_partition")] public string Partition { get; set; }
+        //[MapTo("_partition")] public string Partition { get; set; }
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

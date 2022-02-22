@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Insurance_app.Models;
 using Insurance_app.Service;
+using Realms;
 using Realms.Sync;
 
 namespace Insurance_app.Logic
@@ -87,6 +89,11 @@ namespace Insurance_app.Logic
         public Task<string> FindTypeUser(User user)
         {
             return RealmDb.GetInstance().FindTypeUser(user);
+        }
+
+        public async Task<List<Customer>>GetAllCustomer(User user)
+        {
+           return await RealmDb.GetInstance().GetAllCustomer(user);
         }
     }
 }

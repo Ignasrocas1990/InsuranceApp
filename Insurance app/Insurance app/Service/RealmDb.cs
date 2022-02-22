@@ -364,7 +364,7 @@ namespace Insurance_app.Service
         {
             try
             {
-                await GetRealm(user.Id,user);
+                await GetRealm(partition,user);
                 if (realm is null) throw new Exception("CreateClient ::::::::::: realm was null");
                 realm.Write(() =>
                 {
@@ -503,8 +503,25 @@ namespace Insurance_app.Service
                 Console.WriteLine(e);
             }
         }
+        public async Task<List<Customer>>GetAllCustomer(User user)
+        {
+            List<Customer> customers = new List<Customer>();
+            try
+            {
+                realm = null;
+                await GetRealm(partition, user);
+                
+                realm.Write(() =>
+                {
+                    customers = realm.All<Customer>().Where(c => c.DelFlag == false).ToList();
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return customers;
 
-
-
+        }
     }
 }
