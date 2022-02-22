@@ -95,6 +95,7 @@
                 <Setter Property="FontSize" Value="20" />
             </Style>
             <converters:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
+            <converters:BoolToObjectConverter x:Key="BoolToObjectConverter" TrueObject="True" FalseObject="False" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

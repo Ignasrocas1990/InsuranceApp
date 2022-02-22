@@ -23,11 +23,12 @@ namespace Insurance_app.ViewModels
     public class HomeViewModel : ObservableObject,IDisposable
     {
 
-        private bool ToggleState = false;
+        private bool collectingData;
         private BleManager bleManager;
         private UserManager userManager;
         private RewardManager rewardManager;
         private ConcurrentQueue<MovData> newMovDataList;
+
         //private Customer customer;
 
 
@@ -36,7 +37,10 @@ namespace Insurance_app.ViewModels
         private double currentProgressBars = 0.0;
         private double max = 0 ;
         private double min = StaticOpt.StepNeeded;
-        
+        private bool wasOn;
+        private bool FirstSetup = true;
+        private int counter = 0;
+
         public HomeViewModel()
         {
             bleManager = BleManager.GetInstance();
@@ -45,6 +49,8 @@ namespace Insurance_app.ViewModels
             rewardManager = new RewardManager();
         }
 
+        
+        
         public async Task Setup()
         {
             try
@@ -59,9 +65,21 @@ namespace Insurance_app.ViewModels
                     await Shell.Current.GoToAsync($"//{nameof(LogInPage)}",false);
                     return;
                 }
-                
+                //DelFlag == true (reward has been used)
+                var rewards = customer.Reward.Where(r => r.DelFlag == false).ToList();
+                if (rewards.Count==0)
+                {
+                    await customer.CreateReward();
+                    ProgressBarDisplay = StaticOpt.StepNeeded;
+                }
+                var currentDate = DateTimeOffset.Now;
 
-                if (customer.Reward.Count > 0)//TODO need to test this (when has more then 1 reward)
+                //get all rewards finish in this month
+                var currentMonthRewards = rewards.Count(r => r.FinDate != null 
+                                                             && r.FinDate.Value.Month == currentDate.Month
+                                                             && r.FinDate.Value.Year == currentDate.Year);
+                
+                if (currentMonthRewards < 26)
                 {
                     var reward = customer.Reward.FirstOrDefault(r => r.FinDate == null);
                     if (reward != null)
@@ -71,11 +89,20 @@ namespace Insurance_app.ViewModels
                         //Random rand = new Random();
                         //movLen = rand.NextDouble() * 10000;
                         SetUpView(movLen);
-                        return;
+                    }
+                    else
+                    {
+                        await customer.CreateReward();
+                        ProgressBarDisplay = StaticOpt.StepNeeded;
                     }
                 }
-                await customer.CreateReward();
-                ProgressBarDisplay = StaticOpt.StepNeeded;
+                else
+                {
+                    ProgressBarDisplay = StaticOpt.StepNeeded;
+                    MaxRewardIsVisible = true;
+                }
+                await SetUpEarningsDisplay();
+                
 
             }
             catch (Exception e)
@@ -112,8 +139,7 @@ namespace Insurance_app.ViewModels
                                             Y = e.y,
                                             Z = e.z
                                         },
-                                        Type = "step",
-                                        Partition = App.RealmApp.CurrentUser.Id
+                                        Type = "step"
                                     };
                     newMovDataList.Enqueue(currMovData);
                     if (newMovDataList.Count > 4)
@@ -135,13 +161,16 @@ namespace Insurance_app.ViewModels
             });
         }
         
-        public async void StartDataReceive(bool newValue)
+        public async Task StartDataReceive()
         {
-            if (newValue)
+            counter++;
+            if (counter % 2 != 1) return;
+            
+            if (!collectingData)
             {
                 try
                 {
-                     await bleManager.ToggleMonitoring();
+                    collectingData = await bleManager.ToggleMonitoring();
                     Console.WriteLine("started to receive data");
                     //StepDetector.StepCounted += StepDisplayUpdate;
                 }
@@ -151,14 +180,14 @@ namespace Insurance_app.ViewModels
                 }
                 
             }
-            else if(bleManager != null)
+            else if(collectingData && bleManager !=null)
             {
-                  await bleManager.ToggleMonitoring();
+                collectingData = await bleManager.ToggleMonitoring();
                 Console.WriteLine("stopped to receive data");
             }
-
-            ToggleStateDisplay = newValue;
+            ToggleStateDisplay = collectingData;
         }
+
 
         private void SetUpView(double steps)
         {
@@ -173,7 +202,6 @@ namespace Insurance_app.ViewModels
             StepsDisplayLabel = 0;
 
         }
-        
         private void Step()
         {
             ProgressBarDisplay--;
@@ -186,10 +214,11 @@ namespace Insurance_app.ViewModels
                 StepsDisplayLabel = 0;
             }
         }
+        private bool toggleState;
         public bool ToggleStateDisplay
         {
-            get => ToggleState;
-            set => SetProperty(ref ToggleState, value);
+            get => toggleState;
+            set => SetProperty(ref toggleState, value);
         }
         
         public double ProgressBarDisplay // progress bar display
@@ -224,7 +253,16 @@ namespace Insurance_app.ViewModels
             get => setUpWait;
             set => SetProperty(ref setUpWait, value);
         }
-        
+
+        private bool maxReward;
+        public bool MaxRewardIsVisible
+        {
+            get => maxReward;
+            set => SetProperty(ref maxReward, value);
+        }
+
+
+
         public void Dispose()
         {
             userManager.Dispose();

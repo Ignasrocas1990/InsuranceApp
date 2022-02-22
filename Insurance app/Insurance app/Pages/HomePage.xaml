@@ -5,6 +5,7 @@
              xmlns:plugin="clr-namespace:ProgressRingControl.Forms.Plugin;assembly=ProgressRing.Forms.Plugin"
              xmlns:viewModels="clr-namespace:Insurance_app.ViewModels"
              xmlns:supportClasses1="clr-namespace:Insurance_app.SupportClasses"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              Title="Home Page"
              BackgroundColor="{StaticResource BackColor}"
              x:DataType="viewModels:HomeViewModel"
@@ -23,7 +24,7 @@
 
     <StackLayout>
         <StackLayout Orientation="Horizontal" Padding="20" HorizontalOptions="Center" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}">
-            <Switch x:Name="Switch" ThumbColor="{StaticResource StrongColor}" Scale="1.5" Toggled="Switch_OnToggled" IsToggled="{Binding ToggleStateDisplay,Mode=TwoWay}" />
+            <Switch x:Name="Switch" ThumbColor="{StaticResource StrongColor}" Scale="1.5" Toggled="Switch_OnToggled" IsToggled="{Binding ToggleStateDisplay}" />
             <Label  Text="Step Tracker" Style="{StaticResource NormalLabel}"/>
         </StackLayout>
         
@@ -50,7 +51,8 @@
 
         </Grid>
 
-        <StackLayout HorizontalOptions="Center">
+        <StackLayout HorizontalOptions="Center" Padding=" 0,10,0,10">
+            <Label Text="Rewards have been maxed out this month. Good Job!" IsVisible="{Binding MaxRewardIsVisible}"/>
             <Label Text="{Binding TotalEarnedDisplay}" Style="{StaticResource NormalLabel}"
                    IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"/>
         </StackLayout>

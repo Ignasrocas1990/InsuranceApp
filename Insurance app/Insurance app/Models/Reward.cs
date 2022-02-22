@@ -20,7 +20,9 @@ namespace Insurance_app.Models
         public DateTimeOffset? StartDate { get; set; } = DateTimeOffset.Now.DateTime;
         public bool? DelFlag { get; set; } = false;
         public IList<MovData> MovData { get; }
-        
+
+        public string Owner { get; set; } = App.RealmApp.CurrentUser.Id;
+
         [MapTo("_partition")] public string Partition { get; set; } = "CustomerPartition";
         
     }

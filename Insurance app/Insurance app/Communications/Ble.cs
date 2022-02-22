@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
 using Xamarin.Essentials;
+using Xamarin.Forms;
 using String = System.String;
 
 namespace Insurance_app.Communications
@@ -18,17 +19,8 @@ namespace Insurance_app.Communications
             ble = CrossBluetoothLE.Current;
             SERVER_GUID = setGuid(uuidString);
         }
-        public bool BleCheck()
-        {
-            if (ble.IsOn || ble.State == BluetoothState.TurningOn)
-            {
-                Console.WriteLine("Bluetooth is on");
-                return true;
-            }
-
-            Console.WriteLine("ble is off");
-            return false;
-        }
+        public bool BleCheck() => ble.IsOn || ble.State == BluetoothState.TurningOn;
+        
         public async Task<bool> GetPremissionsAsync()
         {
             var locationPermissionStatus = await Permissions.CheckStatusAsync<Permissions.LocationAlways>();

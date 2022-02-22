@@ -24,6 +24,7 @@ namespace Insurance_app.Communications
         public Ble ble;
         private ICharacteristic chara=null;
         public EventHandler<RawDataArgs> InfferEvent = delegate {  };
+        public EventHandler SwitchToggler =delegate {  };
 
         private int readingDelay = 5000; // reading delay every 5 sec (incase empty read.)
         private int conErrDelay = 0;
@@ -164,6 +165,7 @@ namespace Insurance_app.Communications
         private async void Action()
         {
             await Shell.Current.DisplayAlert("Error", "Please install & turn on the watch app", "close");
+            
         }
 
         private async Task ConnectToDevice()
@@ -198,22 +200,39 @@ namespace Insurance_app.Communications
 
         private async void Action1()
         {
+            
             await Shell.Current.DisplayAlert("Error", "Type of Bluetooth not available and app needs your permissions", "close");
         }
 
-        public Task ToggleMonitoring()
+        private async void NoBluetooth()
         {
+            await Shell.Current.DisplayAlert("Error", "Bluetooth is off", "close");
+
+        }
+
+        public async Task<bool> ToggleMonitoring()
+        {
+            if (!bleState)
+            {
+                if (MainThread.IsMainThread)
+                {
+                    NoBluetooth();
+                }
+                else
+                {
+                    MainThread.BeginInvokeOnMainThread(NoBluetooth);
+                }
+
+                return false;
+            }
             if (isMonitoring)
             {
                 isMonitoring = false;
-                return Task.CompletedTask;
+                return false;
             }
-            else
-            {
-                isMonitoring = true;
-                return Task.FromResult(ConnectToDevice());
-            }
-           
+            isMonitoring = true;
+            await Task.FromResult(ConnectToDevice());
+            return true;
         }
     }
     public class RawDataArgs : EventArgs

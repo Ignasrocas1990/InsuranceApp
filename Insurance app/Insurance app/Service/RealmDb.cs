@@ -124,6 +124,15 @@ namespace Insurance_app.Service
                 {
                     var customer = realm.Find<Customer>(user.Id);
                     if (customer is null) throw new Exception("AddMvData ::: Customer is null");
+                    var currentDate = DateTimeOffset.Now;
+                    int rewardCount = customer.Reward.Count(r => r.FinDate != null 
+                                                       && r.FinDate.Value.Month == currentDate.Month
+                                                       && r.FinDate.Value.Year == currentDate.Year);
+                    if (rewardCount >= 25)
+                    {
+                        realm.Add(movList);
+                    }
+                    
                     var reward = customer.Reward.FirstOrDefault(r => r.DelFlag == false && r.FinDate == null);
 
                     if (reward == null) throw new Exception("AddMvData ::: reward is null");
@@ -187,21 +196,25 @@ namespace Insurance_app.Service
                     throw new Exception("real, AddNewReward, null");
                 realm.Write(()=>
                 {
-
                     var customer = realm.All<Customer>().FirstOrDefault(c => c.Id == user.Id && c.DelFlag == false);
-                    if (customer == null) return;
+                    if (customer == null) throw new Exception("AddNewReward ============== customer null");
+                    var currentDate = DateTimeOffset.Now;
+                    var currentMonthRewards = customer.Reward.Count(r => r.FinDate != null && r.DelFlag==null
+                                                                 && r.FinDate.Value.Month == currentDate.Month
+                                                                 && r.FinDate.Value.Year == currentDate.Year);
+                    if (currentMonthRewards >= 25) return;
+                    
                     var policies = customer.Policy
                         .Where(p=> p.DelFlag == false).ToList();
-                    var policy = policies.OrderByDescending(z => z.UpdateDate).First();
+                    var policy = policies.OrderByDescending(z => z.ExpiryDate).First();
                     var cost = policy.Price / 100;
-                    var r = realm.Add(new Reward()
+                    var newReward = realm.Add(new Reward()
                     {
                         Cost = cost
                     });
                    
-                    customer.Reward.Add(r);
-                    reward = realm.Find<Reward>(r.Id);
-
+                    customer.Reward.Add(newReward);
+                    reward = realm.Find<Reward>(newReward.Id);
                 });
                 return reward;
             }

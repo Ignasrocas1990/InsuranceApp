@@ -36,10 +36,10 @@ namespace Insurance_app.Pages
             
         }
 
-        private void Switch_OnToggled(object sender, ToggledEventArgs e)
+        private async void Switch_OnToggled(object sender, ToggledEventArgs e)
         {
             var vm = (HomeViewModel)BindingContext;
-            vm.StartDataReceive(e.Value);
+            await vm.StartDataReceive();
         }
     }
 }
