@@ -301,16 +301,23 @@ namespace Insurance_app.Service
            if (realm is null) throw new Exception("FindPolicy realm null");
 
            Dictionary<int,Policy> policy = new Dictionary<int, Policy>();
-           realm.Write(() =>
+           try
            {
-               var customer = realm.Find<Customer>(user.Id);
+               realm.Write(() =>
+               {
+                   var customer = realm.Find<Customer>(user.Id);
               
-               var policies = customer.Policy
-                   .Where(p=> p.DelFlag == false).ToList();
-               var currentPolicy = policies.OrderByDescending(z => z.UpdateDate).First();
-               var updatingPolicy = policies.FirstOrDefault(p => p.UnderReview == true);
-               policy.Add(updatingPolicy is null ? 0 : 1, currentPolicy);// return 1 if under reviewed already
-           }); 
+                   var policies = customer.Policy
+                       .Where(p=> p.DelFlag == false && p.UnderReview == false).ToList();
+                   var currentPolicy = policies.OrderByDescending(z => z.ExpiryDate).First();
+                   var updatingPolicy = customer.Policy.FirstOrDefault(p => p.UnderReview == true);
+                   policy.Add(updatingPolicy is null ? 0 : 1, currentPolicy);// return 1 if under reviewed already
+               });
+           }
+           catch (Exception e)
+           {
+               Console.WriteLine(e);
+           }
            return policy;
         }
 
@@ -324,8 +331,10 @@ namespace Insurance_app.Service
                 {
                     var customer = realm.Find<Customer>(user.Id);
                     var policies = customer.Policy
-                        .Where(p=> p.DelFlag == false).ToList();
-                    var oldPolicy = policies.OrderByDescending(z => z.UpdateDate).First();
+                        .Where(p=> p.DelFlag == false && p.UnderReview == false).ToList();
+                    if (policies.Count==0) throw new Exception("UpdatePolicy::::: policies empty");
+                    
+                    var oldPolicy = policies.OrderByDescending(z => z.ExpiryDate).First();
 
                     oldPolicy.UnderReview = true;
                     realm.Add(newPolicy);

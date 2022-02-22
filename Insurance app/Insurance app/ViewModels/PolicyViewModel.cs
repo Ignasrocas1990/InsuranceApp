@@ -80,10 +80,10 @@ namespace Insurance_app.ViewModels
                 if (policy.HospitalFee != null) SelectedItemHospitalFee = (int) policy.HospitalFee;
                 if (policy.Plan != null) SelectedPlan = (int) policy.Plan;
                 IsSmokerDisplay = Convert.ToBoolean(policy.Smoker);
-                if (policy.StartDate != null)
+                if (policy.ExpiryDate != null)
                 {
-                    StartDateDisplay = policy.StartDate.Value.Date.ToString("d");
-                    date = (DateTimeOffset) policy.StartDate;
+                    ExpiryDateDisplay = policy.ExpiryDate.Value.Date.ToString("d");
+                    date = (DateTimeOffset) policy.ExpiryDate;
                 }
 
                
@@ -108,11 +108,12 @@ namespace Insurance_app.ViewModels
                 UnderReviewDisplay = true;
                 InfoIsVisible = !UnderReviewDisplay;
                 CircularWaitDisplay = true;
-                var newPolicy = policyManager.CreatePolicy(price.ToString(CultureInfo.InvariantCulture), 
-                    cover, fee, hospitals, plan, smoker, false, date,DateTimeOffset.Now,App.RealmApp.CurrentUser.Id);
+                var newPolicy = policyManager.CreatePolicy(price,price,
+                    cover, fee, hospitals, plan, smoker,
+                    false, date,DateTimeOffset.Now.Date,App.RealmApp.CurrentUser.Id);
                 await policyManager.AddPolicy(App.RealmApp.CurrentUser, newPolicy);
+                PriceDisplay = "Under Review";
                 CircularWaitDisplay = false;
-                
                 DisableColour = Color.SteelBlue;
                 await Shell.Current.DisplayAlert("Message", "Update requested successfully", "close");
             }
@@ -169,11 +170,11 @@ namespace Insurance_app.ViewModels
             set => SetProperty(ref updating, value);
         }
 
-        private string startDate;
-        public string StartDateDisplay
+        private string expiryDate;
+        public string ExpiryDateDisplay
         {
-            get => startDate;
-            set => SetProperty(ref startDate, value);
+            get => expiryDate;
+            set => SetProperty(ref expiryDate, value);
         }
 
         private string priceString;

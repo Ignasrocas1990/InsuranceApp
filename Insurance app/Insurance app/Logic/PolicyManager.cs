@@ -15,15 +15,15 @@ namespace Insurance_app.Logic
         {
             
         }
-        public Policy CreatePolicy(string price, int cover, int fee, int hospitals, int plan, int smoker, bool underReview, 
-            DateTimeOffset date,DateTimeOffset? dt,string owner)
+        public Policy CreatePolicy(float price,float payedPrice, int cover, int fee, int hospitals, int plan, int smoker, bool underReview, 
+            DateTimeOffset expiryDate,DateTimeOffset? updateDate,string owner)
         {
-            
+           
             return new Policy()
             {
-                Price = Converter.GetPrice(price), Cover = cover, HospitalFee = fee,
+                Price = price,PayedPrice = payedPrice, Cover = cover, HospitalFee = fee,
                 Hospitals = hospitals, Plan = plan, Smoker = smoker,
-                UnderReview = underReview,Owner = owner
+                UnderReview = underReview,Owner = owner,ExpiryDate = expiryDate,UpdateDate = updateDate
             };
         }
 

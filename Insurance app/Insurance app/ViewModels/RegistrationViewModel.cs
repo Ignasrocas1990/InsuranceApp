@@ -73,9 +73,11 @@ namespace Insurance_app.ViewModels
                    var customer = userManager.CreateCustomer(GetDob(),fName, lName,phoneNr,email,address);
                         
                    if (customer is null)throw new Exception("registration failed");
-                   
-                   customer.Policy.Add(policyManager.CreatePolicy(price, quote["Cover"], quote["Hospital_Excess"],
-                       quote["Hospitals"], quote["Plan"], quote["Smoker"], false,DateTimeOffset.Now, null,user.Id));
+                   var ExpiryDate = DateTimeOffset.Now.Date.AddMonths(1);
+                   var UpdatedDate = DateTimeOffset.Now;
+                   var price = Converter.GetPrice(this.price);
+                   customer.Policy.Add(policyManager.CreatePolicy(price,price, quote["Cover"], quote["Hospital_Excess"],
+                       quote["Hospitals"], quote["Plan"], quote["Smoker"], false,ExpiryDate, UpdatedDate,user.Id));
 
                    await userManager.AddCustomer(customer, App.RealmApp.CurrentUser);
                    await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
