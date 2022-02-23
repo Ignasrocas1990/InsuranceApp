@@ -15,7 +15,7 @@ namespace Insurance_app.Pages.ClientPages
         public CustomersPage()
         {
             InitializeComponent();
-            BindingContext = new CustomersViewModel();
+            //BindingContext = new CustomersViewModel();
         }
 
         protected  override async void OnAppearing()
@@ -23,6 +23,19 @@ namespace Insurance_app.Pages.ClientPages
             base.OnAppearing();
             var vm = (CustomersViewModel)BindingContext;
             await vm.Setup();
+        }
+
+        private void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+
+            try
+            {
+                ((ListView) sender).SelectedItem = null;
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+            }
         }
     }
 }

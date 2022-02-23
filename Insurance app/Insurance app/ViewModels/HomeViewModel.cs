@@ -11,7 +11,6 @@ using Insurance_app.Models;
 using Insurance_app.Pages;
 using Insurance_app.Service;
 using Insurance_app.SupportClasses;
-using Java.Lang;
 using Realms;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Essentials;

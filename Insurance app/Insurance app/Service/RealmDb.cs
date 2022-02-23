@@ -5,8 +5,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Insurance_app.Models;
-using Insurance_app.SupportClasses;
-using Java.Security;
 using Realms;
 using Realms.Exceptions;
 using Realms.Sync;

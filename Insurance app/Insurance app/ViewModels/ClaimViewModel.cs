@@ -5,7 +5,6 @@ using Insurance_app.Logic;
 using Insurance_app.Pages;
 using Insurance_app.Pages.Popups;
 using Insurance_app.SupportClasses;
-using Java.Lang.Reflect;
 using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;

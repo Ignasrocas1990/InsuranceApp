@@ -13,7 +13,6 @@ using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using System.Timers;
-using Android.Util;
 using Insurance_app.Pages.Popups;
 using Xamarin.CommunityToolkit.Extensions;
 

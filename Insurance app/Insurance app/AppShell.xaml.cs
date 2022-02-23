@@ -5,7 +5,6 @@ using Insurance_app.Pages;
 using Insurance_app.Service;
 using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
-using Java.Lang;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Exception = System.Exception;

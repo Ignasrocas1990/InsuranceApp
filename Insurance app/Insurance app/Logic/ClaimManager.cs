@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Insurance_app.Models;
 using Insurance_app.Service;
-using Java.Util;
 using Realms;
 using Realms.Sync;
 
