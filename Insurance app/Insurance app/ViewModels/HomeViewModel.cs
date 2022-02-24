@@ -54,8 +54,9 @@ namespace Insurance_app.ViewModels
         {
             try
             {
+                var user = App.RealmApp.CurrentUser;
                 newMovDataList = new ConcurrentQueue<MovData>();
-                var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser);
+                var customer = await userManager.GetCustomer(user,user.Id);
                 
                 if (customer is null)
                 {

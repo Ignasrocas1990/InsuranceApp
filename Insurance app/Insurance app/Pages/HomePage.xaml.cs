@@ -26,14 +26,13 @@ namespace Insurance_app.Pages
 
         protected override async void OnAppearing()
         {
-             var vm = (HomeViewModel)BindingContext;
+            base.OnAppearing();
+            var vm = (HomeViewModel)BindingContext;
              vm.SetUpWaitDisplay = true;
              await vm.Setup();
              await vm.SetUpEarningsDisplay();
              vm.SetUpWaitDisplay = false;
-             
-             base.OnAppearing();
-            
+
         }
 
         private async void Switch_OnToggled(object sender, ToggledEventArgs e)

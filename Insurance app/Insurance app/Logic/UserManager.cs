@@ -23,9 +23,9 @@ namespace Insurance_app.Logic
         {
             
         }
-        public async Task<Customer> GetCustomer(User user)
+        public async Task<Customer> GetCustomer(User user,string id)
         {
-            return await RealmDb.GetInstance().FindCustomer(user);
+            return await RealmDb.GetInstance().FindCustomer(user,id);
            // return currentCustomer;
         }
 

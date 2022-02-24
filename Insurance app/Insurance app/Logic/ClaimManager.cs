@@ -15,15 +15,43 @@ namespace Insurance_app.Logic
 
         public ClaimManager()
         {
+          
+        }
+        public int GetResolvedClaimCount()
+        {
+            try
+            {
+                return Claims.Count(c => c.CloseDate != null && c.DelFlag == false);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return 0;
+        }
+
+        public List<Claim> GetResolvedClaims()
+        {
+            try
+            {
+                return Claims.Where(c => c.CloseDate != null && c.DelFlag == false).ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return null;
         }
         public async Task CreateClaim(string hospitalPostcode, string patientNr, string type, bool status, User user)
         {
             await RealmDb.GetInstance().AddClaim(hospitalPostcode, patientNr, type, status, user);
         }
 
-        public async Task<List<Claim>> GetClaims(User user)
+        public async Task<List<Claim>> GetClaims(User user,string customerId)
         {
-            Claims = await RealmDb.GetInstance().GetClaims(user);
+            Claims = await RealmDb.GetInstance().GetClaims(user,customerId);
             return Claims;
         }
 
@@ -33,7 +61,6 @@ namespace Insurance_app.Logic
             {
                 var aClaim = Claims.FirstOrDefault(claim => claim.CloseDate == null);
                 if (aClaim is null) return null;
-                Claims.Remove(aClaim);
                 return aClaim;
             }
             catch (Exception e)
@@ -41,6 +68,11 @@ namespace Insurance_app.Logic
                 Console.WriteLine($"GetCurrentClaim error : {e}");
             }
             return null;
+        }
+
+        public async Task ResolveClaim(string customerId, User user)
+        {
+           await RealmDb.GetInstance().ResolveClaim(customerId,user);
         }
 
         public void Dispose()

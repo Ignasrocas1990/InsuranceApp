@@ -8,28 +8,28 @@
              x:DataType="viewModels1:ClaimViewModel"
              BackgroundColor="{StaticResource BackColor}"
              x:Class="Insurance_app.Pages.ClaimPage">
+       
        <ContentPage.BindingContext>
               <viewModels1:ClaimViewModel/>
        </ContentPage.BindingContext>
-    
-    
-       <Grid VerticalOptions="Center"  RowSpacing="20" ColumnSpacing="5" Padding="40">
-              <Grid.RowDefinitions>
+       <!--Grid.RowDefinitions>
             
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="2*"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="2*"/>
 
-              </Grid.RowDefinitions>
-        
-              <Grid.ColumnDefinitions>
-                     <ColumnDefinition Width="5*"/>
-                     <ColumnDefinition Width="5*"/>
-              </Grid.ColumnDefinitions>
-                
+       </Grid.RowDefinitions>
+       <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="5*"/>
+              <ColumnDefinition Width="5*"/>
+       </Grid.ColumnDefinitions-->
+    
+       <Grid VerticalOptions="Center"  RowSpacing="20" ColumnSpacing="5" Padding="40"
+             RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="5*,5*" >
+              
             <Label Text="{Binding DateDisplay}" Style="{StaticResource NormalLabel}" HorizontalTextAlignment="Center"
                    Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}" />
             
@@ -67,7 +67,7 @@
             <Label Text="{Binding StatusDisplay}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                    Grid.Column="1" Grid.Row="3" Style="{StaticResource NormalLabel}" />
 
-            <Button Text="Create"  Command="{Binding  CreateClaimCommand}" Padding="10,0,0,0" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
+            <Button Text="Create" Padding="10,0,0,0" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                     Style="{StaticResource PrimaryBtn}" Clicked="Button_OnClicked"
                     Grid.Column="1" Grid.Row="4" IsEnabled="{Binding IsReadOnly,Converter={StaticResource InvertedBoolConverter}}"
                     HorizontalOptions="Fill" />
@@ -76,11 +76,16 @@
                     Style="{StaticResource SecondaryBtn}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                     Grid.Column="0" Grid.Row="4"  HorizontalOptions="Fill" Padding="0,0,10,0" />
             
+            <Button Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" HorizontalOptions="Center" 
+                    Text="Resolve Claim" Command="{Binding ResolveClaimCommand}"
+                    IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                    IsVisible="{Binding CanBeResolved}" BackgroundColor="{StaticResource ClientBtnColor}" Style="{StaticResource SecondaryBtn}"/>
+            
             <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}" 
-                  Style="{StaticResource NormalCircularWait}" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" />
+                  Style="{StaticResource NormalCircularWait}" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" />
             
             <ActivityIndicator IsRunning="{Binding SetUpWaitDisplay}" 
-                               Style="{StaticResource NormalCircularWait}" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" />
+                               Style="{StaticResource NormalCircularWait}" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" />
     </Grid>           
     
 </ContentPage>

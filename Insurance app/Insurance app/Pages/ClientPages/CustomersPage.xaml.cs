@@ -27,7 +27,6 @@ namespace Insurance_app.Pages.ClientPages
 
         private void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-
             try
             {
                 ((ListView) sender).SelectedItem = null;

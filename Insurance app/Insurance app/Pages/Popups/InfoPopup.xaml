@@ -3,8 +3,8 @@
 <xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
            xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
-           xmlns:popups="clr-namespace:Insurance_app.ViewModels.Popups;assembly=Insurance app"
-           x:DataType="popups:InfoPopupViewModel"
+           xmlns:popups1="clr-namespace:Insurance_app.ViewModels.Popups"
+           x:DataType="popups1:InfoPopupViewModel"
            Size="350,400"
            BackgroundColor="{StaticResource BackColor}"
            x:Class="Insurance_app.Pages.Popups.InfoPopup">

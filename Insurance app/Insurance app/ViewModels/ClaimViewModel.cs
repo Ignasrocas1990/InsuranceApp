@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Insurance_app.Logic;
+using Insurance_app.Models;
 using Insurance_app.Pages;
 using Insurance_app.Pages.Popups;
 using Insurance_app.SupportClasses;
@@ -11,10 +14,13 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
 {
+    [QueryProperty(nameof(Id),nameof(Id))]
     public class ClaimViewModel : ObservableObject,IDisposable
     {
         public ICommand CreateClaimCommand { get; }
         public ICommand ViewPreviousClaimsCommand { get; }
+        public ICommand ResolveClaimCommand { get; }
+
         private readonly ClaimManager claimManager;
 
         private string dateString;
@@ -22,19 +28,24 @@ namespace Insurance_app.ViewModels
         private string patientNr="";
         private string status = "Not Created";
         private const string Type = "health"; //If application extended, this has to be moved to App
+        private string customerId = "";
+        
 
         public ClaimViewModel()
         {
             CreateClaimCommand = new AsyncCommand(CreateClaim);
             ViewPreviousClaimsCommand = new AsyncCommand(GetClaims);
+            ResolveClaimCommand = new AsyncCommand(ResolveClaim);
             claimManager = new ClaimManager();
             
         }
-
         public async Task SetUp()
         {
+            if (customerId  == "")
+                customerId = App.RealmApp.CurrentUser.Id;
+            
             SetUpWaitDisplay = true;
-            await claimManager.GetClaims(App.RealmApp.CurrentUser);
+            await claimManager.GetClaims(App.RealmApp.CurrentUser,customerId);
             var claim = claimManager.GetCurrentClaim();
             if (claim != null)
             {
@@ -50,6 +61,11 @@ namespace Insurance_app.ViewModels
                 HospitalPostCodeDisplay = claim.HospitalPostCode;
                 PatientNrDisplay = claim.PatientNr;
                 StatusDisplay = "open";
+
+                if (customerId != App.RealmApp.CurrentUser.Id)
+                {
+                    CanBeResolved = true;
+                }
             }
             else
             {
@@ -58,15 +74,28 @@ namespace Insurance_app.ViewModels
                 HospitalPostCodeDisplay = "";
                 PatientNrDisplay = "";
                 StatusDisplay = "Not Created";
+                CanBeResolved = false;
             }
-            PreviousBtnIsEnabled = claimManager.Claims.Count > 0;
+
+            PreviousBtnIsEnabled = claimManager.GetResolvedClaimCount()>0;
+          
             SetUpWaitDisplay = false;
         }
 
         private async Task GetClaims()
         {
-            await Application.Current.MainPage.Navigation
-                .ShowPopupAsync(new ExistingClaimsPopup(claimManager.Claims));
+            try
+            {
+                var closedClaims = claimManager.GetResolvedClaims() ?? new List<Claim>();
+                
+                await Application.Current.MainPage.Navigation
+                    .ShowPopupAsync(new ExistingClaimsPopup(closedClaims));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            
         }
         
         private async Task CreateClaim()
@@ -86,6 +115,27 @@ namespace Insurance_app.ViewModels
                 "New Claim has been Opened.\nClient will take a look at it shortly",
                 "close");
             CircularWaitDisplay = false;
+        }
+        
+        private async Task ResolveClaim()
+        {
+            try
+            {
+                CircularWaitDisplay = true;
+                bool answer = await Shell.Current.DisplayAlert("Notice",
+                    "Are you sure you want to resolve the Claim?", "resolve", "cancel");
+                if (!answer) return;
+                await claimManager.ResolveClaim(customerId,App.RealmApp.CurrentUser);
+                CircularWaitDisplay = false;
+                CanBeResolved = false;
+                await SetUp();
+                await Shell.Current.DisplayAlert("Notice","Claim has been resolved","close");
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
 
@@ -139,6 +189,20 @@ namespace Insurance_app.ViewModels
         {
             get => setUpWait;
             set => SetProperty(ref setUpWait, value);
+        }
+
+        private bool isClient;
+
+        public bool CanBeResolved
+        {
+            get => isClient;
+            set => SetProperty(ref isClient, value);
+        }
+        public string Id
+        {
+            get => customerId;
+            set =>  customerId = Uri.UnescapeDataString(value ?? String.Empty);
+
         }
 
         public void Dispose()

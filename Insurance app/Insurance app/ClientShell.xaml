@@ -4,6 +4,7 @@
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
        xmlns:sys="clr-namespace:System;assembly=netstandard"
        xmlns:clientPages="clr-namespace:Insurance_app.Pages.ClientPages;assembly=Insurance app"
+       xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
        BackgroundColor="{StaticResource SecondaryColor}"
        TitleColor="White"
        Title="Welcome"
@@ -25,17 +26,28 @@
               </DataTemplate>
        </Shell.FlyoutHeaderTemplate>
        
-       
-<!--      =====    Pages    ====                        -->       
-<!--ShellItem FlyoutItemIsVisible="False" Route="CustomersPage">
-       <ShellContent ContentTemplate="{DataTemplate clientPages:CustomersPage}"/>
-</ShellItem-->
+<!--      =====    Routes    ====                        -->       
 
-<FlyoutItem Title="Customers Page" Icon="CustomersIcon.png" Route="CustomersPage">
+<ShellItem FlyoutItemIsVisible="False">
+       <ShellContent ContentTemplate="{DataTemplate pages:ClaimPage}" Route="ClaimPage"  />
+</ShellItem>
+
+<ShellItem FlyoutItemIsVisible="False"  >
+       <ShellContent Route="ProfilePage">
+              <pages:ProfilePage/>
+       </ShellContent>
+</ShellItem>
+
+
+
+<!--      =====    Flyout navigation    ====                        -->       
+
+
+    <FlyoutItem Title="Customers Page" Icon="CustomersIcon.png" Route="CustomersPage">
        <ShellContent ContentTemplate="{DataTemplate clientPages:CustomersPage}"/>
 </FlyoutItem>
        
-       
+
        
 
        

@@ -2,13 +2,13 @@
 
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:clientViewModels="clr-namespace:Insurance_app.ViewModels.ClientViewModels;assembly=Insurance app"
-             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
-             x:DataType="clientViewModels:ClientRegViewModel"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit" 
+             xmlns:clientViewModels1="clr-namespace:Insurance_app.ViewModels.ClientViewModels"
+             x:DataType="clientViewModels1:ClientRegViewModel"
              BackgroundColor="{StaticResource BackColor}"
              x:Class="Insurance_app.Pages.ClientPages.ClientRegistration">
     <ContentPage.BindingContext>
-        <clientViewModels:ClientRegViewModel/>
+        <clientViewModels1:ClientRegViewModel/>
     </ContentPage.BindingContext>
     
     <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">

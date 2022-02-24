@@ -9,7 +9,7 @@ using Xamarin.Forms.Xaml;
 
 namespace Insurance_app.Pages.ClientPages
 {
-    [XamlCompilation(XamlCompilationOptions.Compile)]
+   // [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ClientRegistration : ContentPage
     {
         public ClientRegistration()

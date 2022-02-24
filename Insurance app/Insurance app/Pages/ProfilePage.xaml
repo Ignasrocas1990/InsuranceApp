@@ -2,15 +2,12 @@
 
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
-             x:DataType="viewModels:ProfileViewModel"
-             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:DataType="viewModels1:ProfileViewModel"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit" 
+             xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
              Title="Customer Profile"
              BackgroundColor="{StaticResource BackColor}"
              x:Class="Insurance_app.Pages.ProfilePage">
-       <ContentPage.BindingContext>
-              <viewModels:ProfileViewModel/>
-       </ContentPage.BindingContext>
        
        <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
                   <Grid.RowDefinitions>

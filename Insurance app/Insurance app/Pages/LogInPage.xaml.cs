@@ -18,9 +18,9 @@ namespace Insurance_app.Pages
 
         protected override async void OnAppearing()
         {
+            base.OnAppearing();
             var vm = (LogInViewModel)BindingContext;
             await vm.CheckIfUserExist();
-            base.OnAppearing();
         }
     }
 }

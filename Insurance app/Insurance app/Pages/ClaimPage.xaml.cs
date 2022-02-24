@@ -23,9 +23,9 @@ namespace Insurance_app.Pages
 
         protected override async void OnAppearing()
         {
+            base.OnAppearing();
             var vm = (ClaimViewModel)BindingContext;
              await vm.SetUp();
-            base.OnAppearing();
         }
 
         private async void Button_OnClicked(object sender, EventArgs e)

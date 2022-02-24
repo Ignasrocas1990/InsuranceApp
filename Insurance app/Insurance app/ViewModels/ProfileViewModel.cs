@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows.Input;
 using Insurance_app.Logic;
 using Insurance_app.Models;
@@ -12,6 +14,7 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
 {
+    //[QueryProperty(nameof(CustomerId),"customerId")]
     public class ProfileViewModel:ObservableObject,IDisposable
     {
         private UserManager userManager;
@@ -28,7 +31,14 @@ namespace Insurance_app.ViewModels
         private string country="";
         private string city="";
         private Address address;
-        private string customerId;
+        public string customerId;
+       // public string CustomerId
+       // {
+            //set => SetProperty(ref customerId, value); //customerId = Uri.UnescapeDataString(value ?? String.Empty);
+
+            //customerId = Uri.UnescapeDataString(value ?? string.Empty);
+        //}
+
 
         public ICommand UpdateCommand { get; }
         public ICommand AddressCommand { get; }
@@ -38,13 +48,14 @@ namespace Insurance_app.ViewModels
             userManager = new UserManager();
             AddressCommand = new AsyncCommand(UpdateAddress);
             UpdateCommand = new AsyncCommand(Update);
-            
         }
-        public async Task Setup()
+        public async Task Setup(string id)
         {
+            customerId = id;
+            Console.WriteLine(customerId);
             try
             {
-                var customer =  await userManager.GetCustomer(App.RealmApp.CurrentUser);
+                var customer =  await userManager.GetCustomer(App.RealmApp.CurrentUser,customerId);
                 if (customer !=null)
                 {
                     NameDisplay = customer.Name;
@@ -148,5 +159,7 @@ namespace Insurance_app.ViewModels
             address = null;
             userManager.Dispose();
         }
+
+      
     }
 }

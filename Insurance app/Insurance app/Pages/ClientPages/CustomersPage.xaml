@@ -23,13 +23,21 @@
                     <ViewCell.ContextActions>
                             <ToolbarItem Text="" Order="Primary"/>
                             <ToolbarItem Text="" Order="Primary"/>
-                            <ToolbarItem Text="Steps" Order="Secondary" Command="{Binding 
+                            
+                            <ToolbarItem Text="Claims" Order="Secondary"  Command="{Binding 
                             Source={x:Reference CustomersViewModel},
-                            Path=StepViewCommand}" CommandParameter="{Binding .}"/>
-                            <ToolbarItem Text="Personal Details" Order="Secondary"/>
-                            <ToolbarItem Text="Policy" Order="Secondary"/>
-                            <ToolbarItem Text="Claims" Order="Secondary"/>
-                    </ViewCell.ContextActions>
+                            Path= CustomerClaimsCommand}" CommandParameter="{Binding .Id}" />
+
+                            <ToolbarItem Text="Customer Details" Command="{Binding 
+                            Source={x:Reference CustomersViewModel},
+                            Path= CustomerDetailsCommand}" CommandParameter="{Binding .Id}"/>
+                        
+                            <ToolbarItem Text="Policy " Order="Secondary"/>
+                            
+                            <ToolbarItem Text="Steps" Command="{Binding 
+                            Source={x:Reference CustomersViewModel},
+                            Path=StepViewCommand}" CommandParameter="{Binding .Id}"/>
+                        </ViewCell.ContextActions>
                     <Grid Padding="10">
                     <Frame CornerRadius="20" HasShadow="True">
                         <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="5*,5*">

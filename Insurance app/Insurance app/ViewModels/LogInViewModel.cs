@@ -113,10 +113,13 @@ namespace Insurance_app.ViewModels
                      {
                          Application.Current.MainPage = new AppShell();
                          await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
-                     }else if (typeUser.Equals($"{UserType.Client}"))
+                        CircularWaitDisplay = false;
+                    }
+                     else if (typeUser.Equals($"{UserType.Client}"))
                      {
                          Application.Current.MainPage = new ClientShell();
                          await Shell.Current.GoToAsync($"//{nameof(CustomersPage)}");
+                         CircularWaitDisplay = false;
                      }
                      else
                      {
