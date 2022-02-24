@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Insurance_app.Models;
+using Insurance_app.Pages.Popups;
 using SkiaSharp;
+using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.Forms;
 using c = SkiaSharp.SKColors;
 
@@ -44,55 +46,6 @@ namespace Insurance_app.SupportClasses
         {
             return new List<int>() {300, 150, 0};
         }
-        public static string IsValid(string fName,string lName,string phoneNr,string email)
-        {
-            var errors = "";
-            if (fName.Length < 2 || fName.Length > 20 || HasNumbers(fName))
-            {
-                errors += " First name is invalid \n";
-            }
-            if (lName.Length < 4 || lName.Length > 20 || HasNumbers(lName))
-            {
-                errors += " Last name is invalid \n";
-            }
-            if (phoneNr.Length < 9 || !HasNumbers(phoneNr))
-            {
-                errors += " Phone nr is invalid \n";
-            }
-            
-            
-            if (email.Length < 15 || !email.Contains("@") || !email.Contains("."))
-            {
-                errors += " Email is invalid \n";
-            }
-            return errors;
-        }
-
-        public static string IsPasswordValid(string password)
-        {
-            string errors="";
-            if (password.Length < 7)
-            {
-                errors += " Password is invalid \n";
-            }
-
-            return errors;
-        }
-        
-        public static string IsClaimInfoValid(string hospitalPostcode, string patientNr)
-        {
-            string errors = "";
-            if (hospitalPostcode.Length < 2 || hospitalPostcode.Length > 200)
-            {
-                errors += "Hospital Code is invalid length\n";
-            }
-
-            if (patientNr.Length < 2 || patientNr.Length > 200)
-            {
-                errors += "Patient Nr is invalid length";
-            }
-            return errors;
-        }
         public static string InfoTest(string type)
         {
             switch (type)
@@ -123,15 +76,11 @@ namespace Insurance_app.SupportClasses
                     return "";
             }
         }
-
-        public static string CodeIsValid(string code)
+        
+        //------------------------------ information popup ----------------------------  
+        public static async Task InfoPopup(string type)
         {
-            var regexItem = new Regex("[a-zA-Z0-9]");
-            if (code.Length > 5 && regexItem.IsMatch(code))
-            {
-                return "";
-            }
-            return "Code is invalid\nPlease check with provider";
+            await Application.Current.MainPage.Navigation.ShowPopupAsync(new InfoPopup(type));
         }
     }
 }

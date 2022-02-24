@@ -24,7 +24,7 @@ namespace Insurance_app.Service
 
         public static RealmDb GetInstance()
         {
-            return _db ?? (_db = new RealmDb());
+            return _db ??= new RealmDb();
         }
         
         
@@ -111,6 +111,28 @@ namespace Insurance_app.Service
                 Console.WriteLine($"Error when updating customer \n{e}");
             }
             
+        }
+        public async Task<DateTimeOffset> GetCustomersDob(User user)
+        {
+            DateTimeOffset dob;
+            try
+            {
+                await GetRealm(partition,user);
+                if (realm is null) throw new Exception("GetCustomersDob, real is null");
+                realm.Write(() =>
+                {
+                    var dateTimeOffset = realm.Find<Customer>(user.Id).Dob;
+                    if (dateTimeOffset != null)
+                        dob = (DateTimeOffset) dateTimeOffset;
+                });
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return dob;
         }
         
 // --------------------------- Mov Data  methods --------------------------------     
@@ -313,28 +335,43 @@ namespace Insurance_app.Service
 //-------------------- policy methods -----------------------
         public async Task<Dictionary<int,Policy>> FindPolicy(User user)
         {
-           await GetRealm(partition,user);
-           if (realm is null) throw new Exception("FindPolicy realm null");
+         
 
-           Dictionary<int,Policy> policy = new Dictionary<int, Policy>();
+           //Policy currentPolicy = new Policy();
+           Dictionary<int, Policy> dictionaryP = new Dictionary<int, Policy>();
            try
            {
+               await GetRealm(partition,user);
+               if (realm is null) throw new Exception("FindPolicy realm null");
+               
                realm.Write(() =>
                {
-                   var customer = realm.Find<Customer>(user.Id);
-              
-                   var policies = customer.Policy
-                       .Where(p=> p.DelFlag == false && p.UnderReview == false).ToList();
-                   var currentPolicy = policies.OrderByDescending(z => z.ExpiryDate).First();
-                   var updatingPolicy = customer.Policy.FirstOrDefault(p => p.UnderReview == true);
-                   policy.Add(updatingPolicy is null ? 0 : 1, currentPolicy);// return 1 if under reviewed already
+                   var c = realm.Find<Customer>(user.Id);
+                   var latestUpdatedPolicy = c?.Policy?.Where(p => p.UpdateDate != null)
+                       .OrderByDescending(d => d.UpdateDate).FirstOrDefault();
+                   
+                  var currentPolicy = c?.Policy
+                           ?.Where(p=> p.DelFlag == false)
+                           .OrderByDescending(z => z.ExpiryDate).First();
+                  
+                  if (latestUpdatedPolicy is null) dictionaryP.Add(1, currentPolicy);
+                  
+                 else if (latestUpdatedPolicy.UpdateDate?.AddMonths(2) < currentPolicy.ExpiryDate)
+                  {
+                      dictionaryP.Add(1,currentPolicy);
+                  }
+                  else
+                  {
+                      dictionaryP.Add(0,currentPolicy);
+                  }
+                  
                });
            }
            catch (Exception e)
            {
                Console.WriteLine(e);
            }
-           return policy;
+           return dictionaryP;
         }
 
         public async Task UpdatePolicy(User user,Policy newPolicy)
@@ -342,19 +379,13 @@ namespace Insurance_app.Service
             try
             {
                 await GetRealm(partition,user);
-                if (realm is null) throw new Exception("UpdatePolicy realm null");
+                if (realm is null) throw new Exception("UpdatePolicy :::::::::::::::::::::: realm null");
                 realm.Write(() =>
                 {
-                    var customer = realm.Find<Customer>(user.Id);
-                    var policies = customer.Policy
-                        .Where(p=> p.DelFlag == false && p.UnderReview == false).ToList();
-                    if (policies.Count==0) throw new Exception("UpdatePolicy::::: policies empty");
                     
-                    var oldPolicy = policies.OrderByDescending(z => z.ExpiryDate).First();
-
-                    oldPolicy.UnderReview = true;
-                    realm.Add(newPolicy);
-                    customer.Policy.Add(newPolicy);
+                    realm.Find<Customer>(user.Id).Policy.Add(realm.Add(newPolicy));
+                    // if (policies.Count==0) throw new Exception("UpdatePolicy::::: policies empty");
+                    // var oldPolicy = policies.OrderByDescending(z => z.ExpiryDate).First();
                 });
             }
             catch (Exception e)
@@ -501,27 +532,7 @@ namespace Insurance_app.Service
 
         }
 // -------------------------------- support methods ---------------------------------        
-        public async Task CleanDatabase(User user)//TODO remove this when submitting
-        {
-            try
-            {
-                await GetRealm(partition,user);
-                if (realm is null)
-                    throw new Exception(" CleanDatabase ::::::::::::::; realm null");
-
-                realm.Write(() =>
-                {
-                    realm.RemoveAll();
-                });
-                
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-           
-
-        }
+       
         private async Task GetRealm(string p,User user)//ne
         {
             try
@@ -568,6 +579,7 @@ namespace Insurance_app.Service
 
             }
         }
+        
         public void Dispose()
         {
             try
@@ -586,7 +598,37 @@ namespace Insurance_app.Service
                 Console.WriteLine(e);
             }
         }
-       
+        public async Task CleanDatabase(User user)//TODO remove this when submitting
+        {
+            try
+            {
+                await GetRealm(partition,user);
+                if (realm is null)
+                    throw new Exception(" CleanDatabase ::::::::::::::; realm null");
+
+                realm.Write(() =>
+                {
+                    realm.RemoveAll();
+                });
+                /*
+                await GetRealm(user.Id, user);
+                if (realm is null)
+                    throw new Exception(" CleanClient ::::::::::::::; realm null");
+                realm.Write(() =>
+                {
+                    realm.RemoveAll();
+                });
+                */
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+           
+
+        }
+
+
         
     }
 }

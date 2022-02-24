@@ -22,11 +22,10 @@ namespace Insurance_app.ViewModels
     public class QuoteViewModel : ObservableObject
     {
         public ICommand GetQuotCommand { get; }
-        private bool buttonEnabled = true;
         private int responseCounter = 0;
         private InferenceService inf;
         private bool wait;
-
+        private bool tooLate;
         private int hospitals;
         private int cover;
         private int hospitalExcess;
@@ -35,10 +34,9 @@ namespace Insurance_app.ViewModels
         private bool isSmokerChecker=false;
         private readonly Timer timer;
         private string elegalChars = "";
-        public ICommand HospitalInfoCommand { get; }
-        public ICommand CoverInfoCommand { get; }
-        public ICommand FeeInfoCommand { get; }
-        public ICommand PlanInfoCommand { get; }
+
+
+        public ICommand InfoCommand { get; }
         public IList<String> HospitalList { get; } = StaticOpt.HospitalsEnum();
         //age
         public IList<String> CoverList { get; } = Enum.GetNames(typeof(StaticOpt.CoverEnum)).ToList();
@@ -48,13 +46,10 @@ namespace Insurance_app.ViewModels
         public QuoteViewModel()
        {
            timer = new Timer(1000);
+           timer.Elapsed += CheckResponseTime;
            GetQuotCommand = new AsyncCommand(GetQuote);
            inf = new InferenceService();
-           timer.Elapsed += CheckResponseTime;
-           HospitalInfoCommand = new AsyncCommand(HospitalInfoPopup);
-           CoverInfoCommand = new AsyncCommand(CoverInfoPopup);
-           FeeInfoCommand = new AsyncCommand(FeeInfoPopup);
-           PlanInfoCommand = new AsyncCommand(PlanInfoPopup);
+           InfoCommand = new AsyncCommand<string>(StaticOpt.InfoPopup);
        }
         private async Task GetQuote()
        {
@@ -68,47 +63,48 @@ namespace Insurance_app.ViewModels
                await Application.Current.MainPage.DisplayAlert("Error",elegalChars , "close");
                return;
            }
-
+            
            var age = DateTime.Now.Year - selectedDate.Year;
-           var tempQuote = new Dictionary<string, int>()
-           {
-               {"Hospitals",hospitals},
-               {"Age",age},
-               {"Cover",cover},
-               {"Hospital_Excess",hospitalExcess},
-               {"Plan",plan},
-               {"Smoker",smoker}
-           };
-           string price = " ";
+          
+           string price;
            
            try
            {
                CircularWaitDisplay=true;
-                ButtonEnabled = false;
                 timer.Start();
-                var result = await inf.Predict(tempQuote);
-               price =  await result.Content.ReadAsStringAsync();
+                price =  await inf.SendQuoteRequest(hospitals, age, cover, hospitalExcess, plan, smoker);
+                timer.Stop();
+                if (tooLate)
+                {
+                    tooLate = false;
+                    return;
+                }
 
            }
-           catch (Exception e)
+           catch
            {
-               CircularWaitDisplay=false;
-                ButtonEnabled = true;
                 timer.Stop();
                 responseCounter = 0;
-                await Application.Current.MainPage.DisplayAlert("Error", StaticOpt.NCE, "close");
+                await Application.Current.MainPage.DisplayAlert("Error", "Something went wrong, try again in a min", "close");
                return;
            }
            CircularWaitDisplay=false;
-           ButtonEnabled = true;
-           timer.Stop();
            responseCounter = 0;
-            bool action = await Application.Current.MainPage.DisplayAlert("Price",price,  "Accept","Deny");
+            bool action = await Application.Current.MainPage.DisplayAlert("Price",$"Price for the quote is : {price}",  "Accept","Deny");
            if (action)
            {
                try
                {   
-                   tempQuote.Add(selectedDate.ToString("d"),-1);
+                   var tempQuote = new Dictionary<string, int>
+                   {
+                       {"Hospitals",hospitals},
+                       {"Age",age},
+                       {"Cover",cover},
+                       {"Hospital_Excess",hospitalExcess},
+                       {"Plan",plan},
+                       {"Smoker",smoker},
+                       {selectedDate.ToString("d"), -1}
+                   };
                    //var jsonQuote = JsonConvert.SerializeObject(tempQuote);
                    //await Shell.Current.GoToAsync($"//{nameof(RegistrationPage)}?PriceDisplay={price}&TempQuote={jsonQuote}");
                    await Application.Current.MainPage.Navigation.PushAsync(new RegistrationPage(tempQuote,price));
@@ -123,13 +119,11 @@ namespace Insurance_app.ViewModels
        private async void CheckResponseTime(object o, ElapsedEventArgs e)
        {
            responseCounter += 1;
-           if (responseCounter == StaticOpt.MaxResponseTime)
-           {
-               CircularWaitDisplay=false;
-               ButtonEnabled = true;
-               responseCounter = 0;
-               await Application.Current.MainPage.DisplayAlert("Error",StaticOpt.NCE, "close");
-           }
+           if (responseCounter != StaticOpt.MaxResponseTime) return;
+           tooLate = true;
+           CircularWaitDisplay=false;
+           responseCounter = 0;
+           await Application.Current.MainPage.DisplayAlert("Error",StaticOpt.NCE, "close");
        }
 
 //-----------------------------data binding methods ------------------------------------------------
@@ -138,14 +132,7 @@ namespace Insurance_app.ViewModels
            get => wait;
            set => SetProperty(ref wait,value);
        }
-
-       public bool ButtonEnabled
-        {
-           get => buttonEnabled;
-           set => SetProperty(ref buttonEnabled, value);
-       }
-
-        public int SelectedHospital
+       public int SelectedHospital
         {
             get => hospitals;
             set => SetProperty(ref hospitals, value);
@@ -195,24 +182,5 @@ namespace Insurance_app.ViewModels
             get => enabled;
             set => SetProperty(ref enabled, value);
         }
-
-        //------------------------------ information popups ----------------------------      
-        private async Task HospitalInfoPopup()
-        {
-            await Application.Current.MainPage.Navigation.ShowPopupAsync(new InfoPopup("Hospital"));
-        }
-        private async Task CoverInfoPopup()
-        {
-            await Application.Current.MainPage.Navigation.ShowPopupAsync(new InfoPopup("Cover"));
-        }
-        private async Task FeeInfoPopup()
-        {
-            await Application.Current.MainPage.Navigation.ShowPopupAsync(new InfoPopup("Fee"));
-        }
-        private async Task PlanInfoPopup()
-        {
-            await Application.Current.MainPage.Navigation.ShowPopupAsync(new InfoPopup("Plan"));
-        }
-
     }
 }

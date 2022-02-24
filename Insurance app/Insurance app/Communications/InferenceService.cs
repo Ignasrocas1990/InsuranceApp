@@ -83,11 +83,26 @@ namespace Insurance_app.Communications
             }
             return null;
         }
+
+        public async Task<string> SendQuoteRequest(int hospitals, int age, int cover, int hospitalExcess, int plan, int smoker)
+        {
+            var tempQuote = new Dictionary<string, int>()
+            {
+                {"Hospitals",hospitals},
+                {"Age",age},
+                {"Cover",cover},
+                {"Hospital_Excess",hospitalExcess},
+                {"Plan",plan},
+                {"Smoker",smoker}
+            };
+            var result = await Predict(tempQuote);
+            return await result.Content.ReadAsStringAsync();
+        }
         /**
          * Take raw data from sensor and pass it by http to predict
          * if customer walking
          */
-        public Task<HttpResponseMessage> Predict(Dictionary<String,int>quote)
+        private Task<HttpResponseMessage> Predict(Dictionary<String,int>quote)
         {
             if (!App.NetConnection()) return null;
 
@@ -115,5 +130,7 @@ namespace Insurance_app.Communications
             
 
         }
+
+
     }
 }

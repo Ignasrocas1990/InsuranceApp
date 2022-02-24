@@ -14,7 +14,7 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
 {
-    //[QueryProperty(nameof(CustomerId),"customerId")]
+    [QueryProperty(nameof(CustomerId), "CustomerId")]
     public class ProfileViewModel:ObservableObject,IDisposable
     {
         private UserManager userManager;
@@ -31,15 +31,9 @@ namespace Insurance_app.ViewModels
         private string country="";
         private string city="";
         private Address address;
-        public string customerId;
-       // public string CustomerId
-       // {
-            //set => SetProperty(ref customerId, value); //customerId = Uri.UnescapeDataString(value ?? String.Empty);
-
-            //customerId = Uri.UnescapeDataString(value ?? string.Empty);
-        //}
-
-
+        private string customerId;
+        //public string customerId;
+        
         public ICommand UpdateCommand { get; }
         public ICommand AddressCommand { get; }
 
@@ -49,10 +43,9 @@ namespace Insurance_app.ViewModels
             AddressCommand = new AsyncCommand(UpdateAddress);
             UpdateCommand = new AsyncCommand(Update);
         }
-        public async Task Setup(string id)
+        public async Task Setup()
         {
-            customerId = id;
-            Console.WriteLine(customerId);
+            customerId ??= App.RealmApp.CurrentUser.Id;
             try
             {
                 var customer =  await userManager.GetCustomer(App.RealmApp.CurrentUser,customerId);
@@ -105,7 +98,7 @@ namespace Insurance_app.ViewModels
                 address = newAddress;
             }
         }
-        public async Task Update()
+        private async Task Update()
         {
             var answer = await Shell.Current.CurrentPage.DisplayAlert(
                 "Notice","You about to update details", "save", "cancel");
@@ -154,6 +147,13 @@ namespace Insurance_app.ViewModels
             get => wait;
             set => SetProperty(ref wait, value);
         }
+        public string CustomerId
+        {
+            get => customerId;
+            set => customerId = value;
+
+        }
+        
         public void Dispose()
         {
             address = null;

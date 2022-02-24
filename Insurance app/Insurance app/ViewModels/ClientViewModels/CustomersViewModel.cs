@@ -47,21 +47,21 @@ namespace Insurance_app.ViewModels.ClientViewModels
         }
         private async Task ManageCustomerClaim(string customerId)
         {
-            var Id = customerId;
-            if (customerId == "")
-                return;
-            var route = $"//{nameof(ClaimPage)}?Id={Id}";
-            Console.WriteLine(Id);
-            await Shell.Current.GoToAsync(route);
+            if (!customerId.Equals(""))
+            {
+                var route = $"//{nameof(ClaimPage)}?CustomerId={customerId}";
+                await Shell.Current.GoToAsync(route);
+            }
+               
         }
         
         private async Task ManageCustomer(string customerId)
         {
-            if (customerId == "")
-                return;
-            var route = $"//{nameof(ProfilePage)}?customerId={customerId}";
-            Console.WriteLine(customerId);
-            await Shell.Current.GoToAsync(route);
+            if (!customerId.Equals(""))
+            {
+                var route = $"//{nameof(ProfilePage)}?CustomerId={customerId}";
+                await Shell.Current.GoToAsync(route);
+            }
         }
         
         private async Task ViewSteps(string customerId)

@@ -47,7 +47,7 @@
                Style="{StaticResource NormalLabel}" Grid.Column="1" Grid.Row="1" />
         
         <Label Text="Hospital :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}" />
-        <Button Grid.Column="0" Grid.Row="2" Text="?" Command="{Binding HospitalInfoCommand}"
+        <Button Grid.Column="0" Grid.Row="2" Text="?" Command="{Binding InfoCommand}" CommandParameter="Hospital"
                 IsVisible="{Binding InfoIsVisible}" Style="{StaticResource SmallBtn}" />
         <Picker Title="Select Hospital" Grid.Column="1" Grid.Row="2"
                 IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
@@ -57,7 +57,7 @@
 
         <Label Text="Cover :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="3"
                IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"/>
-        <Button Grid.Column="0" Grid.Row="3" Text="?" Command="{Binding CoverInfoCommand}"
+        <Button Grid.Column="0" Grid.Row="3" Text="?" Command="{Binding InfoCommand}" CommandParameter="Cover"
                 IsVisible="{Binding InfoIsVisible}" Style="{StaticResource SmallBtn}" />
         <Picker Title="Select Hospital" Grid.Column="1" Grid.Row="3" Style="{StaticResource NormalPicker}"
                 IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
@@ -66,7 +66,7 @@
         
         <Label Text="Fee :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="4"
                IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"/>
-        <Button Grid.Column="0" Grid.Row="4" Text="?" Command="{Binding FeeInfoCommand}"
+        <Button Grid.Column="0" Grid.Row="4" Text="?" Command="{Binding InfoCommand}" CommandParameter="Fee"
                 IsVisible="{Binding InfoIsVisible}" Style="{StaticResource SmallBtn}" />
         <Picker Title="Hospital Fee" Grid.Column="1" Grid.Row="4" Style="{StaticResource NormalPicker}"
                 ItemsSource="{Binding HospitalFeeList}"
@@ -75,7 +75,7 @@
 
         <Label Text="Plan :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="5"
                IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"/>
-        <Button Grid.Column="0" Grid.Row="5" Text="?" Command="{Binding PlanInfoCommand}"
+        <Button Grid.Column="0" Grid.Row="5" Text="?" Command="{Binding InfoCommand}" CommandParameter="Plan"
                 IsVisible="{Binding InfoIsVisible}"
                 Style="{StaticResource SmallBtn}" />
         <Picker Title="Select Hospital Fee" Style="{StaticResource NormalPicker}" Grid.Column="1" Grid.Row="5"

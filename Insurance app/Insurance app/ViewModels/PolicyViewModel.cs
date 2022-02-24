@@ -7,8 +7,10 @@ using System.Timers;
 using System.Windows.Input;
 using Insurance_app.Communications;
 using Insurance_app.Logic;
+using Insurance_app.Models;
 using Insurance_app.Pages.Popups;
 using Insurance_app.SupportClasses;
+using Realms.Sync;
 using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
@@ -26,27 +28,32 @@ namespace Insurance_app.ViewModels
         private int plan;
         private bool isSmoker;
         private float price;
+        private bool canBeUpdated;
         private DateTimeOffset date;
+        private DateTimeOffset dob;
+        private readonly Timer timer;
+        private int rCount = 0;
+        private bool tooLate;
         public ICommand UpdatePolicy { get; }
-        public ICommand HospitalInfoCommand { get; }
-        public ICommand CoverInfoCommand { get; }
-        public ICommand FeeInfoCommand { get; }
-        public ICommand PlanInfoCommand { get; }
+        public ICommand InfoCommand { get; }
         public IList<string> HospitalList { get; } = StaticOpt.HospitalsEnum();
         public IList<string> CoverList { get; } = Enum.GetNames(typeof(StaticOpt.CoverEnum)).ToList();
         public IList<int> HospitalFeeList { get; } = StaticOpt.ExcessFee();
         public IList<string> PlanList { get; } = Enum.GetNames(typeof(StaticOpt.PlanEnum)).ToList();
         private readonly PolicyManager policyManager;
+        private InferenceService inf;
+        private UserManager userManager;
 
         public PolicyViewModel()
         {
             UpdatePolicy = new AsyncCommand(Update);
-            HospitalInfoCommand = new AsyncCommand(HospitalInfoPopup);
-            CoverInfoCommand = new AsyncCommand(CoverInfoPopup);
-            FeeInfoCommand = new AsyncCommand(FeeInfoPopup);
-            PlanInfoCommand = new AsyncCommand(PlanInfoPopup);
+            InfoCommand = new AsyncCommand<string>(StaticOpt.InfoPopup);
             policyManager = new PolicyManager();
-            
+            userManager = new UserManager();
+            inf = new InferenceService();
+            timer = new Timer(1000);
+            timer.Elapsed += CheckResponseTime;
+
         }
 
         public async Task Setup()
@@ -57,18 +64,16 @@ namespace Insurance_app.ViewModels
                 SetUpWaitDisplay = true;
                 UnderReviewDisplay = false;
                 InfoIsVisible = false;
-                var policyDic = await policyManager.FindPolicy(App.RealmApp.CurrentUser);//return <1,.>if under review
-                var policy = policyDic.FirstOrDefault(u => u.Key == 1).Value;//try to see if under review
-                if (policy is null)
+                var policy = await FindPolicy();
+                if (policy.UnderReview == false)
                 {
-                    policy = policyDic[0];
-                    tempUpdate = false;
+                    //tempUpdate = false;
                     if (policy.Price != null)
                     {
                         price = (float) policy.Price;
                         PriceDisplay = (Math.Round(price * 100f) / 100f).ToString(CultureInfo.InvariantCulture);
-                        DisableColour = Color.SteelBlue;
                     }
+                    await GetCurrentCustomer();
                 }
                 else
                 {
@@ -86,7 +91,7 @@ namespace Insurance_app.ViewModels
                     date = (DateTimeOffset) policy.ExpiryDate;
                 }
 
-               
+                
             }
             catch (Exception e)
             {
@@ -99,30 +104,98 @@ namespace Insurance_app.ViewModels
 
         private async Task Update()
         {
-
+            if (!canBeUpdated)
+            {
+                await Shell.Current.DisplayAlert("Notice", "Policy can only be updated every 3 months", "close");
+                return;
+            }
             try
             {
-                var answer = await Shell.Current.CurrentPage.DisplayAlert(
+                var age = DateTime.Now.Year - dob.Year;
+                timer.Start();
+                CircularWaitDisplay = true;
+                var newPrice =  await inf.SendQuoteRequest(hospitals, age, cover, fee, plan, smoker);
+                CircularWaitDisplay = false;
+                timer.Stop();
+                if (tooLate) { 
+                    tooLate = false;
+                    return;
+                }
+                bool action = await Application.Current.MainPage.DisplayAlert("Price",
+                    $"Price for the quote is : {newPrice}",  "Accept","Deny");
+                if (!action) return;
+                
+                var answer = await Shell.Current.DisplayAlert(
                     "Notice","You about to request to update the policy", "save", "cancel");
                 if (!answer) return;
                 UnderReviewDisplay = true;
                 InfoIsVisible = !UnderReviewDisplay;
                 CircularWaitDisplay = true;
-                var newPolicy = policyManager.CreatePolicy(price,price,
-                    cover, fee, hospitals, plan, smoker,
-                    false, date,DateTimeOffset.Now.Date,App.RealmApp.CurrentUser.Id);
-                await policyManager.AddPolicy(App.RealmApp.CurrentUser, newPolicy);
+                
+                await SavePolicy(newPrice);
+                
                 PriceDisplay = "Under Review";
-                CircularWaitDisplay = false;
-                DisableColour = Color.SteelBlue;
                 await Shell.Current.DisplayAlert("Message", "Update requested successfully", "close");
             }
             catch (Exception e)
             {
                 Console.WriteLine($" Update policy error : {e}");
             }
+            timer.Stop();
         }
 
+        private async Task SavePolicy(string newPrice)
+        {
+            try
+            {
+                var newPolicy = policyManager.CreatePolicy(Converter.StringToFloat(newPrice),price,
+                    cover, fee, hospitals, plan, smoker,
+                    true, date,DateTimeOffset.Now,App.RealmApp.CurrentUser.Id);
+                await policyManager.AddPolicy(App.RealmApp.CurrentUser, newPolicy);
+            }
+            catch (Exception e)
+            {
+                await Shell.Current.DisplayAlert("Message", "Update requested failure\nPlease try again later", "close");
+                Console.WriteLine(e);
+            }
+            CircularWaitDisplay = false;
+        }
+
+        private async Task<Policy> FindPolicy()
+        {
+            Policy policy=null;
+            try
+            {
+                var dictionaryPolicy = await policyManager.FindPolicy(App.RealmApp.CurrentUser);
+                policy = dictionaryPolicy.FirstOrDefault(u => u.Key == 0).Value;//see if cant be updated
+                if (policy is null)// can be updated
+                {
+                    canBeUpdated = true;
+                    policy = dictionaryPolicy[1];
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                canBeUpdated = false;
+            }
+
+            return policy??new Policy();
+        }
+        private async Task GetCurrentCustomer() =>
+            dob = await userManager.GetCustomersDob(App.RealmApp.CurrentUser);
+        
+
+        private async void CheckResponseTime(object o, ElapsedEventArgs e)
+        {
+            rCount += 1;
+            if (rCount != StaticOpt.MaxResponseTime) return;
+            tooLate = true;
+            CircularWaitDisplay=false;
+            timer.Stop();
+            rCount = 0;
+            await Shell.Current.DisplayAlert("Error", "Something went wrong, try again in a min", "close");
+        }
 //-----------------------------data binding methods ------------------------------------------------
        public bool CircularWaitDisplay
        {
@@ -185,13 +258,7 @@ namespace Insurance_app.ViewModels
             get => priceString;
             set => SetProperty(ref priceString, value);
         }
-
-        private Color dColor = Color.White;
-        public Color DisableColour
-        {
-            get => dColor;
-            set => SetProperty(ref dColor,value);
-        }
+        
         private bool setUpWait;
         public bool SetUpWaitDisplay
         {
@@ -207,23 +274,7 @@ namespace Insurance_app.ViewModels
 
         }
 
-        //------------------------------ information popups ----------------------------      
-        private async Task HospitalInfoPopup()
-        {
-            await Application.Current.MainPage.Navigation.ShowPopupAsync(new InfoPopup("Hospital"));
-        }
-        private async Task CoverInfoPopup()
-        {
-            await Application.Current.MainPage.Navigation.ShowPopupAsync(new InfoPopup("Cover"));
-        }
-        private async Task FeeInfoPopup()
-        {
-            await Application.Current.MainPage.Navigation.ShowPopupAsync(new InfoPopup("Fee"));
-        }
-        private async Task PlanInfoPopup()
-        {
-            await Application.Current.MainPage.Navigation.ShowPopupAsync(new InfoPopup("Plan"));
-        }
+
 
     }
 }

@@ -41,24 +41,24 @@
         
         
         <Label Text="Hospital :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" />
-        <Button  Grid.Column="0" Grid.Row="1" Text="?" Command="{Binding HospitalInfoCommand}" Style="{StaticResource SmallBtn}" />
+        <Button  Grid.Column="0" Grid.Row="1" Text="?" Command="{Binding InfoCommand}" CommandParameter="Hospital" Style="{StaticResource SmallBtn}" />
         <Picker IsEnabled="{Binding IsEnabled}" Title="Select Hospital" Grid.Column="1" Grid.Row="1"
                 ItemsSource="{Binding HospitalList}" Style="{StaticResource NormalPicker}"
                 SelectedIndex="{Binding SelectedHospital}" />
         
 
         <Label Text="Cover :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" />
-        <Button Grid.Column="0" Grid.Row="2" Text="?" Command="{Binding CoverInfoCommand}" Style="{StaticResource SmallBtn}" />
+        <Button Grid.Column="0" Grid.Row="2" Text="?" Command="{Binding InfoCommand}" CommandParameter="Cover" Style="{StaticResource SmallBtn}" />
         <Picker Title="Select Hospital" Grid.Column="1" Grid.Row="2" Style="{StaticResource NormalPicker}"
                 ItemsSource="{Binding CoverList}" SelectedIndex="{Binding SelectedCover}" />
         
         <Label Text="Fee :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="3" />
-        <Button Grid.Column="0" Grid.Row="3" Text="?" Command="{Binding FeeInfoCommand}" Style="{StaticResource SmallBtn}" />
+        <Button Grid.Column="0" Grid.Row="3" Text="?" Command="{Binding InfoCommand}" CommandParameter="Fee" Style="{StaticResource SmallBtn}" />
         <Picker Title="Hospital Fee" Grid.Column="1" Grid.Row="3" Style="{StaticResource NormalPicker}"
                 ItemsSource="{Binding HospitalFeeList}" SelectedItem="{Binding SelectedHospitalExcess}" />
 
         <Label Text="Plan :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="4" />
-        <Button Grid.Column="0" Grid.Row="4" Text="?" Command="{Binding PlanInfoCommand}" Style="{StaticResource SmallBtn}" />
+        <Button Grid.Column="0" Grid.Row="4" Text="?" Command="{Binding InfoCommand}" CommandParameter="Plan" Style="{StaticResource SmallBtn}" />
         <Picker Title="Select Hospital Fee" Style="{StaticResource NormalPicker}" Grid.Column="1" Grid.Row="4"
                 ItemsSource="{Binding PlanList}" SelectedIndex="{Binding SelectedPlan}" />
 
@@ -66,7 +66,8 @@
         <CheckBox IsChecked="{Binding IsSmoker}" Grid.Column="1" Grid.Row="5" />
 
         
-        <Button Text= "Get Quote" IsEnabled="{Binding ButtonEnabled}" Style="{StaticResource PrimaryBtn}"
+        <Button Text= "Get Quote" IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                Style="{StaticResource PrimaryBtn}"
                 Command="{Binding GetQuotCommand}" Grid.Column="0" Grid.Row="6"  Grid.ColumnSpan="2"/>
         
         <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}" Style="{StaticResource NormalCircularWait}"

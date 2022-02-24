@@ -14,7 +14,7 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
 {
-    [QueryProperty(nameof(Id),nameof(Id))]
+    [QueryProperty(nameof(CustomerId),"CustomerId")]
     public class ClaimViewModel : ObservableObject,IDisposable
     {
         public ICommand CreateClaimCommand { get; }
@@ -198,7 +198,7 @@ namespace Insurance_app.ViewModels
             get => isClient;
             set => SetProperty(ref isClient, value);
         }
-        public string Id
+        public string CustomerId
         {
             get => customerId;
             set =>  customerId = Uri.UnescapeDataString(value ?? String.Empty);

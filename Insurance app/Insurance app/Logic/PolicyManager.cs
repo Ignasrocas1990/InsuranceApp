@@ -16,7 +16,7 @@ namespace Insurance_app.Logic
             
         }
         public Policy CreatePolicy(float price,float payedPrice, int cover, int fee, int hospitals, int plan, int smoker, bool underReview, 
-            DateTimeOffset expiryDate,DateTimeOffset? updateDate,string owner)
+            DateTimeOffset expiryDate,DateTimeOffset updateDate,string owner)
         {
            
             return new Policy()
@@ -41,6 +41,17 @@ namespace Insurance_app.Logic
         public void Dispose()
         {
             RealmDb.GetInstance().Dispose();
+        }
+
+        public Policy RegisterPolicy(float price,float payedPrice, int cover, int fee, int hospitals, int plan, int smoker, bool underReview, 
+            DateTimeOffset expiryDate,string owner)
+        {
+            return new Policy()
+            {
+                Price = price,PayedPrice = payedPrice, Cover = cover, HospitalFee = fee,
+                Hospitals = hospitals, Plan = plan, Smoker = smoker,
+                UnderReview = underReview,Owner = owner,ExpiryDate = expiryDate
+            };
         }
     }
 }

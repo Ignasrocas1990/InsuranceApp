@@ -114,7 +114,7 @@ namespace Insurance_app.ViewModels
                          Application.Current.MainPage = new AppShell();
                          await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
                         CircularWaitDisplay = false;
-                    }
+                     }
                      else if (typeUser.Equals($"{UserType.Client}"))
                      {
                          Application.Current.MainPage = new ClientShell();
