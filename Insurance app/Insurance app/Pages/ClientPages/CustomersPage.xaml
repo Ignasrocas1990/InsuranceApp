@@ -14,7 +14,7 @@
     </ContentPage.BindingContext>
     
     <Grid>
-    <ListView BackgroundColor="gray" SeparatorVisibility="None" HasUnevenRows="True" CachingStrategy="RecycleElement"
+    <ListView Style="{StaticResource ListView}" CachingStrategy="RecycleElement"
               ItemsSource="{Binding Customers}" ItemSelected="ListView_ItemSelected"
               IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}">
         <ListView.ItemTemplate>
@@ -39,7 +39,7 @@
                             Path=StepViewCommand}" CommandParameter="{Binding .Id}"/>
                         </ViewCell.ContextActions>
                     <Grid Padding="10">
-                    <Frame CornerRadius="20" HasShadow="True">
+                    <Frame Style="{StaticResource ViewModelFrame}">
                         <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="5*,5*">
                             
                             <Label Text="{Binding Email}" Style="{StaticResource NormalLabel}" Grid.Column="0" Grid.Row="0"

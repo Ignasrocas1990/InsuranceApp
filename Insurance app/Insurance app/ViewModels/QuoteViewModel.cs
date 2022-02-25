@@ -95,15 +95,15 @@ namespace Insurance_app.ViewModels
            {
                try
                {   
-                   var tempQuote = new Dictionary<string, int>
+                   var tempQuote = new Dictionary<string, string>
                    {
-                       {"Hospitals",hospitals},
-                       {"Age",age},
-                       {"Cover",cover},
-                       {"Hospital_Excess",hospitalExcess},
-                       {"Plan",plan},
-                       {"Smoker",smoker},
-                       {selectedDate.ToString("d"), -1}
+                       {"Hospitals",HospitalList[hospitals]},
+                       {"Age",$"{age}"},
+                       {"Cover",CoverList[cover]},
+                       {"Hospital_Excess",$"{hospitalExcess}"},
+                       {"Plan",PlanList[plan]},
+                       {"Smoker",$"{smoker}"},
+                       {selectedDate.ToString("d"), "-1"}
                    };
                    //var jsonQuote = JsonConvert.SerializeObject(tempQuote);
                    //await Shell.Current.GoToAsync($"//{nameof(RegistrationPage)}?PriceDisplay={price}&TempQuote={jsonQuote}");

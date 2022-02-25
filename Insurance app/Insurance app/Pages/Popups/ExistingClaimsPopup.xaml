@@ -1,69 +1,68 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+           xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
            xmlns:models1="clr-namespace:Insurance_app.Models"
-           xmlns:popups="clr-namespace:Insurance_app.ViewModels.Popups;assembly=Insurance app" 
            xmlns:popups1="clr-namespace:Insurance_app.ViewModels.Popups"
            x:DataType="popups1:EcPopUpViewModel"
-             IsLightDismissEnabled="False"
-             Size="350,500"
-             BackgroundColor="{StaticResource BackColor}"
-             x:Class="Insurance_app.Pages.Popups.ExistingClaimsPopup">
+           Style="{StaticResource Popup}"
+           IsLightDismissEnabled="False"
+           Size="350,500"
+           x:Class="Insurance_app.Pages.Popups.ExistingClaimsPopup">
     <!--Size = width,height -->
-    
-    <ListView BackgroundColor="Transparent" VerticalOptions="Center" SeparatorColor="{StaticResource SecondaryColor}"
-              ItemsSource="{Binding Claims}" HasUnevenRows="True" Header="Previous Claims">
+
+    <ListView  CachingStrategy="RecycleElement" ItemsSource="{Binding Claims}" Header="Previous Claims" 
+               Style="{StaticResource ListView}">
         <ListView.ItemTemplate>
             <DataTemplate x:DataType="models1:Claim">
-               <ViewCell>
-                   <Grid>
-                       <Frame>
-                           <Grid VerticalOptions="CenterAndExpand" RowSpacing="10" ColumnSpacing="0" Padding="0,0,0,0">
-                               <Grid.RowDefinitions>
-                                   <RowDefinition Height="*"/>
-                                   <RowDefinition Height="Auto"/>
-                                   <RowDefinition Height="Auto"/>
-                                   <RowDefinition Height="Auto"/>
-                                   <RowDefinition Height="Auto"/>
-                                   <RowDefinition Height="*"/>
+                <ViewCell>
+                    <Grid Padding="10">
+                        <Frame Style="{StaticResource ViewModelFrame}">
+                            <Grid VerticalOptions="CenterAndExpand" RowSpacing="10" ColumnSpacing="0" Padding="0,0,0,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
 
-                               </Grid.RowDefinitions>
-        
-                               <Grid.ColumnDefinitions>
-                                   <ColumnDefinition Width="5*"/>
-                                   <ColumnDefinition Width="5*"/>
-                               </Grid.ColumnDefinitions>
-                               
-                               <Label Text="Start Date : " Style = "{StaticResource EClaimsEndLabel}"
-                                      Grid.Column="0" Grid.Row="1" />
-                               <Label Text="{Binding StartDate, StringFormat='{0:dd/MM/yyyy}'}"
-                                      Style = "{ StaticResource InfoDetailLabel}"
-                                      Grid.Column="1" Grid.Row="1" />
-                               
-                               <Label Text="Close Date : "
-                                      Grid.Column="0" Grid.Row="2" Style = "{ StaticResource EClaimsEndLabel}" />
-                               <Label Text="{Binding CloseDate, StringFormat='{0:dd/MM/yyyy}'}"
-                                      Style = "{ StaticResource InfoDetailLabel}"
-                                      Grid.Column="1" Grid.Row="2" />
-                               
-                               <Label Text="Hospital Code : " Style = "{ StaticResource EClaimsEndLabel}"
-                                      Grid.Column="0" Grid.Row="3" />
-                               <Label Text="{Binding HospitalPostCode}"
-                                      Style = "{ StaticResource InfoDetailLabel}"
-                                      Grid.Column="1" Grid.Row="3" />
-                               
-                               <Label Text="Type of Claim : " Style = "{ StaticResource EClaimsEndLabel}"
-                                      Grid.Column="0" Grid.Row="4" />
-                               <Label Text="{Binding Type}"
-                                      Style = "{ StaticResource InfoDetailLabel}"
-                                      Grid.Column="1" Grid.Row="4" />
-                               
-                           </Grid>
-                       </Frame>
-                   </Grid>
-               </ViewCell>
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" />
+                                    <ColumnDefinition Width="5*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Label Text="Start Date : " Style="{StaticResource EClaimsEndLabel}"
+                                       Grid.Column="0" Grid.Row="1" />
+                                <Label Text="{Binding StartDate, StringFormat='{0:dd/MM/yyyy}'}"
+                                       Style="{ StaticResource InfoDetailLabel}"
+                                       Grid.Column="1" Grid.Row="1" />
+
+                                <Label Text="Close Date : "
+                                       Grid.Column="0" Grid.Row="2" Style="{ StaticResource EClaimsEndLabel}" />
+                                <Label Text="{Binding CloseDate, StringFormat='{0:dd/MM/yyyy}'}"
+                                       Style="{ StaticResource InfoDetailLabel}"
+                                       Grid.Column="1" Grid.Row="2" />
+
+                                <Label Text="Hospital Code : " Style="{ StaticResource EClaimsEndLabel}"
+                                       Grid.Column="0" Grid.Row="3" />
+                                <Label Text="{Binding HospitalPostCode}"
+                                       Style="{ StaticResource InfoDetailLabel}"
+                                       Grid.Column="1" Grid.Row="3" />
+
+                                <Label Text="Type of Claim : " Style="{ StaticResource EClaimsEndLabel}"
+                                       Grid.Column="0" Grid.Row="4" />
+                                <Label Text="{Binding Type}"
+                                       Style="{ StaticResource InfoDetailLabel}"
+                                       Grid.Column="1" Grid.Row="4" />
+
+                            </Grid>
+                        </Frame>
+                    </Grid>
+                </ViewCell>
             </DataTemplate>
         </ListView.ItemTemplate>
         <ListView.Footer>
@@ -72,7 +71,6 @@
             </StackLayout>
         </ListView.Footer>
     </ListView>
-    
-    
-    
+
+
 </xct:Popup>

@@ -15,10 +15,10 @@ namespace Insurance_app.Models
         public float? Price { get; set; }
 
         public float? PayedPrice { get; set; }
-        public int? Cover { get; set; }
+        public string Cover { get; set; }
         public int? HospitalFee { get; set; }
-        public int? Hospitals { get; set; }
-        public int? Plan { get; set; }
+        public string Hospitals { get; set; }
+        public string Plan { get; set; }
         public int? Smoker { get; set; }
 
         public DateTimeOffset? ExpiryDate { get; set; }

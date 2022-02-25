@@ -15,7 +15,7 @@ namespace Insurance_app.Pages
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class RegistrationPage
     {
-        public RegistrationPage(Dictionary<string, int> tempQuote, string price)
+        public RegistrationPage(Dictionary<string, string> tempQuote, string price)
         {
             try
             {

@@ -79,11 +79,10 @@ namespace Insurance_app.ViewModels
                     tempUpdate = true;
                     PriceDisplay = "Under Review";
                 }
-
-                if (policy.Hospitals != null) SelectedHospital = (int) policy.Hospitals;
-                if (policy.Cover != null) SelectedCover = (int) policy.Cover;
+                if (policy.Hospitals != null) SelectedHospital = HospitalList.IndexOf(policy.Hospitals);
+                if (policy.Cover != null) SelectedCover =  CoverList.IndexOf(policy.Cover);
                 if (policy.HospitalFee != null) SelectedItemHospitalFee = (int) policy.HospitalFee;
-                if (policy.Plan != null) SelectedPlan = (int) policy.Plan;
+                if (policy.Plan != null) SelectedPlan = PlanList.IndexOf(policy.Plan) ;
                 IsSmokerDisplay = Convert.ToBoolean(policy.Smoker);
                 if (policy.ExpiryDate != null)
                 {
@@ -152,7 +151,7 @@ namespace Insurance_app.ViewModels
             try
             {
                 var newPolicy = policyManager.CreatePolicy(Converter.StringToFloat(newPrice), price,
-                    cover, fee, hospitals, plan, smoker,
+                     CoverList[cover], fee, HospitalList[hospitals],PlanList[plan], smoker,
                     true, date, DateTimeOffset.Now, App.RealmApp.CurrentUser.Id);
                 await policyManager.AddPolicy(App.RealmApp.CurrentUser, newPolicy);
             }

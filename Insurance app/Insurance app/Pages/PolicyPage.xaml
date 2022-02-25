@@ -43,7 +43,7 @@
                 Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" TextColor="{StaticResource StrongColor}" />
         
         <Label Text="Expiry Date :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}" />
-        <Label Text="{Binding ExpiryDateDisplay}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
+        <Label Text="{Binding ExpiryDateDisplay, StringFormat='{0:dd/MM/yyyy}'}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                Style="{StaticResource NormalLabel}" Grid.Column="1" Grid.Row="1" />
         
         <Label Text="Hospital :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}" />

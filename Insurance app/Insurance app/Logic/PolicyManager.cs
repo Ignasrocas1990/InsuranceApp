@@ -15,7 +15,7 @@ namespace Insurance_app.Logic
         {
             
         }
-        public Policy CreatePolicy(float price,float payedPrice, int cover, int fee, int hospitals, int plan, int smoker, bool underReview, 
+        public Policy CreatePolicy(float price,float payedPrice, string cover, int fee, string hospitals, string plan, int smoker, bool underReview, 
             DateTimeOffset expiryDate,DateTimeOffset updateDate,string owner)
         {
            
@@ -43,7 +43,7 @@ namespace Insurance_app.Logic
             RealmDb.GetInstance().Dispose();
         }
 
-        public Policy RegisterPolicy(float price,float payedPrice, int cover, int fee, int hospitals, int plan, int smoker, bool underReview, 
+        public Policy RegisterPolicy(float price,float payedPrice, string cover, int fee, string hospitals, string plan, int smoker, bool underReview, 
             DateTimeOffset expiryDate,string owner)
         {
             return new Policy()

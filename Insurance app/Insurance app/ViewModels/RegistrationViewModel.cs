@@ -21,7 +21,7 @@ namespace Insurance_app.ViewModels
     //[QueryProperty(nameof(TempQuote),nameof(TempQuote))]
     public class RegistrationViewModel : ObservableObject
     {
-        private readonly Dictionary<string, int> quote;
+        private readonly Dictionary<string, string> quote;
         public readonly string AddressSText = "Address saved";
         private bool wait;
         private string price="";
@@ -47,7 +47,7 @@ namespace Insurance_app.ViewModels
             AddressCommand = new AsyncCommand(GetAddress);
         }
 */
-        public RegistrationViewModel(Dictionary<string, int> tempQuote, string price)
+        public RegistrationViewModel(Dictionary<string, string> tempQuote, string price)
         {
             address = new Address();
             userManager = new UserManager();
@@ -74,9 +74,10 @@ namespace Insurance_app.ViewModels
                         
                    if (customer is null)throw new Exception("registration failed");
                    var expiryDate = DateTimeOffset.Now.AddMonths(1);
-                   var price = Converter.GetPrice(this.price);
-                   customer.Policy.Add(policyManager.RegisterPolicy(price,price, quote["Cover"], quote["Hospital_Excess"],
-                       quote["Hospitals"], quote["Plan"], quote["Smoker"], false,expiryDate,user.Id));
+                   var priceFloat = Converter.GetPrice(this.price);
+                   customer.Policy.Add(policyManager.RegisterPolicy(priceFloat,priceFloat, quote["Cover"]
+                       , int.Parse(quote["Hospital_Excess"]), quote["Hospitals"], quote["Plan"],
+                       int.Parse(quote["Smoker"]), false,expiryDate,user.Id));
 
                    await userManager.AddCustomer(customer, App.RealmApp.CurrentUser);
                    await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
@@ -113,7 +114,7 @@ namespace Insurance_app.ViewModels
         {
             try
             {
-                var dateString = quote.FirstOrDefault(x => x.Value == -1).Key;
+                var dateString = quote.FirstOrDefault(x => x.Value == "-1").Key;
                 return DateTimeOffset.Parse(dateString);
             }
             catch (Exception e)
