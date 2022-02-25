@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace Insurance_app.ViewModels
         private float price;
         private bool canBeUpdated;
         private DateTimeOffset date;
-        private DateTimeOffset dob;
+        private DateTimeOffset? dob;
         private readonly Timer timer;
         private int rCount = 0;
         private bool tooLate;
@@ -73,39 +74,28 @@ namespace Insurance_app.ViewModels
 
         public async Task Setup()
         {
-            bool tempUpdate = false;
-            bool hasPrevPolicies = false;
+            PrevPoliciesIsVisible = false;
+            var tempUpdate = false;
+            var hasPrevPolicies = false;
             try
             {
                 SetUpWaitDisplay = true;
                 UnderReviewDisplay = false;
                 InfoIsVisible = false;
-                
+
                 if (customerId == "")
+                {
                     customerId = App.RealmApp.CurrentUser.Id;
-                else
+                }
+                else if(customerId != App.RealmApp.CurrentUser.Id)
                 {
                     hasPrevPolicies = await GetPreviousPolicies();
                 }
-
-
+                
                 var policy = await FindPolicy();
-                if (policy.UnderReview == false)
-                {
-                    //tempUpdate = false;
-                    if (policy.Price != null)
-                    {
-                        price = (float) policy.Price;
-                        PriceDisplay = (Math.Round(price * 100f) / 100f).ToString(CultureInfo.InvariantCulture);
-                    }
-
-                    await GetCurrentCustomer();
-                }
-                else
-                {
-                    tempUpdate = true;
-                    PriceDisplay = "Under Review";
-                }
+                if (policy.UnderReview != null) tempUpdate = (bool) policy.UnderReview;
+                if (policy.Price != null) price = (float) policy.Price;
+                PriceDisplay = (Math.Round(price * 100f) / 100f).ToString(CultureInfo.InvariantCulture);
                 if (policy.Hospitals != null) SelectedHospital = HospitalList.IndexOf(policy.Hospitals);
                 if (policy.Cover != null) SelectedCover =  CoverList.IndexOf(policy.Cover);
                 if (policy.HospitalFee != null) SelectedItemHospitalFee = (int) policy.HospitalFee;
@@ -121,11 +111,11 @@ namespace Insurance_app.ViewModels
             {
                 Console.WriteLine($"policy setup problem: \n {e}");
             }
-            PrevPoliciesIsVisible = hasPrevPolicies;
-            UnderReviewDisplay = tempUpdate;
-            InfoIsVisible = !tempUpdate;
             SetUpWaitDisplay = false;
             
+            UnderReviewDisplay = tempUpdate;
+            InfoIsVisible = !tempUpdate;
+            PrevPoliciesIsVisible = hasPrevPolicies;
             if (customerId != App.RealmApp.CurrentUser.Id && UnderReviewDisplay)
             {
                 ClientActionNeeded = true;
@@ -139,12 +129,15 @@ namespace Insurance_app.ViewModels
                 await Shell.Current.DisplayAlert("Notice", "Policy can only be updated every 3 months", "close");
                 return;
             }
-
             try
             {
-                var age = DateTime.Now.Year - dob.Year;
-                timer.Start();
                 CircularWaitDisplay = true;
+                if (dob is null)
+                    await GetCurrentCustomer();
+
+                var age = DateTime.Now.Year - dob.Value.Year;
+                
+                timer.Start();
                 var newPrice = await inf.SendQuoteRequest(hospitals, age, cover, fee, plan, smoker);
                 CircularWaitDisplay = false;
                 timer.Stop();
@@ -166,15 +159,13 @@ namespace Insurance_app.ViewModels
                 CircularWaitDisplay = true;
 
                 await SavePolicy(newPrice);
-
-                PriceDisplay = "Under Review";
+                PriceDisplay = $"{newPrice}";
                 await Shell.Current.DisplayAlert("Message", "Update requested successfully", "close");
             }
             catch (Exception e)
             {
                 Console.WriteLine($" Update policy error : {e}");
             }
-
             timer.Stop();
         }
 
@@ -209,6 +200,8 @@ namespace Insurance_app.ViewModels
                     canBeUpdated = true;
                     policy = dictionaryPolicy[1];
                 }
+
+                policyManager.RemoveIfContains(policy);
             }
             catch (Exception e)
             {
@@ -237,7 +230,7 @@ namespace Insurance_app.ViewModels
                 var answer = await Shell.Current.DisplayAlert("Message", 
                     "Allow the Policy update ?", "Yes", "No");
 
-                string answerString  = answer is true ? "Allow" : "Deny";
+                var answerString  = answer ? "Allow" : "Deny";
 
                 var result = await Shell.Current.DisplayAlert("Notice", 
                     $"Are you sure you want to {answerString} the update?", "Yes", "No");
@@ -245,6 +238,7 @@ namespace Insurance_app.ViewModels
                     CircularWaitDisplay = true;
                     await policyManager.AllowUpdate(customerId,App.RealmApp.CurrentUser,answer);
                     ClientActionNeeded = false;
+                    CircularWaitDisplay = false;
                     await Setup();
             }
             catch (Exception e)
@@ -253,9 +247,9 @@ namespace Insurance_app.ViewModels
             }
         }
 
-        private async Task<bool> GetPreviousPolicies() => await policyManager.GetPreviousPolicies(customerId,App.RealmApp.CurrentUser);
-
-        private async Task GetCurrentCustomer() =>
+        private async Task<bool> GetPreviousPolicies() => 
+            await policyManager.GetPreviousPolicies(customerId,App.RealmApp.CurrentUser);
+        private async Task GetCurrentCustomer() => 
             dob = await userManager.GetCustomersDob(customerId,App.RealmApp.CurrentUser);
 
         private async void CheckResponseTime(object o, ElapsedEventArgs e)
@@ -354,7 +348,6 @@ namespace Insurance_app.ViewModels
         }
 
         private bool infoIsVisible;
-
         public bool InfoIsVisible
         {
             get => infoIsVisible;
@@ -367,8 +360,8 @@ namespace Insurance_app.ViewModels
             get => isClient;
             set => SetProperty(ref isClient, value);
         }
-        
-        private bool prevPolicies;
+
+        private bool prevPolicies = false;
         public bool PrevPoliciesIsVisible
         {
             get => prevPolicies;

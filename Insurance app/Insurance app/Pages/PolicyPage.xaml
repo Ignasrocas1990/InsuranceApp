@@ -96,17 +96,17 @@
                 IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                 Style="{StaticResource  NormalLabel}" Grid.Column="1" Grid.Row="7" />
         
-        <Button Text= "Update" Style="{StaticResource PrimaryBtn}" HorizontalOptions="Center"
+        <Button Text= "Update" Style="{StaticResource PrimaryBtn}"
                 IsEnabled="{Binding UnderReviewDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                 Command="{Binding UpdatePolicy}" Grid.Column="0" Grid.Row="8"  Grid.ColumnSpan="2"/>
         
-        <Button Text= "PrevPolicies" Style="{StaticResource SecondaryBtn}" BackgroundColor="{StaticResource ClientBtnColor}" HorizontalOptions="Center"
+        <Button Text= "Previous Policies" TextTransform="None" Style="{StaticResource SecondaryBtn}" BackgroundColor="{StaticResource ClientBtnColor}" HorizontalOptions="Center"
                 IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 IsVisible="{Binding PrevPoliciesIsVisible}"
                 Command="{Binding ViewPrevPoliciesCommand}" Grid.Column="0" Grid.Row="9"/>
         
-        <Button Text= "ResolveUpdate" Style="{StaticResource PrimaryBtn}" BackgroundColor="{StaticResource ClientBtnColor}" HorizontalOptions="Center"
+        <Button Text= "Resolve Update" TextTransform="None" Style="{StaticResource PrimaryBtn}" BackgroundColor="{StaticResource ClientBtnColor}" HorizontalOptions="Center"
                 IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 IsVisible="{Binding ClientActionNeeded}"
                 Command="{Binding ResolveUpdateCommand}" Grid.Column="1" Grid.Row="9"/>

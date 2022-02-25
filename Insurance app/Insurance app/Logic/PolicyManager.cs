@@ -10,11 +10,11 @@ namespace Insurance_app.Logic
 {
     public class PolicyManager : IDisposable
     {
-        public List<Policy> previousPolicies { get; set; }
+        public List<Policy> previousPolicies;
 
         public PolicyManager()
         {
-            
+            previousPolicies = new List<Policy>();
         }
         public Policy CreatePolicy(float price,float payedPrice, string cover, int fee, string hospitals, string plan, int smoker, bool underReview, 
             DateTimeOffset expiryDate,DateTimeOffset updateDate,string owner)
@@ -64,6 +64,19 @@ namespace Insurance_app.Logic
         public async Task AllowUpdate(string customerId, User user,bool allowUpdate)
         {
            await RealmDb.GetInstance().ResolvePolicyUpdate(customerId,user,allowUpdate);
+        }
+
+        public void RemoveIfContains(Policy policy)
+        {
+            try
+            {
+                if (previousPolicies.Contains(policy)) previousPolicies.Remove(policy);
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"RemoveIfContains error : {e}");
+            }
         }
     }
 }

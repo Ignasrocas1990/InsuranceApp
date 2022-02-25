@@ -10,9 +10,9 @@ using Xamarin.Forms.Xaml;
 namespace Insurance_app.Pages.ClientPages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class CustomersPage : ContentPage
+    public partial class ClientMainPage : ContentPage
     {
-        public CustomersPage()
+        public ClientMainPage()
         {
             InitializeComponent();
             //BindingContext = new CustomersViewModel();
@@ -21,7 +21,7 @@ namespace Insurance_app.Pages.ClientPages
         protected  override async void OnAppearing()
         {
             base.OnAppearing();
-            var vm = (CustomersViewModel)BindingContext;
+            var vm = (ClientMainViewModel)BindingContext;
             await vm.Setup();
         }
 

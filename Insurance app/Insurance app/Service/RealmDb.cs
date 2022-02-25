@@ -418,7 +418,8 @@ public async Task<Dictionary<int,Policy>> FindPolicy(string customerId,User user
                 realm.Write(()=>
                 {
                     previousPolicies = realm.Find<Customer>(customerId)
-                        .Policy?.Where(policy => policy.UnderReview == false).ToList();
+                        .Policy.Where(p => p.UnderReview == false && p.DelFlag == false)
+                        .OrderByDescending(d => d.ExpiryDate).ToList();
                 });
             }
             catch (Exception e)

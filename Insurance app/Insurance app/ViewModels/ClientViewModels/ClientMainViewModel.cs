@@ -10,7 +10,7 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels.ClientViewModels
 {
-    public class CustomersViewModel : ObservableObject
+    public class ClientMainViewModel : ObservableObject
     {
         public ObservableRangeCollection<Customer> Customers { get; set; }
         private readonly UserManager userManager;
@@ -20,7 +20,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
         
         public ICommand PolicyCommand { get; }
         
-        public CustomersViewModel()
+        public ClientMainViewModel()
         {
             userManager = new UserManager();
             Customers = new ObservableRangeCollection<Customer>();

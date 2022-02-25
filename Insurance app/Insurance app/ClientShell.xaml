@@ -47,8 +47,8 @@
 <!--      =====    Flyout navigation    ====                        -->       
 
 
-    <FlyoutItem Title="Customers Page" Icon="CustomersIcon.png" Route="CustomersPage">
-       <ShellContent ContentTemplate="{DataTemplate clientPages:CustomersPage}"/>
+    <FlyoutItem Title="Customers Page" Icon="CustomersIcon.png" Route="ClientMainPage">
+       <ShellContent ContentTemplate="{DataTemplate clientPages:ClientMainPage}"/>
 </FlyoutItem>
        
 

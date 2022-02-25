@@ -6,11 +6,11 @@
              xmlns:model="clr-namespace:Insurance_app.Models"
              BackgroundColor="{StaticResource BackColor}"
              Title="Customers page"
-             x:DataType="viewModels:CustomersViewModel"
-             x:Class="Insurance_app.Pages.ClientPages.CustomersPage">
+             x:DataType="viewModels:ClientMainViewModel"
+             x:Class="Insurance_app.Pages.ClientPages.ClientMainPage">
     
     <ContentPage.BindingContext>
-        <viewModels:CustomersViewModel x:Name="CustomersViewModel"/>
+        <viewModels:ClientMainViewModel x:Name="ClientMainViewModel"/>
     </ContentPage.BindingContext>
     
     <Grid>
@@ -24,16 +24,16 @@
                             <ToolbarItem Text="" Order="Primary"/>
                             <ToolbarItem Text="" Order="Primary"/>
                             
-                            <ToolbarItem Text="Claims" Command="{Binding Source={x:Reference CustomersViewModel},
+                            <ToolbarItem Text="Claims" Command="{Binding Source={x:Reference ClientMainViewModel},
                             Path= CustomerClaimsCommand}" CommandParameter="{Binding .Id}" />
 
-                            <ToolbarItem Text="Customer Details" Command="{Binding Source={x:Reference CustomersViewModel},
+                            <ToolbarItem Text="Customer Details" Command="{Binding Source={x:Reference ClientMainViewModel},
                             Path= CustomerDetailsCommand}" CommandParameter="{Binding .Id}"/>
                         
-                            <ToolbarItem Text="Policy" Command="{Binding Source={x:Reference CustomersViewModel},
+                            <ToolbarItem Text="Policy" Command="{Binding Source={x:Reference ClientMainViewModel},
                             Path= PolicyCommand}" CommandParameter="{Binding .Id}"/>
                             
-                            <ToolbarItem Text="Steps" Command="{Binding Source={x:Reference CustomersViewModel},
+                            <ToolbarItem Text="Steps" Command="{Binding Source={x:Reference ClientMainViewModel},
                             Path=StepViewCommand}" CommandParameter="{Binding .Id}"/>
                         </ViewCell.ContextActions>
                     <Grid Padding="10">

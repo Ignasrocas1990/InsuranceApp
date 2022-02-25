@@ -6,14 +6,15 @@
             xmlns:clientViewModels="clr-namespace:Insurance_app.ViewModels.ClientViewModels;assembly=Insurance app"
             x:DataType="clientViewModels:PPolicyPopupViewModel"
             xmlns:models1="clr-namespace:Insurance_app.Models"
-            IsLightDismissEnabled="False"
-            Size="350,500"
+            Size="350,350"
             Style="{StaticResource Popup}"
             x:Class="Insurance_app.Pages.ClientPages.PreviousPolicyPopup">
-    <Grid>
-    <ListView CachingStrategy="RecycleElement" ItemsSource="{Binding PreviousPolicies}" Header="Previous Policies"
+    <ListView CachingStrategy="RecycleElement" ItemsSource="{Binding PreviousPolicies}"
               Style="{StaticResource ListView}">
-        <ListView.ItemTemplate>
+           <ListView.Header>
+                  <Label Text="Previous Policies" FontSize="Title" HorizontalTextAlignment="Center"/>
+           </ListView.Header>
+           <ListView.ItemTemplate>
             <DataTemplate x:DataType="models1:Policy">
                 <ViewCell>
                     <Grid>
@@ -74,11 +75,10 @@
                 </ViewCell>
             </DataTemplate>
         </ListView.ItemTemplate>
-    </ListView>
-        <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Padding="20">
-            <Button Text="close" Command="{Binding CloseCommand}" Style="{StaticResource SecondaryBtn}" />
-        </StackLayout>
-
-    </Grid>
-    
+           <ListView.Footer>
+                  <StackLayout HorizontalOptions="Center" Padding="5">
+                         <Button Text="close" Command="{Binding CloseCommand}" Style="{StaticResource SecondaryBtn}" />
+                  </StackLayout>
+           </ListView.Footer>
+        </ListView>
 </views:Popup>
