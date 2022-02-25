@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<views:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:views="http://xamarin.com/schemas/2020/toolkit"
+            xmlns:clientViewModels="clr-namespace:Insurance_app.ViewModels.ClientViewModels;assembly=Insurance app"
+            x:DataType="clientViewModels:PPolicyPopupViewModel"
+            xmlns:models1="clr-namespace:Insurance_app.Models"
+            IsLightDismissEnabled="False"
+            Size="350,500"
+            Style="{StaticResource Popup}"
+            x:Class="Insurance_app.Pages.ClientPages.PreviousPolicyPopup">
+    <Grid>
+    <ListView CachingStrategy="RecycleElement" ItemsSource="{Binding PreviousPolicies}" Header="Previous Policies"
+              Style="{StaticResource ListView}">
+        <ListView.ItemTemplate>
+            <DataTemplate x:DataType="models1:Policy">
+                <ViewCell>
+                    <Grid>
+                        <Frame>
+                            <Grid VerticalOptions="CenterAndExpand" RowSpacing="10" ColumnSpacing="0" Padding="0,0,0,0"
+                                  RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="5*,5*">
+
+                                   <Label Text="Expiry Date : " Style="{StaticResource EClaimsEndLabel}"
+                                          Grid.Column="0" Grid.Row="0" />
+                                <Label Text="{Binding ExpiryDate, StringFormat='{0:dd/MM/yyyy}'}"
+                                       Style="{ StaticResource InfoDetailLabel}"
+                                       Grid.Column="1" Grid.Row="0" />
+                                
+                                <Label Text="Hospital : " Style="{ StaticResource EClaimsEndLabel}"
+                                       Grid.Column="0" Grid.Row="1" />
+                                <Label Text="{Binding Hospitals}"
+                                       Style="{ StaticResource InfoDetailLabel}"
+                                       Grid.Column="1" Grid.Row="1" />
+
+                                <Label Text="Cover : " Style="{ StaticResource EClaimsEndLabel}"
+                                       Grid.Column="0" Grid.Row="2" />
+                                <Label Text="{Binding Cover}"
+                                       Style="{ StaticResource InfoDetailLabel}"
+                                       Grid.Column="1" Grid.Row="2" />
+                                
+                                <Label Text="Fee : " Style="{ StaticResource EClaimsEndLabel}"
+                                       Grid.Column="0" Grid.Row="3" />
+                                <Label Text="{Binding HospitalFee}"
+                                       Style="{ StaticResource InfoDetailLabel}"
+                                       Grid.Column="1" Grid.Row="3" />
+                                
+                                <Label Text="Plan : " Style="{ StaticResource EClaimsEndLabel}"
+                                       Grid.Column="0" Grid.Row="4" />
+                                <Label Text="{Binding Plan}"
+                                       Style="{ StaticResource InfoDetailLabel}"
+                                       Grid.Column="1" Grid.Row="4" />
+                                
+                                <Label Text="Smoker : " Style="{ StaticResource EClaimsEndLabel}"
+                                       Grid.Column="0" Grid.Row="5" />
+                                <Label Text="{Binding Smoker}"
+                                       Style="{ StaticResource InfoDetailLabel}"
+                                       Grid.Column="1" Grid.Row="5" />
+                                
+                                <Label Text="Price : " Style="{ StaticResource EClaimsEndLabel}"
+                                       Grid.Column="0" Grid.Row="6" />
+                                <Label Text="{Binding  Price}"
+                                       Style="{ StaticResource InfoDetailLabel}"
+                                       Grid.Column="1" Grid.Row="6" />
+                                
+                                <Label Text="Payed Price : " Style="{ StaticResource EClaimsEndLabel}"
+                                       Grid.Column="0" Grid.Row="7" />
+                                <Label Text="{Binding PayedPrice}"
+                                       Style="{ StaticResource InfoDetailLabel}"
+                                       Grid.Column="1" Grid.Row="7" />
+                            </Grid>
+                        </Frame>
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
+        <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Padding="20">
+            <Button Text="close" Command="{Binding CloseCommand}" Style="{StaticResource SecondaryBtn}" />
+        </StackLayout>
+
+    </Grid>
+    
+</views:Popup>

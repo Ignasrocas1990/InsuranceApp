@@ -26,7 +26,7 @@
               </DataTemplate>
        </Shell.FlyoutHeaderTemplate>
        
-<!--      =====    Routes    ====                        -->       
+<!--      =====    Routes    ====     -->       
 
 <ShellItem FlyoutItemIsVisible="False">
        <ShellContent ContentTemplate="{DataTemplate pages:ClaimPage}" Route="ClaimPage"  />
@@ -37,7 +37,11 @@
               <pages:ProfilePage/>
        </ShellContent>
 </ShellItem>
-
+<ShellItem FlyoutItemIsVisible="False"  >
+       <ShellContent Route="PolicyPage">
+              <pages:PolicyPage/>
+       </ShellContent>
+</ShellItem>
 
 
 <!--      =====    Flyout navigation    ====                        -->       

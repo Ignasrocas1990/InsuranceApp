@@ -96,9 +96,9 @@ namespace Insurance_app.Logic
            return await RealmDb.GetInstance().GetAllCustomer(user);
         }
 
-        public async Task<DateTimeOffset> GetCustomersDob(User user)
+        public async Task<DateTimeOffset> GetCustomersDob(string customerId,User user)
         {
-            return await RealmDb.GetInstance().GetCustomersDob(user);
+            return await RealmDb.GetInstance().GetCustomersDob(customerId,user);
         }
     }
 }

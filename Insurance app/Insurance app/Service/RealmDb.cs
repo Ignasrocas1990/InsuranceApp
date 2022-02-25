@@ -49,7 +49,7 @@ namespace Insurance_app.Service
         {
             try
             {
-                await GetRealm(c.Partition,user);
+                await GetRealm(partition,user);
                 if (realm is null) throw new Exception("AddCustomer, real is null #########################");
                 
                 realm.Write(() =>
@@ -90,10 +90,8 @@ namespace Insurance_app.Service
         {
             try
             {
-                if (user.Id != customerId)
-                {
-                    await SubmitActivity(customerId, user,"UpdateCustomer");
-                }
+                await SubmitActivity(customerId, user,"UpdateCustomer");
+                
                 
                 await GetRealm(partition,user);
                 if (realm is null) throw new Exception("UpdateCustomer, real is null");
@@ -113,7 +111,7 @@ namespace Insurance_app.Service
             }
             
         }
-        public async Task<DateTimeOffset> GetCustomersDob(User user)
+        public async Task<DateTimeOffset> GetCustomersDob(string customerId,User user)
         {
             DateTimeOffset dob;
             try
@@ -122,7 +120,7 @@ namespace Insurance_app.Service
                 if (realm is null) throw new Exception("GetCustomersDob, real is null");
                 realm.Write(() =>
                 {
-                    var dateTimeOffset = realm.Find<Customer>(user.Id).Dob;
+                    var dateTimeOffset = realm.Find<Customer>(customerId).Dob;
                     if (dateTimeOffset != null)
                         dob = (DateTimeOffset) dateTimeOffset;
                 });
@@ -280,16 +278,16 @@ namespace Insurance_app.Service
 
 // ---------------------------- Claim methods --------------------------
 
-        public async Task AddClaim( string hospitalCode,string patientNr,string type,bool openStatus,User user)
+        public async Task AddClaim( string hospitalCode,string patientNr,string type,bool openStatus,User user,string customerId)
         {
             try
             {
-                
+                await SubmitActivity(customerId, user, $"AddClaim");
                 await GetRealm(partition,user);
                 if (realm is null) throw new Exception(" AddClaim ::::::::::: realm null");
                 realm.Write(() =>
                 {
-                    var customer = realm.Find<Customer>(user.Id);
+                    var customer = realm.Find<Customer>(customerId);
 
                     customer?.Claim.Add(realm.Add(new Claim()
                     {
@@ -307,6 +305,31 @@ namespace Insurance_app.Service
                 Console.WriteLine(e);
             }
             
+        }
+        
+        public async Task ResolveClaim(string customerId,User user)
+        {
+            try
+            {
+                await SubmitActivity(customerId, user,"ResolveClaim");
+                
+                await GetRealm(partition,user);
+                if (realm is null)
+                    throw new Exception(" ResolveClaim ::::::::::::::; realm null");
+                realm.Write(() =>
+                {
+                    var claim = realm.Find<Customer>(customerId).Claim
+                        .FirstOrDefault(c => c.CloseDate == null && c.DelFlag == false);
+                    if (claim != null)
+                    {
+                        claim.CloseDate = DateTimeOffset.Now.Date;
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
         public async Task<List<Claim>> GetClaims(User user,string customerId)
         {
@@ -337,11 +360,12 @@ namespace Insurance_app.Service
 /// <summary>
 /// 
 /// </summary>
-/// <param name="user">Current user</param>
+/// <param name="customerId">customer id </param>
+/// <param name="user">Customer or client</param>
 /// <returns>Dictionary with current policy and 0/1 value which tells user
 /// if the policy can be updated. 1=can/0=cant (be updated)</returns>
 /// <exception cref="Exception"></exception>
-        public async Task<Dictionary<int,Policy>> FindPolicy(User user)
+public async Task<Dictionary<int,Policy>> FindPolicy(string customerId,User user)
         {
          
 
@@ -354,7 +378,7 @@ namespace Insurance_app.Service
                
                realm.Write(() =>
                {
-                   var c = realm.Find<Customer>(user.Id);
+                   var c = realm.Find<Customer>(customerId);
                    var latestUpdatedPolicy = c?.Policy?.Where(p => p.UpdateDate != null)
                        .OrderByDescending(d => d.UpdateDate).FirstOrDefault();
                    
@@ -384,17 +408,70 @@ namespace Insurance_app.Service
            }
            return dictionaryP;
         }
+        public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user)
+        {
+            List<Policy> previousPolicies = null;
+            try
+            {
+                await GetRealm(partition,user);
+                if (realm is null) throw new Exception("GetPreviousPolicies :::::::::::::::::::::: realm null");
+                realm.Write(()=>
+                {
+                    previousPolicies = realm.Find<Customer>(customerId)
+                        .Policy?.Where(policy => policy.UnderReview == false).ToList();
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
 
-        public async Task UpdatePolicy(User user,Policy newPolicy)
+            return previousPolicies ??= new List<Policy>();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="user">Client only</param>
+        /// <param name="allowUpdate"> true = allow update/false = dont allow update </param>
+        /// <exception cref="Exception"></exception>
+        public async Task ResolvePolicyUpdate(string customerId, User user,bool allowUpdate)
         {
             try
             {
+                await SubmitActivity(customerId, user, $"ResolvePolicyUpdate,Allow={allowUpdate}");
+                
+                await GetRealm(partition,user);
+                if (realm is null) throw new Exception("AllowPolicyUpdate :::::::::::::::::::::: realm null");
+                realm.Write(()=>
+                {
+                    var policy = realm.Find<Customer>(customerId)?.Policy?
+                        .Where(p => p.UpdateDate != null && p.UnderReview == true && p.DelFlag == false)
+                        .FirstOrDefault();
+                    if (policy is null) throw new Exception("AllowPolicyUpdate  :::::::::::::::::::::: policy null");
+                    
+                    if (!allowUpdate) policy.DelFlag = true;
+                    policy.UnderReview = false;
+                });
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+        public async Task UpdatePolicy(string customerId,User user,Policy newPolicy)
+        {
+            try
+            {
+                await SubmitActivity(customerId, user, "UpdatePolicy");
+                
                 await GetRealm(partition,user);
                 if (realm is null) throw new Exception("UpdatePolicy :::::::::::::::::::::: realm null");
                 realm.Write(() =>
                 {
                     
-                    realm.Find<Customer>(user.Id)?.Policy?.Add(realm.Add(newPolicy));
+                    realm.Find<Customer>(customerId)?.Policy?.Add(realm.Add(newPolicy));
                     // if (policies.Count==0) throw new Exception("UpdatePolicy::::: policies empty");
                     // var oldPolicy = policies.OrderByDescending(z => z.ExpiryDate).First();
                 });
@@ -404,12 +481,12 @@ namespace Insurance_app.Service
                 Console.WriteLine(e);
             }
         }
+       
 //--------------------------------- client methods -------------------------------
         public async Task<bool> CreateClient(User user, string email, string fname, string lname, string code)
         {
             try
             {
-                
                 await GetRealm(user.Id,user);
                 if (realm is null) throw new Exception("CreateClient ::::::::::: realm was null");
                 realm.Write(() =>
@@ -473,35 +550,12 @@ namespace Insurance_app.Service
             }
             return userType;
         }
-        public async Task ResolveClaim(string customerId,User user)
-        {
-            try
-            {
-                await SubmitActivity(customerId, user,"ResolveClaim");
-                
-                await GetRealm(partition,user);
-                if (realm is null)
-                    throw new Exception(" ResolveClaim ::::::::::::::; realm null");
-                realm.Write(() =>
-                {
-                    var claim = realm.Find<Customer>(customerId).Claim
-                        .FirstOrDefault(c => c.CloseDate == null && c.DelFlag == false);
-                    if (claim != null)
-                    {
-                        claim.CloseDate = DateTimeOffset.Now.Date;
-                    }
-                });
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-
         private async Task SubmitActivity(string customerId,User user,string type)
         {
             try
             {
+                if (customerId == user.Id) return;
+
                 await GetRealm(user.Id, user);
                 if (realm is null)
                     throw new Exception(" SubmitActivity ::::::::::::::; realm null");
@@ -635,11 +689,6 @@ namespace Insurance_app.Service
             {
                 Console.WriteLine(e);
             }
-           
-
         }
-
-
-        
     }
 }

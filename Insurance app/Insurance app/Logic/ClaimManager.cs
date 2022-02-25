@@ -44,9 +44,9 @@ namespace Insurance_app.Logic
 
             return null;
         }
-        public async Task CreateClaim(string hospitalPostcode, string patientNr, string type, bool status, User user)
+        public async Task CreateClaim(string hospitalPostcode, string patientNr, string type, bool status, User user,string customerId)
         {
-            await RealmDb.GetInstance().AddClaim(hospitalPostcode, patientNr, type, status, user);
+            await RealmDb.GetInstance().AddClaim(hospitalPostcode, patientNr, type, status, user,customerId);
         }
 
         public async Task<List<Claim>> GetClaims(User user,string customerId)

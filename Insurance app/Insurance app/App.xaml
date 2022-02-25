@@ -26,7 +26,7 @@
             
             <Style x:Key="PrimaryBtn" TargetType="Button"
                    BasedOn="{StaticResource BasicBtn}">
-                <Setter Property="BackgroundColor" Value="ForestGreen"/>
+                <Setter Property="BackgroundColor" Value="ForestGreen"/>              
             </Style>
             
             <Style x:Key="SecondaryBtn" TargetType="Button"

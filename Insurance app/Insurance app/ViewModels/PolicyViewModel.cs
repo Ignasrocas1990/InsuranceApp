@@ -8,6 +8,7 @@ using System.Windows.Input;
 using Insurance_app.Communications;
 using Insurance_app.Logic;
 using Insurance_app.Models;
+using Insurance_app.Pages.ClientPages;
 using Insurance_app.Pages.Popups;
 using Insurance_app.SupportClasses;
 using Realms.Sync;
@@ -18,6 +19,7 @@ using Xamarin.Forms.Internals;
 
 namespace Insurance_app.ViewModels
 {
+    [QueryProperty(nameof(CustomerId), "CustomerId")]
     public class PolicyViewModel : ObservableObject
     {
         private bool wait;
@@ -35,33 +37,58 @@ namespace Insurance_app.ViewModels
         private bool tooLate;
         public ICommand UpdatePolicy { get; }
         public ICommand InfoCommand { get; }
-        public IList<string> HospitalList { get; } = StaticOpt.HospitalsEnum();
-        public IList<string> CoverList { get; } = Enum.GetNames(typeof(StaticOpt.CoverEnum)).ToList();
-        public IList<int> HospitalFeeList { get; } = StaticOpt.ExcessFee();
-        public IList<string> PlanList { get; } = Enum.GetNames(typeof(StaticOpt.PlanEnum)).ToList();
+        public ICommand ViewPrevPoliciesCommand { get; }
+        public ICommand ResolveUpdateCommand { get; }
+
+        public IList<string> HospitalList { get; }
+        public IList<string> CoverList { get; }
+        public IList<int> HospitalFeeList { get; }
+        public IList<string> PlanList { get; } 
         private readonly PolicyManager policyManager;
-        private InferenceService inf;
-        private UserManager userManager;
+        private readonly InferenceService inf;
+        private readonly UserManager userManager;
+        private string customerId = "";
+        
+        
 
         public PolicyViewModel()
         {
             UpdatePolicy = new AsyncCommand(Update);
             InfoCommand = new AsyncCommand<string>(StaticOpt.InfoPopup);
+            ViewPrevPoliciesCommand = new AsyncCommand(ViewPrevPolicies);
+            ResolveUpdateCommand = new AsyncCommand(ResolveUpdate);
             policyManager = new PolicyManager();
             userManager = new UserManager();
             inf = new InferenceService();
             timer = new Timer(1000);
             timer.Elapsed += CheckResponseTime;
+            CoverList = Enum.GetNames(typeof(StaticOpt.CoverEnum)).ToList();
+            HospitalFeeList = StaticOpt.ExcessFee();
+            HospitalList = StaticOpt.HospitalsEnum();
+            PlanList = Enum.GetNames(typeof(StaticOpt.PlanEnum)).ToList();
         }
+
+
+
 
         public async Task Setup()
         {
             bool tempUpdate = false;
+            bool hasPrevPolicies = false;
             try
             {
                 SetUpWaitDisplay = true;
                 UnderReviewDisplay = false;
                 InfoIsVisible = false;
+                
+                if (customerId == "")
+                    customerId = App.RealmApp.CurrentUser.Id;
+                else
+                {
+                    hasPrevPolicies = await GetPreviousPolicies();
+                }
+
+
                 var policy = await FindPolicy();
                 if (policy.UnderReview == false)
                 {
@@ -94,10 +121,15 @@ namespace Insurance_app.ViewModels
             {
                 Console.WriteLine($"policy setup problem: \n {e}");
             }
-
+            PrevPoliciesIsVisible = hasPrevPolicies;
             UnderReviewDisplay = tempUpdate;
             InfoIsVisible = !tempUpdate;
             SetUpWaitDisplay = false;
+            
+            if (customerId != App.RealmApp.CurrentUser.Id && UnderReviewDisplay)
+            {
+                ClientActionNeeded = true;
+            }
         }
 
         private async Task Update()
@@ -152,8 +184,8 @@ namespace Insurance_app.ViewModels
             {
                 var newPolicy = policyManager.CreatePolicy(Converter.StringToFloat(newPrice), price,
                      CoverList[cover], fee, HospitalList[hospitals],PlanList[plan], smoker,
-                    true, date, DateTimeOffset.Now, App.RealmApp.CurrentUser.Id);
-                await policyManager.AddPolicy(App.RealmApp.CurrentUser, newPolicy);
+                    true, date, DateTimeOffset.Now, customerId);
+                await policyManager.AddPolicy(customerId,App.RealmApp.CurrentUser, newPolicy);
             }
             catch (Exception e)
             {
@@ -170,7 +202,7 @@ namespace Insurance_app.ViewModels
             Policy policy = null;
             try
             {
-                var dictionaryPolicy = await policyManager.FindPolicy(App.RealmApp.CurrentUser);
+                var dictionaryPolicy = await policyManager.FindPolicy(customerId,App.RealmApp.CurrentUser);
                 policy = dictionaryPolicy.FirstOrDefault(u => u.Key == 0).Value; //see if cant be updated
                 if (policy is null) // can be updated
                 {
@@ -186,9 +218,45 @@ namespace Insurance_app.ViewModels
 
             return policy ?? new Policy();
         }
+        private async Task ViewPrevPolicies()
+        {
+            try
+            {
+                await Application.Current.MainPage.Navigation
+                    .ShowPopupAsync(new PreviousPolicyPopup(policyManager.previousPolicies));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+        private async Task ResolveUpdate()
+        {
+            try
+            {
+                var answer = await Shell.Current.DisplayAlert("Message", 
+                    "Allow the Policy update ?", "Yes", "No");
+
+                string answerString  = answer is true ? "Allow" : "Deny";
+
+                var result = await Shell.Current.DisplayAlert("Notice", 
+                    $"Are you sure you want to {answerString} the update?", "Yes", "No");
+                if (!result) return;
+                    CircularWaitDisplay = true;
+                    await policyManager.AllowUpdate(customerId,App.RealmApp.CurrentUser,answer);
+                    ClientActionNeeded = false;
+                    await Setup();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        private async Task<bool> GetPreviousPolicies() => await policyManager.GetPreviousPolicies(customerId,App.RealmApp.CurrentUser);
 
         private async Task GetCurrentCustomer() =>
-            dob = await userManager.GetCustomersDob(App.RealmApp.CurrentUser);
+            dob = await userManager.GetCustomersDob(customerId,App.RealmApp.CurrentUser);
 
         private async void CheckResponseTime(object o, ElapsedEventArgs e)
         {
@@ -278,6 +346,12 @@ namespace Insurance_app.ViewModels
             get => setUpWait;
             set => SetProperty(ref setUpWait, value);
         }
+        public string CustomerId
+        {
+            get => customerId;
+            set =>  customerId = Uri.UnescapeDataString(value ?? string.Empty);
+
+        }
 
         private bool infoIsVisible;
 
@@ -285,6 +359,20 @@ namespace Insurance_app.ViewModels
         {
             get => infoIsVisible;
             set => SetProperty(ref infoIsVisible, value);
+        }
+
+        private bool isClient;
+        public bool ClientActionNeeded
+        {
+            get => isClient;
+            set => SetProperty(ref isClient, value);
+        }
+        
+        private bool prevPolicies;
+        public bool PrevPoliciesIsVisible
+        {
+            get => prevPolicies;
+            set => SetProperty(ref prevPolicies, value);
         }
     }
 }

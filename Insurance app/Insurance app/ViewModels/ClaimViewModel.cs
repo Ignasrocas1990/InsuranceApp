@@ -78,7 +78,6 @@ namespace Insurance_app.ViewModels
             }
 
             PreviousBtnIsEnabled = claimManager.GetResolvedClaimCount()>0;
-          
             SetUpWaitDisplay = false;
         }
 
@@ -107,7 +106,7 @@ namespace Insurance_app.ViewModels
             CircularWaitDisplay = true;
             IsReadOnly = true;
 
-            await claimManager.CreateClaim(hospitalPostcode, patientNr, Type, true,App.RealmApp.CurrentUser);
+            await claimManager.CreateClaim(hospitalPostcode, patientNr, Type, true,App.RealmApp.CurrentUser,customerId);
             
             StatusDisplay = "open";
             

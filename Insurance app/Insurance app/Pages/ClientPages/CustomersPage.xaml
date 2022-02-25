@@ -24,18 +24,16 @@
                             <ToolbarItem Text="" Order="Primary"/>
                             <ToolbarItem Text="" Order="Primary"/>
                             
-                            <ToolbarItem Text="Claims" Order="Secondary"  Command="{Binding 
-                            Source={x:Reference CustomersViewModel},
+                            <ToolbarItem Text="Claims" Command="{Binding Source={x:Reference CustomersViewModel},
                             Path= CustomerClaimsCommand}" CommandParameter="{Binding .Id}" />
 
-                            <ToolbarItem Text="Customer Details" Command="{Binding 
-                            Source={x:Reference CustomersViewModel},
+                            <ToolbarItem Text="Customer Details" Command="{Binding Source={x:Reference CustomersViewModel},
                             Path= CustomerDetailsCommand}" CommandParameter="{Binding .Id}"/>
                         
-                            <ToolbarItem Text="Policy " Order="Secondary"/>
+                            <ToolbarItem Text="Policy" Command="{Binding Source={x:Reference CustomersViewModel},
+                            Path= PolicyCommand}" CommandParameter="{Binding .Id}"/>
                             
-                            <ToolbarItem Text="Steps" Command="{Binding 
-                            Source={x:Reference CustomersViewModel},
+                            <ToolbarItem Text="Steps" Command="{Binding Source={x:Reference CustomersViewModel},
                             Path=StepViewCommand}" CommandParameter="{Binding .Id}"/>
                         </ViewCell.ContextActions>
                     <Grid Padding="10">

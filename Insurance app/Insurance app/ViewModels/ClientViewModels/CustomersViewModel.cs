@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Insurance_app.Logic;
 using Insurance_app.Models;
 using Insurance_app.Pages;
@@ -13,17 +14,20 @@ namespace Insurance_app.ViewModels.ClientViewModels
     {
         public ObservableRangeCollection<Customer> Customers { get; set; }
         private readonly UserManager userManager;
-        public AsyncCommand<string> StepViewCommand { get; }
-        public AsyncCommand<string> CustomerDetailsCommand { get; }
-        public AsyncCommand<string> CustomerClaimsCommand { get; }
+        public ICommand StepViewCommand { get; }
+        public ICommand CustomerDetailsCommand { get; }
+        public ICommand CustomerClaimsCommand { get; }
+        
+        public ICommand PolicyCommand { get; }
         
         public CustomersViewModel()
         {
             userManager = new UserManager();
             Customers = new ObservableRangeCollection<Customer>();
             StepViewCommand = new AsyncCommand<string>(ViewSteps);
-            CustomerDetailsCommand = new AsyncCommand<string>(ManageCustomer);
-            CustomerClaimsCommand = new AsyncCommand<string>(ManageCustomerClaim);
+            CustomerDetailsCommand = new AsyncCommand<string>(ManageDetails);
+            CustomerClaimsCommand = new AsyncCommand<string>(ManageClaim);
+            PolicyCommand = new AsyncCommand<string>(ManagePolicy);
         }
         
         private bool First = true;
@@ -45,7 +49,15 @@ namespace Insurance_app.ViewModels.ClientViewModels
             }
             
         }
-        private async Task ManageCustomerClaim(string customerId)
+        private async Task ManageDetails(string customerId)
+        {
+            if (!customerId.Equals(""))
+            {
+                var route = $"//{nameof(ProfilePage)}?CustomerId={customerId}";
+                await Shell.Current.GoToAsync(route);
+            }
+        }
+        private async Task ManageClaim(string customerId)
         {
             if (!customerId.Equals(""))
             {
@@ -54,14 +66,12 @@ namespace Insurance_app.ViewModels.ClientViewModels
             }
                
         }
-        
-        private async Task ManageCustomer(string customerId)
+        private async Task ManagePolicy(string customerId)
         {
-            if (!customerId.Equals(""))
-            {
-                var route = $"//{nameof(ProfilePage)}?CustomerId={customerId}";
-                await Shell.Current.GoToAsync(route);
-            }
+            if (customerId == "")
+                return;
+            var route = $"//{nameof(PolicyPage)}?CustomerId={customerId}";
+            await Shell.Current.GoToAsync(route);
         }
         
         private async Task ViewSteps(string customerId)

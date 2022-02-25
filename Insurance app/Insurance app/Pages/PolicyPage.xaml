@@ -101,9 +101,20 @@
                 IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                 Command="{Binding UpdatePolicy}" Grid.Column="0" Grid.Row="8"  Grid.ColumnSpan="2"/>
         
+        <Button Text= "PrevPolicies" Style="{StaticResource SecondaryBtn}" BackgroundColor="{StaticResource ClientBtnColor}" HorizontalOptions="Center"
+                IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                IsVisible="{Binding PrevPoliciesIsVisible}"
+                Command="{Binding ViewPrevPoliciesCommand}" Grid.Column="0" Grid.Row="9"/>
+        
+        <Button Text= "ResolveUpdate" Style="{StaticResource PrimaryBtn}" BackgroundColor="{StaticResource ClientBtnColor}" HorizontalOptions="Center"
+                IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                IsVisible="{Binding ClientActionNeeded}"
+                Command="{Binding ResolveUpdateCommand}" Grid.Column="1" Grid.Row="9"/>
+
+        
         <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}"
                            Style="{StaticResource NormalCircularWait}"
-                           Grid.Column="0" Grid.Row="9" Grid.ColumnSpan="2" />
+                           Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" />
         
         <ActivityIndicator IsRunning="{Binding SetUpWaitDisplay}" 
                            Style="{StaticResource NormalCircularWait}"
