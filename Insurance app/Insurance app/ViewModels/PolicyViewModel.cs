@@ -20,7 +20,6 @@ namespace Insurance_app.ViewModels
 {
     public class PolicyViewModel : ObservableObject
     {
-        
         private bool wait;
         private int hospitals;
         private int cover;
@@ -53,12 +52,11 @@ namespace Insurance_app.ViewModels
             inf = new InferenceService();
             timer = new Timer(1000);
             timer.Elapsed += CheckResponseTime;
-
         }
 
         public async Task Setup()
         {
-            bool tempUpdate=false;
+            bool tempUpdate = false;
             try
             {
                 SetUpWaitDisplay = true;
@@ -73,6 +71,7 @@ namespace Insurance_app.ViewModels
                         price = (float) policy.Price;
                         PriceDisplay = (Math.Round(price * 100f) / 100f).ToString(CultureInfo.InvariantCulture);
                     }
+
                     await GetCurrentCustomer();
                 }
                 else
@@ -80,6 +79,7 @@ namespace Insurance_app.ViewModels
                     tempUpdate = true;
                     PriceDisplay = "Under Review";
                 }
+
                 if (policy.Hospitals != null) SelectedHospital = (int) policy.Hospitals;
                 if (policy.Cover != null) SelectedCover = (int) policy.Cover;
                 if (policy.HospitalFee != null) SelectedItemHospitalFee = (int) policy.HospitalFee;
@@ -90,13 +90,12 @@ namespace Insurance_app.ViewModels
                     ExpiryDateDisplay = policy.ExpiryDate.Value.Date.ToString("d");
                     date = (DateTimeOffset) policy.ExpiryDate;
                 }
-
-                
             }
             catch (Exception e)
             {
                 Console.WriteLine($"policy setup problem: \n {e}");
             }
+
             UnderReviewDisplay = tempUpdate;
             InfoIsVisible = !tempUpdate;
             SetUpWaitDisplay = false;
@@ -109,31 +108,34 @@ namespace Insurance_app.ViewModels
                 await Shell.Current.DisplayAlert("Notice", "Policy can only be updated every 3 months", "close");
                 return;
             }
+
             try
             {
                 var age = DateTime.Now.Year - dob.Year;
                 timer.Start();
                 CircularWaitDisplay = true;
-                var newPrice =  await inf.SendQuoteRequest(hospitals, age, cover, fee, plan, smoker);
+                var newPrice = await inf.SendQuoteRequest(hospitals, age, cover, fee, plan, smoker);
                 CircularWaitDisplay = false;
                 timer.Stop();
-                if (tooLate) { 
+                if (tooLate)
+                {
                     tooLate = false;
                     return;
                 }
+
                 bool action = await Application.Current.MainPage.DisplayAlert("Price",
-                    $"Price for the quote is : {newPrice}",  "Accept","Deny");
+                    $"Price for the quote is : {newPrice}", "Accept", "Deny");
                 if (!action) return;
-                
+
                 var answer = await Shell.Current.DisplayAlert(
-                    "Notice","You about to request to update the policy", "save", "cancel");
+                    "Notice", "You about to request to update the policy", "save", "cancel");
                 if (!answer) return;
                 UnderReviewDisplay = true;
                 InfoIsVisible = !UnderReviewDisplay;
                 CircularWaitDisplay = true;
-                
+
                 await SavePolicy(newPrice);
-                
+
                 PriceDisplay = "Under Review";
                 await Shell.Current.DisplayAlert("Message", "Update requested successfully", "close");
             }
@@ -141,6 +143,7 @@ namespace Insurance_app.ViewModels
             {
                 Console.WriteLine($" Update policy error : {e}");
             }
+
             timer.Stop();
         }
 
@@ -148,27 +151,29 @@ namespace Insurance_app.ViewModels
         {
             try
             {
-                var newPolicy = policyManager.CreatePolicy(Converter.StringToFloat(newPrice),price,
+                var newPolicy = policyManager.CreatePolicy(Converter.StringToFloat(newPrice), price,
                     cover, fee, hospitals, plan, smoker,
-                    true, date,DateTimeOffset.Now,App.RealmApp.CurrentUser.Id);
+                    true, date, DateTimeOffset.Now, App.RealmApp.CurrentUser.Id);
                 await policyManager.AddPolicy(App.RealmApp.CurrentUser, newPolicy);
             }
             catch (Exception e)
             {
-                await Shell.Current.DisplayAlert("Message", "Update requested failure\nPlease try again later", "close");
+                await Shell.Current.DisplayAlert("Message", "Update requested failure\nPlease try again later",
+                    "close");
                 Console.WriteLine(e);
             }
+
             CircularWaitDisplay = false;
         }
 
         private async Task<Policy> FindPolicy()
         {
-            Policy policy=null;
+            Policy policy = null;
             try
             {
                 var dictionaryPolicy = await policyManager.FindPolicy(App.RealmApp.CurrentUser);
-                policy = dictionaryPolicy.FirstOrDefault(u => u.Key == 0).Value;//see if cant be updated
-                if (policy is null)// can be updated
+                policy = dictionaryPolicy.FirstOrDefault(u => u.Key == 0).Value; //see if cant be updated
+                if (policy is null) // can be updated
                 {
                     canBeUpdated = true;
                     policy = dictionaryPolicy[1];
@@ -180,50 +185,54 @@ namespace Insurance_app.ViewModels
                 canBeUpdated = false;
             }
 
-            return policy??new Policy();
+            return policy ?? new Policy();
         }
+
         private async Task GetCurrentCustomer() =>
             dob = await userManager.GetCustomersDob(App.RealmApp.CurrentUser);
-        
 
         private async void CheckResponseTime(object o, ElapsedEventArgs e)
         {
             rCount += 1;
             if (rCount != StaticOpt.MaxResponseTime) return;
             tooLate = true;
-            CircularWaitDisplay=false;
+            CircularWaitDisplay = false;
             timer.Stop();
             rCount = 0;
             await Shell.Current.DisplayAlert("Error", "Something went wrong, try again in a min", "close");
         }
-//-----------------------------data binding methods ------------------------------------------------
-       public bool CircularWaitDisplay
-       {
-           get => wait;
-           set => SetProperty(ref wait,value);
-       }
 
-       public int SelectedHospital
+//-----------------------------data binding methods ------------------------------------------------
+        public bool CircularWaitDisplay
+        {
+            get => wait;
+            set => SetProperty(ref wait, value);
+        }
+
+        public int SelectedHospital
         {
             get => hospitals;
             set => SetProperty(ref hospitals, value);
         }
+
         public int SelectedCover
         {
             get => cover;
             set => SetProperty(ref cover, value);
         }
+
         public int SelectedItemHospitalFee
         {
             get => fee;
             set => SetProperty(ref fee, value);
         }
+
         public int SelectedPlan
         {
             get => plan;
             set => SetProperty(ref plan, value);
         }
-        
+
         public bool IsSmokerDisplay
         {
             get => isSmoker;
@@ -231,12 +240,15 @@ namespace Insurance_app.ViewModels
         }
 
         private int smoker;
+
         private bool UpdateSmokerValue(bool value)
         {
             smoker = value ? 1 : 0;
             return value;
         }
+
         private bool updating;
+
         public bool UnderReviewDisplay
         {
             get => updating;
@@ -244,6 +256,7 @@ namespace Insurance_app.ViewModels
         }
 
         private string expiryDate;
+
         public string ExpiryDateDisplay
         {
             get => expiryDate;
@@ -251,15 +264,16 @@ namespace Insurance_app.ViewModels
         }
 
         private string priceString;
-        
+
 
         public string PriceDisplay
         {
             get => priceString;
             set => SetProperty(ref priceString, value);
         }
-        
+
         private bool setUpWait;
+
         public bool SetUpWaitDisplay
         {
             get => setUpWait;
@@ -267,14 +281,11 @@ namespace Insurance_app.ViewModels
         }
 
         private bool infoIsVisible;
+
         public bool InfoIsVisible
         {
             get => infoIsVisible;
             set => SetProperty(ref infoIsVisible, value);
-
         }
-
-
-
     }
 }

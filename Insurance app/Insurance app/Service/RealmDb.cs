@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -332,7 +333,14 @@ namespace Insurance_app.Service
 
             return claims;
         }
-//-------------------- policy methods -----------------------
+//---------------------------------------------------- policy methods --------------------------------------
+/// <summary>
+/// 
+/// </summary>
+/// <param name="user">Current user</param>
+/// <returns>Dictionary with current policy and 0/1 value which tells user
+/// if the policy can be updated. 1=can/0=cant (be updated)</returns>
+/// <exception cref="Exception"></exception>
         public async Task<Dictionary<int,Policy>> FindPolicy(User user)
         {
          
@@ -355,14 +363,17 @@ namespace Insurance_app.Service
                            .OrderByDescending(z => z.ExpiryDate).First();
                   
                   if (latestUpdatedPolicy is null) dictionaryP.Add(1, currentPolicy);
-                  
-                 else if (latestUpdatedPolicy.UpdateDate?.AddMonths(2) < currentPolicy.ExpiryDate)
+                  else if (latestUpdatedPolicy.ExpiryDate.Value.CompareTo((DateTimeOffset) currentPolicy.ExpiryDate) == 0)
+                  {
+                      dictionaryP.Add(0,latestUpdatedPolicy);
+                  }
+                  else if (latestUpdatedPolicy.UpdateDate?.AddMonths(2) < currentPolicy.ExpiryDate)
                   {
                       dictionaryP.Add(1,currentPolicy);
                   }
                   else
                   {
-                      dictionaryP.Add(0,currentPolicy);
+                      dictionaryP.Add(0,latestUpdatedPolicy);
                   }
                   
                });
@@ -383,7 +394,7 @@ namespace Insurance_app.Service
                 realm.Write(() =>
                 {
                     
-                    realm.Find<Customer>(user.Id).Policy.Add(realm.Add(newPolicy));
+                    realm.Find<Customer>(user.Id)?.Policy?.Add(realm.Add(newPolicy));
                     // if (policies.Count==0) throw new Exception("UpdatePolicy::::: policies empty");
                     // var oldPolicy = policies.OrderByDescending(z => z.ExpiryDate).First();
                 });
