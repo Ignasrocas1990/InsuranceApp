@@ -32,8 +32,8 @@ namespace Insurance_app.ViewModels
         private string city="";
         private Address address;
         private string customerId;
-        //public string customerId;
-        
+        private Customer customer { get; set; }
+
         public ICommand UpdateCommand { get; }
         public ICommand AddressCommand { get; }
 
@@ -46,9 +46,11 @@ namespace Insurance_app.ViewModels
         public async Task Setup()
         {
             customerId ??= App.RealmApp.CurrentUser.Id;
+            
             try
             {
-                var customer =  await userManager.GetCustomer(App.RealmApp.CurrentUser,customerId);
+                customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
+               // var customer =  await userManager.GetCustomer(App.RealmApp.CurrentUser,customerId);
                 if (customer !=null)
                 {
                     NameDisplay = customer.Name;

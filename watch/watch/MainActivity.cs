@@ -12,6 +12,8 @@ namespace watch
     [Activity(Label = "@string/app_name", MainLauncher = true)]
     public class MainActivity : WearableActivity
     {
+        private Button btn;
+        private Intent intent;
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -20,8 +22,14 @@ namespace watch
 
             SetAmbientEnabled();
             
-
-            Intent intent = new Intent(this, typeof(WatchService));
+            btn = FindViewById<Button>(Resource.Id.closeApp);
+            btn.Click += (s,e) =>
+            {
+                StopService(intent);
+                this.OnDestroy();
+                Finish();
+            };
+            intent = new Intent(this, typeof(WatchService));
             StartForegroundService(intent);
         }
 

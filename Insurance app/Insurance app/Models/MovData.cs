@@ -9,7 +9,7 @@ namespace Insurance_app.Models
     {
         [PrimaryKey] [MapTo("_id")] public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
         [MapTo("_partition")] public string Partition { get; set; } = "CustomerPartition";
-        public DateTimeOffset? DateTimeStamp { get; set; } = DateTimeOffset.Now.DateTime;
+        public DateTimeOffset? DateTimeStamp { get; set; } = DateTimeOffset.Now;
         public bool? DelFlag { get; set; } = false;
 
         [Indexed]

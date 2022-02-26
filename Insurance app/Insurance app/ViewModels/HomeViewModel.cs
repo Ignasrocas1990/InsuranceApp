@@ -44,7 +44,6 @@ namespace Insurance_app.ViewModels
         {
             bleManager = BleManager.GetInstance();
             bleManager.InfferEvent += InferredRawData;
-            userManager = new UserManager();
             rewardManager = new RewardManager();
         }
 
@@ -54,56 +53,21 @@ namespace Insurance_app.ViewModels
         {
             try
             {
-                var user = App.RealmApp.CurrentUser;
-                newMovDataList = new ConcurrentQueue<MovData>();
-                var customer = await userManager.GetCustomer(user,user.Id);
-                
-                if (customer is null)
-                {
-                    await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
-                    userManager.Dispose();
-                    await Shell.Current.GoToAsync($"//{nameof(LogInPage)}",false);
-                    return;
-                }
-                //DelFlag == true (reward has been used)
-                var rewards = customer.Reward.Where(r => r.DelFlag == false).ToList();
-                if (rewards.Count==0)
-                {
-                    await customer.CreateReward();
-                    ProgressBarDisplay = StaticOpt.StepNeeded;
-                }
-                var currentDate = DateTimeOffset.Now;
-
-                //get all rewards finish in this month
-                var currentMonthRewards = rewards.Count(r => r.FinDate != null 
-                                                             && r.FinDate.Value.Month == currentDate.Month
-                                                             && r.FinDate.Value.Year == currentDate.Year);
-                
-                if (currentMonthRewards < 26)
-                {
-                    var reward = customer.Reward.FirstOrDefault(r => r.FinDate == null);
-                    if (reward != null)
-                    {
-                        double movLen = Convert.ToDouble(reward.MovData.Count());
-                        //TODO uncomment to show
-                        //Random rand = new Random();
-                        //movLen = rand.NextDouble() * 10000;
-                        SetUpView(movLen);
-                    }
-                    else
-                    {
-                        await customer.CreateReward();
-                        ProgressBarDisplay = StaticOpt.StepNeeded;
-                    }
-                }
-                else
+                var reward = await rewardManager.FindReward(App.RealmApp.CurrentUser);
+                if (reward is null)
                 {
                     ProgressBarDisplay = StaticOpt.StepNeeded;
                     MaxRewardIsVisible = true;
                 }
+                else
+                {
+                    var stepsDouble = Convert.ToDouble(reward.MovData.Count());
+                   
+                    //Random rand = new Random();
+                    //movLen = rand.NextDouble() * 10000; //TODO uncomment to show
+                    SetUpView(stepsDouble);
+                }
                 await SetUpEarningsDisplay();
-                
-
             }
             catch (Exception e)
             {
@@ -116,49 +80,10 @@ namespace Insurance_app.ViewModels
             TotalEarnedDisplay = $"{await rewardManager.getTotalRewards(App.RealmApp.CurrentUser,App.RealmApp.CurrentUser.Id)}";
         }
         
-        private void InferredRawData(object s, RawDataArgs e)
+        private void InferredRawData(object s, EventArgs eventArgs)
         {
             Step();
            // AddMov(e.x, e.y,e.z, e.Type, e.TimeOffset);
-            Task.Run(async () =>
-            {
-                try
-                {
-                    if (ProgressBarDisplay <= 0)
-                    {
-                        await rewardManager.CreateReward(App.RealmApp.CurrentUser);
-                       //await customer.CreateReward();
-                        
-                        MainThread.BeginInvokeOnMainThread(ResetRewardDisplay);
-                    }
-                    var currMovData = new MovData()
-                                    {
-                                        AccData = new Acc()
-                                        {
-                                            X = e.x,
-                                            Y = e.y,
-                                            Z = e.z
-                                        },
-                                        Type = "step"
-                                    };
-                    newMovDataList.Enqueue(currMovData);
-                    if (newMovDataList.Count > 4)
-                    {
-                        await RealmDb.GetInstance().AddMovData(new ConcurrentQueue<MovData>(newMovDataList),App.RealmApp.CurrentUser);
-                        newMovDataList = new ConcurrentQueue<MovData>();
-                    }
-
-                }
-                catch (Exception exception)
-                {
-                    MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        Console.WriteLine(exception);
-                        
-                    });
-                }
-                
-            });
         }
         
         public async Task StartDataReceive()
@@ -205,12 +130,10 @@ namespace Insurance_app.ViewModels
         private void Step()
         {
             ProgressBarDisplay--;
-            //stepsDisplayValue++;
             StepsDisplayLabel=stepsDisplayValue+1;
             if (ProgressBarDisplay < max)
             {
                 ProgressBarDisplay = StaticOpt.StepNeeded;
-                //stepsDisplayValue = 0;
                 StepsDisplayLabel = 0;
             }
         }

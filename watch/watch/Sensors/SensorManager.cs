@@ -84,7 +84,8 @@ namespace watch.Sensors
 
         public void SendTestData()//TODO remove from here --------------------------------
         {
-            if (sendDataCounter > 5) return;
+            //if (sendDataCounter > 5) return;
+            if (sendDataCounter == -1) return;
             Task task = Task.Run( async () =>
             {
                 if (AccEventHandler == null) return;
@@ -98,12 +99,14 @@ namespace watch.Sensors
                     
                 }
                 await Task.Delay(10000);
-                sendDataCounter++;
-                Log.Debug(TAG, "sending test data "+sendDataCounter);
+                //sendDataCounter++;
+                //Log.Debug(TAG, "sending test data "+sendDataCounter);
                 SendTestData();
             });
 
         }
+        
+        
     }
     
     public class SensorArgs:EventArgs{

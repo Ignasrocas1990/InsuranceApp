@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Android.Text.Style;
+using Insurance_app.Logic;
 using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
 using Plugin.BLE;
@@ -23,7 +24,7 @@ namespace Insurance_app.Communications
         private IAdapter adapter;
         public Ble ble;
         private ICharacteristic chara=null;
-        public EventHandler<RawDataArgs> InfferEvent = delegate {  };
+        public EventHandler InfferEvent = delegate {  };
         public EventHandler SwitchToggler =delegate {  };
 
         private int readingDelay = 5000; // reading delay every 5 sec (incase empty read.)
@@ -31,6 +32,7 @@ namespace Insurance_app.Communications
         private bool bleState = false;
         private bool isMonitoring = false;
         private static BleManager bleManager =null;
+        private RewardManager rewardManager;
         
         private BleManager()
         {
@@ -38,6 +40,7 @@ namespace Insurance_app.Communications
             adapter = CrossBluetoothLE.Current.Adapter;
             RegisterEventHandlers();
             bleState=ble.BleCheck();
+            rewardManager = new RewardManager();
 
         }
         public static BleManager GetInstance()
@@ -122,14 +125,12 @@ namespace Insurance_app.Communications
                 var x = Converter.StringToFloat(split[0]);
                 var y = Converter.StringToFloat(split[1]);
                 var z = Converter.StringToFloat(split[2]);
-                
-                    InfferEvent?.Invoke(this,new RawDataArgs()
-                    {
-                        x = x,y = y,z = z,
-                        Type = 1,
-                    });
-                
-                
+                InfferEvent.Invoke(this,EventArgs.Empty);
+                Task.Run(async () =>
+                {
+                    await rewardManager.addNewMovDate(x, y, z,App.RealmApp.CurrentUser);
+                });
+
             }
             catch (Exception e)
             {

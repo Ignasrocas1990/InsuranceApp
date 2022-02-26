@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Insurance_app.Models;
 using Insurance_app.Service;
 using Realms.Sync;
 
@@ -11,11 +12,6 @@ namespace Insurance_app.Logic
         {
         }
 
-        public async Task CreateReward(User user)
-        {
-           await RealmDb.GetInstance().AddNewReward(user);
-        }
-
         public void Dispose()
         {
             RealmDb.GetInstance().Dispose();
@@ -24,6 +20,16 @@ namespace Insurance_app.Logic
         public async Task<float> getTotalRewards(User user,string id)
         {
             return await RealmDb.GetInstance().GetTotalRewards(user,id);
+        }
+
+        public Task addNewMovDate(float x, float y, float z,User user)
+        {
+            return Task.FromResult(RealmDb.GetInstance().AddMovData(x, y, z, user));
+        }
+
+        public async Task<Reward> FindReward(User user)
+        {
+         return await RealmDb.GetInstance().FindReward(user);
         }
     }
 }

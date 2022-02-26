@@ -26,13 +26,6 @@ namespace Insurance_app.Models
 
         public bool? DelFlag { get; set; } = false;
         [MapTo("_partition")] public string Partition { get; set; } = "CustomerPartition";
-
-        public async Task<Reward> CreateReward()
-        {
-           return await RealmDb.GetInstance().AddNewReward(App.RealmApp.CurrentUser);
-        }
-
-
     }
     public class Address  : EmbeddedObject
     {

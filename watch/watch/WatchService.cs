@@ -56,47 +56,45 @@ namespace watch
             
 
             //Server communications
-            if (bleServer.BltCallback != null)
+            if (bleServer.BltCallback == null) return;
+
+            bleServer.BltCallback.StateHandler += (s, e) =>
             {
-                bleServer.BltCallback.StateHandler += (s, e) =>
+                switch (e.State)
                 {
-                    if (e.State.Equals("Disconnected"))
-                    {
+                    case "Disconnected":
                         timer.Start();
-                    }
-                    else if (e.State.Equals("Connected"))
-                    {
+                        sensorManager.sendDataCounter = -1;
+                        break;
+                    case "Connected":
                         timer.Stop();
                         curDisconnectCounter = 0;
-                        
-                        //sensorManager.sendDataCounter = 0;//TODO remove from here --------------------------------
-                        //sensorManager.SendTestData();//TODO remove from here -------------------------------------
-                    }
-                    sensorManager.ToggleSensors(e.State);
-                    Log.Verbose(TAG, $" is monitoring ? : {sensorManager.isMonitoring()}");
-                    
-                };
-                //check if reading but not sending.(in-case the android killed the process)
-                bleServer.BltCallback.ReadHandler += (s, e) =>
+
+                        sensorManager.sendDataCounter = 0; //TODO remove from here --------------------------------
+                        sensorManager.SendTestData(); //TODO remove from here -------------------------------------
+                        break;
+                }
+
+                sensorManager.ToggleSensors(e.State);
+                Log.Verbose(TAG, $" is monitoring ? : {sensorManager.isMonitoring()}");
+            };
+            //check if reading but not sending.(in-case the android killed the process)
+            bleServer.BltCallback.ReadHandler += (s, e) =>
+            {
+                try
                 {
-                    try
-                    {
-                        timer.Stop();
-                        curDisconnectCounter = 0;
-                        
-                        if (!sensorManager.isMonitoring())
-                        {
-                            sensorManager.ToggleSensors("Connected");
-                        }
-                    }
-                    catch (Exception exception)
-                    {
-                        Console.WriteLine(exception);
-                    }
-                };
-            }
-            
+                    timer.Stop();
+                    curDisconnectCounter = 0;
+
+                    if (!sensorManager.isMonitoring()) sensorManager.ToggleSensors("Connected");
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception);
+                }
+            };
         }
+
         private void DisconnectedCheck(object sender, ElapsedEventArgs e)
         {
             
@@ -128,9 +126,6 @@ namespace watch
         }
         private void CreateNotificationChannel() {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O) {
-                // Notification channels are new in API 26 (and not a part of the
-                // support library). There is no need to create a notification
-                // channel on older versions of Android.
                 return;
             }
 

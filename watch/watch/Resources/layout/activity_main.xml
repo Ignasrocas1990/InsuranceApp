@@ -5,23 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/box_inset_layout_padding"
-    
     tools:deviceIds="wear">
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/pauseBtnAcc"
+            android:id="@+id/closeApp"
+            android:gravity="center"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="other"/>
-        <Button
-            android:id="@+id/change"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="chara change"/>
+            android:text="Stop monitoring"/>
 
     </LinearLayout>
 

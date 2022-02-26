@@ -12,9 +12,14 @@
            x:Class="Insurance_app.Pages.Popups.ExistingClaimsPopup">
     <!--Size = width,height -->
 
-    <ListView  CachingStrategy="RecycleElement" ItemsSource="{Binding Claims}" Header="Previous Claims" 
+    <ListView  CachingStrategy="RecycleElement" ItemsSource="{Binding Claims}"
                Style="{StaticResource ListView}">
-        <ListView.ItemTemplate>
+            <ListView.Header>
+                <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Padding="5">
+                    <Label Text="Previous Claims" FontSize="Title"  />
+                </StackLayout>
+            </ListView.Header>
+            <ListView.ItemTemplate>
             <DataTemplate x:DataType="models1:Claim">
                 <ViewCell>
                     <Grid Padding="10">

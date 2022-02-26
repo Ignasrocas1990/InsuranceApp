@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Insurance_app.Models;
+using Insurance_app.SupportClasses;
 using Realms;
 using Realms.Exceptions;
 using Realms.Sync;
@@ -135,35 +136,50 @@ namespace Insurance_app.Service
         }
         
 // --------------------------- Mov Data  methods --------------------------------     
-        public async Task AddMovData(ConcurrentQueue<MovData> movList,User user)
+        public async Task AddMovData(float x,float y,float z,User user)
         {
             try
             {
-                await GetRealm(partition,user);
-                if (realm is null)
+               var  otherRealm =  await GetOtherRealm(partition,user);
+                if (otherRealm is null)
                 {
-                    Console.WriteLine("AddMovData2 realm is null");
+                    Console.WriteLine("AddMovData realm is null");
                     return;
                 }
-                realm.Write(() =>
+                otherRealm.Write(() =>
                 {
-                    var customer = realm.Find<Customer>(user.Id);
+                    var customer = otherRealm.Find<Customer>(user.Id);
                     if (customer is null) throw new Exception("AddMvData ::: Customer is null");
                     var currentDate = DateTimeOffset.Now;
-                    int rewardCount = customer.Reward.Count(r => r.FinDate != null 
-                                                       && r.FinDate.Value.Month == currentDate.Month
-                                                       && r.FinDate.Value.Year == currentDate.Year);
-                    if (rewardCount >= 25)
-                    {
-                        realm.Add(movList);
-                    }
+                    var rewardCount = customer.Reward.Count(r => r.FinDate != null 
+                                                                 && r.FinDate.Value.Month == currentDate.Month
+                                                                 && r.FinDate.Value.Year == currentDate.Year);
                     
-                    var reward = customer.Reward.FirstOrDefault(r => r.DelFlag == false && r.FinDate == null);
-
-                    if (reward == null) throw new Exception("AddMvData ::: reward is null");
-                    foreach (var mov in movList)
+                    var currentReward = customer.Reward.First(r => r.FinDate == null);
+                    if (currentReward != null && currentReward.MovData.Count <= StaticOpt.StepNeeded)
                     {
-                        reward.MovData.Add(mov);
+                        currentReward.MovData.Add(otherRealm.Add(new MovData() {AccData = new Acc()
+                            {X = x, Y = y, Z = z}, Type = "step"}));
+                    }
+                    else if(rewardCount < 25)
+                    {
+                        
+                        var cost = customer.Policy.Where(p => p.DelFlag == false)
+                            .OrderByDescending(p => p.ExpiryDate).First().Price / 100;
+                        
+                        var reward = otherRealm.Add(new Reward()
+                        {
+                            Cost = cost
+                        });
+                        var movData = otherRealm.Add(new MovData() {AccData = new Acc()
+                            {X = x, Y = y, Z = z}, Type = "step"});
+                        reward.MovData.Add(movData);
+                        
+                    }
+                    else
+                    {
+                        otherRealm.Add(new MovData() {AccData = new Acc()
+                            {X = x, Y = y, Z = z}, Type = "step"});
                     }
                 });
             }
@@ -205,49 +221,42 @@ namespace Insurance_app.Service
                 Console.WriteLine(e);
                 return null;
             }
-            
         }
-
-
-
 //------------------------------------------------   reward methods ----------------------
-        public async Task<Reward> AddNewReward(User user)
+        public async Task<Reward> FindReward(User user)
         {
             Reward reward = null;
             try
             {
                 await GetRealm(partition,user);
                 if (realm is null)
-                    throw new Exception("real, AddNewReward, null");
+                    throw new Exception(" FindReward :::::::::::::::::::::::::; real is null");
                 realm.Write(()=>
                 {
-                    var customer = realm.All<Customer>().FirstOrDefault(c => c.Id == user.Id && c.DelFlag == false);
-                    if (customer == null) throw new Exception("AddNewReward ============== customer null");
+                    var customer = realm.Find<Customer>(user.Id);
+                    reward = customer.Reward.FirstOrDefault(r => r.FinDate == null);
+                    
+                    //find reward count this month (25 = 25%)
                     var currentDate = DateTimeOffset.Now;
-                    var currentMonthRewards = customer.Reward.Count(r => r.FinDate != null && r.DelFlag==null
+                    var rewardCount = customer.Reward.Count(r => r.FinDate != null
                                                                  && r.FinDate.Value.Month == currentDate.Month
                                                                  && r.FinDate.Value.Year == currentDate.Year);
-                    if (currentMonthRewards >= 25) return;
                     
-                    var policies = customer.Policy
-                        .Where(p=> p.DelFlag == false).ToList();
-                    var policy = policies.OrderByDescending(z => z.ExpiryDate).First();
-                    var cost = policy.Price / 100;
-                    var newReward = realm.Add(new Reward()
+                    if (reward == null && rewardCount <25)
                     {
-                        Cost = cost
-                    });
-                   
-                    customer.Reward.Add(newReward);
-                    reward = realm.Find<Reward>(newReward.Id);
+                        var cost = customer.Policy.Where(p => p.DelFlag == false)
+                            .OrderByDescending(p => p.ExpiryDate).First().Price / 100;
+                      reward = realm.Add(new Reward() {Cost = cost});
+                      customer.Reward.Add(reward);
+                    }
                 });
-                return reward;
+
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                return null;
             }
+            return reward;
         }
         public async Task<float> GetTotalRewards(User user,string id)
         {
@@ -258,14 +267,13 @@ namespace Insurance_app.Service
                 if (realm is null) throw new Exception("getTotalRewards realm null my exception");
                 realm.Write(() =>
                 {
-                   var customer =  realm.Find<Customer>(id);
-                   if (customer is null) throw new Exception("GetTotalRewards ::::::: customer is null");
-                   var rewards = customer.Reward.Where(r => r.FinDate != null && r.DelFlag == false).ToList();
-                   totalEarnings += rewards.Where(r => r.Cost != null).Sum(r =>
-                    {
-                        if (r.Cost != null) return (float) r.Cost;
-                        return 0;
-                    });
+                    totalEarnings = realm.Find<Customer>(id).
+                       Reward.Where(r => r.FinDate != null && r.DelFlag == false && r.Cost != null)
+                       .Sum(r =>
+                        {
+                            if (r.Cost != null) return (float) r.Cost;
+                            return 0;
+                        });
                 });
                 return totalEarnings;
             }
