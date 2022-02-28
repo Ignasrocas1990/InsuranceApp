@@ -21,7 +21,7 @@ namespace watch.Services
         private const string TAG = "mono-stdout";
         
         const int ServiceRunningNotificationId = 10000;
-        private const int MaxTimeAfterSwitchOff = 1200;//20 min before dispose;
+        private const int MaxTimeAfterSwitchOff = 600;//10 min before dispose;
         const int MaxRunTime = 14400;// 4 hours max run time
         private const int ElapsedTime = 1000;//1sec
         
@@ -114,12 +114,20 @@ namespace watch.Services
             // sensor data transfer to BLE server
             sensorManager.AccEventHandler += (s, e) =>
             {
-                bleServer.SensorData.Enqueue(e.Data);
-                dataToBeSaved.Add(e.Data);
-                if (dataToBeSaved.Count >=5)
-                { 
-                    SaveData();
+                if (stopSavingData)
+                {
+                    bleServer.SensorData.Enqueue(e.Data);
+                    dataToBeSaved.Add(e.Data);
+                    if (dataToBeSaved.Count >=5)
+                    { 
+                        SaveData();
+                    }
                 }
+                else
+                {
+                    sensorManager.sendDataCounter = -1;
+                }
+                
             };
             RealmDb.GetInstance().LoggedInCompleted += (s,e) =>
             {
@@ -148,8 +156,17 @@ namespace watch.Services
             {
                 if (e.Value == null) return;
                 String detailsString = Encoding.Default.GetString(e.Value);
+                if (detailsString.Equals("Stop"))
+                {
+                    stopSavingData = true;
+                    sensorManager.ToggleSensors("Disconnected");
+                    switchTimer.Start();
+                }
+                else
+                {
+                    LogIn(detailsString);
+                }
                 Log.Verbose(TAG,$"received write details");
-                LogIn(detailsString);
             };
 
             bleServer.BltCallback.StateHandler += (s, e) =>

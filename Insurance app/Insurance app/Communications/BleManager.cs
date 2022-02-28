@@ -36,6 +36,7 @@ namespace Insurance_app.Communications
         private bool firstSet=true;
         public string email;
         public string pass;
+        private bool stop = false;
 
         
         private BleManager()
@@ -160,8 +161,16 @@ namespace Insurance_app.Communications
                     return;
                 }
                 if (firstSet)
+                { 
+                    firstSet = false;
+                   await WriteToCharacteristic($"{App.RealmApp.CurrentUser.Id}|{email}|{pass}");
+                   await UpdateCustomerSwitch(true);
+
+                }
+                if (stop)
                 {
-                   await WriteToCharacteristic();
+                    await WriteToCharacteristic("stop");
+                    return;
                 }
                 await ReadAsync();
                 
@@ -173,14 +182,13 @@ namespace Insurance_app.Communications
             }
         }
 
-        private async Task WriteToCharacteristic()
+        private async Task WriteToCharacteristic(string message)
         {
             if (chara.CanWrite)
             {
                 try
                 {
-                    await userManager.UpdateCustomerSwitch(App.RealmApp.CurrentUser, true);
-                    await chara.WriteAsync(Encoding.Default.GetBytes($"{App.RealmApp.CurrentUser.Id}|{email}|{pass}"));
+                    await chara.WriteAsync(Encoding.Default.GetBytes(message));
                     firstSet = false;
                     
                 }
@@ -189,6 +197,19 @@ namespace Insurance_app.Communications
                     Console.WriteLine(e);
                 }
                 
+            }
+        }
+
+        private async Task UpdateCustomerSwitch(bool state)
+        {
+            try
+            {
+                await userManager.UpdateCustomerSwitch(App.RealmApp.CurrentUser, state);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
 
@@ -271,11 +292,26 @@ namespace Insurance_app.Communications
                     ConnectToDevice();
                     return isMonitoring;
                 case true:
-                    isMonitoring = false;
-                    chara = null;
-                    userManager.UpdateCustomerSwitch(App.RealmApp.CurrentUser, false);
+                    StopData();
                     return false;
             }
+        }
+
+        private Task StopData()
+        {
+            try
+            {
+                isMonitoring = false;
+                stop = true;
+                ConnectToDevice();
+                UpdateCustomerSwitch(false);
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return Task.CompletedTask;
         }
     }
     public class RawDataArgs : EventArgs
