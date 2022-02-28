@@ -44,25 +44,27 @@ namespace watch.Services
             }
             return _db;
         }
-        public async Task<bool> LogIn(string email, string password)
+        public async Task LogIn(string email, string password)
         {
             try
             {
-                if (RealmApp.CurrentUser != null) return false;
-                var user =  await RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
-                if (user is null)
+                if (RealmApp.CurrentUser == null)
                 {
-                    Log.Verbose(TAG, "fail to log in realm");
-                    return false;
+                    var user =  await RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
+                    if (user is null)
+                    {
+                        Log.Verbose(TAG, "fail to log in realm");
+                        return;
+                    }
                 }
-                Log.Verbose(TAG, $"user logged in : {email}");
-                LoggedInCompleted?.Invoke(this, EventArgs.Empty);
-                return true;
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    LoggedInCompleted.Invoke(this, EventArgs.Empty);
+                });
             }
             catch (Exception e)
             {
                 Log.Verbose(TAG,$"LogIn,realm error : \n {e.Message}");
-                return false;
             }
         }
          public async Task AddMovData(List<string> dataToBeSaved)
@@ -84,7 +86,7 @@ namespace watch.Services
                                     {AccData = new Acc() 
                                         {X = toFloat(sd[0]), Y = toFloat(sd[1]), Z = toFloat(sd[2])}, 
                                         Type = "step"}).ToList();
-                    Log.Verbose(TAG,$"data date stamp is : {movDataList.First().DateTimeStamp}");//TODO Remove
+                    Log.Verbose(TAG,$"data date stamp is : {movDataList.First().DateTimeStamp}");//TODO Remove ===========
                     var customer = otherRealm.Find<Customer>(RealmApp.CurrentUser.Id);
                     if (customer is null) throw new Exception("AddMvData ::: Customer is null");
                     if (customer.DataSendSwitch is false)
@@ -100,7 +102,8 @@ namespace watch.Services
 
                     var currentReward = customer.Reward.FirstOrDefault(r => r.FinDate == null && 
                                                                             r.DelFlag == false);
-                    if (currentReward != null && currentReward.MovData.Count <= 9994)
+                    
+                    if (currentReward != null && currentReward.MovData.Count <= 10000)
                     {
                         foreach (var d in movDataList)
                             currentReward.MovData.Add(d);
@@ -121,6 +124,7 @@ namespace watch.Services
                         });
                         foreach (var d in movDataList)
                             reward.MovData.Add(d);
+                        customer.Reward.Add(reward);
                     }
                     Log.Verbose(TAG, "Saved Data to Realm");
                 });
@@ -140,7 +144,19 @@ namespace watch.Services
                  if (otherRealm is null) throw new Exception("AddMvData ::: Realm is null");
                  otherRealm.Write(() =>
                  {
-                     switchOn = otherRealm.Find<Customer>(RealmApp.CurrentUser.Id).DataSendSwitch;
+                   var customer =  otherRealm.Find<Customer>(RealmApp.CurrentUser.Id);
+                   if (customer==null)
+                   {
+                       throw new Exception("No customer found = Switch is false");
+                   }
+                   var currentPolicy = customer?.Policy
+                       ?.Where(p=> p.DelFlag == false && p.ExpiryDate > DateTimeOffset.Now)
+                       .OrderByDescending(z => z.ExpiryDate).FirstOrDefault();
+                   if (currentPolicy is null)
+                   {
+                       throw new Exception("No policy found (expired or not created) = Switch is false");
+                   }
+                     switchOn = customer.DataSendSwitch;
                  });
              }
              catch (Exception e)

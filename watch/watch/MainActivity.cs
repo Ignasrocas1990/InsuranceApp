@@ -35,7 +35,11 @@ namespace watch
             StartForegroundService(intent);
             Instance = this;
         }
-        public static void Fin() => Instance.Finish();
+
+        public static void Fin()
+        {
+            Instance.Finish();
+        } 
 
 
         // Android overridden methods ---------------------------------------------------------------------

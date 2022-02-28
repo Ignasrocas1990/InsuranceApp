@@ -264,8 +264,10 @@ namespace Insurance_app.Service
                             .OrderByDescending(p => p.ExpiryDate).First().Price / 100;
                       reward = realm.Add(new Reward() {Cost = cost});
                       customer.Reward.Add(reward);
+                      
                     }
                 });
+                
 
             }
             catch (Exception e)
@@ -285,13 +287,12 @@ namespace Insurance_app.Service
                 realm.Write(() =>
                 {
                     var c = realm.Find<Customer>(id);
-                    totalEarnings = c.
-                       Reward.Where(r => r.FinDate != null && r.DelFlag == false && r.Cost != null)
-                       .Sum(r =>
-                        {
-                            if (r.Cost != null) return (float) r.Cost;
-                            return 0;
-                        });
+                    var sum = (from r in 
+                        c.Reward where r.FinDate != null && r.DelFlag == false && 
+                                       r.Cost != null select r.Cost).Aggregate<float?, 
+                        float?>(0, (current, f) => current + f.Value);
+
+                    if (sum != null) totalEarnings = (float) sum;
                     rewardsAndSwitch = new Tuple<bool, float>(c.DataSendSwitch,totalEarnings);
                     
                 });

@@ -21,8 +21,8 @@
 
     <StackLayout>
         <StackLayout Orientation="Horizontal" Padding="20" HorizontalOptions="Center" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}">
-            <Switch x:Name="Switch" ThumbColor="{StaticResource StrongColor}" Scale="1.5" Toggled="Switch_OnToggled"
-                    IsToggled="{Binding ToggleStateDisplay}" IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}" />
+            <Switch ThumbColor="{StaticResource StrongColor}" Scale="1.5" Toggled="Switch_OnToggled"
+                    IsToggled="{Binding ToggleStateDisplay,Mode=OneWay}" IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}" />
             <Label  Text="Step Tracker" Style="{StaticResource NormalLabel}"/>
         </StackLayout>
         <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}"

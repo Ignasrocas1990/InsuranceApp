@@ -24,7 +24,6 @@ namespace Insurance_app.ViewModels
     public class HomeViewModel : ObservableObject,IDisposable
     {
 
-        private bool collectingData;
         private readonly BleManager bleManager;
         private UserManager userManager;
         private RewardManager rewardManager;
@@ -34,8 +33,10 @@ namespace Insurance_app.ViewModels
         private double stepsDisplayValue = 0;
         private double currentProgressBars = 0.0;
         private double max = 0 ;
-        private bool FirstSetup = true;
+        private bool firstSetup = true;
         private int counter = 0;
+        private double startUpSteps;
+        private Reward reward;
 
         public HomeViewModel()
         {
@@ -49,7 +50,8 @@ namespace Insurance_app.ViewModels
             try
             {
                 SetUpWaitDisplay = true;
-                var reward = await rewardManager.FindReward(App.RealmApp.CurrentUser);
+                reward = await rewardManager.FindReward(App.RealmApp.CurrentUser);
+                
                 if (reward is null)
                 {
                     ProgressBarDisplay = StaticOpt.StepNeeded;
@@ -57,21 +59,17 @@ namespace Insurance_app.ViewModels
                 }
                 else
                 {
-                    if (FirstSetup)
-                    {
-                        var stepsDouble = Convert.ToDouble(reward.MovData.Count());
-                   
-                        //Random rand = new Random();
-                        //movLen = rand.NextDouble() * 10000; //TODO uncomment to show
-                        SetUpView(stepsDouble);
-                    }
+                    //Random rand = new Random();
+                    //movLen = rand.NextDouble() * 10000; //TODO uncomment to show
+                    ResetView();
+                    startUpSteps = Convert.ToDouble(reward.MovData.Count);
+                    SetUpView(startUpSteps);
                     
                 }
                 await SetUpEarningsDisplay();
                 bleManager.ToggleSwitch += (o, e) =>
                 {
                     ToggleStateDisplay = false;
-                    collectingData = false;
                 };
             }
             catch (Exception e)
@@ -79,7 +77,7 @@ namespace Insurance_app.ViewModels
                 Console.WriteLine(e);
             }
             SetUpWaitDisplay = false;
-            FirstSetup = false;
+            firstSetup = false;
         }
 
         private async Task SetUpEarningsDisplay()
@@ -89,43 +87,47 @@ namespace Insurance_app.ViewModels
                if (data is null) return;
                TotalEarnedDisplay = $"{data.Item2}";
                Console.WriteLine("ble manager SetUpEarningsDisplay");
-               if (FirstSetup)
+               if (firstSetup)
                {
                    ToggleStateDisplay = data.Item1;
+                   if (data.Item1)
+                   {
+                       await StartDataReceive(true);
+                   }
                }
-              
-
         }
-        
         private async void InferredRawData(object s, EventArgs eventArgs)
         {
             await Step();
         }
-        
-        public async Task StartDataReceive()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="state">Switch on the data receive (true=on/false=off)</param>
+        public async Task StartDataReceive(bool state)
         {
-            counter++;
-            if (counter % 2 != 1) return;
+            if (!firstSetup)
+            {
+                counter++;
+                if (counter % 2 != 1) return;
+            }
             CircularWaitDisplay = true;
-            var switchState = collectingData;
-            switch (collectingData)
-            {
-                case false:
-                    collectingData = await bleManager.ToggleMonitoring();
-                    break;
-                case true:
-                    collectingData = await bleManager.ToggleMonitoring();
-                    Console.WriteLine("stopped to receive data");
-                    break;
-            }
 
-            if (collectingData != switchState)
+            if (state is false && toggleState)
             {
-                ToggleStateDisplay = collectingData;
+               await userManager.UpdateCustomerSwitch(App.RealmApp.CurrentUser, false);
             }
+            
+            state = await bleManager.ToggleMonitoring(state);
+            ToggleStateDisplay = state;
             CircularWaitDisplay = false;
+        }
 
-           
+        private void ResetView()
+        {
+            ProgressBarDisplay = StaticOpt.StepNeeded;
+            StepsDisplayLabel = 0;
+            stepsDisplayValue = 0;
         }
         private void SetUpView(double steps)
         {
@@ -133,24 +135,16 @@ namespace Insurance_app.ViewModels
             StepsDisplayLabel = steps;
             stepsDisplayValue = steps;
         }
-// reset 
-        private void ResetRewardDisplay()
-        {
-            ProgressBarDisplay = StaticOpt.StepNeeded;
-            stepsDisplayValue = 0;
-            StepsDisplayLabel = 0;
-
-        }
+        
         private async Task Step()
         {
             ProgressBarDisplay--;
             StepsDisplayLabel=stepsDisplayValue+1;
-            if (ProgressBarDisplay < max)
+            if (ProgressBarDisplay <= max)
             {
                 CircularWaitDisplay = true;
                 ProgressBarDisplay = StaticOpt.StepNeeded;
                 StepsDisplayLabel = 0;
-                Console.WriteLine("Step toggled");
                 await SetUpEarningsDisplay();
                 CircularWaitDisplay = false;
 

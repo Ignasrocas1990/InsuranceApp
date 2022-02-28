@@ -33,12 +33,14 @@ namespace Insurance_app.Communications
         private bool isMonitoring = false;
         private static BleManager bleManager =null;
         private UserManager userManager;
-        private bool firstSet=true;
+        private bool start=true;
         public string email;
         public string pass;
-        private bool stop = false;
+        private bool stop;
+        private bool previousState;
+        private bool firstSetup;
 
-        
+
         private BleManager()
         {
             ble = new Ble();
@@ -99,7 +101,7 @@ namespace Insurance_app.Communications
                 }
 
                 //Console.WriteLine($"Read complete, values are : > {str}");
-                //Infer(str);
+                Infer(str);
                 InfferEvent.Invoke(this,EventArgs.Empty);
                Task task = Task.Run(ReadAsync);
                
@@ -148,6 +150,7 @@ namespace Insurance_app.Communications
                  service = await device.GetServiceAsync(ble.SERVER_GUID);
                 if (service is null)
                 {
+                    Console.WriteLine("service is null ");
                     isMonitoring = false;
                     MainThread.BeginInvokeOnMainThread(MessageUser);
                     return;
@@ -156,22 +159,26 @@ namespace Insurance_app.Communications
                 chara = await service.GetCharacteristicAsync(ble.SERVER_GUID);
                 if (chara is null)
                 {
+                    Console.WriteLine("characteristic is null ");
                     isMonitoring = false;
                     MainThread.BeginInvokeOnMainThread(MessageUser);
                     return;
                 }
-                if (firstSet)
-                { 
-                    firstSet = false;
-                   await WriteToCharacteristic($"{App.RealmApp.CurrentUser.Id}|{email}|{pass}");
-                   await UpdateCustomerSwitch(true);
-
-                }
-                if (stop)
+                if (start)
                 {
-                    await WriteToCharacteristic("stop");
+                    isMonitoring = true;
+                    start = false;
+                    await WriteToCharacteristic($"{App.RealmApp.CurrentUser.Id}|{email}|{pass}");
+                   await UpdateCustomerSwitch(true);
+                }
+                else if (stop)
+                {
+                    stop = false;
+                    isMonitoring = false;
+                    await WriteToCharacteristic("Stop");
                     return;
                 }
+                Console.WriteLine("start Reading data from ble ");
                 await ReadAsync();
                 
             }
@@ -189,8 +196,6 @@ namespace Insurance_app.Communications
                 try
                 {
                     await chara.WriteAsync(Encoding.Default.GetBytes(message));
-                    firstSet = false;
-                    
                 }
                 catch (Exception e)
                 {
@@ -239,7 +244,7 @@ namespace Insurance_app.Communications
                 }
                 catch
                 {
-                    if (firstSet)
+                    if (start)
                     {
                         isMonitoring = false;
                         MainThread.BeginInvokeOnMainThread(MessageUser);
@@ -261,57 +266,40 @@ namespace Insurance_app.Communications
 
         private async void Action1()
         {
+            ToggleSwitch.Invoke(this,EventArgs.Empty);
             await Shell.Current.DisplayAlert("Error", "Type of Bluetooth not available and app needs your permissions", "close");
         }
 
         private async void NoBluetooth()
         {
+            ToggleSwitch.Invoke(this,EventArgs.Empty);
             await Shell.Current.DisplayAlert("Error", "Bluetooth is off", "close");
-
         }
 
-        public async Task<bool> ToggleMonitoring()
+        public async Task<bool> ToggleMonitoring(bool state)
         {
-            if (!bleState && firstSet)
+            switch (state)
             {
-                if (MainThread.IsMainThread)
-                {
-                    NoBluetooth();
-                }
-                else
-                {
-                    MainThread.BeginInvokeOnMainThread(NoBluetooth);
-                }
+                case true:
+                    start = true;
+                    stop = false;
+                    break;
+                
+                case false:
+                    stop = true;
+                    start = false;
+                    break;
+            }
+            if (!bleState)
+            {
+                MainThread.BeginInvokeOnMainThread(NoBluetooth);
                 isMonitoring = false;
                 return false;
             }
-            switch (isMonitoring)
-            {
-                case false:
-                    isMonitoring = true;
-                    ConnectToDevice();
-                    return isMonitoring;
-                case true:
-                    StopData();
-                    return false;
-            }
-        }
-
-        private Task StopData()
-        {
-            try
-            {
-                isMonitoring = false;
-                stop = true;
-                ConnectToDevice();
-                UpdateCustomerSwitch(false);
-                
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            return Task.CompletedTask;
+            ConnectToDevice();
+            
+            return state;
+            
         }
     }
     public class RawDataArgs : EventArgs

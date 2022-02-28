@@ -31,5 +31,6 @@ namespace Insurance_app.Logic
         {
          return await RealmDb.GetInstance().FindReward(user);
         }
+       
     }
 }
