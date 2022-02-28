@@ -134,18 +134,33 @@ namespace Insurance_app.Service
 
             return dob;
         }
+        public async Task UpdateCustomerSwitch(User user, bool switchState)
+        {
+            try
+            {
+                var  otherRealm =  await GetOtherRealm(partition,user);
+                if (otherRealm is null)throw new Exception("UpdateCustomerSwitch ::: realm is null");
+                otherRealm.Write(() =>
+                {
+                    var c =otherRealm.Find<Customer>(user.Id);
+                    c.DataSendSwitch= switchState;
+                });
+                Console.WriteLine($"Updated Switch to {switchState} ");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("UpdateCustomerSwitch :: "+e);
+            }
+        }
         
 // --------------------------- Mov Data  methods --------------------------------     
         public async Task AddMovData(float x,float y,float z,User user)
         {
             try
             {
-               var  otherRealm =  await GetOtherRealm(partition,user);
-                if (otherRealm is null)
-                {
-                    Console.WriteLine("AddMovData realm is null");
-                    return;
-                }
+                var  otherRealm =  await GetOtherRealm(partition,user);
+                if (otherRealm is null)throw new Exception("AddMovData ::: realm is null");
+
                 otherRealm.Write(() =>
                 {
                     var customer = otherRealm.Find<Customer>(user.Id);
@@ -201,9 +216,10 @@ namespace Insurance_app.Service
                 if (realm is null) throw new Exception("GetWeeksMovData ::::::: real null");
                 realm.Write(() =>
                 {
-                    int count = 0;
+                   
                     for (int i = 0; i < 7; i++)
                     {
+                        int count = 0;
                         var prev1 = prev;
                         var now1 = now;
                         count = realm
@@ -258,8 +274,9 @@ namespace Insurance_app.Service
             }
             return reward;
         }
-        public async Task<float> GetTotalRewards(User user,string id)
+        public async Task<Tuple<bool, float>> GetTotalRewards(User user,string id)
         {
+            Tuple<bool, float> rewardsAndSwitch = null;
             float totalEarnings = 0;
             try
             {
@@ -267,21 +284,24 @@ namespace Insurance_app.Service
                 if (realm is null) throw new Exception("getTotalRewards realm null my exception");
                 realm.Write(() =>
                 {
-                    totalEarnings = realm.Find<Customer>(id).
+                    var c = realm.Find<Customer>(id);
+                    totalEarnings = c.
                        Reward.Where(r => r.FinDate != null && r.DelFlag == false && r.Cost != null)
                        .Sum(r =>
                         {
                             if (r.Cost != null) return (float) r.Cost;
                             return 0;
                         });
+                    rewardsAndSwitch = new Tuple<bool, float>(c.DataSendSwitch,totalEarnings);
+                    
                 });
-                return totalEarnings;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                return totalEarnings;
             }
+            return rewardsAndSwitch;
+
         }
 
 // ---------------------------- Claim methods --------------------------
@@ -370,15 +390,13 @@ namespace Insurance_app.Service
 /// </summary>
 /// <param name="customerId">customer id </param>
 /// <param name="user">Customer or client</param>
-/// <returns>Dictionary with current policy and 0/1 value which tells user
-/// if the policy can be updated. 1=can/0=cant (be updated)</returns>
+/// <returns>Tuple with current policy & can be updated or not.
+/// if the policy can be updated. true/false=cant </returns>
 /// <exception cref="Exception"></exception>
-public async Task<Dictionary<int,Policy>> FindPolicy(string customerId,User user)
+public async Task<Tuple<bool,Policy>> FindPolicy(string customerId,User user)
         {
-         
-
-           //Policy currentPolicy = new Policy();
-           Dictionary<int, Policy> dictionaryP = new Dictionary<int, Policy>();
+            //Policy currentPolicy = new Policy();
+           Tuple<bool, Policy> tuplePolicy = null;
            try
            {
                await GetRealm(partition,user);
@@ -394,18 +412,18 @@ public async Task<Dictionary<int,Policy>> FindPolicy(string customerId,User user
                            ?.Where(p=> p.DelFlag == false)
                            .OrderByDescending(z => z.ExpiryDate).First();
                   
-                  if (latestUpdatedPolicy is null) dictionaryP.Add(1, currentPolicy);
+                  if (latestUpdatedPolicy is null) tuplePolicy= new Tuple<bool, Policy>(true, currentPolicy);
                   else if (latestUpdatedPolicy.ExpiryDate.Value.CompareTo((DateTimeOffset) currentPolicy.ExpiryDate) == 0)
                   {
-                      dictionaryP.Add(0,latestUpdatedPolicy);
+                      tuplePolicy= new Tuple<bool, Policy>(false,latestUpdatedPolicy);
                   }
                   else if (latestUpdatedPolicy.UpdateDate?.AddMonths(2) < currentPolicy.ExpiryDate)
                   {
-                      dictionaryP.Add(1,currentPolicy);
+                      tuplePolicy= new Tuple<bool, Policy>(true,currentPolicy);
                   }
                   else
                   {
-                      dictionaryP.Add(0,latestUpdatedPolicy);
+                      tuplePolicy= new Tuple<bool, Policy>(false,latestUpdatedPolicy);
                   }
                   
                });
@@ -414,7 +432,7 @@ public async Task<Dictionary<int,Policy>> FindPolicy(string customerId,User user
            {
                Console.WriteLine(e);
            }
-           return dictionaryP;
+           return tuplePolicy;
         }
         public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user)
         {
@@ -699,5 +717,7 @@ public async Task<Dictionary<int,Policy>> FindPolicy(string customerId,User user
                 Console.WriteLine(e);
             }
         }
+
+        
     }
 }

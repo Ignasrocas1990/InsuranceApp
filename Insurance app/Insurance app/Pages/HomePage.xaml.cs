@@ -21,17 +21,15 @@ namespace Insurance_app.Pages
             //BindingContext = (HomeViewModel) ShellViewModel.GetInstance()
               //  .GetViewModel(Converter.HomeViewModel);
 
-             //BindingContext   = new HomeViewModel();
+             BindingContext   = new HomeViewModel();
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
             var vm = (HomeViewModel)BindingContext;
-             vm.SetUpWaitDisplay = true;
              await vm.Setup();
-             await vm.SetUpEarningsDisplay();
-             vm.SetUpWaitDisplay = false;
+           
 
         }
 

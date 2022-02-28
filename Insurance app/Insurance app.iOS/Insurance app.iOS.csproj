@@ -143,6 +143,9 @@
     <PackageReference Include="SkiaSharp.Views.Forms">
       <Version>2.88.0-preview.187</Version>
     </PackageReference>
+    <PackageReference Include="System.Runtime">
+      <Version>4.3.1</Version>
+    </PackageReference>
     <PackageReference Include="Xam.Plugins.Forms.ProgressRing">
       <Version>0.1.2</Version>
     </PackageReference>

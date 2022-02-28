@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Insurance_app.Service;
-using MongoDB.Bson;
 using Realms;
+using watch.Services;
 
-namespace Insurance_app.Models
+namespace watch.Models
 {
     public class Customer : RealmObject
     {
         public Customer() { }
-        [PrimaryKey] [MapTo("_id")] [Required] public string Id { get; set; } = App.RealmApp.CurrentUser.Id;
+        [PrimaryKey] [MapTo("_id")] [Required] public string Id { get; set; } = RealmDb.RealmApp.CurrentUser.Id;
         public Address Address { get; set; }
         
         public DateTimeOffset? Dob { get; set; }
@@ -21,8 +18,8 @@ namespace Insurance_app.Models
         public string Email { get; set; }
         
         public IList<Policy> Policy { get; }
-        public IList<Reward> Reward { get; }
-        public IList<Claim> Claim { get; }
+        public IList<watch.Models.Reward> Reward { get; }
+        public IList<watch.Models.Claim> Claim { get; }
 
         public bool DataSendSwitch { get; set; } = false;
         public bool? DelFlag { get; set; } = false;

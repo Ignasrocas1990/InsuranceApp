@@ -19,40 +19,36 @@ using Exception = System.Exception;
 
 namespace Insurance_app.ViewModels
 {
+    [QueryProperty(nameof(Email),"Email")]
+    [QueryProperty(nameof(Pass),"Pass")]
     public class HomeViewModel : ObservableObject,IDisposable
     {
 
         private bool collectingData;
-        private BleManager bleManager;
+        private readonly BleManager bleManager;
         private UserManager userManager;
         private RewardManager rewardManager;
-        private ConcurrentQueue<MovData> newMovDataList;
 
         //private Customer customer;
-
-
 
         private double stepsDisplayValue = 0;
         private double currentProgressBars = 0.0;
         private double max = 0 ;
-        private double min = StaticOpt.StepNeeded;
-        private bool wasOn;
         private bool FirstSetup = true;
         private int counter = 0;
 
         public HomeViewModel()
         {
             bleManager = BleManager.GetInstance();
-            bleManager.InfferEvent += InferredRawData;
+            bleManager.InfferEvent +=InferredRawData;
             rewardManager = new RewardManager();
+            userManager = new UserManager();
         }
-
-        
-        
         public async Task Setup()
         {
             try
             {
+                SetUpWaitDisplay = true;
                 var reward = await rewardManager.FindReward(App.RealmApp.CurrentUser);
                 if (reward is null)
                 {
@@ -61,63 +57,81 @@ namespace Insurance_app.ViewModels
                 }
                 else
                 {
-                    var stepsDouble = Convert.ToDouble(reward.MovData.Count());
+                    if (FirstSetup)
+                    {
+                        var stepsDouble = Convert.ToDouble(reward.MovData.Count());
                    
-                    //Random rand = new Random();
-                    //movLen = rand.NextDouble() * 10000; //TODO uncomment to show
-                    SetUpView(stepsDouble);
+                        //Random rand = new Random();
+                        //movLen = rand.NextDouble() * 10000; //TODO uncomment to show
+                        SetUpView(stepsDouble);
+                    }
+                    
                 }
                 await SetUpEarningsDisplay();
+                bleManager.ToggleSwitch += (o, e) =>
+                {
+                    ToggleStateDisplay = false;
+                    collectingData = false;
+                };
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
+            SetUpWaitDisplay = false;
+            FirstSetup = false;
         }
 
-        public async Task SetUpEarningsDisplay()
+        private async Task SetUpEarningsDisplay()
         {
-            TotalEarnedDisplay = $"{await rewardManager.getTotalRewards(App.RealmApp.CurrentUser,App.RealmApp.CurrentUser.Id)}";
+            
+               var data = await rewardManager.getTotalRewards(App.RealmApp.CurrentUser,App.RealmApp.CurrentUser.Id);
+               if (data is null) return;
+               TotalEarnedDisplay = $"{data.Item2}";
+               Console.WriteLine("ble manager SetUpEarningsDisplay");
+               if (FirstSetup)
+               {
+                   ToggleStateDisplay = data.Item1;
+               }
+              
+
         }
         
-        private void InferredRawData(object s, EventArgs eventArgs)
+        private async void InferredRawData(object s, EventArgs eventArgs)
         {
-            Step();
-           // AddMov(e.x, e.y,e.z, e.Type, e.TimeOffset);
+            await Step();
         }
         
         public async Task StartDataReceive()
         {
             counter++;
             if (counter % 2 != 1) return;
-            
-            if (!collectingData)
+            CircularWaitDisplay = true;
+            var switchState = collectingData;
+            switch (collectingData)
             {
-                try
-                {
+                case false:
                     collectingData = await bleManager.ToggleMonitoring();
-                    Console.WriteLine("started to receive data");
-                    //StepDetector.StepCounted += StepDisplayUpdate;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("something went wrong starting BLE");
-                }
-                
+                    break;
+                case true:
+                    collectingData = await bleManager.ToggleMonitoring();
+                    Console.WriteLine("stopped to receive data");
+                    break;
             }
-            else if(collectingData && bleManager !=null)
+
+            if (collectingData != switchState)
             {
-                collectingData = await bleManager.ToggleMonitoring();
-                Console.WriteLine("stopped to receive data");
+                ToggleStateDisplay = collectingData;
             }
-            ToggleStateDisplay = collectingData;
+            CircularWaitDisplay = false;
+
+           
         }
-
-
         private void SetUpView(double steps)
         {
             ProgressBarDisplay = StaticOpt.StepNeeded - steps;
             StepsDisplayLabel = steps;
+            stepsDisplayValue = steps;
         }
 // reset 
         private void ResetRewardDisplay()
@@ -127,14 +141,19 @@ namespace Insurance_app.ViewModels
             StepsDisplayLabel = 0;
 
         }
-        private void Step()
+        private async Task Step()
         {
             ProgressBarDisplay--;
             StepsDisplayLabel=stepsDisplayValue+1;
             if (ProgressBarDisplay < max)
             {
+                CircularWaitDisplay = true;
                 ProgressBarDisplay = StaticOpt.StepNeeded;
                 StepsDisplayLabel = 0;
+                Console.WriteLine("Step toggled");
+                await SetUpEarningsDisplay();
+                CircularWaitDisplay = false;
+
             }
         }
         private bool toggleState;
@@ -151,7 +170,6 @@ namespace Insurance_app.ViewModels
         }
         public double StepsDisplayLabel //the percentages label in the middle
         {
-            
             get => stepsDisplayValue / StaticOpt.StepNeeded * 100;
             set => SetProperty(ref  stepsDisplayValue, value);
         }
@@ -184,12 +202,28 @@ namespace Insurance_app.ViewModels
             set => SetProperty(ref maxReward, value);
         }
 
+        public string Email
+        {
+            set
+            {
+                if (bleManager!=null)
+                    bleManager.email = Uri.UnescapeDataString(value ?? "");
+            }
+        }
+        
+        public string Pass
+        {
+            set
+            {
+                if (bleManager!=null)
+                    bleManager.pass = Uri.UnescapeDataString(value ?? "");
+            }
+        }
 
 
         public void Dispose()
         {
             userManager.Dispose();
-            newMovDataList = null;
             rewardManager.Dispose();
             userManager = null;
             rewardManager = null;

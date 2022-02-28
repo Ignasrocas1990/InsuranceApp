@@ -193,14 +193,9 @@ namespace Insurance_app.ViewModels
             Policy policy = null;
             try
             {
-                var dictionaryPolicy = await policyManager.FindPolicy(customerId,App.RealmApp.CurrentUser);
-                policy = dictionaryPolicy.FirstOrDefault(u => u.Key == 0).Value; //see if cant be updated
-                if (policy is null) // can be updated
-                {
-                    canBeUpdated = true;
-                    policy = dictionaryPolicy[1];
-                }
-
+                var tuple = await policyManager.FindPolicy(customerId,App.RealmApp.CurrentUser);
+                canBeUpdated = tuple.Item1;
+                policy = tuple.Item2;
                 policyManager.RemoveIfContains(policy);
             }
             catch (Exception e)

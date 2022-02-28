@@ -17,7 +17,7 @@ namespace Insurance_app.Logic
             RealmDb.GetInstance().Dispose();
         }
 
-        public async Task<float> getTotalRewards(User user,string id)
+        public async Task<Tuple<bool, float>> getTotalRewards(User user,string id)
         {
             return await RealmDb.GetInstance().GetTotalRewards(user,id);
         }

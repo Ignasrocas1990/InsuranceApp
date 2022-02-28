@@ -8,11 +8,10 @@ namespace watch.Ble
     {
         private const string TAG = "mono-stdout";
 
-        //public event EventHandler<BleEventArgs> DataRecievedNotifier;
-        public EventHandler<BleEventArgs> DataWriteHandler;
-
         public event EventHandler<BleEventArgs> ReadHandler;
-        public EventHandler<ConnectEventArgs> StateHandler;
+        public event EventHandler<ConnectEventArgs> StateHandler;
+        public event EventHandler<BleEventArgs> DataWriteHandler;
+
         public BleServerCallback() { }
 
 
@@ -25,18 +24,38 @@ namespace watch.Ble
         public override void OnConnectionStateChange(BluetoothDevice device, ProfileState status, ProfileState newState)
         {
             base.OnConnectionStateChange(device, status, newState);
-  
-            if (newState == ProfileState.Disconnected)
-            {
-                Log.Verbose(TAG, $"State changed to : {newState}");
 
-                StateHandler?.Invoke(this,new ConnectEventArgs(){State ="Disconnected"});
-                
-            }else if (newState == ProfileState.Connected)
+            switch (newState)
             {
-                Log.Verbose(TAG, $"State changed to : {newState}");
-                StateHandler?.Invoke(this,new ConnectEventArgs(){State ="Connected"});
+                case ProfileState.Disconnected:
+                    Log.Verbose(TAG, $"State changed to : {newState}");
+
+                    StateHandler?.Invoke(this,new ConnectEventArgs(){State ="Disconnected"});
+                    break;
+                case ProfileState.Connected:
+                    Log.Verbose(TAG, $"State changed to : {newState}");
+                    StateHandler?.Invoke(this,new ConnectEventArgs(){State ="Connected"});
+                    break;
             }
+            Log.Verbose(TAG, $"State changed to : {newState}");
+        }
+
+        public override void OnCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic,
+            bool preparedWrite, bool responseNeeded, int offset, byte[] value)
+        {
+            base.OnCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
+            if (DataWriteHandler != null)
+            {
+                DataWriteHandler(this, new BleEventArgs()
+                {
+                    Device = device, Characteristic = characteristic, Value = value, RequestId = requestId, Offset = offset
+                });
+            }
+        }
+        public override void OnDescriptorWriteRequest(BluetoothDevice device, int requestId, BluetoothGattDescriptor descriptor,
+            bool preparedWrite, bool responseNeeded, int offset, byte[] value)
+        {
+            base.OnDescriptorWriteRequest(device, requestId, descriptor, preparedWrite, responseNeeded, offset, value);
         }
         private BleEventArgs createArgs(BluetoothDevice device, BluetoothGattCharacteristic chara, int requestId, int offset)
         {

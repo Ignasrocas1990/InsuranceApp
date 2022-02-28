@@ -101,5 +101,10 @@ namespace Insurance_app.Logic
         {
             return await RealmDb.GetInstance().GetCustomersDob(customerId,user);
         }
+
+        public async Task UpdateCustomerSwitch(User user, bool switchState)
+        { 
+         await  RealmDb.GetInstance().UpdateCustomerSwitch(user, switchState);
+        }
     }
 }

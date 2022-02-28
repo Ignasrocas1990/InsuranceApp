@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Android.Nfc;
 using Android.Util;
 using Java.Lang;
+using watch.Services;
 using Xamarin.Essentials;
 using Exception = System.Exception;
 
@@ -41,7 +42,6 @@ namespace watch.Sensors
             if (detector.updateAccel(timeStamp, vec.X, vec.Y, vec.Z) == 1 && (shakeDetected+ShakeTimeGap) <= timeStamp)
             {
                 Log.Verbose(TAG,$"step counted {++count}");
-
                 AccEventHandler?.Invoke(this, new SensorArgs()
                 {
                     Data = $"{vec.X},{vec.Y},{vec.Z}"
@@ -57,10 +57,13 @@ namespace watch.Sensors
                 if (Accelerometer.IsMonitoring && state.Equals("Disconnected"))
                 {
                     Accelerometer.Stop();
+                    Log.Verbose(TAG, "ToggleSensors,stop to monitor");
                 }
                 else if(!Accelerometer.IsMonitoring && state.Equals("Connected"))
                 {
                     Accelerometer.Start(speed);
+                    Log.Verbose(TAG, "ToggleSensors,start to monitor");
+
                 }
             }
             catch (FeatureNotSupportedException fe)

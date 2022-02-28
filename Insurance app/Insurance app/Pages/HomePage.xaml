@@ -11,9 +11,6 @@
              x:DataType="viewModels:HomeViewModel"
              Shell.PresentationMode="Modal"
              x:Class="Insurance_app.Pages.HomePage">
-    <ContentPage.BindingContext>
-        <viewModels:HomeViewModel/>
-    </ContentPage.BindingContext>
     
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -24,10 +21,12 @@
 
     <StackLayout>
         <StackLayout Orientation="Horizontal" Padding="20" HorizontalOptions="Center" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}">
-            <Switch x:Name="Switch" ThumbColor="{StaticResource StrongColor}" Scale="1.5" Toggled="Switch_OnToggled" IsToggled="{Binding ToggleStateDisplay}" />
+            <Switch x:Name="Switch" ThumbColor="{StaticResource StrongColor}" Scale="1.5" Toggled="Switch_OnToggled"
+                    IsToggled="{Binding ToggleStateDisplay}" IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}" />
             <Label  Text="Step Tracker" Style="{StaticResource NormalLabel}"/>
         </StackLayout>
-        
+        <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}"
+                           Style="{StaticResource NormalCircularWait}" />
         
         <Grid  VerticalOptions="CenterAndExpand">
             <StackLayout VerticalOptions="Center" HorizontalOptions="Center" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}">
@@ -43,8 +42,6 @@
                                       Progress="{Binding ProgressBarDisplay 
                                       , Converter={StaticResource ValueProgressBar},Mode=TwoWay}"/>
             </StackLayout>
-            <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}"
-                               Style="{StaticResource NormalCircularWait}" />
             
             <ActivityIndicator IsRunning="{Binding SetUpWaitDisplay}" 
                                Style="{StaticResource NormalCircularWait}"/>

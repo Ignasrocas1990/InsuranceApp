@@ -100,14 +100,14 @@ namespace Insurance_app.ViewModels
                     
                     await Application.Current.MainPage.DisplayAlert("error", $"{registered}", "close");
                 }
-                
+                CircularWaitDisplay = false;
             }
             catch (Exception e)
             {
+                CircularWaitDisplay = false;
                 await Application.Current.MainPage.DisplayAlert("error", "registration failed", "close");
                 Console.WriteLine(e);
             }
-            CircularWaitDisplay = false;
         }
 
         private DateTimeOffset GetDob()

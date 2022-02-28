@@ -33,7 +33,7 @@ namespace Insurance_app.Logic
             await RealmDb.GetInstance().UpdatePolicy(customerId,user, newPolicy);
         }
 
-        public async Task<Dictionary<int,Policy>> FindPolicy(string customerId,User user)
+        public async Task<Tuple<bool,Policy>> FindPolicy(string customerId,User user)
         {
             return await RealmDb.GetInstance().FindPolicy(customerId,user);
         }

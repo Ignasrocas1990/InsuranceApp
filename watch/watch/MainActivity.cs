@@ -6,6 +6,7 @@ using Android.Hardware;
 using Android.Widget;
 using Android.OS;
 using Android.Support.Wearable.Activity;
+using watch.Services;
 
 namespace watch
 {
@@ -14,6 +15,7 @@ namespace watch
     {
         private Button btn;
         private Intent intent;
+        public static MainActivity Instance;
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -31,7 +33,9 @@ namespace watch
             };
             intent = new Intent(this, typeof(WatchService));
             StartForegroundService(intent);
+            Instance = this;
         }
+        public static void Fin() => Instance.Finish();
 
 
         // Android overridden methods ---------------------------------------------------------------------

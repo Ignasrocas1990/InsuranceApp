@@ -25,14 +25,18 @@ namespace Insurance_app.Communications
         public Ble ble;
         private ICharacteristic chara=null;
         public EventHandler InfferEvent = delegate {  };
-        public EventHandler SwitchToggler =delegate {  };
+        public event EventHandler ToggleSwitch =delegate {  };
 
         private int readingDelay = 5000; // reading delay every 5 sec (incase empty read.)
         private int conErrDelay = 0;
         private bool bleState = false;
         private bool isMonitoring = false;
         private static BleManager bleManager =null;
-        private RewardManager rewardManager;
+        private UserManager userManager;
+        private bool firstSet=true;
+        public string email;
+        public string pass;
+
         
         private BleManager()
         {
@@ -40,17 +44,12 @@ namespace Insurance_app.Communications
             adapter = CrossBluetoothLE.Current.Adapter;
             RegisterEventHandlers();
             bleState=ble.BleCheck();
-            rewardManager = new RewardManager();
+            userManager = new UserManager();
 
         }
         public static BleManager GetInstance()
         {
-            if (bleManager is null)
-            {
-                return new BleManager();
-            }
-
-            return bleManager;
+            return bleManager ??= new BleManager();
         }
         
         private void RegisterEventHandlers()
@@ -99,8 +98,10 @@ namespace Insurance_app.Communications
                 }
 
                 //Console.WriteLine($"Read complete, values are : > {str}");
-                Infer(str);
-                await ReadAsync();
+                //Infer(str);
+                InfferEvent.Invoke(this,EventArgs.Empty);
+               Task task = Task.Run(ReadAsync);
+               
             }
             catch
             {
@@ -121,15 +122,16 @@ namespace Insurance_app.Communications
         {
             try
             {
-                var split = rawData.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
-                var x = Converter.StringToFloat(split[0]);
-                var y = Converter.StringToFloat(split[1]);
-                var z = Converter.StringToFloat(split[2]);
+                //var split = rawData.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+                //var x = Converter.StringToFloat(split[0]);
+                //var y = Converter.StringToFloat(split[1]);
+                //var z = Converter.StringToFloat(split[2]);
                 InfferEvent.Invoke(this,EventArgs.Empty);
+                /*
                 Task.Run(async () =>
                 {
-                    await rewardManager.addNewMovDate(x, y, z,App.RealmApp.CurrentUser);
-                });
+                    //await rewardManager.addNewMovDate(x, y, z,App.RealmApp.CurrentUser);
+                });*/
 
             }
             catch (Exception e)
@@ -141,21 +143,28 @@ namespace Insurance_app.Communications
         {
             try
             {
-                var service = await device.GetServiceAsync(ble.SERVER_GUID);
+                IService service = null;
+                 service = await device.GetServiceAsync(ble.SERVER_GUID);
                 if (service is null)
                 {
-                    MainThread.BeginInvokeOnMainThread(Action);
+                    isMonitoring = false;
+                    MainThread.BeginInvokeOnMainThread(MessageUser);
                     return;
                 }
-                else
+                chara = null;
+                chara = await service.GetCharacteristicAsync(ble.SERVER_GUID);
+                if (chara is null)
                 {
-                    chara = await service.GetCharacteristicAsync(ble.SERVER_GUID);
+                    isMonitoring = false;
+                    MainThread.BeginInvokeOnMainThread(MessageUser);
+                    return;
                 }
-
-                if (chara != null)
+                if (firstSet)
                 {
-                    await ReadAsync();
+                   await WriteToCharacteristic();
                 }
+                await ReadAsync();
+                
             }
             catch //fail to connect
             {
@@ -163,9 +172,32 @@ namespace Insurance_app.Communications
                 await ConnectToDevice();
             }
         }
-        private async void Action()
+
+        private async Task WriteToCharacteristic()
         {
+            if (chara.CanWrite)
+            {
+                try
+                {
+                    await userManager.UpdateCustomerSwitch(App.RealmApp.CurrentUser, true);
+                    await chara.WriteAsync(Encoding.Default.GetBytes($"{App.RealmApp.CurrentUser.Id}|{email}|{pass}"));
+                    firstSet = false;
+                    
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+                
+            }
+        }
+
+
+        private async void MessageUser()
+        {
+            ToggleSwitch.Invoke(this,EventArgs.Empty);
             await Shell.Current.DisplayAlert("Error", "Please install & turn on the watch app", "close");
+            
             
         }
 
@@ -173,6 +205,7 @@ namespace Insurance_app.Communications
         {
             if (!ble.IsAvailable() || !await ble.GetPremissionsAsync())
             {
+                isMonitoring = false;
                 MainThread.BeginInvokeOnMainThread(Action1);
             }
             else if (bleState)
@@ -185,6 +218,12 @@ namespace Insurance_app.Communications
                 }
                 catch
                 {
+                    if (firstSet)
+                    {
+                        isMonitoring = false;
+                        MainThread.BeginInvokeOnMainThread(MessageUser);
+                        return;
+                    }
                     //dont need to see an error message, since this is depends connection loss
                     conErrDelay += 3000;
                     Console.WriteLine($" Device Conn Fail : wait {conErrDelay/1000}s , Reconnect");
@@ -201,7 +240,6 @@ namespace Insurance_app.Communications
 
         private async void Action1()
         {
-            
             await Shell.Current.DisplayAlert("Error", "Type of Bluetooth not available and app needs your permissions", "close");
         }
 
@@ -213,7 +251,7 @@ namespace Insurance_app.Communications
 
         public async Task<bool> ToggleMonitoring()
         {
-            if (!bleState)
+            if (!bleState && firstSet)
             {
                 if (MainThread.IsMainThread)
                 {
@@ -223,17 +261,21 @@ namespace Insurance_app.Communications
                 {
                     MainThread.BeginInvokeOnMainThread(NoBluetooth);
                 }
-
-                return false;
-            }
-            if (isMonitoring)
-            {
                 isMonitoring = false;
                 return false;
             }
-            isMonitoring = true;
-            await Task.FromResult(ConnectToDevice());
-            return true;
+            switch (isMonitoring)
+            {
+                case false:
+                    isMonitoring = true;
+                    ConnectToDevice();
+                    return isMonitoring;
+                case true:
+                    isMonitoring = false;
+                    chara = null;
+                    userManager.UpdateCustomerSwitch(App.RealmApp.CurrentUser, false);
+                    return false;
+            }
         }
     }
     public class RawDataArgs : EventArgs

@@ -106,13 +106,13 @@ namespace Insurance_app.ViewModels
                     var user = await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
                     if (user is null) throw new Exception("User fail log in");
                     
-                    //await CleanDatabase();//TODO remove when submitting 
+                    //await CleanDatabase();//TODO remove when submitting -------------------------------------------------
                     
                      var typeUser = await TypeUser(user);
                      if (typeUser.Equals($"{UserType.Customer}"))
                      {
                          Application.Current.MainPage = new AppShell();
-                         await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
+                         await Shell.Current.GoToAsync($"//{nameof(HomePage)}?Email={email}&Pass={password}");
                         CircularWaitDisplay = false;
                      }
                      else if (typeUser.Equals($"{UserType.Client}"))

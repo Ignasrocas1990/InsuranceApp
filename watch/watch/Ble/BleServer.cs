@@ -13,7 +13,7 @@ using String = System.String;
 
 namespace watch.Ble
 {
-    public class BleServer
+    public class BleServer : IDisposable
     {
         private const string DefaultUuid = "a3bb5442-5b61-11ec-bf63-0242ac130002";
         public const string TAG = "mono-stdout";
@@ -23,8 +23,8 @@ namespace watch.Ble
         public BleServerCallback BltCallback;
         private BluetoothGattServer bltServer;
         private BluetoothGattCharacteristic bltCharac;
-        private BluetoothLeAdvertiser bltAdvertiser;
-        public Queue<string> SensorData;
+        private readonly BluetoothLeAdvertiser bltAdvertiser;
+        public readonly Queue<string> SensorData;
 
         
         //public event EventHandler ToggleSensorsEventHandler;
@@ -46,11 +46,10 @@ namespace watch.Ble
 
         public void SendData(object s, BleEventArgs e)
         {
-            string data = " ";
+            var data = " ";
             if (SensorData.Count > 0)
             {
                 data =  SensorData.Dequeue();
-                Log.Verbose(TAG,$"data is sending : {data}");
             }
             e.Characteristic.SetValue(data);
             bltServer.SendResponse(e.Device, e.RequestId, GattStatus.Success, e.Offset, e.Characteristic.GetValue() ?? throw new InvalidOperationException());
@@ -69,7 +68,8 @@ namespace watch.Ble
             }
 
             service = new BluetoothGattService(serverUuid, GattServiceType.Primary);
-            bltCharac = new BluetoothGattCharacteristic(serverUuid, GattProperty.Read| GattProperty.Write | GattProperty.Notify ,
+            bltCharac = new BluetoothGattCharacteristic(serverUuid, 
+                GattProperty.Read| GattProperty.Write | GattProperty.Notify ,
                 GattPermission.Read | GattPermission.Write);
             var descriptor = new BluetoothGattDescriptor(serverUuid, GattDescriptorPermission.Read | GattDescriptorPermission.Write);
             bltCharac.AddDescriptor(descriptor);
@@ -118,7 +118,19 @@ namespace watch.Ble
                 
             }
         }
-        
+
+        public void Dispose()
+        {
+            serverUuid?.Dispose();
+            bltManager?.Dispose();
+            bltAdapter?.Dispose();
+            BltCallback?.Dispose();
+            bltServer?.Dispose();
+            bltCharac?.Dispose();
+            bltAdvertiser?.Dispose();
+            bltAdvertiserCallback?.Dispose();
+            service?.Dispose();
+        }
     }
     public class BleAdvertiseCallback : AdvertiseCallback
     {
