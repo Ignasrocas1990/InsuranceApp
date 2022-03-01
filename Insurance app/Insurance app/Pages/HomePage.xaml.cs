@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
 using Xamarin.Forms;
+using Switch;
+using Switch.Helpers;
 using Xamarin.Forms.Xaml;
 
 namespace Insurance_app.Pages
@@ -28,15 +30,7 @@ namespace Insurance_app.Pages
         {
             base.OnAppearing();
             var vm = (HomeViewModel)BindingContext;
-             await vm.Setup();
-           
-
-        }
-
-        private void Switch_OnToggled(object sender, ToggledEventArgs e)
-        {
-            var vm = (HomeViewModel)BindingContext;
-            vm.StartDataReceive(e.Value);
+            await vm.Setup();
         }
     }
 }

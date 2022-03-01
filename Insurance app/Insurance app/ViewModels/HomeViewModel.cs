@@ -37,6 +37,8 @@ namespace Insurance_app.ViewModels
         private int counter = 0;
         private double startUpSteps;
         private Reward reward;
+        public ICommand SwitchCommand { get; }
+        private bool swtichState = false;
 
         public HomeViewModel()
         {
@@ -44,6 +46,7 @@ namespace Insurance_app.ViewModels
             bleManager.InfferEvent +=InferredRawData;
             rewardManager = new RewardManager();
             userManager = new UserManager();
+            SwitchCommand = new AsyncCommand(StartDataReceive);
         }
         public async Task Setup()
         {
@@ -92,7 +95,7 @@ namespace Insurance_app.ViewModels
                    ToggleStateDisplay = data.Item1;
                    if (data.Item1)
                    {
-                       await StartDataReceive(true);
+                       await StartDataReceive();
                    }
                }
         }
@@ -104,22 +107,13 @@ namespace Insurance_app.ViewModels
         /// 
         /// </summary>
         /// <param name="state">Switch on the data receive (true=on/false=off)</param>
-        public async Task StartDataReceive(bool state)
+        public async Task StartDataReceive()
         {
-            if (!firstSetup)
-            {
-                counter++;
-                if (counter % 2 != 1) return;
-            }
-            CircularWaitDisplay = true;
-
-            if (state is false && toggleState)
-            {
-               await userManager.UpdateCustomerSwitch(App.RealmApp.CurrentUser, false);
-            }
+            if (++counter % 2==0) return;
             
-            state = await bleManager.ToggleMonitoring(state);
-            ToggleStateDisplay = state;
+            CircularWaitDisplay = true;
+            swtichState = await bleManager.ToggleMonitoring(toggleState);
+            ToggleStateDisplay = swtichState;
             CircularWaitDisplay = false;
         }
 
@@ -201,7 +195,7 @@ namespace Insurance_app.ViewModels
             set
             {
                 if (bleManager!=null)
-                    bleManager.email = Uri.UnescapeDataString(value ?? "");
+                    bleManager.Email = Uri.UnescapeDataString(value ?? "");
             }
         }
         
@@ -210,7 +204,7 @@ namespace Insurance_app.ViewModels
             set
             {
                 if (bleManager!=null)
-                    bleManager.pass = Uri.UnescapeDataString(value ?? "");
+                    bleManager.Pass = Uri.UnescapeDataString(value ?? "");
             }
         }
 

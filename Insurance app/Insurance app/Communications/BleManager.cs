@@ -30,15 +30,14 @@ namespace Insurance_app.Communications
         private int readingDelay = 5000; // reading delay every 5 sec (incase empty read.)
         private int conErrDelay = 0;
         private bool bleState = false;
-        private bool isMonitoring = false;
-        private static BleManager bleManager =null;
+        public bool IsMonitoring = false;
+        private static BleManager _bleManager =null;
         private UserManager userManager;
         private bool start=true;
-        public string email;
-        public string pass;
+        public string Email;
+        public string Pass;
         private bool stop;
-        private bool previousState;
-        private bool firstSetup;
+        private bool turnInprocess;
 
 
         private BleManager()
@@ -52,7 +51,7 @@ namespace Insurance_app.Communications
         }
         public static BleManager GetInstance()
         {
-            return bleManager ??= new BleManager();
+            return _bleManager ??= new BleManager();
         }
         
         private void RegisterEventHandlers()
@@ -81,7 +80,7 @@ namespace Insurance_app.Communications
         {
             try
             {
-                if (!isMonitoring) return;
+                if (!IsMonitoring) return;
 
                 var data = await chara.ReadAsync();
                 
@@ -89,7 +88,7 @@ namespace Insurance_app.Communications
                 str = Encoding.Default.GetString(data);
                 if (str.Equals(" "))
                 {
-                    if (!isMonitoring) return;
+                    if (!IsMonitoring) return;
 
                     Console.WriteLine($"reading empty : wait {readingDelay / 1000}sec > try again");
                     Task t = Task.Run(async () =>
@@ -151,7 +150,7 @@ namespace Insurance_app.Communications
                 if (service is null)
                 {
                     Console.WriteLine("service is null ");
-                    isMonitoring = false;
+                    IsMonitoring = false;
                     MainThread.BeginInvokeOnMainThread(MessageUser);
                     return;
                 }
@@ -160,31 +159,33 @@ namespace Insurance_app.Communications
                 if (chara is null)
                 {
                     Console.WriteLine("characteristic is null ");
-                    isMonitoring = false;
+                    IsMonitoring = false;
                     MainThread.BeginInvokeOnMainThread(MessageUser);
                     return;
                 }
                 if (start)
                 {
-                    isMonitoring = true;
+                    IsMonitoring = true;
                     start = false;
-                    await WriteToCharacteristic($"{App.RealmApp.CurrentUser.Id}|{email}|{pass}");
+                    await WriteToCharacteristic($"{App.RealmApp.CurrentUser.Id}|{Email}|{Pass}");
                    await UpdateCustomerSwitch(true);
                 }
                 else if (stop)
                 {
+                    turnInprocess = false;
                     stop = false;
-                    isMonitoring = false;
+                    IsMonitoring = false;
                     await WriteToCharacteristic("Stop");
+                    await UpdateCustomerSwitch(false);
                     return;
                 }
                 Console.WriteLine("start Reading data from ble ");
+                turnInprocess = false;
                 await ReadAsync();
                 
             }
             catch //fail to connect
             {
-                
                 await ConnectToDevice();
             }
         }
@@ -221,6 +222,7 @@ namespace Insurance_app.Communications
 
         private async void MessageUser()
         {
+            turnInprocess = false;
             ToggleSwitch.Invoke(this,EventArgs.Empty);
             await Shell.Current.DisplayAlert("Error", "Please install & turn on the watch app", "close");
             
@@ -231,7 +233,7 @@ namespace Insurance_app.Communications
         {
             if (!ble.IsAvailable() || !await ble.GetPremissionsAsync())
             {
-                isMonitoring = false;
+                IsMonitoring = false;
                 MainThread.BeginInvokeOnMainThread(Action1);
             }
             else if (bleState)
@@ -246,7 +248,7 @@ namespace Insurance_app.Communications
                 {
                     if (start)
                     {
-                        isMonitoring = false;
+                        IsMonitoring = false;
                         MainThread.BeginInvokeOnMainThread(MessageUser);
                         return;
                     }
@@ -266,18 +268,28 @@ namespace Insurance_app.Communications
 
         private async void Action1()
         {
+            turnInprocess = false;
             ToggleSwitch.Invoke(this,EventArgs.Empty);
             await Shell.Current.DisplayAlert("Error", "Type of Bluetooth not available and app needs your permissions", "close");
         }
 
         private async void NoBluetooth()
         {
+            turnInprocess = false;
             ToggleSwitch.Invoke(this,EventArgs.Empty);
             await Shell.Current.DisplayAlert("Error", "Bluetooth is off", "close");
         }
 
         public async Task<bool> ToggleMonitoring(bool state)
         {
+            if (!turnInprocess)
+            {
+                turnInprocess = true;
+            }
+            else
+            {
+                return state;
+            }
             switch (state)
             {
                 case true:
@@ -293,7 +305,7 @@ namespace Insurance_app.Communications
             if (!bleState)
             {
                 MainThread.BeginInvokeOnMainThread(NoBluetooth);
-                isMonitoring = false;
+                IsMonitoring = false;
                 return false;
             }
             ConnectToDevice();

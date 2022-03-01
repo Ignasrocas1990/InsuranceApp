@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Android.Nfc;
 using Android.Util;
@@ -18,16 +20,19 @@ namespace watch.Sensors
         private StepDetector detector;
         SensorSpeed speed = SensorSpeed.UI;
         private long shakeDetected = 0;
-        private const long ShakeTimeGap = 300;
+        private const long ShakeTimeGap = 500;
+        private static int NUM_TUPLES = 80; //80 sets of accelerometer readings
         private int count = 0;
+        private List<float> data;
 
-        
+
 
         public SensorManager()
         {
             detector = new StepDetector();
             Accelerometer.ReadingChanged += AcceReadingChanged;
             Accelerometer.ShakeDetected += ShakeDetected;
+            data = new List<float>();
         }
 
         private void ShakeDetected(object sender, EventArgs e)
@@ -38,7 +43,7 @@ namespace watch.Sensors
         void AcceReadingChanged(object s, AccelerometerChangedEventArgs args)
         {
             var vec = args.Reading.Acceleration;
-            long timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+            var timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
             if (detector.updateAccel(timeStamp, vec.X, vec.Y, vec.Z) == 1 && (shakeDetected+ShakeTimeGap) <= timeStamp)
             {
                 Log.Verbose(TAG,$"step counted {++count}");
@@ -48,7 +53,6 @@ namespace watch.Sensors
                 });
 
             }
-            
         }
         public void ToggleSensors(string state)
         {
@@ -106,12 +110,8 @@ namespace watch.Sensors
                 //Log.Debug(TAG, "sending test data "+sendDataCounter);
                 SendTestData();
             });
-
         }
-        
-        
     }
-    
     public class SensorArgs:EventArgs{
         public string Data { get; set; }
     }

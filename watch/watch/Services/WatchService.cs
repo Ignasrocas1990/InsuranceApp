@@ -21,7 +21,7 @@ namespace watch.Services
         private const string TAG = "mono-stdout";
         
         const int ServiceRunningNotificationId = 10000;
-        private const int MaxTimeAfterSwitchOff = 300;//5 min before dispose;
+        private const int MaxTimeAfterSwitchOff = 120;//2 min before dispose;
         const int MaxRunTime = 14400;// 4 hours max run time
         private const int ElapsedTime = 1000;//1sec
         
@@ -231,8 +231,9 @@ namespace watch.Services
                 {
                     localDb.AddUser(splitData[0], splitData[1], splitData[2]);
                     user = localDb.FindUser();
-                    await RealmDb.GetInstance().LogIn(user.Email, user.Pass);
                 }
+                await RealmDb.GetInstance().LogIn(user.Email, user.Pass);
+                
             }
             catch (Exception e)
             {

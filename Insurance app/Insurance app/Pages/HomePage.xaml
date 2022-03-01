@@ -6,6 +6,7 @@
              xmlns:viewModels="clr-namespace:Insurance_app.ViewModels"
              xmlns:supportClasses1="clr-namespace:Insurance_app.SupportClasses"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:switch="clr-namespace:Switch;assembly=Switch"
              Title="Home Page"
              BackgroundColor="{StaticResource BackColor}"
              x:DataType="viewModels:HomeViewModel"
@@ -21,8 +22,12 @@
 
     <StackLayout>
         <StackLayout Orientation="Horizontal" Padding="20" HorizontalOptions="Center" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}">
-            <Switch ThumbColor="{StaticResource StrongColor}" Scale="1.5" Toggled="Switch_OnToggled"
-                    IsToggled="{Binding ToggleStateDisplay,Mode=OneWay}" IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}" />
+         <Switch IsToggled="{Binding ToggleStateDisplay}" ThumbColor="{StaticResource StrongColor}" >
+             <Switch.Behaviors>
+                 <xct:EventToCommandBehavior EventName="Toggled" Command="{Binding SwitchCommand}"/>
+             </Switch.Behaviors>
+         </Switch>
+           
             <Label  Text="Step Tracker" Style="{StaticResource NormalLabel}"/>
         </StackLayout>
         <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}"
