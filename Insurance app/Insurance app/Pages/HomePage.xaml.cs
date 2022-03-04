@@ -13,7 +13,7 @@ using Xamarin.Forms.Xaml;
 namespace Insurance_app.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class HomePage : ContentPage
+    public partial class HomePage : LoadingPage
     {
 
         public HomePage()
@@ -23,7 +23,7 @@ namespace Insurance_app.Pages
             //BindingContext = (HomeViewModel) ShellViewModel.GetInstance()
               //  .GetViewModel(Converter.HomeViewModel);
 
-             BindingContext   = new HomeViewModel();
+              BindingContext = new HomeViewModel() {SetUpWaitDisplay = true};
         }
 
         protected override async void OnAppearing()

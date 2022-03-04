@@ -10,20 +10,11 @@
            x:Class="Insurance_app.Pages.Popups.InfoPopup">
 
     <ScrollView>
-           <Grid VerticalOptions="CenterAndExpand" RowSpacing="5" ColumnSpacing="5" Padding="10,0,10,0">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="3*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="3*"/>
-        </Grid.ColumnDefinitions>
+           <Grid VerticalOptions="CenterAndExpand" RowSpacing="5" ColumnSpacing="5" Padding="10,0,10,0"
+                 RowDefinitions="*,3*,*" ColumnDefinitions="3*,3*,3*">
         
-        <Label Style="{StaticResource InfoHLabel}" 
-               Grid.Row="0" Grid.Column="0" Text="{Binding InfoDisplayH1}"/>
+                  <Label Style="{StaticResource InfoHLabel}" 
+                         Grid.Row="0" Grid.Column="0" Text="{Binding InfoDisplayH1}"/>
         <Label Style="{StaticResource InfoHLabel}" 
                Grid.Row="0" Grid.Column="1" Text="{Binding InfoDisplayH2}"/>
         <Label Style="{StaticResource  InfoHLabel}" 

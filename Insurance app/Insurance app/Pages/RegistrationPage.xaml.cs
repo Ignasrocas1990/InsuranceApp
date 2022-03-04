@@ -13,7 +13,7 @@ using Exception = System.Exception;
 namespace Insurance_app.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class RegistrationPage
+    public partial class RegistrationPage:LoadingPage
     {
         public RegistrationPage(Dictionary<string, string> tempQuote, string price)
         {

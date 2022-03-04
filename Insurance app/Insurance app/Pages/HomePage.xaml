@@ -1,17 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:plugin="clr-namespace:ProgressRingControl.Forms.Plugin;assembly=ProgressRing.Forms.Plugin"
-             xmlns:viewModels="clr-namespace:Insurance_app.ViewModels"
-             xmlns:supportClasses1="clr-namespace:Insurance_app.SupportClasses"
-             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
-             xmlns:switch="clr-namespace:Switch;assembly=Switch"
-             Title="Home Page"
-             BackgroundColor="{StaticResource BackColor}"
-             x:DataType="viewModels:HomeViewModel"
-             Shell.PresentationMode="Modal"
-             x:Class="Insurance_app.Pages.HomePage">
+<pages:LoadingPage xmlns="http://xamarin.com/schemas/2014/forms"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                   xmlns:plugin="clr-namespace:ProgressRingControl.Forms.Plugin;assembly=ProgressRing.Forms.Plugin"
+                   xmlns:viewModels="clr-namespace:Insurance_app.ViewModels"
+                   xmlns:supportClasses1="clr-namespace:Insurance_app.SupportClasses"
+                   xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+                   xmlns:switch="clr-namespace:Switch;assembly=Switch"
+                   xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
+                   Title="Home Page"
+                   BackgroundColor="{StaticResource BackColor}"
+                   x:DataType="viewModels:HomeViewModel"
+                   RootViewModel="{Binding .}"
+                   ControlTemplate="{StaticResource LoaderViewTemplate}"
+                   Shell.PresentationMode="Modal"
+                   x:Class="Insurance_app.Pages.HomePage">
     
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -30,8 +33,6 @@
            
             <Label  Text="Step Tracker" Style="{StaticResource NormalLabel}"/>
         </StackLayout>
-        <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}"
-                           Style="{StaticResource NormalCircularWait}" />
         
         <Grid  VerticalOptions="CenterAndExpand">
             <StackLayout VerticalOptions="Center" HorizontalOptions="Center" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}">
@@ -48,8 +49,6 @@
                                       , Converter={StaticResource ValueProgressBar},Mode=TwoWay}"/>
             </StackLayout>
             
-            <ActivityIndicator IsRunning="{Binding SetUpWaitDisplay}" 
-                               Style="{StaticResource NormalCircularWait}"/>
 
         </Grid>
 
@@ -66,4 +65,4 @@
     
 
 
-</ContentPage>
+</pages:LoadingPage>

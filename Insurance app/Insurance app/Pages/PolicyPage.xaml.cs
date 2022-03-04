@@ -10,13 +10,14 @@ using Xamarin.Forms.Xaml;
 namespace Insurance_app.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class PolicyPage : ContentPage
+    public partial class PolicyPage : LoadingPage
     {
         public PolicyPage()
         {
             InitializeComponent();
+            var vm = new PolicyViewModel {SetUpWaitDisplay = true};
+            BindingContext = vm;
         }
-
         protected override async void OnAppearing()
         {
             var vm = (PolicyViewModel)BindingContext;

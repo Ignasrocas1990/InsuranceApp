@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:microcharts="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms" 
-             xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
-             x:DataType="viewModels1:ReportViewModel"
-             BackgroundColor="{StaticResource BackColor}"
-             Title="Customer Report"
-             x:Class="Insurance_app.Pages.Report">
-    <ContentPage.BindingContext>
-        <viewModels1:ReportViewModel/>
-    </ContentPage.BindingContext>
+<pages:LoadingPage xmlns="http://xamarin.com/schemas/2014/forms"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                   xmlns:microcharts="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms" 
+                   xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
+                   xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
+                   x:DataType="viewModels1:ReportViewModel"
+                   BackgroundColor="{StaticResource BackColor}"
+                   Title="Customer Report"
+                   RootViewModel="{Binding .}"
+                   ControlTemplate="{StaticResource LoaderViewTemplate}"
+                   x:Class="Insurance_app.Pages.Report">
 
     <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
          <ActivityIndicator IsRunning="{Binding SetUpWaitDisplay}" Style="{StaticResource NormalCircularWait}" />
@@ -23,4 +23,4 @@
      </StackLayout>
      
     
-</ContentPage>
+</pages:LoadingPage>

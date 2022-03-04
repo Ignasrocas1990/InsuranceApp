@@ -10,15 +10,17 @@ using Xamarin.Forms.Xaml;
 namespace Insurance_app.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ClaimPage : ContentPage
+    public partial class ClaimPage : LoadingPage
     {
         public ClaimPage()
         {
             InitializeComponent();
+            var vm = new ClaimViewModel {SetUpWaitDisplay = true};
+            BindingContext = vm;
             
             //BindingContext = (ClaimViewModel) ShellViewModel.GetInstance()
-             //   .GetViewModel(Converter.ClaimViewModel);
-             //BindingContext = new ClaimViewModel();
+            //   .GetViewModel(Converter.ClaimViewModel);
+            //BindingContext = new ClaimViewModel();
         }
 
         protected override async void OnAppearing()

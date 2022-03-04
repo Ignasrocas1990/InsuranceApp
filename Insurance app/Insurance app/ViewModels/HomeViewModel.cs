@@ -9,9 +9,11 @@ using Insurance_app.Communications;
 using Insurance_app.Logic;
 using Insurance_app.Models;
 using Insurance_app.Pages;
+using Insurance_app.Pages.Popups;
 using Insurance_app.Service;
 using Insurance_app.SupportClasses;
 using Realms;
+using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -38,7 +40,7 @@ namespace Insurance_app.ViewModels
         private double startUpSteps;
         private Reward reward;
         public ICommand SwitchCommand { get; }
-        private bool swtichState = false;
+        private bool switchState = false;
 
         public HomeViewModel()
         {
@@ -48,6 +50,9 @@ namespace Insurance_app.ViewModels
             userManager = new UserManager();
             SwitchCommand = new AsyncCommand(StartDataReceive);
         }
+
+
+
         public async Task Setup()
         {
             try
@@ -112,8 +117,8 @@ namespace Insurance_app.ViewModels
             if (++counter % 2==0) return;
             
             CircularWaitDisplay = true;
-            swtichState = await bleManager.ToggleMonitoring(toggleState);
-            ToggleStateDisplay = swtichState;
+            switchState = await bleManager.ToggleMonitoring(toggleState);
+            ToggleStateDisplay = switchState;
             CircularWaitDisplay = false;
         }
 

@@ -1,21 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows.Input;
-using Android.Content.Res;
-using Android.OS;
-using Insurance_app.Communications;
-using Insurance_app.Models;
 using Insurance_app.Pages;
 using Insurance_app.Pages.ClientPages;
-using Insurance_app.Pages.Popups;
 using Insurance_app.Service;
 using Insurance_app.SupportClasses;
-using Realms;
 using Realms.Sync;
-using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -57,8 +47,6 @@ namespace Insurance_app.ViewModels
         }
         public async Task CheckIfUserExist()
         {
- 
-            SetUpWaitDisplay = true;
             try
             {
                 if (App.RealmApp.CurrentUser != null)
@@ -72,8 +60,6 @@ namespace Insurance_app.ViewModels
             {
                 Console.WriteLine(e);
             }
-
-            SetUpWaitDisplay = false;
         }
 
         private async Task NavigateToQuote()
@@ -186,7 +172,6 @@ namespace Insurance_app.ViewModels
             get => setUpWait;
             set => SetProperty(ref setUpWait, value);
         }
-
         private async Task CleanDatabase()//TODO Remove when submitting
         {
             await RealmDb.GetInstance().CleanDatabase(App.RealmApp.CurrentUser);

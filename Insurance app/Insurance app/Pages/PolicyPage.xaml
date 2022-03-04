@@ -1,16 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
-             xmlns:converters="http://xamarin.com/schemas/2020/toolkit"
-             x:DataType="viewModels:PolicyViewModel"
-             BackgroundColor="{StaticResource BackColor}"
-             x:Class="Insurance_app.Pages.PolicyPage">
-        
-        <ContentPage.BindingContext>
-                <viewModels:PolicyViewModel/>
-        </ContentPage.BindingContext>
+<pages:LoadingPage xmlns="http://xamarin.com/schemas/2014/forms"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                   xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
+                   xmlns:converters="http://xamarin.com/schemas/2020/toolkit"
+                   xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
+                   x:DataType="viewModels:PolicyViewModel"
+                   BackgroundColor="{StaticResource BackColor}"
+                   RootViewModel="{Binding .}"
+                   ControlTemplate="{StaticResource LoaderViewTemplate}"
+                   x:Class="Insurance_app.Pages.PolicyPage">
         
         <ContentPage.Resources>
                 <ResourceDictionary>
@@ -111,14 +110,5 @@
                 IsVisible="{Binding ClientActionNeeded}"
                 Command="{Binding ResolveUpdateCommand}" Grid.Column="1" Grid.Row="9"/>
 
-        
-        <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}"
-                           Style="{StaticResource NormalCircularWait}"
-                           Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" />
-        
-        <ActivityIndicator IsRunning="{Binding SetUpWaitDisplay}" 
-                           Style="{StaticResource NormalCircularWait}"
-                           Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2"/>
-
-    </Grid>
-</ContentPage>
+        </Grid>
+</pages:LoadingPage>

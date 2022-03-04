@@ -12,13 +12,13 @@ using Xamarin.Forms.Xaml;
 namespace Insurance_app.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ProfilePage : ContentPage
+    public partial class ProfilePage : LoadingPage
     {
        
         public ProfilePage()
         {
             InitializeComponent();
-            BindingContext = new ProfileViewModel();
+            BindingContext = new ProfileViewModel {SetUpWaitDisplay = true};
         }
 
         protected override async void OnAppearing()

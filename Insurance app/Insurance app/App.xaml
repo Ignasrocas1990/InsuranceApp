@@ -20,6 +20,7 @@
             </Style>
             <!-- buttons -->
             <Style x:Key="BasicBtn" TargetType="Button">
+                <Setter Property="TextTransform" Value="None"/>
                 <Setter Property="CornerRadius" Value="10"/>
                 <Setter Property="TextColor" Value="{StaticResource BackColor}"/>
             </Style>
@@ -119,6 +120,15 @@
             
             <!-- Inverters    -->
             <xct:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
+            
+            
+            <ControlTemplate x:Key="LoaderViewTemplate">
+                <AbsoluteLayout Padding = "0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                    <ContentPresenter AbsoluteLayout.LayoutBounds="1,1,1,1" AbsoluteLayout.LayoutFlags="All"/>
+                    <ActivityIndicator Color= "{StaticResource StrongColor}" IsRunning= "{TemplateBinding RootViewModel.SetUpWaitDisplay}" AbsoluteLayout.LayoutBounds=".5,.5,100,100" AbsoluteLayout.LayoutFlags="PositionProportional" />
+                    <ActivityIndicator Color= "{StaticResource StrongColor}" IsRunning= "{TemplateBinding RootViewModel.CircularWaitDisplay}" AbsoluteLayout.LayoutBounds=".5,.5,100,100" AbsoluteLayout.LayoutFlags="PositionProportional" />
+                </AbsoluteLayout>
+            </ControlTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

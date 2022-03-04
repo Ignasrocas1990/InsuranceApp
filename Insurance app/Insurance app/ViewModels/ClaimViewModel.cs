@@ -41,10 +41,10 @@ namespace Insurance_app.ViewModels
         }
         public async Task SetUp()
         {
+            SetUpWaitDisplay = true;
             if (customerId  == "")
                 customerId = App.RealmApp.CurrentUser.Id;
             
-            SetUpWaitDisplay = true;
             await claimManager.GetClaims(App.RealmApp.CurrentUser,customerId);
             var claim = claimManager.GetCurrentClaim();
             if (claim != null)

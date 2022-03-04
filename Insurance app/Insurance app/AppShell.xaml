@@ -39,10 +39,10 @@
     -->
     
     <!--    side Flyout menu navigation                    -->
-    <FlyoutItem Title="Home page" Icon="walkIcon.png" Route="HomePage">
+    <FlyoutItem Title="Home page" Icon="walkIcon.png" Route="HomePage" >
         <ShellContent ContentTemplate="{DataTemplate pages:HomePage}"/>
     </FlyoutItem>
-    <FlyoutItem Title="Profile page" Icon="profileIcon.png">
+    <FlyoutItem Title="Profile page" Icon="profileIcon.png" >
         <ShellContent ContentTemplate="{DataTemplate pages:ProfilePage}" />
     </FlyoutItem>
     <FlyoutItem Title="Report page" Icon="reportIcon.png">
@@ -54,7 +54,7 @@
     <FlyoutItem Title="Policy page" Icon="policyIcon.png">
         <ShellContent ContentTemplate="{DataTemplate pages:PolicyPage}"/>
     </FlyoutItem>
-
+    
     <Shell.FlyoutFooterTemplate>
             <DataTemplate>
                 <StackLayout Padding="0,0,0,10">

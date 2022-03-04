@@ -23,6 +23,8 @@ namespace Insurance_app.ViewModels
         private string phoneNr="";
         private bool wait = false;
         private string addressText = "Click to update address";
+
+        private string email;
         //--- address backing fields ---
         private int? houseN;
         private string postCode="";
@@ -36,12 +38,16 @@ namespace Insurance_app.ViewModels
 
         public ICommand UpdateCommand { get; }
         public ICommand AddressCommand { get; }
+        public ICommand ChangePasswordCommand { get; }
+
 
         public ProfileViewModel()
         {
             userManager = new UserManager();
             AddressCommand = new AsyncCommand(UpdateAddress);
             UpdateCommand = new AsyncCommand(Update);
+            ChangePasswordCommand = new AsyncCommand(ChangePassword);
+
         }
         public async Task Setup()
         {
@@ -57,6 +63,7 @@ namespace Insurance_app.ViewModels
                     LastNameDisplay = customer.LastName;
                     PhoneNrDisplay = customer.PhoneNr;
                     customerId = customer.Id;
+                    email = customer.Email;
                     
                     //address backing fields
                     houseN = customer.Address.HouseN;
@@ -81,6 +88,8 @@ namespace Insurance_app.ViewModels
             {
                 Console.WriteLine($"problem in customer setup : {e}");
             }
+
+            SetUpWaitDisplay = false;
         }
         private async Task UpdateAddress()
         {
@@ -112,7 +121,6 @@ namespace Insurance_app.ViewModels
                 CircularWaitDisplay = true;
                 
                await userManager.updateCustomer(name,lastName,phoneNr,address, App.RealmApp.CurrentUser,customerId);
-               //await App.RealmApp.EmailPasswordAuth.CallResetPasswordFunctionAsync(email, password); make it separate screen
             }
             catch (Exception e)
             {
@@ -120,6 +128,20 @@ namespace Insurance_app.ViewModels
             }
             CircularWaitDisplay = false;
             await Shell.Current.DisplayAlert("Message", "Details updated", "close");
+        }
+        private async Task ChangePassword()
+        {
+            try
+            { 
+               var result =await Application.Current.MainPage.Navigation.ShowPopupAsync(new ChangePassPopup(email));
+               if (!result) return;
+               await Shell.Current.DisplayAlert("Message", "Password has been updated", "close");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            
         }
 
         public string NameDisplay
@@ -154,6 +176,13 @@ namespace Insurance_app.ViewModels
             get => customerId;
             set => customerId = value;
 
+        }
+        private bool setUpWait;
+
+        public bool SetUpWaitDisplay
+        {
+            get => setUpWait;
+            set => SetProperty(ref setUpWait, value);
         }
         
         public void Dispose()

@@ -1,34 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
-             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
-             x:DataType="viewModels1:RegistrationViewModel"
-             Shell.FlyoutBehavior="Disabled"
-             Title="Customer Registration"
-             BackgroundColor="{StaticResource BackColor}"
-             x:Class="Insurance_app.Pages.RegistrationPage">
+<pages:LoadingPage xmlns="http://xamarin.com/schemas/2014/forms"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                   xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
+                   xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+                   xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
+                   x:DataType="viewModels1:RegistrationViewModel"
+                   Shell.FlyoutBehavior="Disabled"
+                   Title="Customer Registration"
+                   BackgroundColor="{StaticResource BackColor}"
+                   RootViewModel="{Binding .}"
+                   ControlTemplate="{StaticResource LoaderViewTemplate}"
+                   x:Class="Insurance_app.Pages.RegistrationPage">
     
-    <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
-              <Grid.RowDefinitions>
-            
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="2*"/>
-
-              </Grid.RowDefinitions>
+    <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40"
+          RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,2*" ColumnDefinitions="5*,5*"   >
         
-              <Grid.ColumnDefinitions>
-                     <ColumnDefinition Width="5*"/>
-                     <ColumnDefinition Width="5*"/>
-              </Grid.ColumnDefinitions>
                 
               <Label Text="Email :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="0" />
               <Entry  Keyboard="Email" Text="{Binding EmailDisplay}" 
@@ -120,12 +107,6 @@
                       Style="{StaticResource PrimaryBtn}"
                       IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                       Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" HorizontalOptions="Center" />
-              
-              <ActivityIndicator
-                       IsRunning="{Binding CircularWaitDisplay}" 
-                       Style="{StaticResource NormalCircularWait}"
-                       Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" />
+    </Grid>           
 
-   </Grid>           
-
-</ContentPage>
+</pages:LoadingPage>

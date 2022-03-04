@@ -13,15 +13,15 @@ using Xamarin.Forms.Xaml;
 namespace Insurance_app.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class Report : ContentPage
+    public partial class Report : LoadingPage
     {
         public Report()
         {
             InitializeComponent();
-            
+            BindingContext = new ReportViewModel {SetUpWaitDisplay = true};
             //BindingContext = (ReportViewModel) ShellViewModel.GetInstance()
-              //  .GetViewModel(Converter.ReportViewModel);
-              //BindingContext = new ReportViewModel();
+            //  .GetViewModel(Converter.ReportViewModel);
+            //BindingContext = new ReportViewModel();
         }
 
         protected override async void OnAppearing()

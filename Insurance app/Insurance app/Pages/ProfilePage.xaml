@@ -1,30 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:DataType="viewModels1:ProfileViewModel"
-             xmlns:xct="http://xamarin.com/schemas/2020/toolkit" 
-             xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
-             Title="Customer Profile"
-             BackgroundColor="{StaticResource BackColor}"
-             x:Class="Insurance_app.Pages.ProfilePage">
-       
-       <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40">
-                  <Grid.RowDefinitions>
-            
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="Auto"/>
-                     <RowDefinition Height="*"/>
+<pages:LoadingPage xmlns="http://xamarin.com/schemas/2014/forms"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                   x:DataType="viewModels1:ProfileViewModel"
+                   xmlns:xct="http://xamarin.com/schemas/2020/toolkit" 
+                   xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
+                   xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
+                   Title="Customer Profile"
+                   BackgroundColor="{StaticResource BackColor}"
+                   RootViewModel="{Binding .}"
+                   ControlTemplate="{StaticResource LoaderViewTemplate}"
+                   x:Class="Insurance_app.Pages.ProfilePage">
 
-              </Grid.RowDefinitions>
+       
+       <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40"
+       RowDefinitions="Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="5*,5*">
+                 
         
-              <Grid.ColumnDefinitions>
-                     <ColumnDefinition Width="5*"/>
-                     <ColumnDefinition Width="5*"/>
-              </Grid.ColumnDefinitions>
+              
               
               <Label Text="First Name :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="0" />
               <Entry Keyboard="Text" Text="{Binding NameDisplay}" 
@@ -81,14 +74,14 @@
                       IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                       Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" />
               
+              <Button Command="{Binding ChangePasswordCommand}"
+                      Text="Password Change" Style="{StaticResource SecondaryBtn}"
+                      IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                      Grid.Column="0" Grid.Row="4" />
               
-              <Button  Text="Update" Clicked="Button_OnClicked" Style="{StaticResource PrimaryBtn}"
+              <Button  Text="Update info" Clicked="Button_OnClicked" Style="{StaticResource PrimaryBtn}"
                        IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}" 
-                       Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" HorizontalOptions="Center"/>
-              
-                <ActivityIndicator
-                       IsRunning="{Binding CircularWaitDisplay}" Style="{StaticResource NormalCircularWait}"
-                       Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" />
+                       Grid.Column="1" Grid.Row="4"/>
 
-   </Grid>
-</ContentPage>
+       </Grid>
+</pages:LoadingPage>

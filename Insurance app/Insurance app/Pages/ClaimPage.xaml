@@ -1,31 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
-             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
-             Title="Claims"
-             x:DataType="viewModels1:ClaimViewModel"
-             BackgroundColor="{StaticResource BackColor}"
-             x:Class="Insurance_app.Pages.ClaimPage">
+<pages:LoadingPage xmlns="http://xamarin.com/schemas/2014/forms"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                   xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
+                   xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+                   xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
+                   Title="Claims"
+                   x:DataType="viewModels1:ClaimViewModel"
+                   BackgroundColor="{StaticResource BackColor}"
+                   RootViewModel="{Binding .}"
+                   ControlTemplate="{StaticResource LoaderViewTemplate}"
+                   x:Class="Insurance_app.Pages.ClaimPage">
        
-       <ContentPage.BindingContext>
-              <viewModels1:ClaimViewModel/>
-       </ContentPage.BindingContext>
-       <!--Grid.RowDefinitions>
-            
-              <RowDefinition Height="Auto"/>
-              <RowDefinition Height="Auto"/>
-              <RowDefinition Height="Auto"/>
-              <RowDefinition Height="Auto"/>
-              <RowDefinition Height="Auto"/>
-              <RowDefinition Height="2*"/>
-
-       </Grid.RowDefinitions>
-       <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="5*"/>
-              <ColumnDefinition Width="5*"/>
-       </Grid.ColumnDefinitions-->
     
        <Grid VerticalOptions="Center"  RowSpacing="20" ColumnSpacing="5" Padding="40"
              RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="5*,5*" >
@@ -80,12 +66,6 @@
                     Text="Resolve Claim" Command="{Binding ResolveClaimCommand}"
                     IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                     IsVisible="{Binding CanBeResolved}" BackgroundColor="{StaticResource ClientBtnColor}" Style="{StaticResource SecondaryBtn}"/>
-            
-            <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}" 
-                  Style="{StaticResource NormalCircularWait}" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" />
-            
-            <ActivityIndicator IsRunning="{Binding SetUpWaitDisplay}" 
-                               Style="{StaticResource NormalCircularWait}" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" />
-    </Grid>           
+       </Grid>           
     
-</ContentPage>
+</pages:LoadingPage>

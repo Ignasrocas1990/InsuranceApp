@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
-             x:DataType="viewModels1:QuoteViewModel"
-             Shell.FlyoutBehavior="Disabled"
-             BackgroundColor="{StaticResource BackColor}"
-             Title="Get a Quote"
-             x:Class="Insurance_app.Pages.QuotePage">
-    <ContentPage.BindingContext>
-        <viewModels1:QuoteViewModel/>
-    </ContentPage.BindingContext>
+<pages:LoadingPage xmlns="http://xamarin.com/schemas/2014/forms"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                   xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
+                   xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
+                   x:DataType="viewModels1:QuoteViewModel"
+                   Shell.FlyoutBehavior="Disabled"
+                   BackgroundColor="{StaticResource BackColor}"
+                   Title="Get a Quote"
+                   RootViewModel="{Binding .}"
+                   ControlTemplate="{StaticResource LoaderViewTemplate}"
+                   x:Class="Insurance_app.Pages.QuotePage">
     
     
-    <Grid VerticalOptions="CenterAndExpand" RowSpacing="25" ColumnSpacing="0" Padding="30,0,30,0">
+        <Grid VerticalOptions="CenterAndExpand" RowSpacing="25" ColumnSpacing="0" Padding="30,0,30,0">
         <Grid.RowDefinitions>
             
             <RowDefinition Height="Auto"/>
@@ -69,10 +69,6 @@
         <Button Text= "Get Quote" IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Style="{StaticResource PrimaryBtn}"
                 Command="{Binding GetQuotCommand}" Grid.Column="0" Grid.Row="6"  Grid.ColumnSpan="2"/>
-        
-        <ActivityIndicator IsRunning="{Binding CircularWaitDisplay}" Style="{StaticResource NormalCircularWait}"
-                           Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" />
+        </Grid>
 
-    </Grid>
-
-</ContentPage>
+</pages:LoadingPage>
