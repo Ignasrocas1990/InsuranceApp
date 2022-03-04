@@ -7,6 +7,7 @@ using Android.Widget;
 using Android.OS;
 using Android.Support.Wearable.Activity;
 using watch.Services;
+using Xamarin.Essentials;
 
 namespace watch
 {

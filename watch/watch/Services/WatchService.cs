@@ -18,10 +18,9 @@ namespace watch.Services
     [Service]
     public class WatchService : Service
     {
-        private const string TAG = "mono-stdout";
-        
+        public static string TAG = "mono-stdout";
         const int ServiceRunningNotificationId = 10000;
-        private const int MaxTimeAfterSwitchOff = 120;//2 min before dispose;
+        private const int MaxTimeAfterSwitchOff = 240;//4 min before dispose;
         const int MaxRunTime = 14400;// 4 hours max run time
         private const int ElapsedTime = 1000;//1sec
         
@@ -34,6 +33,7 @@ namespace watch.Services
         private SqlService localDb;
         private List<string> dataToBeSaved;
         private bool savingData;
+
         
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
@@ -149,7 +149,7 @@ namespace watch.Services
                 sensorManager.ToggleSensors("Connected");
 
             };
-            RealmDb.GetInstance().StopDataGathering += (s,e) =>//stop gathering data for 20min before shut down
+            RealmDb.GetInstance().StopDataGathering += (s,e) =>//stop gathering data for 4min before shut down
             {
                 if (switchCounter != 0) return;
                 switchCounter = 0;
@@ -161,14 +161,15 @@ namespace watch.Services
             };
             //Server communications
             if (bleServer.BltCallback == null) return;
-            bleServer.BltCallback.DataWriteHandler += (s,e) =>// start writing the data
+            bleServer.BltCallback.DataWriteHandler += async (s,e) =>// start writing the data
             {
                 if (e.Value == null) return;
                 var detailsString = Encoding.Default.GetString(e.Value);
                 
                 if (detailsString.Equals("Stop"))
                 {
-                    Log.Verbose(TAG, " STOP the data sending =>>>>>"+detailsString);
+                    Log.Verbose(TAG, " STOP the data sending =>>>>>"+detailsString); 
+                    RealmDb.GetInstance().UpdateSwitch();
                     savingData = false;
                     sensorManager.ToggleSensors("Disconnected");
                     sensorManager.sendDataCounter = -1; //TODO remove from here ------------------------------------------------
@@ -176,9 +177,8 @@ namespace watch.Services
                     switchTimer.Start();
                 }
                 else
-                {
+                { 
                     LogIn(detailsString);
-
                 }
                 Log.Verbose(TAG,$"received write details");
             };

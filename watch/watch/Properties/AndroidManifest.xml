@@ -19,6 +19,9 @@
 	
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+	<uses-permission android:name="android.permission.BODY_SENSORSs"/>
+	<uses-permission android:name="android.permission.HIGH_SAMPLING_RATE_SENSORS"/>
+					 
 
 	<application
     android:allowBackup="true"
@@ -36,5 +39,5 @@
     <meta-data
       android:name="com.google.android.wearable.standalone"
       android:value="true" />
-  </application>
+	</application>
 </manifest>

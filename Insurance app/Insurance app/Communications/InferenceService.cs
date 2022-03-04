@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Insurance_app.SupportClasses;
 using Newtonsoft.Json;
+using Xamarin.Essentials;
 
 namespace Insurance_app.Communications
 {
@@ -24,19 +25,25 @@ namespace Insurance_app.Communications
         }
         
 
-        public Task<HttpResponseMessage> Email(String email)
+        public void CustomerNotifyEmail(string email, string name, DateTime date, string action)
         {
-            if (!App.NetConnection())return null;
-            
+            if (!App.NetConnection()) return;
+
             var content = new StringContent(JsonConvert
-                .SerializeObject(new Dictionary<string,string>(){{"email",email}})
+                .SerializeObject(new Dictionary<string,string>()
+                {
+                    {"email",email},
+                    {"name",name},
+                    {"date",$"{date:D}"},
+                    {"action",action}
+                })
                 ,Encoding.UTF8, "application/json");
             
             if (App.NetConnection())
             {
                 try
                 {
-                    return client.PostAsync(StaticOpt.EmailUrl, content);
+                    client.PostAsync(StaticOpt.EmailUrl, content);
                 }
                 catch (Exception e)
                 {
@@ -50,11 +57,7 @@ namespace Insurance_app.Communications
             {
                 Console.WriteLine("error not connected");
             }
-            return null;
-            
-            
         }
-
         public Task<HttpResponseMessage> CheckCompanyCode(string code)
         {
             if (!App.NetConnection()) return null;

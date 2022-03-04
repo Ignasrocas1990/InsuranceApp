@@ -463,8 +463,9 @@ public async Task<Tuple<bool,Policy>> FindPolicy(string customerId,User user)
         /// <param name="user">Client only</param>
         /// <param name="allowUpdate"> true = allow update/false = dont allow update </param>
         /// <exception cref="Exception"></exception>
-        public async Task ResolvePolicyUpdate(string customerId, User user,bool allowUpdate)
+        public async Task<Customer> ResolvePolicyUpdate(string customerId, User user,bool allowUpdate)
         {
+            Customer customer =null;
             try
             {
                 await SubmitActivity(customerId, user, $"ResolvePolicyUpdate,Allow={allowUpdate}");
@@ -473,7 +474,8 @@ public async Task<Tuple<bool,Policy>> FindPolicy(string customerId,User user)
                 if (realm is null) throw new Exception("AllowPolicyUpdate :::::::::::::::::::::: realm null");
                 realm.Write(()=>
                 {
-                    var policy = realm.Find<Customer>(customerId)?.Policy?
+                     customer = realm.Find<Customer>(customerId);
+                    var policy = customer?.Policy?
                         .Where(p => p.UpdateDate != null && p.UnderReview == true && p.DelFlag == false)
                         .FirstOrDefault();
                     if (policy is null) throw new Exception("AllowPolicyUpdate  :::::::::::::::::::::: policy null");
@@ -481,12 +483,14 @@ public async Task<Tuple<bool,Policy>> FindPolicy(string customerId,User user)
                     if (!allowUpdate) policy.DelFlag = true;
                     policy.UnderReview = false;
                 });
-                
+
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
+            return customer;
+
         }
         public async Task UpdatePolicy(string customerId,User user,Policy newPolicy)
         {

@@ -23,6 +23,8 @@ namespace Insurance_app.ViewModels
     [QueryProperty(nameof(CustomerId), "CustomerId")]
     public class PolicyViewModel : ObservableObject
     {
+        private const string EmailSubject = "Policy update";
+        private const string EmailPolicyMsg = "Policy change request has been";
         private bool wait;
         private int hospitals;
         private int cover;
@@ -76,7 +78,6 @@ namespace Insurance_app.ViewModels
         {
             PrevPoliciesIsVisible = false;
             var tempUpdate = false;
-            var hasPrevPolicies = false;
             try
             {
                 SetUpWaitDisplay = true;
@@ -89,9 +90,8 @@ namespace Insurance_app.ViewModels
                 }
                 else if(customerId != App.RealmApp.CurrentUser.Id)
                 {
-                    hasPrevPolicies = await GetPreviousPolicies();
+                    await GetPreviousPolicies();
                 }
-                
                 var policy = await FindPolicy();
                 if (policy.UnderReview != null) tempUpdate = (bool) policy.UnderReview;
                 if (policy.Price != null) price = (float) policy.Price;
@@ -115,7 +115,7 @@ namespace Insurance_app.ViewModels
             
             UnderReviewDisplay = tempUpdate;
             InfoIsVisible = !tempUpdate;
-            PrevPoliciesIsVisible = hasPrevPolicies;
+            PrevPoliciesIsVisible = policyManager.previousPolicies.Count>0 ;
             if (customerId != App.RealmApp.CurrentUser.Id && UnderReviewDisplay)
             {
                 ClientActionNeeded = true;
@@ -222,6 +222,12 @@ namespace Insurance_app.ViewModels
         {
             try
             {
+                if (!App.NetConnection())
+                {
+                    await Shell.Current.DisplayAlert("Notice", 
+                        StaticOpt.NCE, "close");
+                    return;
+                }
                 var answer = await Shell.Current.DisplayAlert("Message", 
                     "Allow the Policy update ?", "Yes", "No");
 
@@ -230,8 +236,15 @@ namespace Insurance_app.ViewModels
                 var result = await Shell.Current.DisplayAlert("Notice", 
                     $"Are you sure you want to {answerString} the update?", "Yes", "No");
                 if (!result) return;
+                
                     CircularWaitDisplay = true;
-                    await policyManager.AllowUpdate(customerId,App.RealmApp.CurrentUser,answer);
+                    var customer = await policyManager.AllowUpdate(customerId,App.RealmApp.CurrentUser,answer);
+                    if (customer !=null)
+                    {
+                        inf.CustomerNotifyEmail(customer.Email, customer.Name, DateTime.Now, $"{answerString}'ed");
+                        await Shell.Current.DisplayAlert("Notice", $"Customer has been notified by email.", "close");
+                    }
+                    
                     ClientActionNeeded = false;
                     CircularWaitDisplay = false;
                     await Setup();
@@ -242,7 +255,7 @@ namespace Insurance_app.ViewModels
             }
         }
 
-        private async Task<bool> GetPreviousPolicies() => 
+        private async Task GetPreviousPolicies() => 
             await policyManager.GetPreviousPolicies(customerId,App.RealmApp.CurrentUser);
         private async Task GetCurrentCustomer() => 
             dob = await userManager.GetCustomersDob(customerId,App.RealmApp.CurrentUser);

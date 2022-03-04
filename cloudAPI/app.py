@@ -25,7 +25,7 @@ def send_email_confirm():
     #Create your secure SMTP session
         smtp = smtplib.SMTP('smtp.gmail.com', 587)
         smtp.starttls()
-        smtp.login("dinamicinsuranceapp@gmail.com","6714d944a286291a12784df0302e5a0910fd2fe75a09023daceaeb6f54ab6eb1")
+        smtp.login("dinamicinsuranceapp@gmail.com","3b3f134bec5872745c2ee67e245329777b361ac6fc4c1ee5a738613f8af72d52")
 
         # create email string
         text =f"Please follow link below back to your application \n {application}"
@@ -51,10 +51,10 @@ def send_email_notification():
             #Create your secure SMTP session
             smtp = smtplib.SMTP('smtp.gmail.com', 587)
             smtp.starttls()
-            smtp.login("dinamicinsuranceapp@gmail.com","6714d944a286291a12784df0302e5a0910fd2fe75a09023daceaeb6f54ab6eb1")
+            smtp.login("dinamicinsuranceapp@gmail.com","3b3f134bec5872745c2ee67e245329777b361ac6fc4c1ee5a738613f8af72d52")
             
             # create email string
-            text =f"Dear {data['name']}\nThe Policy request has been {data['action']}\nPlease contact support if any questions arises"
+            text =f"Dear {data['name']}\n\nThe Policy request has been {data['action']}\n\nPlease contact support if any questions arises\nKind regards.\nDinamic Personal Insurance\n{data['date']}"
             msg = MIMEText(text)
             msg['Subject'] = 'Dinamic Insurance Quote'
             msg['From'] = 'dinamicinsuranceapp@gmail.com'

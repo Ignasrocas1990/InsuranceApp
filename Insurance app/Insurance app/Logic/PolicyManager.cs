@@ -55,15 +55,14 @@ namespace Insurance_app.Logic
             };
         }
 
-        public async Task<bool> GetPreviousPolicies(string customerId, User user)
+        public async Task GetPreviousPolicies(string customerId, User user)
         {
            previousPolicies = await RealmDb.GetInstance().GetPreviousPolicies(customerId, user);
-           return previousPolicies.Count>0;
         }
 
-        public async Task AllowUpdate(string customerId, User user,bool allowUpdate)
+        public async Task<Customer> AllowUpdate(string customerId, User user,bool allowUpdate)
         {
-           await RealmDb.GetInstance().ResolvePolicyUpdate(customerId,user,allowUpdate);
+         return await RealmDb.GetInstance().ResolvePolicyUpdate(customerId,user,allowUpdate);
         }
 
         public void RemoveIfContains(Policy policy)
