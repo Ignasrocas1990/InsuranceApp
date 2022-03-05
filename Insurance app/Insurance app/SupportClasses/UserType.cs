@@ -2,6 +2,6 @@
 {
     public enum UserType
     {
-        Client,Customer
+        Client,Customer,ExpiredCustomer
     }
 }

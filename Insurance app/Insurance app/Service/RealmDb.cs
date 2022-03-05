@@ -531,7 +531,45 @@ public async Task<Tuple<bool,Policy>> FindPolicy(string customerId,User user)
                 Console.WriteLine(e);
             }
         }
-       
+        public async Task UpdatePolicyDate(DateTimeOffset newDate, Policy currentPolicy, float totalCost, User user)
+        {
+            try
+            {
+                await GetRealm(partition,user);
+                if (realm is null) throw new Exception("UpdatePolicyDate ::::::::::: realm was null");
+                realm.Write(() =>
+                {
+                   var customer = realm.Find<Customer>(user.Id);
+                    var newPolicy = realm.Add(new Policy()
+                    {
+                        Smoker = currentPolicy.Smoker,
+                        Cover = currentPolicy.Cover,
+                        ExpiryDate = newDate,
+                        HospitalFee = currentPolicy.HospitalFee,
+                        Hospitals = currentPolicy.Hospitals,
+                        Plan = currentPolicy.Plan,
+                        Owner = user.Id,
+                        PayedPrice = currentPolicy.Price-totalCost,
+                        Price = currentPolicy.Price,
+                        UnderReview = false
+                    });
+                    customer.Policy.Add(newPolicy);
+                    currentPolicy.DelFlag = true;
+                    if (totalCost>0)
+                    {
+                        var rewards=customer.Reward
+                            .Where(r => r.FinDate != null && r.DelFlag != false).ToList();
+                        
+                        foreach (var r in rewards) 
+                            r.DelFlag = true;
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
 //--------------------------------- client methods -------------------------------
         public async Task<bool> CreateClient(User user, string email, string fname, string lname, string code)
         {
@@ -559,46 +597,20 @@ public async Task<Tuple<bool,Policy>> FindPolicy(string customerId,User user)
 
             return false;
         }
-        public async Task<string> FindTypeUser(User user)
+
+        public async Task<bool> IsClient(string userId,User user)
         {
-            string userType = "";
-            try
+            await GetRealm(userId,user);
+            bool isClient = false;
+            if (realm is null) throw new Exception("IsClient,Realm return null");
+            realm.Write(()=>
             {
-                await GetRealm(partition,user);
-                if (realm is null) throw new Exception("FindTpeUser,Realm return null");
-                Customer c = null;
-                realm.Write(() =>
+                if (realm.Find<Client>(userId) != null)
                 {
-                    var now = DateTimeOffset.Now;
-                    c = realm.Find<Customer>(user.Id);
-                    if (c!=null)
-                    {
-                        var p = c.Policy.FirstOrDefault(policy => policy.ExpiryDate < now);//check if policy expired
-                        if (p !=null)
-                        {
-                            userType = "NCustomer";
-                        }
-                        else
-                        {
-                            userType = "Customer";
-                        }
-                    }
-                });
-                if (userType == "")
-                {
-                    await GetRealm(user.Id,user);
-                    var client = realm.Find<Client>(user.Id);
-                    if (client != null)
-                    {
-                        userType = "Client";
-                    }
+                    isClient = true;
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            return userType;
+            });
+            return isClient;
         }
         private async Task SubmitActivity(string customerId,User user,string type)
         {
@@ -742,6 +754,6 @@ public async Task<Tuple<bool,Policy>> FindPolicy(string customerId,User user)
         }
 
 
-       
+        
     }
 }

@@ -98,13 +98,14 @@ namespace Insurance_app.ViewModels
                      if (typeUser.Equals($"{UserType.Customer}"))
                      {
                          Application.Current.MainPage = new AppShell();
-                         CircularWaitDisplay = true;
                          await Shell.Current.GoToAsync($"//{nameof(HomePage)}?Email={email}&Pass={password}");
+                     }else if (typeUser.Equals($"{UserType.ExpiredCustomer}"))
+                     {
+                         //continuew here ====================================
                      }
                      else if (typeUser.Equals($"{UserType.Client}"))
                      {
                          Application.Current.MainPage = new ClientShell();
-                         CircularWaitDisplay = true;
                          await Shell.Current.GoToAsync($"//{nameof(ClientMainPage)}");
                      }
                      else
@@ -115,16 +116,15 @@ namespace Insurance_app.ViewModels
                 }
                 else
                 {
-                    await Application.Current.MainPage.DisplayAlert("Notice", StaticOpt.NetworkConMsg, "close");
+                    throw new Exception(StaticOpt.NetworkConMsg);
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                await Application.Current.MainPage.DisplayAlert("Login Failed", e.Message, "close");
-
+                await Application.Current.MainPage.DisplayAlert("Error", e.Message, "close");
+                circularWaitDisplay = false;
             }
-            CircularWaitDisplay = false;
         }
         private async Task<string> TypeUser(User user)
         {

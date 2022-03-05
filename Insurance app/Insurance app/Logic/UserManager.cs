@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Insurance_app.Models;
 using Insurance_app.Service;
@@ -88,9 +89,72 @@ namespace Insurance_app.Logic
             return await RealmDb.GetInstance().CreateClient(user, email, fname, lname, code);
         }
 
-        public Task<string> FindTypeUser(User user)
+        public async Task<string> FindTypeUser(User user)
         {
-            return RealmDb.GetInstance().FindTypeUser(user);
+            try
+            {
+                var now = DateTimeOffset.Now;
+                var customer = await RealmDb.GetInstance().FindCustomer(user,user.Id);
+
+                if (customer!=null)
+                {
+                    // expired
+                    var currentPolicy = customer.Policy
+                        ?.Where(p=> p.DelFlag == false && p.ExpiryDate< now).OrderByDescending(z => z.ExpiryDate).First();
+                
+                    if (currentPolicy!=null)
+                    {
+                        if (!customer.DirectDebitSwitch)
+                        {
+                            return "ExpiredCustomer";
+                        }
+                        await UpdatePolicy(now,customer,user,currentPolicy);
+                    }
+                    return "Customer";
+                }
+                if (await RealmDb.GetInstance().IsClient(user.Id, user))
+                {
+                    return "Client";
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return "";
+        }
+        private async Task UpdatePolicy(DateTimeOffset now, Customer customer, User user, Policy currentPolicy)
+        {
+            try
+            {
+                float totalCost = 0;
+                var newDate = ChangeDate(currentPolicy.ExpiryDate.Value, now);
+                if (customer.AutoRewardUse)
+                {
+                    var rewards = customer.Reward.Where(r => r.FinDate != null && r.DelFlag != false).ToList();
+                    totalCost = GetTotalRewardCost(rewards);
+                }
+                await RealmDb.GetInstance().UpdatePolicyDate(newDate, currentPolicy,totalCost,user);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+        
+
+        private float GetTotalRewardCost(IEnumerable<Reward> rewards)
+        {
+            return rewards.Where(reward => reward.Cost != null).Sum(reward => (float) reward.Cost);
+        }
+        private DateTimeOffset ChangeDate(DateTimeOffset policyDate,DateTimeOffset now)
+        {
+            while (policyDate<now)
+            {
+                policyDate = policyDate.AddMonths(1);
+            }
+
+            return policyDate;
         }
 
         public async Task<List<Customer>>GetAllCustomer(User user)
