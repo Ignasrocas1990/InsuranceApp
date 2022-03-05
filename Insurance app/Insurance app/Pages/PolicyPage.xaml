@@ -17,29 +17,12 @@
                 </ResourceDictionary>
         </ContentPage.Resources>
         
-        <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="10" Padding="30,0,30,0">
-         <Grid.RowDefinitions>
-            
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="2*"/>
-
-                </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5*"/>
-            <ColumnDefinition Width="5*"/>
-        </Grid.ColumnDefinitions>
+        <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="10" Padding="30,0,30,0"
+              RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,2*" ColumnDefinitions = "5*,5*" >
                 
-        <Label Text="Currently under review" Style="{StaticResource NormalLabel}" FontAttributes="Italic"
-               IsVisible="{Binding UnderReviewDisplay}" HorizontalTextAlignment="Center"
-                Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" TextColor="{StaticResource StrongColor}" />
+                <Label Text="Currently under review" Style="{StaticResource NormalLabel}" FontAttributes="Italic"
+                       IsVisible="{Binding UnderReviewDisplay}" HorizontalTextAlignment="Center"
+                       Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" TextColor="{StaticResource StrongColor}" />
         
         <Label Text="Expiry Date :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}" />
         <Label Text="{Binding ExpiryDateDisplay, StringFormat='{0:dd/MM/yyyy}'}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"

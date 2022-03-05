@@ -7,6 +7,7 @@ using Insurance_app.Communications;
 using Insurance_app.Logic;
 using Insurance_app.Pages;
 using Insurance_app.Pages.Popups;
+using Insurance_app.Service;
 using Insurance_app.SupportClasses;
 using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
@@ -21,7 +22,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
         private string fname="";
         private bool wait;
         private string lname="";
-        private InferenceService inf;
+        private HttpService inf;
         private int attempt = 0;
         private bool codeIsValid;
         private readonly UserManager userManager;
@@ -29,7 +30,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
 
         public ClientRegViewModel()
         {
-            inf = new InferenceService();
+            inf = new HttpService();
             userManager = new UserManager();
         }
 

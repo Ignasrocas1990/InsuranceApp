@@ -69,6 +69,33 @@ def send_email_notification():
     except Exception as ex:
         return "error"
 
+@app.route('/resetPass', methods=['POST'])
+def send_email_notification():
+    try:
+        data = request.get_json(force=True)  # Get data posted as a json
+    
+        if(data != None):
+            #Create your secure SMTP session
+            smtp = smtplib.SMTP('smtp.gmail.com', 587)
+            smtp.starttls()
+            smtp.login("dinamicinsuranceapp@gmail.com","3b3f134bec5872745c2ee67e245329777b361ac6fc4c1ee5a738613f8af72d52")
+            
+            # create email string
+            text =f"Dear {data['name']}\n\nThe Dinamic Insurance temporary password has been changed to : {data['pass']}\n\nPlease contact support if any questions arises\nKind regards.\nDinamic Personal Insurance\n{data['date']}"
+            msg = MIMEText(text)
+            msg['Subject'] = 'Dinamic Insurance Quote'
+            msg['From'] = 'dinamicinsuranceapp@gmail.com'
+            msg['To'] =  data['email']
+
+            #send email
+            smtp.sendmail("dinamicinsuranceapp@gmail.com", data['email'],msg.as_string()) 
+            smtp.quit()
+            return "sent"
+        return "error"
+    
+    except Exception as ex:
+        return "error"
+
 
 @app.route('/CompanyCode', methods=['POST'])
 def check_Company_Code():

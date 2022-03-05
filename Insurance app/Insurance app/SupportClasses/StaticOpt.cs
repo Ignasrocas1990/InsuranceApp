@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Insurance_app.Models;
@@ -17,6 +18,7 @@ namespace Insurance_app.SupportClasses
         //public const string Url = "http://ec2-34-251-148-246.eu-west-1.compute.amazonaws.com/predict";
         public const string PredictUrl = "https://testRESTapi.pythonanywhere.com/predict";
         public const string EmailUrl = "https://testRESTapi.pythonanywhere.com/notifyCustomer";
+        public const string PassResetEmailUrl = "https://testRESTapi.pythonanywhere.com/resetPass";
         public const string CompanyCodeUrl = "https://testRESTapi.pythonanywhere.com/CompanyCode";
         public static string MyRealmAppId = "application-1-luybv";
         public static readonly double StepNeeded = 10000;
@@ -78,8 +80,37 @@ namespace Insurance_app.SupportClasses
                     return "";
             }
         }
+
+        public static string TempPassGenerator()
+        {
+            string sourceSL = "qwertyuiopasdfghjklzxcvbnm";
+            string sourceCL = "MNBVCXZASDFGHJKLPOIUYTREWQ";
+            string sourceN = "1234567890";
+            string sourceS = "=-/?#][|!£$%^&*()_+";
+            Random r = new Random();
+            string pass = "";
+            for (int i = 0; i < 9; i++)
+            {
+                if (i<3)
+                {
+                    pass += sourceCL[r.Next(0, sourceCL.Length-1)];
+                }else if (i < 6)
+                {
+                    pass += sourceSL[r.Next(0, sourceSL.Length-1)];
+                }else if (i < 8)
+                {
+                    pass += sourceN[r.Next(0, sourceN.Length-1)];
+                }
+                else
+                {
+                    pass += sourceS[r.Next(0, sourceS.Length-1)];
+                }
+                
+            }
+            
+            return pass;
+        }
         
-        //------------------------------ information popup ----------------------------  
         public static async Task InfoPopup(string type)
         {
             await Application.Current.MainPage.Navigation.ShowPopupAsync(new InfoPopup(type));

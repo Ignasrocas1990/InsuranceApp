@@ -14,7 +14,7 @@
     
     
         <Grid VerticalOptions="CenterAndExpand" RowSpacing="25" ColumnSpacing="0" Padding="30,0,30,0"
-              RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,*"  ColumnDefinitions="5*,5*">
+              RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,*"  ColumnDefinitions="5*,5*">
         
                 <Label Text="Dob :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="0" />
         <DatePicker MinimumDate="{Binding MinDate}"
@@ -52,6 +52,12 @@
         <Button Text= "Get Quote" IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Style="{StaticResource PrimaryBtn}"
                 Command="{Binding GetQuotCommand}" Grid.Column="0" Grid.Row="6"  Grid.ColumnSpan="2"/>
+                
+        <Button Text= "Reset Password"
+                IsVisible="{Binding IsExpiredCustomer}"
+                IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                        Style="{StaticResource SecondaryBtn}"
+                        Command="{Binding ResetPasswordCommand}" Grid.Column="0" Grid.Row="7"  Grid.ColumnSpan="2"/>        
         </Grid>
 
 </pages:LoadingPage>

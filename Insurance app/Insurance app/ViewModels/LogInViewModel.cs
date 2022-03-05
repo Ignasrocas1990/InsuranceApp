@@ -18,8 +18,10 @@ namespace Insurance_app.ViewModels
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public class LogInViewModel : ObservableObject
     {
-        private string email=""; 
-        private string password="";
+        private string email="";
+        private string password = "";
+        private string expiredCustomerStr = "Accounts policy has been expired" +
+                                            "\nPlease select one of the following options.";
         private UserManager userManager;
 
         public ICommand LogInCommand { get; }
@@ -68,8 +70,7 @@ namespace Insurance_app.ViewModels
             {
                 CircularWaitDisplay = true;
                 //await Shell.Current.GoToAsync($"//{nameof(QuotePage)}");
-                await Application.Current.MainPage.Navigation.PushAsync(new QuotePage());
-                CircularWaitDisplay = false;
+                await Application.Current.MainPage.Navigation.PushAsync(new QuotePage(""));
             }
             catch (Exception e)
             {
@@ -99,19 +100,29 @@ namespace Insurance_app.ViewModels
                      {
                          Application.Current.MainPage = new AppShell();
                          await Shell.Current.GoToAsync($"//{nameof(HomePage)}?Email={email}&Pass={password}");
-                     }else if (typeUser.Equals($"{UserType.ExpiredCustomer}"))
-                     {
-                         //continuew here ====================================
                      }
                      else if (typeUser.Equals($"{UserType.Client}"))
                      {
                          Application.Current.MainPage = new ClientShell();
                          await Shell.Current.GoToAsync($"//{nameof(ClientMainPage)}");
                      }
-                     else
+                     else if(typeUser.Equals(""))
                      {
                          await CheckIfUserExist();
                          throw new Exception("User has not been found");
+                     }
+                     else
+                     {
+                         var anwer = await Application.Current.MainPage.DisplayAlert("Notice", expiredCustomerStr,
+                             "Create new account.", "Reset the old account");
+                         if (anwer)
+                         {
+                             QuoteCommand.Execute(null);
+                         }
+                         else
+                         {
+                             await Application.Current.MainPage.Navigation.PushAsync(new QuotePage(typeUser));
+                         }
                      }
                 }
                 else

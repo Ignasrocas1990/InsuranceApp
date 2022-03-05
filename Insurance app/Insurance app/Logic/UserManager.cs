@@ -106,7 +106,7 @@ namespace Insurance_app.Logic
                     {
                         if (!customer.DirectDebitSwitch)
                         {
-                            return "ExpiredCustomer";
+                            return currentPolicy.Id.ToString();
                         }
                         await UpdatePolicy(now,customer,user,currentPolicy);
                     }

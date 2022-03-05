@@ -453,7 +453,7 @@ public async Task<Tuple<bool,Policy>> FindPolicy(string customerId,User user)
            }
            return tuplePolicy;
         }
-        public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user)
+public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user)
         {
             List<Policy> previousPolicies = null;
             try

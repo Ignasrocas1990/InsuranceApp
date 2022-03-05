@@ -13,7 +13,11 @@ using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using System.Timers;
+using Android.Provider;
+using Insurance_app.Logic;
 using Insurance_app.Pages.Popups;
+using Insurance_app.Service;
+using MongoDB.Bson;
 using Xamarin.CommunityToolkit.Extensions;
 
 
@@ -22,8 +26,9 @@ namespace Insurance_app.ViewModels
     public class QuoteViewModel : ObservableObject
     {
         public ICommand GetQuotCommand { get; }
+        public ICommand ResetPasswordCommand { get; }
         private int responseCounter = 0;
-        private InferenceService inf;
+        private HttpService api;
         private bool wait;
         private bool tooLate;
         private int hospitals;
@@ -34,23 +39,55 @@ namespace Insurance_app.ViewModels
         private bool isSmokerChecker=false;
         private readonly Timer timer;
         private string elegalChars = "";
-
-
+        private string policyId = "";
+        
         public ICommand InfoCommand { get; }
-        public IList<String> HospitalList { get; } = StaticOpt.HospitalsEnum();
+        public IList<string> HospitalList { get; }
         //age
-        public IList<String> CoverList { get; } = Enum.GetNames(typeof(StaticOpt.CoverEnum)).ToList();
-        public IList<int> HospitalFeeList { get; } = StaticOpt.ExcessFee();
-        public IList<String> PlanList { get; } = Enum.GetNames(typeof(StaticOpt.PlanEnum)).ToList();
+        public IList<string> CoverList { get; }
+        public IList<int> HospitalFeeList { get; }
+        public IList<string> PlanList { get; }
+        private UserManager userManager;
+        private string email;
+        private string name;
 
-        public QuoteViewModel()
+        public QuoteViewModel(string policyId)
        {
+           HospitalList = StaticOpt.HospitalsEnum();
+           CoverList = Enum.GetNames(typeof(StaticOpt.CoverEnum)).ToList();
+           HospitalFeeList = StaticOpt.ExcessFee();
+           PlanList = Enum.GetNames(typeof(StaticOpt.PlanEnum)).ToList();
+           
            timer = new Timer(1000);
            timer.Elapsed += CheckResponseTime;
            GetQuotCommand = new AsyncCommand(GetQuote);
-           inf = new InferenceService();
+           api = new HttpService();
            InfoCommand = new AsyncCommand<string>(StaticOpt.InfoPopup);
+           ResetPasswordCommand = new AsyncCommand(ResetPassword);
+           this.policyId = policyId;
+           userManager = new UserManager();
        }
+        public async Task SetUp()
+        {
+            IsExpiredCustomer = false;
+            if (policyId.Equals("")) return;
+            SetUpWaitDisplay = true;
+            try
+            {
+                //ObjectId.Parse(policyId);
+               var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, App.RealmApp.CurrentUser.Id);
+               if (customer.Dob != null) SelectedDate = customer.Dob.Value.UtcDateTime;
+               email = customer.Email;
+               name = customer.Name;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            IsExpiredCustomer = true;
+            SetUpWaitDisplay = false;
+        }
+        
         private async Task GetQuote()
        {
            if (!App.NetConnection())
@@ -72,14 +109,13 @@ namespace Insurance_app.ViewModels
            {
                CircularWaitDisplay=true;
                 timer.Start();
-                price =  await inf.SendQuoteRequest(hospitals, age, cover, hospitalExcess, plan, smoker);
+                price =  await api.SendQuoteRequest(hospitals, age, cover, hospitalExcess, plan, smoker);
                 timer.Stop();
                 if (tooLate)
                 {
                     tooLate = false;
                     return;
                 }
-
            }
            catch
            {
@@ -91,32 +127,60 @@ namespace Insurance_app.ViewModels
            CircularWaitDisplay=false;
            responseCounter = 0;
             bool action = await Application.Current.MainPage.DisplayAlert("Price",$"Price for the quote is : {price}",  "Accept","Deny");
-           if (action)
+           if (action && policyId=="")
            {
-               try
-               {   
-                   var tempQuote = new Dictionary<string, string>
-                   {
-                       {"Hospitals",HospitalList[hospitals]},
-                       {"Age",$"{age}"},
-                       {"Cover",CoverList[cover]},
-                       {"Hospital_Excess",$"{hospitalExcess}"},
-                       {"Plan",PlanList[plan]},
-                       {"Smoker",$"{smoker}"},
-                       {selectedDate.ToString("d"), "-1"}
-                   };
-                   //var jsonQuote = JsonConvert.SerializeObject(tempQuote);
-                   //await Shell.Current.GoToAsync($"//{nameof(RegistrationPage)}?PriceDisplay={price}&TempQuote={jsonQuote}");
-                   await Application.Current.MainPage.Navigation.PushAsync(new RegistrationPage(tempQuote,price));
-               }
-               catch (Exception e)
-               {
-                   Console.WriteLine(e);
-               }
-           } 
+               await TransferToRegistration(age,price);
+           }else if (action)
+           {
+               //TODO   update policy etc... and navigate back to log in screen
+           }
        }
 
-       private async void CheckResponseTime(object o, ElapsedEventArgs e)
+        private async Task TransferToRegistration(int age,string price)
+        {
+            try
+            {   
+                var tempQuote = new Dictionary<string, string>
+                {
+                    {"Hospitals",HospitalList[hospitals]},
+                    {"Age",$"{age}"},
+                    {"Cover",CoverList[cover]},
+                    {"Hospital_Excess",$"{hospitalExcess}"},
+                    {"Plan",PlanList[plan]},
+                    {"Smoker",$"{smoker}"},
+                    {selectedDate.ToString("d"), "-1"}
+                };
+                await Application.Current.MainPage.Navigation.PushAsync(new RegistrationPage(tempQuote,price));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+        private async Task ResetPassword()
+        {
+            CircularWaitDisplay = true;
+            try
+            {
+                if (!App.NetConnection())
+                {
+                    await Application.Current.MainPage.DisplayAlert("Notice", StaticOpt.NetworkConMsg, "close");
+                    throw new Exception();
+                }
+                var tempPass = StaticOpt.TempPassGenerator();// TODO NEED TO UPDATE API FIRST 
+                await App.RealmApp.EmailPasswordAuth.CallResetPasswordFunctionAsync(email,tempPass);
+                api.ResetPasswordEmail(email,name, DateTime.Now, tempPass);
+                await Application.Current.MainPage.DisplayAlert(
+                    "Notice", "The temporary password has been send to account email.", "close");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            CircularWaitDisplay = false;
+        }
+
+        private async void CheckResponseTime(object o, ElapsedEventArgs e)
        {
            responseCounter += 1;
            if (responseCounter != StaticOpt.MaxResponseTime) return;
@@ -182,6 +246,13 @@ namespace Insurance_app.ViewModels
             get => enabled;
             set => SetProperty(ref enabled, value);
         }
+
+        private bool expiredCustomer=false;
+        public bool IsExpiredCustomer
+        {
+            get => expiredCustomer;
+            set => SetProperty(ref expiredCustomer, value);
+        }
         private bool setUpWait;
 
         public bool SetUpWaitDisplay
@@ -189,5 +260,7 @@ namespace Insurance_app.ViewModels
             get => setUpWait;
             set => SetProperty(ref setUpWait, value);
         }
+
+       
     }
 }

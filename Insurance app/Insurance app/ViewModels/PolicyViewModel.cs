@@ -11,6 +11,7 @@ using Insurance_app.Logic;
 using Insurance_app.Models;
 using Insurance_app.Pages.ClientPages;
 using Insurance_app.Pages.Popups;
+using Insurance_app.Service;
 using Insurance_app.SupportClasses;
 using Realms.Sync;
 using Xamarin.CommunityToolkit.Extensions;
@@ -48,7 +49,7 @@ namespace Insurance_app.ViewModels
         public IList<int> HospitalFeeList { get; }
         public IList<string> PlanList { get; } 
         private readonly PolicyManager policyManager;
-        private readonly InferenceService inf;
+        private readonly HttpService inf;
         private readonly UserManager userManager;
         private string customerId = "";
         
@@ -62,7 +63,7 @@ namespace Insurance_app.ViewModels
             ResolveUpdateCommand = new AsyncCommand(ResolveUpdate);
             policyManager = new PolicyManager();
             userManager = new UserManager();
-            inf = new InferenceService();
+            inf = new HttpService();
             timer = new Timer(1000);
             timer.Elapsed += CheckResponseTime;
             CoverList = Enum.GetNames(typeof(StaticOpt.CoverEnum)).ToList();
@@ -70,10 +71,7 @@ namespace Insurance_app.ViewModels
             HospitalList = StaticOpt.HospitalsEnum();
             PlanList = Enum.GetNames(typeof(StaticOpt.PlanEnum)).ToList();
         }
-
-
-
-
+        
         public async Task Setup()
         {
             PrevPoliciesIsVisible = false;
@@ -93,19 +91,7 @@ namespace Insurance_app.ViewModels
                     await GetPreviousPolicies();
                 }
                 var policy = await FindPolicy();
-                if (policy.UnderReview != null) tempUpdate = (bool) policy.UnderReview;
-                if (policy.Price != null) price = (float) policy.Price;
-                PriceDisplay = (Math.Round(price * 100f) / 100f).ToString(CultureInfo.InvariantCulture);
-                if (policy.Hospitals != null) SelectedHospital = HospitalList.IndexOf(policy.Hospitals);
-                if (policy.Cover != null) SelectedCover =  CoverList.IndexOf(policy.Cover);
-                if (policy.HospitalFee != null) SelectedItemHospitalFee = (int) policy.HospitalFee;
-                if (policy.Plan != null) SelectedPlan = PlanList.IndexOf(policy.Plan) ;
-                IsSmokerDisplay = Convert.ToBoolean(policy.Smoker);
-                if (policy.ExpiryDate != null)
-                {
-                    ExpiryDateDisplay = policy.ExpiryDate.Value.Date.ToString("d");
-                    date = (DateTimeOffset) policy.ExpiryDate;
-                }
+                tempUpdate= SelectPreviousPolicy(policy);
             }
             catch (Exception e)
             {
@@ -120,6 +106,33 @@ namespace Insurance_app.ViewModels
             {
                 ClientActionNeeded = true;
             }
+        }
+
+        private bool SelectPreviousPolicy(Policy policy)
+        {
+
+            try
+            {
+                if (policy.Price != null) price = (float) policy.Price;
+                PriceDisplay = (Math.Round(price * 100f) / 100f).ToString(CultureInfo.InvariantCulture);
+                if (policy.Hospitals != null) SelectedHospital = HospitalList.IndexOf(policy.Hospitals);
+                if (policy.Cover != null) SelectedCover =  CoverList.IndexOf(policy.Cover);
+                if (policy.HospitalFee != null) SelectedItemHospitalFee = (int) policy.HospitalFee;
+                if (policy.Plan != null) SelectedPlan = PlanList.IndexOf(policy.Plan) ;
+                IsSmokerDisplay = Convert.ToBoolean(policy.Smoker);
+                if (policy.ExpiryDate != null)
+                {
+                    ExpiryDateDisplay = policy.ExpiryDate.Value.Date.ToString("d");
+                    date = (DateTimeOffset) policy.ExpiryDate;
+                }
+                return policy.UnderReview != null && (bool) policy.UnderReview;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return true;
         }
 
         private async Task Update()
@@ -242,7 +255,7 @@ namespace Insurance_app.ViewModels
                     if (customer !=null)
                     {
                         inf.CustomerNotifyEmail(customer.Email, customer.Name, DateTime.Now, $"{answerString}'ed");
-                        await Shell.Current.DisplayAlert("Notice", $"Customer has been notified by email.", "close");
+                        await Shell.Current.DisplayAlert("Notice", "Customer has been notified by email.", "close");
                     }
                     
                     ClientActionNeeded = false;

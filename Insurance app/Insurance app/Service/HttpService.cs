@@ -1,25 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Insurance_app.SupportClasses;
 using Newtonsoft.Json;
-using Xamarin.Essentials;
 
-namespace Insurance_app.Communications
+namespace Insurance_app.Service
 {
     
-    public class InferenceService
+    public class HttpService
     {
         
 
         
         private HttpClient client;
         //Func<String,double>convertToDouble =  x => double.Parse(x, CultureInfo.InvariantCulture);
-        public InferenceService()
+        public HttpService()
         {
             client = new HttpClient();
         }
@@ -58,6 +55,46 @@ namespace Insurance_app.Communications
                 Console.WriteLine("error not connected");
             }
         }
+        
+        public void ResetPasswordEmail(string email, string name, DateTime date,string tempPass)
+        {
+            if (!App.NetConnection()) return;
+
+            var content = new StringContent(JsonConvert
+                    .SerializeObject(new Dictionary<string,string>()
+                    {
+                        {"email",email},
+                        {"name",name},
+                        {"date",$"{date:D}"},
+                        {"pass",$"{tempPass}"}
+                    })
+                ,Encoding.UTF8, "application/json");
+            
+            if (App.NetConnection())
+            {
+                try
+                {
+                    client.PostAsync(StaticOpt.EmailUrl, content);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"fail to send { e }");
+                    App.Connected = false;
+                       
+                }
+                    
+            }
+            else
+            {
+                Console.WriteLine("error not connected");
+            }
+        }
+        
+        
+        
+        
+        
+        
         public Task<HttpResponseMessage> CheckCompanyCode(string code)
         {
             if (!App.NetConnection()) return null;
