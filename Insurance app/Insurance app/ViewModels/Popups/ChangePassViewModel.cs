@@ -44,6 +44,8 @@ namespace Insurance_app.ViewModels.Popups
             }
             catch (Exception e)
             {
+                await Application.Current.MainPage.DisplayAlert(
+                    "Error", "Password change failed.\nTry again later.", "close");
                 Console.WriteLine(e);
             }
         }

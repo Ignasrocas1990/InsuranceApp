@@ -16,6 +16,7 @@ namespace Insurance_app
         //public static RealmDb RealmDb;
         public static Realms.Sync.App RealmApp;
         public static bool Connected;
+        private bool disconnected;
 
         public App()
         {
@@ -36,6 +37,26 @@ namespace Insurance_app
             {
                 MainPage.DisplayAlert("error", "Application server is down\nPlease try again later","close");
             }
+
+            Connectivity.ConnectivityChanged += (s, e) =>
+            {
+                if (!NetConnection())
+                {
+                    if (RealmApp.CurrentUser != null)
+                    {
+                        RealmApp.RemoveUserAsync(RealmApp.CurrentUser);
+                        disconnected = true;
+                        MainPage = new NavigationPage(new LogInPage());
+                        
+                        //Current.MainPage.Navigation.PushAsync(new LogInPage());
+                    }
+                }
+                if (disconnected && NetConnection())
+                {
+                    disconnected = false;
+                    RealmDb.GetInstance().Dispose();
+                }
+            };
         }
 
         protected override void OnSleep()
@@ -48,7 +69,6 @@ namespace Insurance_app
 
         public static bool NetConnection()
         {
-            var connection = Connectivity.NetworkAccess;
             var profiles = Connectivity.ConnectionProfiles;
             var connectionProfiles = profiles as ConnectionProfile[] ?? profiles.ToArray();
             if (connectionProfiles.Contains(ConnectionProfile.WiFi) || connectionProfiles.Contains(ConnectionProfile.Cellular))

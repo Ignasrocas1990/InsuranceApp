@@ -39,22 +39,22 @@
     -->
     
     <!--    side Flyout menu navigation                    -->
-    <FlyoutItem Title="Home page" Icon="walkIcon.png" Route="HomePage" >
+    <FlyoutItem Title="Home" Icon="walkIcon.png" Route="HomePage" >
         <ShellContent ContentTemplate="{DataTemplate pages:HomePage}"/>
     </FlyoutItem>
-    <FlyoutItem Title="Profile page" Icon="profileIcon.png" >
+    <FlyoutItem Title="Profile" Icon="profileIcon.png" >
         <ShellContent ContentTemplate="{DataTemplate pages:ProfilePage}" />
     </FlyoutItem>
-    <FlyoutItem Title="Report page" Icon="reportIcon.png">
+    <FlyoutItem Title="Report" Icon="reportIcon.png">
         <ShellContent ContentTemplate="{DataTemplate pages:Report}"/>
     </FlyoutItem>
-    <FlyoutItem Title="Claim page" Icon="claimIcon.png">
+    <FlyoutItem Title="Claim" Icon="claimIcon.png">
         <ShellContent ContentTemplate="{DataTemplate pages:ClaimPage}"/>
     </FlyoutItem>
-    <FlyoutItem Title="Policy page" Icon="policyIcon.png">
+    <FlyoutItem Title="Policy" Icon="policyIcon.png">
         <ShellContent ContentTemplate="{DataTemplate pages:PolicyPage}"/>
     </FlyoutItem>
-    <FlyoutItem Title="Account Settings page" Icon="settingsIcon.png">
+    <FlyoutItem Title="Settings" Icon="settingsIcon.png">
         <ShellContent ContentTemplate="{DataTemplate pages:AccountSettingsPage}"/>
     </FlyoutItem>
     

@@ -76,13 +76,6 @@ namespace Insurance_app.ViewModels
             get => lineChart;
             set => SetProperty(ref lineChart, value);
         }
-
-        private bool isRunning;
-        public bool CircularDisplay
-        {
-            get => isRunning;
-            set => SetProperty(ref isRunning, value);
-        }
         private bool setUpWait;
         public bool SetUpWaitDisplay
         {
@@ -103,6 +96,12 @@ namespace Insurance_app.ViewModels
         {
             get => weekChartIsVisible;
             set => SetProperty(ref weekChartIsVisible, value);
+        }
+        private bool wait;
+        public bool CircularWaitDisplay
+        {
+            get => wait;
+            set => SetProperty(ref wait, value);
         }
 
         public void Dispose()

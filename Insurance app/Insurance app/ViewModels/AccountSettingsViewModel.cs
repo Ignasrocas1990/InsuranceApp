@@ -2,7 +2,9 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Insurance_app.Logic;
+using Insurance_app.Pages.Popups;
 using Insurance_app.SupportClasses;
+using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
 
@@ -19,10 +21,6 @@ namespace Insurance_app.ViewModels
         private string email;
         private bool originalRewardSwitch;
         private bool originalDirrectDebid;
-
-        
-
-
         public AccountSettingsViewModel()
         {
             ChangePassCommand = new AsyncCommand(ChangePassword);
@@ -32,6 +30,7 @@ namespace Insurance_app.ViewModels
         }
         public async Task SetUp()
         {
+            SetUpWaitDisplay = true;
             if (customerId.Equals(""))
             {
                 customerId = App.RealmApp.CurrentUser.Id;
@@ -41,11 +40,11 @@ namespace Insurance_app.ViewModels
               var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
               if (customer != null)
               {
-                  originalRewardSwitch = customer.DirectDebitSwitch;
+                  originalRewardSwitch = customer.AutoRewardUse;
                   UseRewardsDisplay = originalRewardSwitch;
               
-                  originalDirrectDebid = customer.AutoRewardUse;
-                  DirectDebitDisplay = originalRewardSwitch;
+                  originalDirrectDebid = customer.DirectDebitSwitch;
+                  DirectDebitDisplay = originalDirrectDebid;
                   email = customer.Email;
               }
             }
@@ -83,7 +82,6 @@ namespace Insurance_app.ViewModels
         }
         private async Task CancelAccount()
         {
-            CircularWaitDisplay = true;
             try
             {
                var result = await Shell.Current.DisplayAlert("Notice",
@@ -94,8 +92,9 @@ namespace Insurance_app.ViewModels
                await Shell.Current.DisplayAlert("Notice",
                    "Account has been canceled.\n" +
                    "You can still use app till end of the month.\n" +
-                   "If you change your mind, just come back here and setup \"Direct-debit\" ", "close");
-               CircularWaitDisplay = false;
+                   "If you change your mind,\n just come back here and setup \"Direct-Debit\" option ", "close");
+               DirectDebitDisplay = false;
+               UseRewardsDisplay = false;
             }
             catch (Exception e)
             {
@@ -104,22 +103,20 @@ namespace Insurance_app.ViewModels
             CircularWaitDisplay = false;
         }
 
+        
         private async Task ChangePassword()
         {
             try
-            {
-                CircularWaitDisplay = true;
-                await App.RealmApp.EmailPasswordAuth
-                    .CallResetPasswordFunctionAsync(email,password);
-                CircularWaitDisplay = false;
-                await Shell.Current.DisplayAlert("Message", StaticOpt.SuccessUpdateMsg, "close");
-
+            { 
+                var result =await Application.Current.MainPage.Navigation.ShowPopupAsync(new ChangePassPopup(email));
+                if (!result) return;
+                await Shell.Current.DisplayAlert("Message", "Password has been updated", "close");
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
-            CircularWaitDisplay = false;
+            
         }
         private string password;
         public string PassDisplay

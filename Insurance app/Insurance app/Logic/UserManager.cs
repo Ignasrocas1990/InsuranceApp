@@ -11,6 +11,7 @@ namespace Insurance_app.Logic
     public class UserManager : IDisposable
     {
         
+        
         public UserManager()
         {
             

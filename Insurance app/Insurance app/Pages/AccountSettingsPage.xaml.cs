@@ -24,35 +24,5 @@ namespace Insurance_app.Pages
             var vm = (AccountSettingsViewModel)BindingContext;
             await vm.SetUp();
         }
-
-        private async void Button_OnClicked(object sender, EventArgs e)
-        {
-            var vm = (AccountSettingsViewModel)BindingContext;
-                
-            if ( PasswordValidator.IsValid && RePasswordValidator.IsValid)
-            {
-                vm.ChangePassCommand.Execute(null);
-            }
-            else
-            {
-                var errBuilder = new StringBuilder();
-
-                if (RePasswordValidator.IsNotValid)
-                {
-                    errBuilder.AppendLine("Passwords do not match");
-                   
-                }
-                if (PasswordValidator.IsNotValid)
-                {
-                    if (PasswordValidator.Errors != null)
-                        foreach (var err in PasswordValidator.Errors.OfType<string>())
-                        {
-                            errBuilder.AppendLine(err);
-                        }
-                }
-                await Application.Current.MainPage.DisplayAlert(
-                    "Error", errBuilder.ToString(), "close");
-            }
-        }
     }
 }

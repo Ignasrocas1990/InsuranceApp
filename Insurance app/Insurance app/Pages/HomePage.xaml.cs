@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Insurance_app.Service;
 using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
 using Xamarin.Forms;
@@ -31,6 +32,11 @@ namespace Insurance_app.Pages
             base.OnAppearing();
             var vm = (HomeViewModel)BindingContext;
             await vm.Setup();
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
         }
     }
 }

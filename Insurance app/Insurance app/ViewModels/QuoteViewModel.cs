@@ -182,5 +182,12 @@ namespace Insurance_app.ViewModels
             get => enabled;
             set => SetProperty(ref enabled, value);
         }
+        private bool setUpWait;
+
+        public bool SetUpWaitDisplay
+        {
+            get => setUpWait;
+            set => SetProperty(ref setUpWait, value);
+        }
     }
 }

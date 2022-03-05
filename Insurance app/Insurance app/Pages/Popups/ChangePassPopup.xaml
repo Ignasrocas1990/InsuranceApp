@@ -37,17 +37,18 @@
         
         
         <Label Text="Re-enter :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" />
-              <Entry  Text="{Binding PassDisplay2}" 
-                      Placeholder="*********" IsPassword="True"
-                      Style="{StaticResource NormalEntry}"
-                      Grid.Column="1" Grid.Row="2">
-                  <Entry.Behaviors>
-                <xct:RequiredStringValidationBehavior x:Name="RePasswordValidator" Flags="ValidateOnValueChanging"
-                          ValidStyle="{StaticResource NormalEntry}"
-                          InvalidStyle="{StaticResource InvalidEntry}"
-                          RequiredString="{Binding PassDisplay}" />
-                  </Entry.Behaviors>
-              </Entry>
+        <Entry Text="{Binding PassDisplay2}"
+               Placeholder="*********" IsPassword="True"
+               Style="{StaticResource NormalEntry}"
+               Grid.Column="1" Grid.Row="2">
+            <Entry.Behaviors>
+                <xct:RequiredStringValidationBehavior x:Name="RePasswordValidator"
+                                                      Flags="ValidateOnValueChanging" IsValid="False"
+                                                      ValidStyle="{StaticResource NormalEntry}"
+                                                      InvalidStyle="{StaticResource InvalidEntry}"
+                                                      RequiredString="{Binding PassDisplay}" />
+            </Entry.Behaviors>
+        </Entry>
         
         
         <Button Clicked="Button_OnClicked" Style="{StaticResource PrimaryBtn}" Text="Save"
@@ -59,11 +60,8 @@
                 IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Grid.Column="0" Grid.Row="3" />
         
-        <AbsoluteLayout Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2"  Padding = "0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-            <ContentPresenter AbsoluteLayout.LayoutBounds="1,1,1,1" AbsoluteLayout.LayoutFlags="All"/>
-            <ActivityIndicator Color= "{StaticResource StrongColor}" IsRunning= "{Binding CircularWaitDisplay}" AbsoluteLayout.LayoutBounds=".5,.5,100,100" AbsoluteLayout.LayoutFlags="PositionProportional" />
-        </AbsoluteLayout>
-        
+            <ActivityIndicator Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Style="{StaticResource NormalCircularWait}"
+                               IsRunning= "{Binding CircularWaitDisplay}" Scale="2" />
     </Grid>
     
     

@@ -98,14 +98,14 @@ namespace Insurance_app.ViewModels
                      if (typeUser.Equals($"{UserType.Customer}"))
                      {
                          Application.Current.MainPage = new AppShell();
+                         CircularWaitDisplay = true;
                          await Shell.Current.GoToAsync($"//{nameof(HomePage)}?Email={email}&Pass={password}");
-                        CircularWaitDisplay = false;
                      }
                      else if (typeUser.Equals($"{UserType.Client}"))
                      {
                          Application.Current.MainPage = new ClientShell();
+                         CircularWaitDisplay = true;
                          await Shell.Current.GoToAsync($"//{nameof(ClientMainPage)}");
-                         CircularWaitDisplay = false;
                      }
                      else
                      {

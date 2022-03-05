@@ -72,12 +72,6 @@
                 Command="{Binding QuoteCommand}" HorizontalOptions="Fill" Style="{StaticResource SecondaryBtn}" 
                 IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                 Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2"/>
-        
-        
-        <ActivityIndicator IsRunning="{Binding SetUpWaitDisplay}" 
-                           Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"
-                           Style="{StaticResource NormalCircularWait}" />
-        
     </Grid>
     
     

@@ -27,5 +27,13 @@ namespace Insurance_app.Pages
             await vm.CheckIfUserExist();
             vm.SetUpWaitDisplay = false;
         }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            var vm = (LogInViewModel)BindingContext;
+            vm.SetUpWaitDisplay = true;
+
+        }
     }
 }
