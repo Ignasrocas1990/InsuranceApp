@@ -13,27 +13,10 @@
                    x:Class="Insurance_app.Pages.QuotePage">
     
     
-        <Grid VerticalOptions="CenterAndExpand" RowSpacing="25" ColumnSpacing="0" Padding="30,0,30,0">
-        <Grid.RowDefinitions>
-            
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="2*"/>
-
-        </Grid.RowDefinitions>
+        <Grid VerticalOptions="CenterAndExpand" RowSpacing="25" ColumnSpacing="0" Padding="30,0,30,0"
+              RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,*"  ColumnDefinitions="5*,5*">
         
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5*"/>
-            <ColumnDefinition Width="5*"/>
-        </Grid.ColumnDefinitions>
-        
-        
-        <Label Text="Dob :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="0" />
+                <Label Text="Dob :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="0" />
         <DatePicker MinimumDate="{Binding MinDate}"
                     MaximumDate="{Binding MaxDate}"
                     Date="{Binding SelectedDate,Mode=TwoWay}"

@@ -109,6 +109,7 @@
     <AndroidResource Include="Resources\drawable\policyIcon.png" />
     <AndroidResource Include="Resources\drawable\profileIcon.png" />
     <AndroidResource Include="Resources\drawable\reportIcon.png" />
+    <AndroidResource Include="Resources\drawable\settingsIcon.png" />
     <AndroidResource Include="Resources\drawable\walkIcon.png" />
     <AndroidResource Include="Resources\values\styles.xml" />
     <AndroidResource Include="Resources\values\colors.xml" />

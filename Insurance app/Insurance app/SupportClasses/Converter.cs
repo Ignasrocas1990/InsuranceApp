@@ -9,7 +9,6 @@ namespace Insurance_app.SupportClasses
     public static class Converter
     {
         public static Func<String,float>StringToFloat =  x => float.Parse(x, CultureInfo.InvariantCulture.NumberFormat);
-        public static Func<long, DateTimeOffset> ToDtOffset = DateTimeOffset.FromUnixTimeMilliseconds;
         private static string nameSpace = nameof(Insurance_app) + "." + nameof(ViewModels) + ".";
 
 

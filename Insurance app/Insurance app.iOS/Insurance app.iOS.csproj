@@ -174,6 +174,7 @@
     <BundleResource Include="Resources\policyIcon.png" />
     <BundleResource Include="Resources\profileIcon.png" />
     <BundleResource Include="Resources\reportIcon.png" />
+    <BundleResource Include="Resources\settingsIcon.png" />
     <BundleResource Include="Resources\walkIcon.png" />
   </ItemGroup>
 </Project>

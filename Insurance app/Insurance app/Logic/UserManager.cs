@@ -35,14 +35,14 @@ namespace Insurance_app.Logic
             return new Customer();
         }
 
-        public Customer CreateCustomer(DateTimeOffset dob, string fName, string lName, string phoneNr, string email,Address address)
+        public Customer CreateCustomer(DateTimeOffset dob, string fName, string lName, string phoneNr, string email,Address address,bool direct)
         {
             try
             {
                 return new Customer()
                 {
                 
-                    Dob = dob,
+                    Dob = dob,DirectDebitSwitch = direct,
                     Name = fName, LastName = lName, PhoneNr = phoneNr, Email=email,
                     Address = new Address()
                     {
@@ -105,6 +105,11 @@ namespace Insurance_app.Logic
         public async Task UpdateCustomerSwitch(User user, bool switchState)
         { 
          await  RealmDb.GetInstance().UpdateCustomerSwitch(user, switchState);
+        }
+
+        public void UpdateAccountSettings(User user,string userId,bool directDebit, bool useRewards)
+        {
+            Task.FromResult(RealmDb.GetInstance().UpdateAccountSettings(user,userId,directDebit,useRewards));
         }
     }
 }

@@ -225,7 +225,7 @@ namespace Insurance_app.ViewModels
                 if (!App.NetConnection())
                 {
                     await Shell.Current.DisplayAlert("Notice", 
-                        StaticOpt.NCE, "close");
+                        StaticOpt.NetworkConMsg, "close");
                     return;
                 }
                 var answer = await Shell.Current.DisplayAlert("Message", 
@@ -272,11 +272,7 @@ namespace Insurance_app.ViewModels
         }
 
 //-----------------------------data binding methods ------------------------------------------------
-        public bool CircularWaitDisplay
-        {
-            get => wait;
-            set => SetProperty(ref wait, value);
-        }
+
 
         public int SelectedHospital
         {
@@ -340,21 +336,12 @@ namespace Insurance_app.ViewModels
             get => priceString;
             set => SetProperty(ref priceString, value);
         }
-
-        private bool setUpWait;
-
-        public bool SetUpWaitDisplay
-        {
-            get => setUpWait;
-            set => SetProperty(ref setUpWait, value);
-        }
         public string CustomerId
         {
             get => customerId;
             set =>  customerId = Uri.UnescapeDataString(value ?? string.Empty);
 
         }
-
         private bool infoIsVisible;
         public bool InfoIsVisible
         {
@@ -374,6 +361,18 @@ namespace Insurance_app.ViewModels
         {
             get => prevPolicies;
             set => SetProperty(ref prevPolicies, value);
+        }
+        public bool CircularWaitDisplay
+        {
+            get => wait;
+            set => SetProperty(ref wait, value);
+        }
+        private bool setUpWait;
+
+        public bool SetUpWaitDisplay
+        {
+            get => setUpWait;
+            set => SetProperty(ref setUpWait, value);
         }
     }
 }

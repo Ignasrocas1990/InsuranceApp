@@ -25,6 +25,8 @@ namespace Insurance_app.Models
         public IList<Claim> Claim { get; }
 
         public bool DataSendSwitch { get; set; } = false;
+        public bool DirectDebitSwitch { get; set; } = false;
+        public bool AutoRewardUse { get; set; } = false;
         public bool? DelFlag { get; set; } = false;
         [MapTo("_partition")] public string Partition { get; set; } = "CustomerPartition";
     }

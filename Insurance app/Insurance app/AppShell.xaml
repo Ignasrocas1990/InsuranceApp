@@ -54,6 +54,9 @@
     <FlyoutItem Title="Policy page" Icon="policyIcon.png">
         <ShellContent ContentTemplate="{DataTemplate pages:PolicyPage}"/>
     </FlyoutItem>
+    <FlyoutItem Title="Account Settings page" Icon="settingsIcon.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:AccountSettingsPage}"/>
+    </FlyoutItem>
     
     <Shell.FlyoutFooterTemplate>
             <DataTemplate>

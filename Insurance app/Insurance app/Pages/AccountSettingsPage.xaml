@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<pages:LoadingPage xmlns="http://xamarin.com/schemas/2014/forms"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                   xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
+                   xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+                   xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
+                   Title="Account Settings"
+                   x:DataType="viewModels:AccountSettingsViewModel"
+                   BackgroundColor="{StaticResource BackColor}"
+                   RootViewModel="{Binding .}"
+                   ControlTemplate="{StaticResource LoaderViewTemplate}"
+                   x:Class="Insurance_app.Pages.AccountSettingsPage">
+    
+    <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40"
+          IsVisible="{Binding SetUpWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+          RowDefinitions="*,Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="5*,5*">
+            
+
+        <Label Text="Password :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" />
+        <Entry  Text="{Binding PassDisplay}" 
+                Placeholder="*********" IsPassword="True"
+                Style="{StaticResource NormalEntry}"
+                Grid.Column="1" Grid.Row="1">
+            <Entry.Behaviors>
+                <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
+                                             Flags="ValidateOnValueChanging" x:Name="PasswordValidator"
+                                             InvalidStyle="{StaticResource InvalidEntry}">
+                    <xct:TextValidationBehavior MinimumLength="6" xct:MultiValidationBehavior.Error="Password must have at least 6 chars" />
+                    <xct:CharactersValidationBehavior CharacterType="Digit" MinimumCharacterCount="1" xct:MultiValidationBehavior.Error="Password needs 1 digit" />
+                    <xct:CharactersValidationBehavior CharacterType="LowercaseLetter" MinimumCharacterCount="1" xct:MultiValidationBehavior.Error="Password needs 1 lower case char"/>
+                    <xct:CharactersValidationBehavior CharacterType="UppercaseLetter" MinimumCharacterCount="1" xct:MultiValidationBehavior.Error="Password needs 1 upper case char"/>
+                    <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MinimumCharacterCount="1" xct:MultiValidationBehavior.Error="Password needs special char" />
+                    <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Password Has spaces" />
+                </xct:MultiValidationBehavior>
+            </Entry.Behaviors>
+        </Entry>
+        
+        
+        <Label Text="Re-enter :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" />
+              <Entry  Text="{Binding PassDisplay2}" 
+                      Placeholder="*********" IsPassword="True"
+                      Style="{StaticResource NormalEntry}"
+                      Grid.Column="1" Grid.Row="2">
+                  <Entry.Behaviors>
+                <xct:RequiredStringValidationBehavior x:Name="RePasswordValidator" Flags="ValidateOnValueChanging"
+                          ValidStyle="{StaticResource NormalEntry}"
+                          InvalidStyle="{StaticResource InvalidEntry}"
+                          RequiredString="{Binding PassDisplay}" />
+                  </Entry.Behaviors>
+              </Entry>
+        
+        <Button Clicked="Button_OnClicked" Style="{StaticResource PrimaryBtn}" Text="Update Password"
+                IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" HorizontalOptions="Center" />
+        
+        
+        
+        
+        <Label Text="Direct-Debit :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="5" />
+        <CheckBox IsChecked="{Binding DirectDebitDisplay}" Grid.Column="1" Grid.Row="5"
+                  IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}">
+        </CheckBox>
+        
+        <Label Text="Use-Rewards :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="6" />
+        <CheckBox IsChecked="{Binding UseRewardsDisplay}" Grid.Column="1" Grid.Row="6"
+                  IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"/>
+        
+        <Button Style="{StaticResource SecondaryBtn}" Text="Cancel Account" Command="{Binding CancelAccountCommand}"
+                IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                Grid.Column="0" Grid.Row="7" BackgroundColor="Red" />
+        
+        
+        <Button Style="{StaticResource PrimaryBtn}" Text="Update Options" Command="{Binding UpdateOptionsCommand}"
+                IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                Grid.Column="1" Grid.Row="7" />
+        
+     </Grid>
+    
+    
+    
+</pages:LoadingPage>

@@ -55,7 +55,7 @@ namespace Insurance_app.ViewModels
        {
            if (!App.NetConnection())
            {
-               await Application.Current.MainPage.DisplayAlert("error",StaticOpt.NCE, "close");
+               await Application.Current.MainPage.DisplayAlert("error",StaticOpt.NetworkConMsg, "close");
                return;
            }
            if (elegalChars != "")
@@ -123,7 +123,7 @@ namespace Insurance_app.ViewModels
            tooLate = true;
            CircularWaitDisplay=false;
            responseCounter = 0;
-           await Application.Current.MainPage.DisplayAlert("Error",StaticOpt.NCE, "close");
+           await Application.Current.MainPage.DisplayAlert("Error",StaticOpt.NetworkConMsg, "close");
        }
 
 //-----------------------------data binding methods ------------------------------------------------

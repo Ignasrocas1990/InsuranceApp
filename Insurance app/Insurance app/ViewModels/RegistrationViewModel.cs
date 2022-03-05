@@ -17,8 +17,7 @@ using Xamarin.CommunityToolkit.Extensions;
 
 
 namespace Insurance_app.ViewModels
-{    //[QueryProperty(nameof(PriceDisplay),nameof(PriceDisplay))]
-    //[QueryProperty(nameof(TempQuote),nameof(TempQuote))]
+{    
     public class RegistrationViewModel : ObservableObject
     {
         private readonly Dictionary<string, string> quote;
@@ -70,7 +69,7 @@ namespace Insurance_app.ViewModels
                     
                     if (user is null)throw new Exception("registration failed");
                         
-                   var customer = userManager.CreateCustomer(GetDob(),fName, lName,phoneNr,email,address);
+                   var customer = userManager.CreateCustomer(GetDob(),fName, lName,phoneNr,email,address,direct);
                         
                    if (customer is null)throw new Exception("registration failed");
                    var expiryDate = DateTimeOffset.Now.AddMonths(1);
@@ -178,29 +177,12 @@ namespace Insurance_app.ViewModels
             get => price;
             set => SetProperty(ref price, value);
         }
-        
-/*
-        public string TempQuote
+
+        private bool direct;
+        public bool DirectDebit
         {
-            get => qString;
-            set
-            {
-                var v = Uri.UnescapeDataString(value ?? string.Empty);
-                quote= JsonConvert.DeserializeObject<Dictionary<string,int>>(v);
-            } 
+            get => direct;
+            set => SetProperty(ref direct, value);
         }
-
-
-        public string PriceDisplay
-        {
-            get => price;
-            set
-            {
-                price = Uri.UnescapeDataString(value ?? string.Empty);
-                
-            } 
-        
-        }*/
-        
     }
 }

@@ -115,7 +115,7 @@ namespace Insurance_app.ViewModels
                 }
                 else
                 {
-                    await Application.Current.MainPage.DisplayAlert("Notice", StaticOpt.NCE, "close");
+                    await Application.Current.MainPage.DisplayAlert("Notice", StaticOpt.NetworkConMsg, "close");
                 }
             }
             catch (Exception e)

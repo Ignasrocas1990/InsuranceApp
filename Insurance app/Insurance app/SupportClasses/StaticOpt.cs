@@ -23,9 +23,11 @@ namespace Insurance_app.SupportClasses
         public static readonly int MovUpdateArraySize = 5;
         public static readonly int MaxResponseTime = 60;
         public static readonly string AgeLimitErrorMessage = "The age limit is between 18 and 65";
-        public static readonly string NCE = "Network connectivity is not available";
+        public static readonly string NetworkConMsg = "Network connectivity is not available";
         public static readonly int MaxNameLen = 20;
         public static readonly int blockTime = 180;
+        public static readonly string SameDetailsMsg = "The details provided did not change";
+        public static readonly string SuccessUpdateMsg = "The details updated successfully";
         public static Func<string, bool> HasNumbers => s => s.Any(char.IsDigit);
 
         public static readonly SKColor White = c.WhiteSmoke;
