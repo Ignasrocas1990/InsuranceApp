@@ -16,7 +16,7 @@ namespace Insurance_app.ViewModels
         public ICommand ChangePassCommand { get; }
         public ICommand CancelAccountCommand { get; }
 
-        private UserManager userManager;
+        public readonly UserManager userManager;
         private string customerId="";
         private string email;
         private bool originalRewardSwitch;

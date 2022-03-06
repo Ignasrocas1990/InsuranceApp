@@ -7,6 +7,7 @@ using Insurance_app.Logic;
 using Insurance_app.Models;
 using Insurance_app.Pages;
 using Insurance_app.Pages.Popups;
+using Insurance_app.Service;
 using Insurance_app.SupportClasses;
 using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.CommunityToolkit.ObjectModel;
@@ -17,7 +18,7 @@ namespace Insurance_app.ViewModels
     [QueryProperty(nameof(CustomerId), "CustomerId")]
     public class ProfileViewModel:ObservableObject,IDisposable
     {
-        private UserManager userManager;
+        public readonly UserManager UserManager;
         private string name="";
         private string lastName="";
         private string phoneNr="";
@@ -33,30 +34,37 @@ namespace Insurance_app.ViewModels
         private string country="";
         private string city="";
         private Address address;
-        private string customerId;
-        private Customer customer { get; set; }
-
+        private string customerId="";
+        private HttpService api;
         public ICommand UpdateCommand { get; }
         public ICommand AddressCommand { get; }
-        public ICommand ChangePasswordCommand { get; }
+        public ICommand ResetPasswordCommand { get; }
 
 
         public ProfileViewModel()
         {
-            userManager = new UserManager();
+            UserManager = new UserManager();
             AddressCommand = new AsyncCommand(UpdateAddress);
             UpdateCommand = new AsyncCommand(Update);
-            ChangePasswordCommand = new AsyncCommand(ChangePassword);
+            ResetPasswordCommand = new AsyncCommand(ResetPassword);
+            api = new HttpService();
+
 
         }
         public async Task Setup()
         {
-            customerId ??= App.RealmApp.CurrentUser.Id;
-            
+           
             try
             {
-                customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
-               // var customer =  await userManager.GetCustomer(App.RealmApp.CurrentUser,customerId);
+                if(customerId.Equals(""))
+                {
+                    customerId = App.RealmApp.CurrentUser.Id;
+                }
+                else
+                {
+                    IsClientDisplay = true;
+                }
+                var customer = await UserManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
                 if (customer !=null)
                 {
                     NameDisplay = customer.Name;
@@ -112,7 +120,7 @@ namespace Insurance_app.ViewModels
         private async Task Update()
         {
             var answer = await Shell.Current.CurrentPage.DisplayAlert(
-                "Notice","You about to update details", "save", "cancel");
+                Msg.Notice,"You about to update details", "save", "cancel");
             if (!answer) return;
             
             //save to database
@@ -120,28 +128,26 @@ namespace Insurance_app.ViewModels
             {
                 CircularWaitDisplay = true;
                 
-               await userManager.updateCustomer(name,lastName,phoneNr,address, App.RealmApp.CurrentUser,customerId);
+               await UserManager.updateCustomer(name,lastName,phoneNr,address, App.RealmApp.CurrentUser,customerId);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
             CircularWaitDisplay = false;
-            await Shell.Current.DisplayAlert("Message", "Details updated", "close");
+            await Shell.Current.DisplayAlert(Msg.Notice, Msg.SuccessUpdateMsg, "close");
         }
-        private async Task ChangePassword()
+        private async Task ResetPassword()
         {
-            try
-            { 
-               var result =await Application.Current.MainPage.Navigation.ShowPopupAsync(new ChangePassPopup(email));
-               if (!result) return;
-               await Shell.Current.DisplayAlert("Message", "Password has been updated", "close");
-            }
-            catch (Exception e)
+            if (!App.NetConnection())
             {
-                Console.WriteLine(e);
+                await Application.Current.MainPage.DisplayAlert(Msg.Notice, Msg.NetworkConMsg, "close");
+                return;
             }
-            
+            CircularWaitDisplay = true;
+            await UserManager.ResetPassword(name, email,api);
+            CircularWaitDisplay = false;
+            await Application.Current.MainPage.DisplayAlert(Msg.Notice,Msg.ResetPassMsg, "close");
         }
 
         public string NameDisplay
@@ -177,18 +183,24 @@ namespace Insurance_app.ViewModels
             set => customerId = value;
 
         }
-        private bool setUpWait;
 
+        private bool isclient;
+        public bool IsClientDisplay
+        {
+            get => isclient;
+            set => SetProperty(ref isclient, value);
+        }
+        private bool setUpWait;
         public bool SetUpWaitDisplay
         {
             get => setUpWait;
             set => SetProperty(ref setUpWait, value);
         }
-        
+
         public void Dispose()
         {
             address = null;
-            userManager.Dispose();
+            UserManager.Dispose();
         }
 
       

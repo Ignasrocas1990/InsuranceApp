@@ -10,10 +10,10 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels.ClientViewModels
 {
-    public class ClientMainViewModel : ObservableObject
+    public class ClientMainViewModel : ObservableObject,IDisposable
     {
         public ObservableRangeCollection<Customer> Customers { get; set; }
-        private readonly UserManager userManager;
+        public readonly UserManager UserManager;
         public ICommand StepViewCommand { get; }
         public ICommand CustomerDetailsCommand { get; }
         public ICommand CustomerClaimsCommand { get; }
@@ -22,7 +22,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
         
         public ClientMainViewModel()
         {
-            userManager = new UserManager();
+            UserManager = new UserManager();
             Customers = new ObservableRangeCollection<Customer>();
             StepViewCommand = new AsyncCommand<string>(ViewSteps);
             CustomerDetailsCommand = new AsyncCommand<string>(ManageDetails);
@@ -30,27 +30,23 @@ namespace Insurance_app.ViewModels.ClientViewModels
             PolicyCommand = new AsyncCommand<string>(ManagePolicy);
         }
         
-        private bool First = true;
         public async Task Setup()
         {
             try
             {
-                if (!First) return;
                 SetUpWaitDisplay = true;
-                var list = await userManager.GetAllCustomer(App.RealmApp.CurrentUser);
+                var list = await UserManager.GetAllCustomer(App.RealmApp.CurrentUser);
                 Customers.AddRange(list);
-                SetUpWaitDisplay = false;
-                First = false;
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
-
-                System.Console.WriteLine(e);
+                Console.WriteLine(e);
             }
-            
+            SetUpWaitDisplay = false;
         }
         private async Task ManageDetails(string customerId)
         {
+            SetUpWaitDisplay = true;
             if (!customerId.Equals(""))
             {
                 var route = $"//{nameof(ProfilePage)}?CustomerId={customerId}";
@@ -59,6 +55,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
         }
         private async Task ManageClaim(string customerId)
         {
+            SetUpWaitDisplay = true;
             if (!customerId.Equals(""))
             {
                 var route = $"//{nameof(ClaimPage)}?CustomerId={customerId}";
@@ -68,6 +65,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
         }
         private async Task ManagePolicy(string customerId)
         {
+            SetUpWaitDisplay = true;
             if (customerId == "")
                 return;
             var route = $"//{nameof(PolicyPage)}?CustomerId={customerId}";
@@ -76,6 +74,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
         
         private async Task ViewSteps(string customerId)
         {
+            SetUpWaitDisplay = true;
             if (customerId == "")
                 return;
             await Shell.Current.DisplayAlert("Notice", customerId, "close");
@@ -87,6 +86,17 @@ namespace Insurance_app.ViewModels.ClientViewModels
             get => wait;
             set => SetProperty(ref wait, value);
         }
-        
+
+        private bool w;
+        public bool CircularWaitDisplay
+        {
+            get => w;
+            set => SetProperty(ref w, value);
+        }
+
+        public void Dispose()
+        {
+            Customers = new ObservableRangeCollection<Customer>();
+        }
     }
 }

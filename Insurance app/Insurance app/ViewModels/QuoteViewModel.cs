@@ -48,7 +48,7 @@ namespace Insurance_app.ViewModels
         public IList<string> CoverList { get; }
         public IList<int> HospitalFeeList { get; }
         public IList<string> PlanList { get; }
-        private UserManager userManager;
+        public readonly UserManager UserManager;
         private PolicyManager policyManager;
         private string email;
         private string name;
@@ -67,10 +67,11 @@ namespace Insurance_app.ViewModels
            InfoCommand = new AsyncCommand<string>(StaticOpt.InfoPopup);
            ResetPasswordCommand = new AsyncCommand(ResetPassword);
            this.policyId = policyId;
-           userManager = new UserManager();
+           UserManager = new UserManager();
            policyManager = new PolicyManager();
 
        }
+
         public async Task SetUp()
         {
             IsExpiredCustomer = false;
@@ -80,7 +81,7 @@ namespace Insurance_app.ViewModels
             {
                 //ObjectId.Parse(policyId);
                 customerId = App.RealmApp.CurrentUser.Id;
-               var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
+               var customer = await UserManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
                if (customer.Dob != null) SelectedDate = customer.Dob.Value.UtcDateTime;
                email = customer.Email;
                name = customer.Name;
@@ -144,7 +145,7 @@ namespace Insurance_app.ViewModels
                CircularWaitDisplay = true;
                await CreatePolicy(price);
                await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
-               userManager.Dispose();
+               UserManager.Dispose();
                await Application.Current.MainPage.DisplayAlert(Msg.Notice, Msg.SuccessUpdateMsg, "Close");
                await Application.Current.MainPage.Navigation.PopToRootAsync();
            }
@@ -185,25 +186,15 @@ namespace Insurance_app.ViewModels
         }
         private async Task ResetPassword()
         {
+            if (!App.NetConnection())
+            {
+                await Application.Current.MainPage.DisplayAlert(Msg.Notice, Msg.NetworkConMsg, "close");
+                return;
+            }
             CircularWaitDisplay = true;
-            try
-            {
-                if (!App.NetConnection())
-                {
-                    await Application.Current.MainPage.DisplayAlert(Msg.Notice, Msg.NetworkConMsg, "close");
-                    throw new Exception();
-                }
-                var tempPass = StaticOpt.TempPassGenerator();
-                await App.RealmApp.EmailPasswordAuth.CallResetPasswordFunctionAsync(email,tempPass);
-                api.ResetPasswordEmail(email,name, DateTime.Now, tempPass);
-                await Application.Current.MainPage.DisplayAlert(
-                    Msg.Notice,Msg.ResetPassMsg, "close");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            await UserManager.ResetPassword(name, email,api);
             CircularWaitDisplay = false;
+            await Application.Current.MainPage.DisplayAlert(Msg.Notice,Msg.ResetPassMsg, "close");
         }
 
         private async void CheckResponseTime(object o, ElapsedEventArgs e)

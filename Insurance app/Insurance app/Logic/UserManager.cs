@@ -4,31 +4,38 @@ using System.Linq;
 using System.Threading.Tasks;
 using Insurance_app.Models;
 using Insurance_app.Service;
+using Insurance_app.SupportClasses;
 using Realms;
 using Realms.Sync;
+using Xamarin.Forms;
 
 namespace Insurance_app.Logic
 {
     public class UserManager : IDisposable
     {
-        
-        
+        private RealmDb realmDb;
+
         public UserManager()
         {
-            
+            realmDb = RealmDb.GetInstancePerPage();
+
         }
-        public Task<string> Register(string email, string password)
+        public async Task<string> Register(String email, String password)
         {
-            
-            return RealmDb.GetInstance().Register(email, password);
-        }
-        public void DelCustomer()
-        {
-            
+            try
+            {
+                await App.RealmApp.EmailPasswordAuth.RegisterUserAsync(email, password);
+                return "success";
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return e.Message;
+            }
         }
         public async Task<Customer> GetCustomer(User user,string id)
         {
-            return await RealmDb.GetInstance().FindCustomer(user,id);
+            return await realmDb.FindCustomer(user,id);
            // return currentCustomer;
         }
 
@@ -66,20 +73,20 @@ namespace Insurance_app.Logic
         }
         public async Task AddCustomer(Customer customer,User user)
         {
-            await RealmDb.GetInstance().AddCustomer(customer,user);
+            await realmDb.AddCustomer(customer,user);
         }
 
 
         public async Task updateCustomer(string name, string lastName, 
             string phoneNr,Address address, User user,string customerId)
         {
-           await RealmDb.GetInstance().UpdateCustomer(name, lastName,
+           await realmDb.UpdateCustomer(name, lastName,
                 phoneNr,  address, user,customerId);
         }
 
         public async Task<bool> CreateClient(User user, string email, string fname, string lname, string code)
         {
-            return await RealmDb.GetInstance().CreateClient(user, email, fname, lname, code);
+            return await realmDb.CreateClient(user, email, fname, lname, code);
         }
 
         public async Task<string> FindTypeUser(User user)
@@ -87,7 +94,7 @@ namespace Insurance_app.Logic
             try
             {
                 var now = DateTimeOffset.Now;
-                var customer = await RealmDb.GetInstance().FindCustomer(user,user.Id);
+                var customer = await realmDb.FindCustomer(user,user.Id);
 
                 if (customer!=null)
                 {
@@ -105,7 +112,7 @@ namespace Insurance_app.Logic
                     }
                     return "Customer";
                 }
-                if (await RealmDb.GetInstance().IsClient(user.Id, user))
+                if (await realmDb.IsClient(user))
                 {
                     return "Client";
                 }
@@ -127,7 +134,7 @@ namespace Insurance_app.Logic
                     var rewards = customer.Reward.Where(r => r.FinDate != null && r.DelFlag != false).ToList();
                     totalCost = GetTotalRewardCost(rewards);
                 }
-                await RealmDb.GetInstance().UpdatePolicyDate(newDate, currentPolicy,totalCost,user);
+                await realmDb.UpdatePolicyDate(newDate, currentPolicy,totalCost,user);
             }
             catch (Exception e)
             {
@@ -152,31 +159,41 @@ namespace Insurance_app.Logic
 
         public async Task<List<Customer>>GetAllCustomer(User user)
         {
-           return await RealmDb.GetInstance().GetAllCustomer(user);
+           return await realmDb.GetAllCustomer(user);
         }
 
         public async Task<DateTimeOffset> GetCustomersDob(string customerId,User user)
         {
-            return await RealmDb.GetInstance().GetCustomersDob(customerId,user);
+            return await realmDb.GetCustomersDob(customerId,user);
         }
 
         public async Task UpdateCustomerSwitch(User user, bool switchState)
         { 
-         await  RealmDb.GetInstance().UpdateCustomerSwitch(user, switchState);
+         await  realmDb.UpdateCustomerSwitch(user, switchState);
         }
 
         public void UpdateAccountSettings(User user,string userId,bool directDebit, bool useRewards)
         {
-            Task.FromResult(RealmDb.GetInstance().UpdateAccountSettings(user,userId,directDebit,useRewards));
+            Task.FromResult(realmDb.UpdateAccountSettings(user,userId,directDebit,useRewards));
         }
-        
+        public async Task ResetPassword(string email,string name,HttpService api)
+        {
+            try
+            {
+             
+                var tempPass = StaticOpt.TempPassGenerator();
+                await App.RealmApp.EmailPasswordAuth.CallResetPasswordFunctionAsync(email,tempPass);
+                api.ResetPasswordEmail(email,name, DateTime.Now, tempPass);
+               
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
         public void Dispose()
         {
-            if (RealmDb.GetInstance()!=null)
-            {
-                RealmDb.GetInstance().Dispose();
-                
-            }
+            realmDb.Dispose();
         }
     }
 }

@@ -12,10 +12,11 @@ namespace Insurance_app.Logic
     public class ClaimManager : IDisposable
     {
         public List<Claim> Claims { get; set; }
+        private RealmDb realmDb;
 
         public ClaimManager()
         {
-          
+            realmDb=RealmDb.GetInstancePerPage();
         }
         public int GetResolvedClaimCount()
         {
@@ -46,12 +47,12 @@ namespace Insurance_app.Logic
         }
         public async Task CreateClaim(string hospitalPostcode, string patientNr, string type, bool status, User user,string customerId)
         {
-            await RealmDb.GetInstance().AddClaim(hospitalPostcode, patientNr, type, status, user,customerId);
+            await realmDb.AddClaim(hospitalPostcode, patientNr, type, status, user,customerId);
         }
 
         public async Task<List<Claim>> GetClaims(User user,string customerId)
         {
-            Claims = await RealmDb.GetInstance().GetClaims(user,customerId);
+            Claims = await realmDb.GetClaims(user,customerId);
             return Claims;
         }
 
@@ -72,12 +73,12 @@ namespace Insurance_app.Logic
 
         public async Task ResolveClaim(string customerId, User user)
         {
-           await RealmDb.GetInstance().ResolveClaim(customerId,user);
+           await realmDb.ResolveClaim(customerId,user);
         }
 
         public void Dispose()
         {
-            RealmDb.GetInstance().Dispose();
+            realmDb.Dispose();
             if (Claims != null) Claims = null;
         }
     }

@@ -25,13 +25,13 @@ namespace Insurance_app.ViewModels.ClientViewModels
         private HttpService inf;
         private int attempt = 0;
         private bool codeIsValid;
-        private readonly UserManager userManager;
+        public readonly UserManager UserManager;
 
 
         public ClientRegViewModel()
         {
             inf = new HttpService();
-            userManager = new UserManager();
+            UserManager = new UserManager();
         }
 
         public async Task Register()
@@ -43,10 +43,10 @@ namespace Insurance_app.ViewModels.ClientViewModels
                 //TODO need to change the API so takes over the code when used 
                 try
                 {
-                    await userManager.Register(email, pass);
+                    await UserManager.Register(email, pass);
                     var user = await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, pass));
                     if (user is null) throw new Exception("Registration failed");
-                    var saved = await userManager.CreateClient(user, email, fname, lname, code);
+                    var saved = await UserManager.CreateClient(user, email, fname, lname, code);
                     if (!saved)
                     {
                         throw new Exception("Registration failed");
@@ -56,7 +56,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
                     {
                         await App.RealmApp.CurrentUser.LogOutAsync();
                     }
-                    userManager.Dispose();
+                    UserManager.Dispose();
                     
                     await Application.Current.MainPage.DisplayAlert("notice", "Successfully registered", "close");
                     await Application.Current.MainPage.Navigation.PopToRootAsync();
@@ -143,6 +143,14 @@ namespace Insurance_app.ViewModels.ClientViewModels
             get => wait;
             set => SetProperty(ref wait, value);
         }
+
+        private bool setUpWait;
+        public bool SetUpWaitDisplay
+        {
+            get => setUpWait;
+            set => SetProperty(ref setUpWait, value);
+        }
+        
 
         private string code;
         public string CodeDisplay

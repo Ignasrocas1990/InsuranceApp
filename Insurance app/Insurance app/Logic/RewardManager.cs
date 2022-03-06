@@ -8,29 +8,22 @@ namespace Insurance_app.Logic
 {
     public class RewardManager : IDisposable
     {
+        private RealmDb realmDb;
         public RewardManager()
         {
+            realmDb = RealmDb.GetInstancePerPage();
         }
-
-        public void Dispose()
-        {
-            RealmDb.GetInstance().Dispose();
-        }
-
         public async Task<Tuple<bool, float>> getTotalRewards(User user,string id)
         {
-            return await RealmDb.GetInstance().GetTotalRewards(user,id);
+            return await realmDb.GetTotalRewards(user,id);
         }
-
-        public Task addNewMovDate(float x, float y, float z,User user)
-        {
-            return Task.FromResult(RealmDb.GetInstance().AddMovData(x, y, z, user));
-        }
-
         public async Task<Reward> FindReward(User user)
         {
-         return await RealmDb.GetInstance().FindReward(user);
+         return await realmDb.FindReward(user);
         }
-       
+        public void Dispose()
+        {
+            realmDb.Dispose();
+        }
     }
 }

@@ -30,6 +30,14 @@ namespace Insurance_app.Pages
              await vm.SetUp();
         }
 
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            var vm = (ClaimViewModel)BindingContext;
+            vm.SetUpWaitDisplay = true;
+            vm.ClaimManager.Dispose();
+        }
+
         private async void Button_OnClicked(object sender, EventArgs e)
         {
             try

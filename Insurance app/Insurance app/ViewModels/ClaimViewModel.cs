@@ -21,7 +21,7 @@ namespace Insurance_app.ViewModels
         public ICommand ViewPreviousClaimsCommand { get; }
         public ICommand ResolveClaimCommand { get; }
 
-        private readonly ClaimManager claimManager;
+        public readonly ClaimManager ClaimManager;
 
         private string dateString;
         private string hospitalPostcode="";
@@ -36,7 +36,7 @@ namespace Insurance_app.ViewModels
             CreateClaimCommand = new AsyncCommand(CreateClaim);
             ViewPreviousClaimsCommand = new AsyncCommand(GetClaims);
             ResolveClaimCommand = new AsyncCommand(ResolveClaim);
-            claimManager = new ClaimManager();
+            ClaimManager = new ClaimManager();
             
         }
         public async Task SetUp()
@@ -45,8 +45,8 @@ namespace Insurance_app.ViewModels
             if (customerId  == "")
                 customerId = App.RealmApp.CurrentUser.Id;
             
-            await claimManager.GetClaims(App.RealmApp.CurrentUser,customerId);
-            var claim = claimManager.GetCurrentClaim();
+            await ClaimManager.GetClaims(App.RealmApp.CurrentUser,customerId);
+            var claim = ClaimManager.GetCurrentClaim();
             if (claim != null)
             {
                 var dtoDate = claim.StartDate;
@@ -77,7 +77,7 @@ namespace Insurance_app.ViewModels
                 CanBeResolved = false;
             }
 
-            PreviousBtnIsEnabled = claimManager.GetResolvedClaimCount()>0;
+            PreviousBtnIsEnabled = ClaimManager.GetResolvedClaimCount()>0;
             SetUpWaitDisplay = false;
         }
 
@@ -85,7 +85,7 @@ namespace Insurance_app.ViewModels
         {
             try
             {
-                var closedClaims = claimManager.GetResolvedClaims() ?? new List<Claim>();
+                var closedClaims = ClaimManager.GetResolvedClaims() ?? new List<Claim>();
                 
                 await Application.Current.MainPage.Navigation
                     .ShowPopupAsync(new ExistingClaimsPopup(closedClaims));
@@ -106,7 +106,7 @@ namespace Insurance_app.ViewModels
             CircularWaitDisplay = true;
             IsReadOnly = true;
 
-            await claimManager.CreateClaim(hospitalPostcode, patientNr, Type, true,App.RealmApp.CurrentUser,customerId);
+            await ClaimManager.CreateClaim(hospitalPostcode, patientNr, Type, true,App.RealmApp.CurrentUser,customerId);
             
             StatusDisplay = "open";
             
@@ -124,7 +124,7 @@ namespace Insurance_app.ViewModels
                 bool answer = await Shell.Current.DisplayAlert("Notice",
                     "Are you sure you want to resolve the Claim?", "resolve", "cancel");
                 if (!answer) return;
-                await claimManager.ResolveClaim(customerId,App.RealmApp.CurrentUser);
+                await ClaimManager.ResolveClaim(customerId,App.RealmApp.CurrentUser);
                 CircularWaitDisplay = false;
                 CanBeResolved = false;
                 await SetUp();
@@ -206,7 +206,7 @@ namespace Insurance_app.ViewModels
 
         public void Dispose()
         {
-            claimManager.Dispose();
+            ClaimManager.Dispose();
         }
     }
 }

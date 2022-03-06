@@ -1,22 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewModels="clr-namespace:Insurance_app.ViewModels.ClientViewModels" 
-             xmlns:model="clr-namespace:Insurance_app.Models"
-             BackgroundColor="{StaticResource BackColor}"
-             Title="Customers page"
-             x:DataType="viewModels:ClientMainViewModel"
-             x:Class="Insurance_app.Pages.ClientPages.ClientMainPage">
+<pages:LoadingPage xmlns="http://xamarin.com/schemas/2014/forms"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                   xmlns:viewModels="clr-namespace:Insurance_app.ViewModels.ClientViewModels" 
+                   xmlns:model="clr-namespace:Insurance_app.Models"
+                   xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
+                   BackgroundColor="{StaticResource BackColor}"
+                   Title="Customers page"
+                   x:DataType="viewModels:ClientMainViewModel"
+                   RootViewModel="{Binding .}"
+                   ControlTemplate="{StaticResource LoaderViewTemplate}"
+                   x:Class="Insurance_app.Pages.ClientPages.ClientMainPage">
     
     <ContentPage.BindingContext>
         <viewModels:ClientMainViewModel x:Name="ClientMainViewModel"/>
     </ContentPage.BindingContext>
     
-    <Grid>
+    <Grid IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}">
     <ListView Style="{StaticResource ListView}" CachingStrategy="RecycleElement"
-              ItemsSource="{Binding Customers}" ItemSelected="ListView_ItemSelected"
-              IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}">
+              ItemsSource="{Binding Customers}" ItemSelected="ListView_ItemSelected">
         <ListView.ItemTemplate>
             <DataTemplate x:DataType="model:Customer">
                 <ViewCell>
@@ -59,7 +61,5 @@
             </DataTemplate>
         </ListView.ItemTemplate>
     </ListView>
-        <ActivityIndicator IsRunning="{Binding SetUpWaitDisplay}" 
-                           Style="{StaticResource NormalCircularWait}"/>
     </Grid>
-</ContentPage>
+</pages:LoadingPage>

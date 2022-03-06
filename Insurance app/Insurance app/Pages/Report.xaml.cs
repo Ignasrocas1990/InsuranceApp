@@ -33,9 +33,13 @@ namespace Insurance_app.Pages
             base.OnAppearing();
 
         }
-        
-        
-        
-        
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            var vm = (ReportViewModel) BindingContext;
+            vm.SetUpWaitDisplay = true;
+            vm.ReportManager.Dispose();
+        }
     }
 }

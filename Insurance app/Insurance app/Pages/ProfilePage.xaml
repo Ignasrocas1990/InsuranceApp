@@ -14,7 +14,7 @@
 
        
        <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40"
-       RowDefinitions="Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="5*,5*">
+       RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="5*,5*">
                  
         
               
@@ -74,14 +74,15 @@
                       IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                       Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" />
               
-              <Button Command="{Binding ChangePasswordCommand}"
-                      Text="Password Change" Style="{StaticResource SecondaryBtn}"
-                      IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
-                      Grid.Column="0" Grid.Row="4" />
-              
               <Button  Text="Update info" Clicked="Button_OnClicked" Style="{StaticResource PrimaryBtn}"
                        IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}" 
-                       Grid.Column="1" Grid.Row="4"/>
+                       Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" HorizontalOptions="Center"/>
+              
+              <Button Command="{Binding ResetPasswordCommand}"
+                      Text="Reset Password" Style="{StaticResource SecondaryBtn}"
+                      IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                      IsVisible="{Binding IsClientDisplay}"
+                      Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" HorizontalOptions="Center" />
 
        </Grid>
 </pages:LoadingPage>

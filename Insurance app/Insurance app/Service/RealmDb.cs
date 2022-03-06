@@ -17,32 +17,22 @@ namespace Insurance_app.Service
 {
     public class RealmDb
     {
-        private Realm realm = null;
+        private static Realm realm = null;
         //readonly Thread curThread = Thread.CurrentThread;
-        private static RealmDb _db = null;
+        
         private readonly string partition = "CustomerPartition";
-
+        
+        private static RealmDb _db = null;
         private RealmDb() {}
 
-        public static RealmDb GetInstance()
+        public static RealmDb GetInstancePerPage()
         {
-            return _db ??= new RealmDb();
-        }
-        
-        
-//------------------------- app Access Methods ---------------------------------------
-        public async Task<string> Register(String email, String password)
-        {
-            try
+            if (realm is null)
             {
-              await App.RealmApp.EmailPasswordAuth.RegisterUserAsync(email, password);
-              return "success";
+                _db = new RealmDb();
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return e.Message;
-            }
+
+            return _db;
         }
 //------------------------------------- Customer methods ---------------------
         
@@ -75,7 +65,7 @@ namespace Insurance_app.Service
                 realm.Write(() =>
                 {
                     c = realm.All<Customer>().FirstOrDefault(u => u.Id == id && u.DelFlag == false);
-                    
+
                 });
                 return c;
             }
@@ -514,10 +504,8 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
         {
             try
             {
-                if (customerId != user.Id)
-                {
-                    await SubmitActivity(customerId, user, "UpdatePolicy");
-                }
+                await SubmitActivity(customerId, user, "UpdatePolicy");
+                
                 
                 await GetRealm(partition,user);
                 if (realm is null) throw new Exception("UpdatePolicy :::::::::::::::::::::: realm null");
@@ -598,18 +586,28 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
             return false;
         }
 
-        public async Task<bool> IsClient(string userId,User user)
+        public async Task<bool> IsClient(User user)
         {
-            await GetRealm(userId,user);
             bool isClient = false;
-            if (realm is null) throw new Exception("IsClient,Realm return null");
-            realm.Write(()=>
+            try
             {
-                if (realm.Find<Client>(userId) != null)
+                var otherRealm=await GetOtherRealm(user.Id,user);
+
+                if (otherRealm is null) throw new Exception("IsClient,Realm return null");
+                otherRealm.Write(()=>
                 {
-                    isClient = true;
-                }
-            });
+                   var c = otherRealm.All<Client>().FirstOrDefault(u => u.Id == user.Id && u.DelFlag == false);
+                   if (c != null)
+                   {
+                       isClient = true;
+                   }
+                });
+                otherRealm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
             return isClient;
         }
         private async Task SubmitActivity(string customerId,User user,string type)
@@ -618,25 +616,26 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
             {
                 if (customerId == user.Id) return;
 
-                await GetRealm(user.Id, user);
-                if (realm is null)
+                var otherRealm = await GetOtherRealm(user.Id, user);
+                if (otherRealm is null)
                     throw new Exception(" SubmitActivity ::::::::::::::; realm null");
-                realm.Write(() =>
+                otherRealm.Write(() =>
                 {
-                   var c = realm.Find<Client>(user.Id);
+                   var c = otherRealm.Find<Client>(user.Id);
                     if (c is null) throw new Exception(" SubmitActivity ::::::::::::::; no client found");
-                    c.Activities.Add(realm.Add(new ClientActivity()
+                    c.Activities.Add(otherRealm.Add(new ClientActivity()
                     {
                         ActivityOwnerId = customerId,
                         Type = type
                     }));
                 });
-                realm = null;
+                otherRealm.Dispose();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
+            
         }
         public async Task<List<Customer>>GetAllCustomer(User user)
         {
@@ -664,8 +663,12 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
         {
             try
             {
-                var config = new SyncConfiguration(p,user);
-                realm = await Realm.GetInstanceAsync(config);
+                if (realm is null)
+                {
+                    var config = new SyncConfiguration(p,user);
+                    realm = await Realm.GetInstanceAsync(config);
+                }
+               
                 /*
                 if (!curThread.Equals(Thread.CurrentThread))
                 {
@@ -712,7 +715,7 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
             try
             {
                 if (realm is null) return;
-                realm.SyncSession.Stop();
+                //realm.SyncSession.Stop();
                
                 if (!realm.IsClosed)
                 {

@@ -1,12 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:xct="http://xamarin.com/schemas/2020/toolkit" 
-             xmlns:clientViewModels1="clr-namespace:Insurance_app.ViewModels.ClientViewModels"
-             x:DataType="clientViewModels1:ClientRegViewModel"
-             BackgroundColor="{StaticResource BackColor}"
-             x:Class="Insurance_app.Pages.ClientPages.ClientRegistration">
+<pages:LoadingPage xmlns="http://xamarin.com/schemas/2014/forms"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                   xmlns:xct="http://xamarin.com/schemas/2020/toolkit" 
+                   xmlns:clientViewModels1="clr-namespace:Insurance_app.ViewModels.ClientViewModels"
+                   xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
+                   x:DataType="clientViewModels1:ClientRegViewModel"
+                   BackgroundColor="{StaticResource BackColor}"
+                   RootViewModel="{Binding .}"
+                   ControlTemplate="{StaticResource LoaderViewTemplate}"
+                   x:Class="Insurance_app.Pages.ClientPages.ClientRegistration">
     <ContentPage.BindingContext>
         <clientViewModels1:ClientRegViewModel/>
     </ContentPage.BindingContext>
@@ -114,16 +117,10 @@
                 Style="{StaticResource PrimaryBtn}" 
                 IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" HorizontalOptions="Center" />
-              
-        <ActivityIndicator
-            IsRunning="{Binding CircularWaitDisplay}" 
-            Style="{StaticResource NormalCircularWait}"
-            Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" />
-    
     </Grid>
     
     
     
     
     
-</ContentPage>
+</pages:LoadingPage>

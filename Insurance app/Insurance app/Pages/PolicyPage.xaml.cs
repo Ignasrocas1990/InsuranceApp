@@ -24,5 +24,13 @@ namespace Insurance_app.Pages
             await vm.Setup();
             base.OnAppearing();
         }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            var vm = (PolicyViewModel)BindingContext;
+            vm.SetUpWaitDisplay = true;
+            vm.UserManager.Dispose();
+        }
     }
 }

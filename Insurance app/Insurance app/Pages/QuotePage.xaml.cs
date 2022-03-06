@@ -22,5 +22,13 @@ namespace Insurance_app.Pages
             var vm = (QuoteViewModel)BindingContext;
             await vm.SetUp();
         }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            var vm = (QuoteViewModel)BindingContext;
+            vm.SetUpWaitDisplay = true;
+            vm.UserManager.Dispose();
+        }
     }
 }

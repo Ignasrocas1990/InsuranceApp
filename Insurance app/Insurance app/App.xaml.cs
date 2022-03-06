@@ -54,7 +54,6 @@ namespace Insurance_app
                 if (disconnected && NetConnection())
                 {
                     disconnected = false;
-                    RealmDb.GetInstance().Dispose();
                 }
             };
         }

@@ -28,6 +28,14 @@ namespace Insurance_app.Pages
             }
         }
 
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            var vm = (RegistrationViewModel)BindingContext;
+            vm.SetUpWaitDisplay = true;
+            vm.UserManager.Dispose();
+        }
+
         private async void Button_OnClicked(object sender, EventArgs e)
         {
              try

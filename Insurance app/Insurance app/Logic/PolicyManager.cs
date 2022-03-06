@@ -10,11 +10,13 @@ namespace Insurance_app.Logic
 {
     public class PolicyManager : IDisposable
     {
-        public List<Policy> previousPolicies;
+        public List<Policy> PreviousPolicies;
+        private RealmDb realmDb;
 
         public PolicyManager()
         {
-            previousPolicies = new List<Policy>();
+            PreviousPolicies = new List<Policy>();
+            realmDb = RealmDb.GetInstancePerPage();
         }
         public Policy CreatePolicy(float price,float payedPrice, string cover, int fee, string hospitals, string plan, int smoker, bool underReview, 
             DateTimeOffset expiryDate,DateTimeOffset updateDate,string owner)
@@ -30,16 +32,12 @@ namespace Insurance_app.Logic
 
         public async Task AddPolicy(string customerId,User user,Policy newPolicy)
         {
-            await RealmDb.GetInstance().UpdatePolicy(customerId,user, newPolicy);
+            await realmDb.UpdatePolicy(customerId,user, newPolicy);
         }
 
         public async Task<Tuple<bool,Policy>> FindPolicy(string customerId,User user)
         {
-            return await RealmDb.GetInstance().FindPolicy(customerId,user);
-        }
-        public void Dispose()
-        {
-            RealmDb.GetInstance().Dispose();
+            return await realmDb.FindPolicy(customerId,user);
         }
 
         public Policy RegisterPolicy(float price,float payedPrice, string cover, int fee, string hospitals, string plan, int smoker, bool underReview, 
@@ -55,25 +53,30 @@ namespace Insurance_app.Logic
 
         public async Task GetPreviousPolicies(string customerId, User user)
         {
-           previousPolicies = await RealmDb.GetInstance().GetPreviousPolicies(customerId, user);
+           PreviousPolicies = await realmDb.GetPreviousPolicies(customerId, user);
         }
 
         public async Task<Customer> AllowUpdate(string customerId, User user,bool allowUpdate)
         {
-         return await RealmDb.GetInstance().ResolvePolicyUpdate(customerId,user,allowUpdate);
+         return await realmDb.ResolvePolicyUpdate(customerId,user,allowUpdate);
         }
 
         public void RemoveIfContains(Policy policy)
         {
             try
             {
-                if (previousPolicies.Contains(policy)) previousPolicies.Remove(policy);
+                if (PreviousPolicies.Contains(policy)) PreviousPolicies.Remove(policy);
                 
             }
             catch (Exception e)
             {
                 Console.WriteLine($"RemoveIfContains error : {e}");
             }
+        }
+        public void Dispose()
+        {
+            realmDb.Dispose();
+            PreviousPolicies = null;
         }
     }
 }

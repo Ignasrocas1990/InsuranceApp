@@ -27,7 +27,7 @@ namespace Insurance_app.ViewModels
     {
 
         private readonly BleManager bleManager;
-        private UserManager userManager;
+        public UserManager UserManager;
         private RewardManager rewardManager;
 
         //private Customer customer;
@@ -47,7 +47,7 @@ namespace Insurance_app.ViewModels
             bleManager = BleManager.GetInstance();
             bleManager.InfferEvent +=InferredRawData;
             rewardManager = new RewardManager();
-            userManager = new UserManager();
+            UserManager = new UserManager();
             SwitchCommand = new AsyncCommand(StartDataReceive);
         }
 
@@ -216,9 +216,9 @@ namespace Insurance_app.ViewModels
 
         public void Dispose()
         {
-            userManager.Dispose();
+            UserManager.Dispose();
             rewardManager.Dispose();
-            userManager = null;
+            UserManager = null;
             rewardManager = null;
 
         }

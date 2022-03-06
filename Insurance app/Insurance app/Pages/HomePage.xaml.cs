@@ -24,7 +24,7 @@ namespace Insurance_app.Pages
             //BindingContext = (HomeViewModel) ShellViewModel.GetInstance()
               //  .GetViewModel(Converter.HomeViewModel);
 
-              BindingContext = new HomeViewModel() {SetUpWaitDisplay = true};
+              BindingContext = new HomeViewModel();
         }
 
         protected override async void OnAppearing()
@@ -37,6 +37,9 @@ namespace Insurance_app.Pages
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
+            var vm = (HomeViewModel)BindingContext;
+            vm.SetUpWaitDisplay = true;
+            vm.UserManager.Dispose();
         }
     }
 }

@@ -8,18 +8,20 @@ namespace Insurance_app.Logic
 {
     public class ReportManager : IDisposable
     {
+        private RealmDb realmDb;
         public ReportManager()
         {
+            realmDb = RealmDb.GetInstancePerPage();
         }
 
         public Task<Dictionary<string,int>> GetWeeksMovData(User user)
         {
-            return RealmDb.GetInstance().GetWeeksMovData(user);
+            return realmDb.GetWeeksMovData(user);
         }
 
         public void Dispose()
         {
-            RealmDb.GetInstance().Dispose();
+            realmDb.Dispose();
         }
     }
 }

@@ -10,11 +10,19 @@ using Xamarin.Forms.Xaml;
 namespace Insurance_app.Pages.ClientPages
 {
    // [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ClientRegistration : ContentPage
+    public partial class ClientRegistration : LoadingPage
     {
         public ClientRegistration()
         {
             InitializeComponent();
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            var vm = (ClientRegViewModel) BindingContext;
+            vm.SetUpWaitDisplay = true;
+            vm.UserManager.Dispose();
         }
 
         private async void OnClickedRegister(object sender, EventArgs e)

@@ -31,25 +31,14 @@ namespace Insurance_app.ViewModels
         private string phoneNr="";
         //private string qString="";
         public string AddressText = "Add address please";
-        private readonly UserManager userManager;
+        public readonly UserManager UserManager;
         private readonly PolicyManager policyManager;
         private Address address;
         public ICommand AddressCommand { get; }
-
-/*
-        public RegistrationViewModel()
-        {
-            address = new Address();
-            userManager = new UserManager();
-            policyManager = new PolicyManager();
-            RegisterCommand = new AsyncCommand(Register);
-            AddressCommand = new AsyncCommand(GetAddress);
-        }
-*/
         public RegistrationViewModel(Dictionary<string, string> tempQuote, string price)
         {
             address = new Address();
-            userManager = new UserManager();
+            UserManager = new UserManager();
             policyManager = new PolicyManager();
             AddressCommand = new AsyncCommand(GetAddress);
             PriceDisplay = price;
@@ -61,7 +50,7 @@ namespace Insurance_app.ViewModels
             try
             {
                 CircularWaitDisplay = true;
-                var registered = await userManager.Register(email, password);
+                var registered = await UserManager.Register(email, password);
 
                 if (registered == "success")
                 {
@@ -69,7 +58,7 @@ namespace Insurance_app.ViewModels
                     
                     if (user is null)throw new Exception("registration failed");
                         
-                   var customer = userManager.CreateCustomer(GetDob(),fName, lName,phoneNr,email,address,direct);
+                   var customer = UserManager.CreateCustomer(GetDob(),fName, lName,phoneNr,email,address,direct);
                         
                    if (customer is null)throw new Exception("registration failed");
                    var expiryDate = DateTimeOffset.Now.AddMonths(1);
@@ -78,9 +67,9 @@ namespace Insurance_app.ViewModels
                        , int.Parse(quote["Hospital_Excess"]), quote["Hospitals"], quote["Plan"],
                        int.Parse(quote["Smoker"]), false,expiryDate,user.Id));
 
-                   await userManager.AddCustomer(customer, App.RealmApp.CurrentUser);
+                   await UserManager.AddCustomer(customer, App.RealmApp.CurrentUser);
                    await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
-                   userManager.Dispose();
+                   //UserManager.Dispose();
 
                    if (App.RealmApp.CurrentUser != null)
                    {

@@ -12,10 +12,10 @@ namespace Insurance_app.ViewModels
 {
     public class ReportViewModel : ObservableObject,IDisposable
     {
-        private readonly ReportManager reportManager;
+        public readonly ReportManager ReportManager;
         public ReportViewModel()
         {
-            reportManager = new ReportManager();
+            ReportManager = new ReportManager();
         }
         
         public async Task SetUp()
@@ -26,7 +26,7 @@ namespace Insurance_app.ViewModels
             var r = new Random();
             bool today = true;
             
-            var chartEntries = await reportManager.GetWeeksMovData(App.RealmApp.CurrentUser);
+            var chartEntries = await ReportManager.GetWeeksMovData(App.RealmApp.CurrentUser);
                 
                 if (chartEntries != null)
                 {
@@ -108,7 +108,7 @@ namespace Insurance_app.ViewModels
         {
            // chartEntries = null;
             //Entries = null;
-            reportManager.Dispose();
+            ReportManager.Dispose();
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Insurance_app.Pages
         public ProfilePage()
         {
             InitializeComponent();
-            BindingContext = new ProfileViewModel {SetUpWaitDisplay = true};
+            BindingContext = new ProfileViewModel();
         }
 
         protected override async void OnAppearing()
@@ -76,5 +76,12 @@ namespace Insurance_app.Pages
             }
         }
 
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            var vm = (ProfileViewModel) BindingContext;
+            vm.SetUpWaitDisplay = true;
+            vm.UserManager.Dispose();
+        }
     }
 }

@@ -50,7 +50,7 @@ namespace Insurance_app.ViewModels
         public IList<string> PlanList { get; } 
         private readonly PolicyManager policyManager;
         private readonly HttpService inf;
-        private readonly UserManager userManager;
+        public readonly UserManager UserManager;
         private string customerId = "";
         
         
@@ -62,7 +62,7 @@ namespace Insurance_app.ViewModels
             ViewPrevPoliciesCommand = new AsyncCommand(ViewPrevPolicies);
             ResolveUpdateCommand = new AsyncCommand(ResolveUpdate);
             policyManager = new PolicyManager();
-            userManager = new UserManager();
+            UserManager = new UserManager();
             inf = new HttpService();
             timer = new Timer(1000);
             timer.Elapsed += CheckResponseTime;
@@ -101,7 +101,7 @@ namespace Insurance_app.ViewModels
             
             UnderReviewDisplay = tempUpdate;
             InfoIsVisible = !tempUpdate;
-            PrevPoliciesIsVisible = policyManager.previousPolicies.Count>0 ;
+            PrevPoliciesIsVisible = policyManager.PreviousPolicies.Count>0 ;
             if (customerId != App.RealmApp.CurrentUser.Id && UnderReviewDisplay)
             {
                 ClientActionNeeded = true;
@@ -224,7 +224,7 @@ namespace Insurance_app.ViewModels
             try
             {
                 await Application.Current.MainPage.Navigation
-                    .ShowPopupAsync(new PreviousPolicyPopup(policyManager.previousPolicies));
+                    .ShowPopupAsync(new PreviousPolicyPopup(policyManager.PreviousPolicies));
             }
             catch (Exception e)
             {
@@ -271,7 +271,7 @@ namespace Insurance_app.ViewModels
         private async Task GetPreviousPolicies() => 
             await policyManager.GetPreviousPolicies(customerId,App.RealmApp.CurrentUser);
         private async Task GetCurrentCustomer() => 
-            dob = await userManager.GetCustomersDob(customerId,App.RealmApp.CurrentUser);
+            dob = await UserManager.GetCustomersDob(customerId,App.RealmApp.CurrentUser);
 
         private async void CheckResponseTime(object o, ElapsedEventArgs e)
         {
