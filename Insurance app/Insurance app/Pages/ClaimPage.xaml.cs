@@ -15,8 +15,7 @@ namespace Insurance_app.Pages
         public ClaimPage()
         {
             InitializeComponent();
-            var vm = new ClaimViewModel {SetUpWaitDisplay = true};
-            BindingContext = vm;
+            BindingContext  = new ClaimViewModel();
             
             //BindingContext = (ClaimViewModel) ShellViewModel.GetInstance()
             //   .GetViewModel(Converter.ClaimViewModel);
@@ -34,7 +33,6 @@ namespace Insurance_app.Pages
         {
             base.OnDisappearing();
             var vm = (ClaimViewModel)BindingContext;
-            vm.SetUpWaitDisplay = true;
             vm.ClaimManager.Dispose();
         }
 

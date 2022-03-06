@@ -30,7 +30,6 @@ namespace Insurance_app.Pages
             base.OnDisappearing();
             var vm = (AccountSettingsViewModel)BindingContext;
             vm.userManager.Dispose();
-            vm.SetUpWaitDisplay = true;
         }
     }
 }

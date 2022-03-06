@@ -35,7 +35,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
             try
             {
                 SetUpWaitDisplay = true;
-                Customers.AddRange(await UserManager.GetAllCustomer(App.RealmApp.CurrentUser));
+                Customers.ReplaceRange(await UserManager.GetAllCustomer(App.RealmApp.CurrentUser));
             }
             catch (Exception e)
             {
@@ -95,7 +95,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
 
         public void Dispose()
         {
-            Customers = new ObservableRangeCollection<Customer>();
+            Customers.Clear();
         }
     }
 }

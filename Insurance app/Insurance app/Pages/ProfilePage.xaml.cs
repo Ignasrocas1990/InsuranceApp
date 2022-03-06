@@ -80,7 +80,6 @@ namespace Insurance_app.Pages
         {
             base.OnDisappearing();
             var vm = (ProfileViewModel) BindingContext;
-            vm.SetUpWaitDisplay = true;
             vm.UserManager.Dispose();
         }
     }

@@ -27,7 +27,6 @@ namespace Insurance_app.Pages
         {
             base.OnDisappearing();
             var vm = (QuoteViewModel)BindingContext;
-            vm.SetUpWaitDisplay = true;
             vm.UserManager.Dispose();
         }
     }

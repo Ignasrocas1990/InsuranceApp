@@ -1,37 +1,50 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Insurance_app.Logic;
 using Insurance_app.Models;
+using Insurance_app.Pages;
 using Xamarin.CommunityToolkit.ObjectModel;
+using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels.ClientViewModels
 {
     public class ClientOClaimsViewModel:ObservableObject,IDisposable
     {
         public ClaimManager ClaimManager;
-        public ObservableRangeCollection<Claim> claims { get; set; }
+        public ObservableRangeCollection<Claim> Claims { get; set; }
+        public ICommand ClaimSelectedCommand { get; }
+
         public ClientOClaimsViewModel()
         {
             ClaimManager = new ClaimManager();
-            claims = new ObservableRangeCollection<Claim>();
+            Claims = new ObservableRangeCollection<Claim>();
+            ClaimSelectedCommand = new AsyncCommand<Claim>(SelectedClaim);
         }
+
+
+
         public async Task Setup()
         {
             try
             {
                 SetUpWaitDisplay = true;
-                claims.AddRange(await ClaimManager.GetAllOpenClaims(App.RealmApp.CurrentUser));
-                if (claims.Count>0)
-                {
-                    ListVisibleDisplay = true;
-                }
+                Claims.ReplaceRange(await ClaimManager.GetAllOpenClaims(App.RealmApp.CurrentUser));
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
+            ListVisibleDisplay = Claims.Count>0;
             SetUpWaitDisplay = false;
+        }
+        private async Task SelectedClaim(Claim claim)
+        {
+            if (claim is null) return;
+            Console.WriteLine(claim.Owner);
+            var route = $"//{nameof(ClaimPage)}?CustomerId={claim.Owner}";
+            await Shell.Current.GoToAsync(route);
         }
         
         private bool wait;
@@ -54,10 +67,9 @@ namespace Insurance_app.ViewModels.ClientViewModels
             get => listVisible;
             set => SetProperty(ref listVisible, value);
         }
-
         public void Dispose()
         {
-            claims = new ObservableRangeCollection<Claim>();
+            Claims.Clear();
         }
     }
 }

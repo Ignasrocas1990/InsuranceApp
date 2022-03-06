@@ -32,7 +32,6 @@ namespace Insurance_app.Pages
         {
             base.OnDisappearing();
             var vm = (RegistrationViewModel)BindingContext;
-            vm.SetUpWaitDisplay = true;
             vm.UserManager.Dispose();
         }
 

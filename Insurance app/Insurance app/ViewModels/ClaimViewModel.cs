@@ -41,44 +41,51 @@ namespace Insurance_app.ViewModels
         }
         public async Task SetUp()
         {
-            SetUpWaitDisplay = true;
-            if (customerId  == "")
-                customerId = App.RealmApp.CurrentUser.Id;
+            try
+            {
+                SetUpWaitDisplay = true;
+                if (customerId  == "")
+                    customerId = App.RealmApp.CurrentUser.Id;
             
-            await ClaimManager.GetClaims(App.RealmApp.CurrentUser,customerId);
-            var claim = ClaimManager.GetCurrentClaim();
-            if (claim != null)
-            {
-                var dtoDate = claim.StartDate;
-                string displayDate = "Date Not found";
-                if (dtoDate !=null)
+                await ClaimManager.GetClaims(App.RealmApp.CurrentUser,customerId);
+                var claim = ClaimManager.GetCurrentClaim();
+                if (claim != null)
                 {
-                    displayDate = dtoDate.Value.Date.ToString("d");
+                    var dtoDate = claim.StartDate;
+                    string displayDate = "Date Not found";
+                    if (dtoDate !=null)
+                    {
+                        displayDate = dtoDate.Value.Date.ToString("d");
 
+                    }
+                    IsReadOnly = true;
+                    DateDisplay = displayDate;
+                    HospitalPostCodeDisplay = claim.HospitalPostCode;
+                    PatientNrDisplay = claim.PatientNr;
+                    StatusDisplay = "open";
+
+                    if (customerId != App.RealmApp.CurrentUser.Id)
+                    {
+                        CanBeResolved = true;
+                    }
                 }
-                IsReadOnly = true;
-                DateDisplay = displayDate;
-                HospitalPostCodeDisplay = claim.HospitalPostCode;
-                PatientNrDisplay = claim.PatientNr;
-                StatusDisplay = "open";
-
-                if (customerId != App.RealmApp.CurrentUser.Id)
+                else
                 {
-                    CanBeResolved = true;
+                    IsReadOnly = false;
+                    DateDisplay = DateTimeOffset.Now.Date.ToString("d");
+                    HospitalPostCodeDisplay = "";
+                    PatientNrDisplay = "";
+                    StatusDisplay = "Not Created";
+                    CanBeResolved = false;
                 }
-            }
-            else
-            {
-                IsReadOnly = false;
-                DateDisplay = DateTimeOffset.Now.Date.ToString("d");
-                HospitalPostCodeDisplay = "";
-                PatientNrDisplay = "";
-                StatusDisplay = "Not Created";
-                CanBeResolved = false;
-            }
 
-            PreviousBtnIsEnabled = ClaimManager.GetResolvedClaimCount()>0;
-            SetUpWaitDisplay = false;
+                PreviousBtnIsEnabled = ClaimManager.GetResolvedClaimCount()>0;
+                SetUpWaitDisplay = false;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         private async Task GetClaims()

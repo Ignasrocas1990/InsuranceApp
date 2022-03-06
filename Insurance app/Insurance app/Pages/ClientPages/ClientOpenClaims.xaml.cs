@@ -23,15 +23,11 @@ namespace Insurance_app.Pages.ClientPages
             var vm = (ClientOClaimsViewModel)BindingContext;
             await vm.Setup();
         }
-
-
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
             var vm = (ClientOClaimsViewModel)BindingContext;
             vm.Dispose();
-            vm.SetUpWaitDisplay = true;
-            vm.ListVisibleDisplay = true;
             vm.ClaimManager.Dispose();
         }
     }

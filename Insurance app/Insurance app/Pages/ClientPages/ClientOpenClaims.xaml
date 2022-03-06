@@ -5,6 +5,7 @@
                    xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
                    xmlns:clientViewModels="clr-namespace:Insurance_app.ViewModels.ClientViewModels;assembly=Insurance app"
                    xmlns:models="clr-namespace:Insurance_app.Models;assembly=Insurance app"
+                   xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
                    RootViewModel="{Binding .}"
                    ControlTemplate="{StaticResource LoaderViewTemplate}"
                    x:Class="Insurance_app.Pages.ClientPages.ClientOpenClaims">
@@ -13,12 +14,12 @@
         <clientViewModels:ClientOClaimsViewModel x:Name="ClientOClaimsViewModel"/>
     </ContentPage.BindingContext>
     
-     <Grid>
+    <Grid>
          
          <ListView Style="{StaticResource ListView}" CachingStrategy="RecycleElement"
                    IsVisible="{Binding ListVisibleDisplay}"
-                   ItemsSource="{Binding claims}">
-        <ListView.ItemTemplate>
+                   ItemsSource="{Binding Claims}">
+             <ListView.ItemTemplate>
             <DataTemplate x:DataType="models:Claim">
                 <ViewCell>
                     <Grid Padding="10">
@@ -42,6 +43,13 @@
                 </ViewCell>
             </DataTemplate>
         </ListView.ItemTemplate>
+             
+             <ListView.Behaviors>
+                 <xct:EventToCommandBehavior
+                     EventName="ItemSelected"
+                     Command="{Binding ClaimSelectedCommand}"
+                     EventArgsConverter="{StaticResource ItemSelectedEventArgsConverter}"/>
+             </ListView.Behaviors>
     </ListView>
          <Label Style="{StaticResource NormalLabel}" Text="There are no Claims submitted at this moment"
                 HorizontalOptions="Center" FontSize="Subtitle" IsVisible="{Binding ListVisibleDisplay,Converter={StaticResource InvertedBoolConverter}}" />

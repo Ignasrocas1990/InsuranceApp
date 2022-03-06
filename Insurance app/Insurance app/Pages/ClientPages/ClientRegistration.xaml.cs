@@ -21,7 +21,6 @@ namespace Insurance_app.Pages.ClientPages
         {
             base.OnDisappearing();
             var vm = (ClientRegViewModel) BindingContext;
-            vm.SetUpWaitDisplay = true;
             vm.UserManager.Dispose();
         }
 

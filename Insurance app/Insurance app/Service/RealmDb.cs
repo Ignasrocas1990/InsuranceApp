@@ -402,7 +402,7 @@ namespace Insurance_app.Service
                 if (realm is null) throw new Exception("GetAllOpenClaims :::::::::::::::::::::: realm null");
                 realm.Write(() =>
                 {
-                    openClaims = realm.All<Claim>().Where(c => c.OpenStatus && c.CloseDate == null).ToList();
+                    openClaims = realm.All<Claim>().Where(c => c.CloseDate == null && c.DelFlag == false).ToList();
                 });
             }
             catch (Exception e)

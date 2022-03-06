@@ -29,7 +29,6 @@ namespace Insurance_app.Pages
         {
             base.OnDisappearing();
             var vm = (PolicyViewModel)BindingContext;
-            vm.SetUpWaitDisplay = true;
             vm.UserManager.Dispose();
         }
     }
