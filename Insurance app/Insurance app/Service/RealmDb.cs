@@ -393,6 +393,25 @@ namespace Insurance_app.Service
 
             return claims;
         }
+        public async Task<List<Claim>> GetAllOpenClaims(User user)
+        {
+            var openClaims = new List<Claim>();
+            try
+            {
+                await GetRealm(partition,user);
+                if (realm is null) throw new Exception("GetAllOpenClaims :::::::::::::::::::::: realm null");
+                realm.Write(() =>
+                {
+                    openClaims = realm.All<Claim>().Where(c => c.OpenStatus && c.CloseDate == null).ToList();
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return openClaims;
+        }
 //---------------------------------------------------- policy methods --------------------------------------
 /// <summary>
 /// 
@@ -757,6 +776,6 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
         }
 
 
-        
+      
     }
 }

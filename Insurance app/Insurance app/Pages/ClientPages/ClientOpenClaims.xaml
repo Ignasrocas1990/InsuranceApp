@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<pages:LoadingPage xmlns="http://xamarin.com/schemas/2014/forms"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                   xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
+                   xmlns:clientViewModels="clr-namespace:Insurance_app.ViewModels.ClientViewModels;assembly=Insurance app"
+                   xmlns:models="clr-namespace:Insurance_app.Models;assembly=Insurance app"
+                   RootViewModel="{Binding .}"
+                   ControlTemplate="{StaticResource LoaderViewTemplate}"
+                   x:Class="Insurance_app.Pages.ClientPages.ClientOpenClaims">
+    
+    <ContentPage.BindingContext>
+        <clientViewModels:ClientOClaimsViewModel x:Name="ClientOClaimsViewModel"/>
+    </ContentPage.BindingContext>
+    
+     <Grid>
+         
+         <ListView Style="{StaticResource ListView}" CachingStrategy="RecycleElement"
+                   IsVisible="{Binding ListVisibleDisplay}"
+                   ItemsSource="{Binding claims}">
+        <ListView.ItemTemplate>
+            <DataTemplate x:DataType="models:Claim">
+                <ViewCell>
+                    <Grid Padding="10">
+                    <Frame Style="{StaticResource ViewModelFrame}">
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="5*,5*">
+                            
+                            <Label Text="Open Date :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="0" />
+                            <Label Text="{Binding StartDate,StringFormat='{0:dd/MM/yyyy}'}" Style="{StaticResource NormalLabel}" Grid.Column="1" Grid.Row="0" />
+                                        
+                            <Label Text="Hospital Code :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" />
+                            <Label Text="{Binding HospitalPostCode}" Style="{StaticResource NormalLabel}" Grid.Column="1" Grid.Row="1" />
+                                        
+                            <Label Text="Patient Nr :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" />
+                            <Label Text="{Binding PatientNr}" Style="{StaticResource NormalLabel}" Grid.Column="1" Grid.Row="2" />
+                            
+                            <Label Text="Type :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="3" />
+                            <Label Text="{Binding Type}" Style="{StaticResource NormalLabel}" Grid.Column="1" Grid.Row="3" />
+                        </Grid>
+                    </Frame>
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
+         <Label Style="{StaticResource NormalLabel}" Text="There are no Claims submitted at this moment"
+                HorizontalOptions="Center" FontSize="Subtitle" IsVisible="{Binding ListVisibleDisplay,Converter={StaticResource InvertedBoolConverter}}" />
+    </Grid>
+    
+    
+</pages:LoadingPage>

@@ -171,6 +171,7 @@
   <ItemGroup>
     <BundleResource Include="Resources\claimIcon.png" />
     <BundleResource Include="Resources\CustomersIcon.png" />
+    <BundleResource Include="Resources\openClaimsIcon.png" />
     <BundleResource Include="Resources\policyIcon.png" />
     <BundleResource Include="Resources\profileIcon.png" />
     <BundleResource Include="Resources\reportIcon.png" />

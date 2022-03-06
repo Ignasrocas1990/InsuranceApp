@@ -47,10 +47,12 @@
 <!--      =====    Flyout navigation    ====                        -->       
 
 
-    <FlyoutItem Title="Customers Page" Icon="CustomersIcon.png" Route="ClientMainPage">
+<FlyoutItem Title="Customers Page" Icon="CustomersIcon.png" Route="ClientMainPage">
        <ShellContent ContentTemplate="{DataTemplate clientPages:ClientMainPage}"/>
 </FlyoutItem>
-       
+<FlyoutItem Title="Open Claims" Icon="openClaimsIcon.png" Route="ClientOpenClaims">
+       <ShellContent ContentTemplate="{DataTemplate clientPages:ClientOpenClaims}"/>
+</FlyoutItem>     
 
        
 

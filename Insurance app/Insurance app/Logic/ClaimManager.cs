@@ -81,5 +81,10 @@ namespace Insurance_app.Logic
             realmDb.Dispose();
             if (Claims != null) Claims = null;
         }
+
+        public async Task<IEnumerable<Claim>> GetAllOpenClaims(User user)
+        {
+           return await realmDb.GetAllOpenClaims(user);
+        }
     }
 }
