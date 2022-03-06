@@ -75,12 +75,12 @@ namespace Insurance_app.ViewModels.ClientViewModels
             {
                 if (!App.NetConnection())
                 {
-                    await Application.Current.MainPage.DisplayAlert("Notice", StaticOpt.NetworkConMsg, "close");
+                    await Application.Current.MainPage.DisplayAlert(Msg.Notice, Msg.NetworkConMsg, "close");
                     return;
                 }
                 if (attempt >= 3)
                 {
-                    await Application.Current.MainPage.DisplayAlert("Error",
+                    await Application.Current.MainPage.DisplayAlert(Msg.Error,
                         "You have been blocked for 3min\nToo many attempts", "close");
                     return;
                 }

@@ -58,7 +58,7 @@ namespace Insurance_app.Service
         
         public void ResetPasswordEmail(string email, string name, DateTime date,string tempPass)
         {
-            if (!App.NetConnection()) return;
+            if (!App.NetConnection()) return ;
 
             var content = new StringContent(JsonConvert
                     .SerializeObject(new Dictionary<string,string>()
@@ -66,15 +66,15 @@ namespace Insurance_app.Service
                         {"email",email},
                         {"name",name},
                         {"date",$"{date:D}"},
-                        {"pass",$"{tempPass}"}
+                        {"pass",tempPass}
                     })
                 ,Encoding.UTF8, "application/json");
-            
+            Console.WriteLine(email+" "+name+" "+$"{date:D}"+tempPass);
             if (App.NetConnection())
             {
                 try
                 {
-                    client.PostAsync(StaticOpt.EmailUrl, content);
+                    client.PostAsync(StaticOpt.PassResetEmailUrl, content);
                 }
                 catch (Exception e)
                 {

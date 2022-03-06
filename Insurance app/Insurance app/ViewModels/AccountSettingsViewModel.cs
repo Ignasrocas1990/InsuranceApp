@@ -63,13 +63,13 @@ namespace Insurance_app.ViewModels
                 if (originalDirrectDebid == DirectDebitDisplay && originalRewardSwitch == UseRewardsDisplay)
                 {
                     CircularWaitDisplay = false;
-                    Shell.Current.DisplayAlert("Notice", StaticOpt.SameDetailsMsg, "close");
+                    Shell.Current.DisplayAlert(Msg.Notice, Msg.SameDetailsMsg, "close");
                 }
                 else
                 { 
                     userManager.UpdateAccountSettings(App.RealmApp.CurrentUser,customerId,DirectDebitDisplay,UseRewardsDisplay);
                     CircularWaitDisplay = false;
-                    Shell.Current.DisplayAlert("Notice", StaticOpt.SuccessUpdateMsg, "close");
+                    Shell.Current.DisplayAlert(Msg.Notice, Msg.SuccessUpdateMsg, "close");
                 }
                
             }
@@ -110,7 +110,7 @@ namespace Insurance_app.ViewModels
             { 
                 var result =await Application.Current.MainPage.Navigation.ShowPopupAsync(new ChangePassPopup(email));
                 if (!result) return;
-                await Shell.Current.DisplayAlert("Message", "Password has been updated", "close");
+                await Shell.Current.DisplayAlert(Msg.Notice, "Password has been updated", "close");
             }
             catch (Exception e)
             {

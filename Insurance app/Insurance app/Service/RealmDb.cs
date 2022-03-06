@@ -514,16 +514,16 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
         {
             try
             {
-                await SubmitActivity(customerId, user, "UpdatePolicy");
+                if (customerId != user.Id)
+                {
+                    await SubmitActivity(customerId, user, "UpdatePolicy");
+                }
                 
                 await GetRealm(partition,user);
                 if (realm is null) throw new Exception("UpdatePolicy :::::::::::::::::::::: realm null");
                 realm.Write(() =>
                 {
-                    
                     realm.Find<Customer>(customerId)?.Policy?.Add(realm.Add(newPolicy));
-                    // if (policies.Count==0) throw new Exception("UpdatePolicy::::: policies empty");
-                    // var oldPolicy = policies.OrderByDescending(z => z.ExpiryDate).First();
                 });
             }
             catch (Exception e)

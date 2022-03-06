@@ -237,8 +237,8 @@ namespace Insurance_app.ViewModels
             {
                 if (!App.NetConnection())
                 {
-                    await Shell.Current.DisplayAlert("Notice", 
-                        StaticOpt.NetworkConMsg, "close");
+                    await Shell.Current.DisplayAlert(Msg.Notice, 
+                        Msg.NetworkConMsg, "close");
                     return;
                 }
                 var answer = await Shell.Current.DisplayAlert("Message", 

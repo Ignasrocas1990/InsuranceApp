@@ -68,14 +68,7 @@ namespace Insurance_app.Logic
         {
             await RealmDb.GetInstance().AddCustomer(customer,user);
         }
-        public void Dispose()
-        {
-            if (RealmDb.GetInstance()!=null)
-            {
-                RealmDb.GetInstance().Dispose();
-                
-            }
-        }
+
 
         public async Task updateCustomer(string name, string lastName, 
             string phoneNr,Address address, User user,string customerId)
@@ -100,9 +93,9 @@ namespace Insurance_app.Logic
                 {
                     // expired
                     var currentPolicy = customer.Policy
-                        ?.Where(p=> p.DelFlag == false && p.ExpiryDate< now).OrderByDescending(z => z.ExpiryDate).First();
+                        ?.Where(p=> p.DelFlag == false).OrderByDescending(z => z.ExpiryDate).FirstOrDefault();
                 
-                    if (currentPolicy!=null)
+                    if (currentPolicy != null && currentPolicy.ExpiryDate < now)
                     {
                         if (!customer.DirectDebitSwitch)
                         {
@@ -175,6 +168,15 @@ namespace Insurance_app.Logic
         public void UpdateAccountSettings(User user,string userId,bool directDebit, bool useRewards)
         {
             Task.FromResult(RealmDb.GetInstance().UpdateAccountSettings(user,userId,directDebit,useRewards));
+        }
+        
+        public void Dispose()
+        {
+            if (RealmDb.GetInstance()!=null)
+            {
+                RealmDb.GetInstance().Dispose();
+                
+            }
         }
     }
 }

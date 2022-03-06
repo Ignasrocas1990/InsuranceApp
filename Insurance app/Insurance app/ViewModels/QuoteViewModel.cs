@@ -40,6 +40,7 @@ namespace Insurance_app.ViewModels
         private readonly Timer timer;
         private string elegalChars = "";
         private string policyId = "";
+        private string customerId = "";
         
         public ICommand InfoCommand { get; }
         public IList<string> HospitalList { get; }
@@ -48,6 +49,7 @@ namespace Insurance_app.ViewModels
         public IList<int> HospitalFeeList { get; }
         public IList<string> PlanList { get; }
         private UserManager userManager;
+        private PolicyManager policyManager;
         private string email;
         private string name;
 
@@ -66,6 +68,8 @@ namespace Insurance_app.ViewModels
            ResetPasswordCommand = new AsyncCommand(ResetPassword);
            this.policyId = policyId;
            userManager = new UserManager();
+           policyManager = new PolicyManager();
+
        }
         public async Task SetUp()
         {
@@ -75,7 +79,8 @@ namespace Insurance_app.ViewModels
             try
             {
                 //ObjectId.Parse(policyId);
-               var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, App.RealmApp.CurrentUser.Id);
+                customerId = App.RealmApp.CurrentUser.Id;
+               var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
                if (customer.Dob != null) SelectedDate = customer.Dob.Value.UtcDateTime;
                email = customer.Email;
                name = customer.Name;
@@ -92,12 +97,12 @@ namespace Insurance_app.ViewModels
        {
            if (!App.NetConnection())
            {
-               await Application.Current.MainPage.DisplayAlert("error",StaticOpt.NetworkConMsg, "close");
+               await Application.Current.MainPage.DisplayAlert(Msg.Error,Msg.NetworkConMsg, "close");
                return;
            }
            if (elegalChars != "")
            {
-               await Application.Current.MainPage.DisplayAlert("Error",elegalChars , "close");
+               await Application.Current.MainPage.DisplayAlert(Msg.Error,elegalChars , "close");
                return;
            }
             
@@ -119,25 +124,46 @@ namespace Insurance_app.ViewModels
            }
            catch
            {
-                timer.Stop();
-                responseCounter = 0;
-                await Application.Current.MainPage.DisplayAlert("Error", "Something went wrong, try again in a min", "close");
+               timer.Stop();
+               responseCounter = 0;
+               await Application.Current.MainPage.DisplayAlert(Msg.Error, Msg.ApiSendErrorMsg, "close");
                return;
            }
-           CircularWaitDisplay=false;
+
+           CircularWaitDisplay = false;
            responseCounter = 0;
-            bool action = await Application.Current.MainPage.DisplayAlert("Price",$"Price for the quote is : {price}",  "Accept","Deny");
-           if (action && policyId=="")
+           bool action =
+               await Application.Current.MainPage.DisplayAlert(Msg.Notice,
+                   $"Price for the quote is : {price}", "Accept", "Deny");
+           if (action && policyId == "")
            {
-               await TransferToRegistration(age,price);
-           }else if (action)
+               await TransferToRegistration(age, price);
+           }
+           else if (action)
            {
-               //TODO   update policy etc... and navigate back to log in screen
+               CircularWaitDisplay = true;
+               await CreatePolicy(price);
+               await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
+               userManager.Dispose();
+               await Application.Current.MainPage.DisplayAlert(Msg.Notice, Msg.SuccessUpdateMsg, "Close");
+               await Application.Current.MainPage.Navigation.PopToRootAsync();
            }
        }
 
+        private async Task CreatePolicy(string price)
+        {
+            var expiryDate = DateTimeOffset.Now.AddMonths(1);
+            var priceFloat = Converter.GetPrice(price);
+
+            var policy = policyManager.RegisterPolicy(priceFloat,priceFloat, CoverList[cover],
+                hospitalExcess, HospitalList[hospitals], PlanList[plan],
+                smoker, false,expiryDate,customerId);
+           await policyManager.AddPolicy(customerId, App.RealmApp.CurrentUser, policy);
+        }
+
         private async Task TransferToRegistration(int age,string price)
         {
+            CircularWaitDisplay=true;
             try
             {   
                 var tempQuote = new Dictionary<string, string>
@@ -164,14 +190,14 @@ namespace Insurance_app.ViewModels
             {
                 if (!App.NetConnection())
                 {
-                    await Application.Current.MainPage.DisplayAlert("Notice", StaticOpt.NetworkConMsg, "close");
+                    await Application.Current.MainPage.DisplayAlert(Msg.Notice, Msg.NetworkConMsg, "close");
                     throw new Exception();
                 }
-                var tempPass = StaticOpt.TempPassGenerator();// TODO NEED TO UPDATE API FIRST 
+                var tempPass = StaticOpt.TempPassGenerator();
                 await App.RealmApp.EmailPasswordAuth.CallResetPasswordFunctionAsync(email,tempPass);
                 api.ResetPasswordEmail(email,name, DateTime.Now, tempPass);
                 await Application.Current.MainPage.DisplayAlert(
-                    "Notice", "The temporary password has been send to account email.", "close");
+                    Msg.Notice,Msg.ResetPassMsg, "close");
             }
             catch (Exception e)
             {
@@ -187,7 +213,7 @@ namespace Insurance_app.ViewModels
            tooLate = true;
            CircularWaitDisplay=false;
            responseCounter = 0;
-           await Application.Current.MainPage.DisplayAlert("Error",StaticOpt.NetworkConMsg, "close");
+           await Application.Current.MainPage.DisplayAlert(Msg.Error,Msg.NetworkConMsg, "close");
        }
 
 //-----------------------------data binding methods ------------------------------------------------

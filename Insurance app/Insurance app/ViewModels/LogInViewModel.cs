@@ -20,8 +20,12 @@ namespace Insurance_app.ViewModels
     {
         private string email="";
         private string password = "";
-        private string expiredCustomerStr = "Accounts policy has been expired" +
+        private const string ExpiredCustomerStr = "Accounts policy has been expired" +
                                             "\nPlease select one of the following options.";
+
+        private const string AcceptExpiredStr = "Create new account.";
+        private const string CancelExpiredStr = "Reset the old account.";
+        
         private UserManager userManager;
 
         public ICommand LogInCommand { get; }
@@ -47,8 +51,9 @@ namespace Insurance_app.ViewModels
             await Application.Current.MainPage.Navigation.PushAsync(new ClientRegistration());
             CircularWaitDisplay = false;
         }
-        public async Task CheckIfUserExist()
+        public async Task ExistUser()
         {
+            CircularWaitDisplay = false;
             try
             {
                 if (App.RealmApp.CurrentUser != null)
@@ -95,53 +100,49 @@ namespace Insurance_app.ViewModels
                     
                     //await CleanDatabase();//TODO remove when submitting -------------------------------------------------
                     
-                     var typeUser = await TypeUser(user);
+                     var typeUser = await userManager.FindTypeUser(user);
                      if (typeUser.Equals($"{UserType.Customer}"))
                      {
                          Application.Current.MainPage = new AppShell();
-                         await Shell.Current.GoToAsync($"//{nameof(HomePage)}?Email={email}&Pass={password}");
+                         await Shell.Current.GoToAsync($"//{nameof(HomePage)}?Email={email}&Pass={password}",true);
                      }
                      else if (typeUser.Equals($"{UserType.Client}"))
                      {
                          Application.Current.MainPage = new ClientShell();
-                         await Shell.Current.GoToAsync($"//{nameof(ClientMainPage)}");
+                         await Shell.Current.GoToAsync($"//{nameof(ClientMainPage)}",true);
                      }
                      else if(typeUser.Equals(""))
                      {
-                         await CheckIfUserExist();
-                         throw new Exception("User has not been found");
+                         await ExistUser();
                      }
                      else
                      {
-                         var anwer = await Application.Current.MainPage.DisplayAlert("Notice", expiredCustomerStr,
-                             "Create new account.", "Reset the old account");
+                         var anwer = await Application.Current.MainPage.DisplayAlert(Msg.Notice, ExpiredCustomerStr,
+                            AcceptExpiredStr,CancelExpiredStr );
                          if (anwer)
                          {
+                             await ExistUser();
                              QuoteCommand.Execute(null);
                          }
                          else
                          {
-                             await Application.Current.MainPage.Navigation.PushAsync(new QuotePage(typeUser));
+                             await Application.Current.MainPage.Navigation.PushAsync(new QuotePage(typeUser),true);
                          }
                      }
                 }
                 else
                 {
-                    throw new Exception(StaticOpt.NetworkConMsg);
+                    throw new Exception(Msg.NetworkConMsg);
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                await Application.Current.MainPage.DisplayAlert("Error", e.Message, "close");
-                circularWaitDisplay = false;
+                await Application.Current.MainPage.DisplayAlert(Msg.Error, e.Message, "close");
+                CircularWaitDisplay = false;
             }
         }
-        private async Task<string> TypeUser(User user)
-        {
-            return await userManager.FindTypeUser(user);
-        }
-       
+
 
         public string EmailDisplay
         {
@@ -154,13 +155,13 @@ namespace Insurance_app.ViewModels
             set => SetProperty(ref password, value);
         }
 
-        private bool circularWaitDisplay;
+        private bool circularWait;
         
 
         public bool CircularWaitDisplay
         {
-            get => circularWaitDisplay;
-            set => SetProperty(ref circularWaitDisplay, value);
+            get => circularWait;
+            set => SetProperty(ref circularWait, value);
         }
 
         private bool passIsValid;

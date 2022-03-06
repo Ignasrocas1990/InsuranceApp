@@ -14,7 +14,7 @@ namespace Insurance_app.Pages
         public LogInPage()
         {
             InitializeComponent();
-            var vm = new LogInViewModel {SetUpWaitDisplay = true};
+            var vm = new LogInViewModel();
             BindingContext = vm;
 
         }
@@ -24,7 +24,7 @@ namespace Insurance_app.Pages
             base.OnAppearing();
             var vm = (LogInViewModel)BindingContext;
             vm.SetUpWaitDisplay = true;
-            await vm.CheckIfUserExist();
+            await vm.ExistUser();
             vm.SetUpWaitDisplay = false;
         }
 
