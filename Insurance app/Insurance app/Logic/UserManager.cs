@@ -99,8 +99,7 @@ namespace Insurance_app.Logic
                 if (customer!=null)
                 {
                     // expired
-                    var currentPolicy = customer.Policy
-                        ?.Where(p=> p.DelFlag == false).OrderByDescending(z => z.ExpiryDate).FirstOrDefault();
+                    var currentPolicy= FindLatestPolicy(customer);
                 
                     if (currentPolicy != null && currentPolicy.ExpiryDate < now)
                     {
@@ -123,6 +122,21 @@ namespace Insurance_app.Logic
             }
             return "";
         }
+
+        private Policy FindLatestPolicy(Customer customer)
+        {
+            try
+            {
+                return customer.Policy
+                    ?.Where(p=> p.DelFlag == false).OrderByDescending(z => z.ExpiryDate).FirstOrDefault();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return null;
+        }
         private async Task UpdatePolicy(DateTimeOffset now, Customer customer, User user, Policy currentPolicy)
         {
             try
@@ -141,7 +155,6 @@ namespace Insurance_app.Logic
                 Console.WriteLine(e);
             }
         }
-        
 
         private float GetTotalRewardCost(IEnumerable<Reward> rewards)
         {
@@ -159,7 +172,18 @@ namespace Insurance_app.Logic
 
         public async Task<List<Customer>>GetAllCustomer(User user)
         {
-           return await realmDb.GetAllCustomer(user);
+            
+            List<Customer> list = new List<Customer>();
+            var now = DateTimeOffset.Now;
+           foreach (var customer in await realmDb.GetAllCustomer(user))
+           {
+              var policy= FindLatestPolicy(customer);
+              if (policy != null && policy.ExpiryDate > now)
+              {
+                  list.Add(customer);
+              }
+           }
+           return list;
         }
 
         public async Task<DateTimeOffset> GetCustomersDob(string customerId,User user)

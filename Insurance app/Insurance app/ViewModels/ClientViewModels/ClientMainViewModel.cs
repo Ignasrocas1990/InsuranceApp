@@ -35,8 +35,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
             try
             {
                 SetUpWaitDisplay = true;
-                var list = await UserManager.GetAllCustomer(App.RealmApp.CurrentUser);
-                Customers.AddRange(list);
+                Customers.AddRange(await UserManager.GetAllCustomer(App.RealmApp.CurrentUser));
             }
             catch (Exception e)
             {
