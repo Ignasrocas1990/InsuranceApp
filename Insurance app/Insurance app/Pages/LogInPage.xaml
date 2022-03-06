@@ -13,6 +13,9 @@
                    RootViewModel="{Binding .}"
                    ControlTemplate="{StaticResource LoaderViewTemplate}"
                    x:Class="Insurance_app.Pages.LogInPage">
+    <pages:LoadingPage.ToolbarItems>
+        <ToolbarItem IconImageSource="logInlogo.png"/>
+    </pages:LoadingPage.ToolbarItems>
     
     <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="20" Padding="40">
         

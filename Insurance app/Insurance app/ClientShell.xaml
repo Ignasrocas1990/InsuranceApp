@@ -25,8 +25,7 @@
                      </Grid>            
               </DataTemplate>
        </Shell.FlyoutHeaderTemplate>
-       
-<!--      =====    Routes    ====     -->       
+       <!--      =====    Routes    ====     -->       
 
 <ShellItem FlyoutItemIsVisible="False">
        <ShellContent ContentTemplate="{DataTemplate pages:ClaimPage}" Route="ClaimPage"  />
@@ -47,16 +46,24 @@
 <!--      =====    Flyout navigation    ====                        -->       
 
 
-<FlyoutItem Title="Customers Page" Icon="CustomersIcon.png" Route="ClientMainPage">
+<!--FlyoutItem Title="Customers Page" Icon="CustomersIcon.png" Route="ClientMainPage">
        <ShellContent ContentTemplate="{DataTemplate clientPages:ClientMainPage}"/>
 </FlyoutItem>
 <FlyoutItem Title="Open Claims" Icon="openClaimsIcon.png" Route="ClientOpenClaims">
        <ShellContent ContentTemplate="{DataTemplate clientPages:ClientOpenClaims}"/>
-</FlyoutItem>     
+</FlyoutItem> 
+<FlyoutItem Title="Policy Updates" Icon="policyIcon.png" Route="OpenPolicyRequestsPage">
+       <ShellContent ContentTemplate="{DataTemplate clientPages:OpenPolicyRequestsPage}"/>
+</FlyoutItem-->
+       <TabBar>
+              <Tab>
+                     <ShellContent Title="     Customers   " Icon="CustomersIcon.png" Route="ClientMainPage" ContentTemplate="{DataTemplate clientPages:ClientMainPage}"/>
+                     <ShellContent Title="     Policies    " Icon="policyIcon.png"  Route="OpenPolicyRequestsPage" ContentTemplate="{DataTemplate clientPages:OpenPolicyRequestsPage}"/>
+                     <ShellContent Title="      Claims     "  Route="ClientOpenClaims" ContentTemplate="{DataTemplate clientPages:ClientOpenClaims}"/>
 
-       
+              </Tab>
+       </TabBar>
 
-       
        <Shell.FlyoutFooterTemplate>
               <DataTemplate>
                      <StackLayout Padding="0,0,0,10">

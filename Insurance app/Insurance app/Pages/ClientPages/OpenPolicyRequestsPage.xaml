@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<pages:LoadingPage xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
+                    xmlns:clientViewModels="clr-namespace:Insurance_app.ViewModels.ClientViewModels;assembly=Insurance app"
+                    xmlns:models="clr-namespace:Insurance_app.Models;assembly=Insurance app"
+                    xmlns:behaviors="http://xamarin.com/schemas/2020/toolkit"
+                    RootViewModel="{Binding .}"
+                    ControlTemplate="{StaticResource LoaderViewTemplate}"
+                    x:Class="Insurance_app.Pages.ClientPages.OpenPolicyRequestsPage">
+    <ContentPage.BindingContext>
+        <clientViewModels:OpenPolicyRViewModel/>
+    </ContentPage.BindingContext>
+    
+    <Grid>
+        <ListView Style="{StaticResource ListView}" CachingStrategy="RecycleElement"
+                  IsVisible="{Binding ListVisibleDisplay}"
+                  ItemsSource="{Binding Policies}">
+             <ListView.ItemTemplate>
+            <DataTemplate x:DataType="models:Policy">
+                <ViewCell>
+                    <Grid Padding="10">
+                    <Frame Style="{StaticResource ViewModelFrame}">
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="5*,5*">
+                            
+                            <Label Text="Submitted Date :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="0" />
+                            <Label Text="{Binding UpdateDate,StringFormat='{0:dd/MM/yyyy}'}" Style="{StaticResource NormalLabel}" Grid.Column="1" Grid.Row="0" />
+                                        
+                            <Label Text="Expiry Date :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" />
+                            <Label Text="{Binding ExpiryDate,StringFormat='{0:dd/MM/yyyy}'}" Style="{StaticResource NormalLabel}" Grid.Column="1" Grid.Row="1" />
+                                        
+                            <Label Text="New Price :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="2" />
+                            <Label Text="{Binding Price,StringFormat='{0:F2}'}" Style="{StaticResource NormalLabel}" Grid.Column="1" Grid.Row="2" />
+                            
+                            <Label Text="Old Price :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="3" />
+                            <Label Text="{Binding PayedPrice,StringFormat='{0:F2}'}" Style="{StaticResource NormalLabel}" Grid.Column="1" Grid.Row="3" />
+                        </Grid>
+                    </Frame>
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+             
+             <ListView.Behaviors>
+                 <behaviors:EventToCommandBehavior
+                     EventName="ItemSelected"
+                     Command="{Binding PolicySelectedCommand}"
+                     EventArgsConverter="{StaticResource ItemSelectedEventArgsConverter}"/>
+             </ListView.Behaviors>
+    </ListView>
+         <Label Style="{StaticResource NormalLabel}" Text="There are no Policy update request's at this moment" HorizontalTextAlignment="Center"
+                VerticalOptions="Center" HorizontalOptions="Center"
+                FontSize="Subtitle" IsVisible="{Binding ListVisibleDisplay,Converter={StaticResource InvertedBoolConverter}}" />
+    </Grid>
+</pages:LoadingPage>

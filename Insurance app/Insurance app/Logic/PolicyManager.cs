@@ -78,5 +78,10 @@ namespace Insurance_app.Logic
             realmDb.Dispose();
             PreviousPolicies = null;
         }
+
+        public async Task<IEnumerable<Policy>> GetAllUpdatedPolicies(User user)
+        {
+          return  await realmDb.GetAllUpdatedPolicies(user);
+        }
     }
 }

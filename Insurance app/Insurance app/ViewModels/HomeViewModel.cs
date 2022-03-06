@@ -27,7 +27,7 @@ namespace Insurance_app.ViewModels
     {
 
         private readonly BleManager bleManager;
-        public UserManager UserManager;
+        private UserManager UserManager;
         private RewardManager rewardManager;
 
         //private Customer customer;
@@ -40,6 +40,8 @@ namespace Insurance_app.ViewModels
         private double startUpSteps;
         private Reward reward;
         public ICommand SwitchCommand { get; }
+        public ICommand LogoutCommand { get; }
+
         private bool switchState = false;
 
         public HomeViewModel()
@@ -49,10 +51,8 @@ namespace Insurance_app.ViewModels
             rewardManager = new RewardManager();
             UserManager = new UserManager();
             SwitchCommand = new AsyncCommand(StartDataReceive);
+            LogoutCommand = new AsyncCommand(Logout);
         }
-
-
-
         public async Task Setup()
         {
             try
@@ -189,6 +189,7 @@ namespace Insurance_app.ViewModels
         }
 
         private bool maxReward;
+
         public bool MaxRewardIsVisible
         {
             get => maxReward;
@@ -212,15 +213,25 @@ namespace Insurance_app.ViewModels
                     bleManager.Pass = Uri.UnescapeDataString(value ?? "");
             }
         }
+        private async Task Logout()
+        {
+            try
+            {
+                CircularWaitDisplay = true;
+                await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
+                Application.Current.MainPage = new NavigationPage(new LogInPage());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
 
+            CircularWaitDisplay = false;
+        }
 
         public void Dispose()
         {
             UserManager.Dispose();
-            rewardManager.Dispose();
-            UserManager = null;
-            rewardManager = null;
-
         }
     }
 }

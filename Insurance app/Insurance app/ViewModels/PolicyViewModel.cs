@@ -49,7 +49,7 @@ namespace Insurance_app.ViewModels
         public IList<int> HospitalFeeList { get; }
         public IList<string> PlanList { get; } 
         private readonly PolicyManager policyManager;
-        private readonly HttpService inf;
+        private readonly HttpService api;
         public readonly UserManager UserManager;
         private string customerId = "";
         
@@ -63,7 +63,7 @@ namespace Insurance_app.ViewModels
             ResolveUpdateCommand = new AsyncCommand(ResolveUpdate);
             policyManager = new PolicyManager();
             UserManager = new UserManager();
-            inf = new HttpService();
+            api = new HttpService();
             timer = new Timer(1000);
             timer.Elapsed += CheckResponseTime;
             CoverList = Enum.GetNames(typeof(StaticOpt.CoverEnum)).ToList();
@@ -151,7 +151,7 @@ namespace Insurance_app.ViewModels
                 var age = DateTime.Now.Year - dob.Value.Year;
                 
                 timer.Start();
-                var newPrice = await inf.SendQuoteRequest(hospitals, age, cover, fee, plan, smoker);
+                var newPrice = await api.SendQuoteRequest(hospitals, age, cover, fee, plan, smoker);
                 CircularWaitDisplay = false;
                 timer.Stop();
                 if (tooLate)
@@ -160,12 +160,12 @@ namespace Insurance_app.ViewModels
                     return;
                 }
 
-                bool action = await Application.Current.MainPage.DisplayAlert("Price",
+                bool action = await Application.Current.MainPage.DisplayAlert(Msg.Notice,
                     $"Price for the quote is : {newPrice}", "Accept", "Deny");
                 if (!action) return;
 
                 var answer = await Shell.Current.DisplayAlert(
-                    "Notice", "You about to request to update the policy", "save", "cancel");
+                    Msg.Notice, "You about to request to update the policy", "save", "cancel");
                 if (!answer) return;
                 UnderReviewDisplay = true;
                 InfoIsVisible = !UnderReviewDisplay;
@@ -173,7 +173,7 @@ namespace Insurance_app.ViewModels
 
                 await SavePolicy(newPrice);
                 PriceDisplay = $"{newPrice}";
-                await Shell.Current.DisplayAlert("Message", "Update requested successfully", "close");
+                await Shell.Current.DisplayAlert(Msg.Notice, "Update requested successfully", "close");
             }
             catch (Exception e)
             {
@@ -193,7 +193,7 @@ namespace Insurance_app.ViewModels
             }
             catch (Exception e)
             {
-                await Shell.Current.DisplayAlert("Message", "Update requested failure\nPlease try again later",
+                await Shell.Current.DisplayAlert(Msg.Error, "Update requested failure\nPlease try again later",
                     "close");
                 Console.WriteLine(e);
             }
@@ -254,7 +254,7 @@ namespace Insurance_app.ViewModels
                     var customer = await policyManager.AllowUpdate(customerId,App.RealmApp.CurrentUser,answer);
                     if (customer !=null)
                     {
-                        inf.CustomerNotifyEmail(customer.Email, customer.Name, DateTime.Now, $"{answerString}'ed");
+                        api.CustomerNotifyEmail(customer.Email, customer.Name, DateTime.Now, $"{answerString}'ed");
                         await Shell.Current.DisplayAlert("Notice", "Customer has been notified by email.", "close");
                     }
                     

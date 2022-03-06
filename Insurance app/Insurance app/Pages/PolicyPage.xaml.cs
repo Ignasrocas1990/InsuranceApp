@@ -15,8 +15,7 @@ namespace Insurance_app.Pages
         public PolicyPage()
         {
             InitializeComponent();
-            var vm = new PolicyViewModel {SetUpWaitDisplay = true};
-            BindingContext = vm;
+            BindingContext = new PolicyViewModel();
         }
         protected override async void OnAppearing()
         {

@@ -106,6 +106,7 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\claimIcon.png" />
     <AndroidResource Include="Resources\drawable\CustomersIcon.png" />
+    <AndroidResource Include="Resources\drawable\logInlogo.png" />
     <AndroidResource Include="Resources\drawable\openClaimsIcon.png" />
     <AndroidResource Include="Resources\drawable\policyIcon.png" />
     <AndroidResource Include="Resources\drawable\profileIcon.png" />

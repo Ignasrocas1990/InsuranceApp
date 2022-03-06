@@ -118,6 +118,11 @@
                 <Setter Property="BackgroundColor" Value="{StaticResource BackColor}"/>
             </Style>
             
+            <Style x:Key="TabBar" TargetType="TabBar" >
+                <Setter Property="Shell.TabBarBackgroundColor" Value="Crimson"/>
+            </Style>
+            
+            
             <!-- Inverters    -->
             <xct:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
             <xct:ItemSelectedEventArgsConverter x:Key="ItemSelectedEventArgsConverter"/>
@@ -129,6 +134,7 @@
                     <ActivityIndicator Color= "{StaticResource StrongColor}" IsRunning= "{TemplateBinding RootViewModel.CircularWaitDisplay}" AbsoluteLayout.LayoutBounds=".5,.5,100,100" AbsoluteLayout.LayoutFlags="PositionProportional" />
                 </AbsoluteLayout>
             </ControlTemplate>
+            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

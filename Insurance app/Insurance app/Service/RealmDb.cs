@@ -483,6 +483,28 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
 
             return previousPolicies ??= new List<Policy>();
         }
+
+        public async Task<IEnumerable<Policy>> GetAllUpdatedPolicies(User user)
+        {
+            IEnumerable<Policy> policies = new List<Policy>();
+            try
+            {
+                await GetRealm(partition,user);
+                if (realm is null) throw new Exception("GetAllUpdatedPolicies :::::::::::::::::::::: realm null");
+                realm.Write(() =>
+                {
+                    var now = DateTimeOffset.Now;
+                    policies= realm.All<Policy>().Where(
+                        p => p.UnderReview == true && p.DelFlag == false && p.ExpiryDate > now);
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return policies;
+        }
+        
         /// <summary>
         /// 
         /// </summary>
@@ -776,6 +798,6 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
         }
 
 
-      
+        
     }
 }

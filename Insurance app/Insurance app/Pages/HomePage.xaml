@@ -22,6 +22,9 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     
+    <pages:LoadingPage.ToolbarItems>
+        <ToolbarItem Text="LogOut" Command="{Binding LogoutCommand}"/>
+    </pages:LoadingPage.ToolbarItems>
 
     <StackLayout>
         <StackLayout Orientation="Horizontal" Padding="20" HorizontalOptions="Center" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}">
