@@ -211,7 +211,7 @@ namespace Insurance_app.Service
                 Console.WriteLine(e);
             }
         }
-        public async Task<Dictionary<string,int>> GetWeeksMovData(User user)
+        public async Task<Dictionary<string,int>> CountDailyMovData(User user)
         {
             Dictionary<string, int> chartEntries = new Dictionary<string, int>();
             try
@@ -246,6 +246,28 @@ namespace Insurance_app.Service
                 return null;
             }
         }
+
+        public async Task<List<MovData>> GetAllMovData(string customerId,User user)
+        {
+            List<MovData> movData = null;
+            try
+            {
+                await GetRealm(partition,user);
+                if (realm is null)
+                    throw new Exception(" GetAllMovData :::::::::::::::::::::::::; real is null");
+                realm.Write(() =>
+                {
+                    movData = realm.All<MovData>().Where(data => data.Owner == customerId && data.DelFlag == false).ToList();
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return movData;
+        }
+        
 //------------------------------------------------   reward methods ----------------------
         public async Task<Reward> FindReward(User user)
         {

@@ -35,7 +35,7 @@
                             <ToolbarItem Text="Policy" Command="{Binding Source={x:Reference ClientMainViewModel},
                             Path= PolicyCommand}" CommandParameter="{Binding .Id}"/>
                             
-                            <ToolbarItem Text="Steps" Command="{Binding Source={x:Reference ClientMainViewModel},
+                            <ToolbarItem Text="Mov Report" Command="{Binding Source={x:Reference ClientMainViewModel},
                             Path=StepViewCommand}" CommandParameter="{Binding .Id}"/>
                         </ViewCell.ContextActions>
                     <Grid Padding="10">

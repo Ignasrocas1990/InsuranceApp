@@ -10,9 +10,11 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
 {
+    [QueryProperty(nameof(CustomerId), "CustomerId")]
     public class ReportViewModel : ObservableObject,IDisposable
     {
         public readonly ReportManager ReportManager;
+        private string customerId = "";
         public ReportViewModel()
         {
             ReportManager = new ReportManager();
@@ -20,42 +22,16 @@ namespace Insurance_app.ViewModels
         
         public async Task SetUp()
         {
-            int emptyDaysCount = 0;
-            var entries = new Stack<ChartEntry>();
-            
-            var r = new Random();
-            bool today = true;
-            
-            var chartEntries = await ReportManager.GetWeeksMovData(App.RealmApp.CurrentUser);
-                
-                if (chartEntries != null)
-                {
+            if (CustomerId.Equals(""))
+            {
+                customerId = App.RealmApp.CurrentUser.Id;
+            }
+            var allMovData = await ReportManager.GetAllMovData(customerId, App.RealmApp.CurrentUser);
+            if (customerId == App.RealmApp.CurrentUser.Id)
+            {
+                var dailyMovData =  ReportManager.CountDailyMovData(allMovData);
+                var (emptyDaysCount, entries) = ReportManager.CreateDailyLineChart(dailyMovData);
 
-                    foreach (KeyValuePair<string, int> i in chartEntries)
-                    {
-                        var label = i.Key;
-                        float value = i.Value;
-                        //value = r.Next(0, 20000);//TODO To show that it works this can be uncommented
-                        var color = StaticOpt.ChartColors[r.Next(0, StaticOpt.ChartColors.Length - 1)];
-                        if (today)
-                        {
-                            label = "Today";
-                            today = false;
-                        }
-                        if (value==0)
-                        {
-                            value = 0.0001f;
-                            color = StaticOpt.White;
-                            emptyDaysCount++;
-                        }
-                        entries.Push(new ChartEntry(value)
-                            {
-                                Color = color,
-                                ValueLabel = $"{(int)value}",
-                                Label = label
-                            });
-                    }
-                }
                 if (emptyDaysCount==7)
                 {
                     WeekChartLabel = "No step has been taken yet this week";
@@ -67,8 +43,12 @@ namespace Insurance_app.ViewModels
                 
                 WeekChartLabel = "Step done last 7 days";
                 WeekChartIsVisible = true;
-            
+            }
+            var weeklyMovData =ReportManager.CountWeeklyMovData(allMovData);
+            //createWeeklyLineChart
+
         }
+        
        
         private LineChart lineChart;
         public LineChart LineChart
@@ -103,11 +83,15 @@ namespace Insurance_app.ViewModels
             get => wait;
             set => SetProperty(ref wait, value);
         }
+        public string CustomerId
+        {
+            get => customerId;
+            set =>  customerId = Uri.UnescapeDataString(value ?? string.Empty);
+
+        }
 
         public void Dispose()
         {
-           // chartEntries = null;
-            //Entries = null;
             ReportManager.Dispose();
         }
     }

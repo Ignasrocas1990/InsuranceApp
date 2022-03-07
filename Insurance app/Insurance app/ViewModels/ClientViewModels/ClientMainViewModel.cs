@@ -76,7 +76,8 @@ namespace Insurance_app.ViewModels.ClientViewModels
             SetUpWaitDisplay = true;
             if (customerId == "")
                 return;
-            await Shell.Current.DisplayAlert("Notice", customerId, "close");
+            var route = $"//{nameof(Report)}?CustomerId={customerId}";
+            await Shell.Current.GoToAsync(route);
         }
         
         private bool wait;
