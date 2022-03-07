@@ -50,18 +50,19 @@ namespace Insurance_app.Logic
             try
             {
                 var hourDif = 24;
-                var now = DateTime.Now;
+                var weekString = "";
+                var startOfTheWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
                 var prev = DateTime.Now.AddHours(-hourDif);
                 for (int i = 0; i < 4; i++)
                 {
                     int count = 0;
-                    var prev1 = prev;
-                    var now1 = now;
-                    count = allMovData.Count(m => m.DateTimeStamp <= now1 && 
-                                                          m.DateTimeStamp > prev1);
-                    chartEntries.Add($"Week {i}",count);
-                    now = prev;
-                    prev = prev.AddHours(-hourDif);
+                    var endOfTheWeek = startOfTheWeek.AddDays(7);
+                    count = allMovData.Count(m => 
+                        m.DateTimeStamp >= startOfTheWeek && m.DateTimeStamp < endOfTheWeek);
+
+                    weekString = i == 0 ? "This week" : $"Week {i}";
+                    chartEntries.Add(weekString,count);
+                    startOfTheWeek = startOfTheWeek.AddDays(-7);
                 }
             }
             catch (Exception e)
