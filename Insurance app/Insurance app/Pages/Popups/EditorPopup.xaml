@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+           xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+           xmlns:local="clr-namespace:System;assembly=netstandard"
+           xmlns:popups="clr-namespace:Insurance_app.ViewModels.Popups;assembly=Insurance app"
+           IsLightDismissEnabled="False"
+           BackgroundColor="{StaticResource BackColor}"
+           x:TypeArguments="local:String"
+           Size="350,350"
+           x:DataType="popups:EditorViewModel"
+           x:Class="Insurance_app.Pages.Popups.EditorPopup">
+    
+    <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="10,0,10,0"
+          RowDefinitions="*,Auto,Auto,*" ColumnDefinitions="5*,5*">
+        
+        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
+               Style="{StaticResource NormalLabel}" HorizontalOptions="Center" Text="Please Enter extra information" FontSize="Subtitle"  />
+        <Editor Text="{Binding ExtraInfoDisplay}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HeightRequest="200" WidthRequest="300">
+            <Editor.Behaviors>
+                <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
+                                             Flags="ValidateOnValueChanging" x:Name="ExtraInfoValidator"
+                                             InvalidStyle="{StaticResource InvalidEntry}">
+                    <xct:TextValidationBehavior MinimumLength="10" xct:MultiValidationBehavior.Error="Extra info must have at least 6 chars" />
+                    <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="No special characters allowed" />
+                </xct:MultiValidationBehavior>
+            </Editor.Behaviors>
+        </Editor>
+        <Button Clicked="Button_OnClicked" Style="{StaticResource PrimaryBtn}" Text="Submit"
+                Grid.Column="1" Grid.Row="3" />
+              
+        <Button Text="Close" Command="{Binding CloseCommand}"
+                Style="{StaticResource SecondaryBtn}"
+                Grid.Column="0" Grid.Row="3" />
+    </Grid>
+    
+    
+</xct:Popup>
