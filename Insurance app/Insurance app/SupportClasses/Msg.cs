@@ -10,6 +10,8 @@
         public static readonly string ApiSendErrorMsg = "Something went wrong.Please try again later";
         public static readonly string AgeLimitErrorMessage = "The age limit is between 18 and 65";
         public static readonly string NetworkConMsg = "Network connectivity is not available";
+        public static readonly string EmailSent = "Customer has been notified by email.";
+
 
     }
 }

@@ -337,7 +337,7 @@ namespace Insurance_app.Service
 
 // ---------------------------- Claim methods --------------------------
 
-        public async Task AddClaim( string hospitalCode,string patientNr,string type,bool openStatus,User user,string customerId)
+        public async Task AddClaim( string hospitalCode,string patientNr,string type,User user,string customerId)
         {
             try
             {
@@ -353,7 +353,6 @@ namespace Insurance_app.Service
                         HospitalPostCode = hospitalCode,
                         PatientNr = patientNr,
                         Type = type,
-                        OpenStatus = openStatus,
                         Owner = user.Id
 
                     },true));
@@ -366,8 +365,9 @@ namespace Insurance_app.Service
             
         }
         
-        public async Task ResolveClaim(string customerId,User user)
+        public async Task<Customer> ResolveClaim(string customerId,User user,string reason,bool action)
         {
+            Customer customer = null;
             try
             {
                 await SubmitActivity(customerId, user,"ResolveClaim");
@@ -377,18 +377,22 @@ namespace Insurance_app.Service
                     throw new Exception(" ResolveClaim ::::::::::::::; realm null");
                 realm.Write(() =>
                 {
-                    var claim = realm.Find<Customer>(customerId).Claim
+                    customer = realm.Find<Customer>(customerId);
+                    var claim = customer.Claim
                         .FirstOrDefault(c => c.CloseDate == null && c.DelFlag == false);
-                    if (claim != null)
-                    {
-                        claim.CloseDate = DateTimeOffset.Now.Date;
-                    }
+                    if (claim == null) throw new Exception(" ResolveClaim ::::::::::::::; claim null");
+                    
+                    claim.CloseDate = DateTimeOffset.Now.Date;
+                    claim.Accepted = action;
+                    claim.ExtraInfo = reason;
                 });
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
+
+            return customer;
         }
         public async Task<List<Claim>> GetClaims(User user,string customerId)
         {

@@ -45,9 +45,9 @@ namespace Insurance_app.Logic
 
             return null;
         }
-        public async Task CreateClaim(string hospitalPostcode, string patientNr, string type, bool status, User user,string customerId)
+        public async Task CreateClaim(string hospitalPostcode, string patientNr, string type, User user,string customerId)
         {
-            await realmDb.AddClaim(hospitalPostcode, patientNr, type, status, user,customerId);
+            await realmDb.AddClaim(hospitalPostcode, patientNr, type, user,customerId);
         }
 
         public async Task<List<Claim>> GetClaims(User user,string customerId)
@@ -71,9 +71,9 @@ namespace Insurance_app.Logic
             return null;
         }
 
-        public async Task ResolveClaim(string customerId, User user)
+        public async Task<Customer> ResolveClaim(string customerId, User user,string reason,bool action)
         {
-           await realmDb.ResolveClaim(customerId,user);
+           return await realmDb.ResolveClaim(customerId,user,reason,action);
         }
 
         public void Dispose()

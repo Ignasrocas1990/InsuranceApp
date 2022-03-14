@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Insurance_app.Models;
+using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
 using Insurance_app.ViewModels.ClientViewModels;
 using Xamarin.Forms;
@@ -93,7 +94,7 @@ namespace Insurance_app.Pages
                      {
                          errBuilder.AppendLine(vm.AddressText);
                      }
-                     await Application.Current.MainPage.DisplayAlert("Error", errBuilder.ToString(), "close");
+                     await Application.Current.MainPage.DisplayAlert(Msg.Error, errBuilder.ToString(), "close");
                  }
              }
              catch (Exception exception)

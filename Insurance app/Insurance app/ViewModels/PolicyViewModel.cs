@@ -241,12 +241,12 @@ namespace Insurance_app.ViewModels
                         Msg.NetworkConMsg, "close");
                     return;
                 }
-                var answer = await Shell.Current.DisplayAlert("Message", 
-                    "Allow the Policy update ?", "Yes", "No");
+                var answer = await Shell.Current.DisplayAlert(Msg.Notice, 
+                    "Allow the Policy update ?", "Allow", "Deny");
 
                 var answerString  = answer ? "Allow" : "Deny";
 
-                var result = await Shell.Current.DisplayAlert("Notice", 
+                var result = await Shell.Current.DisplayAlert(Msg.Notice, 
                     $"Are you sure you want to {answerString} the update?", "Yes", "No");
                 if (!result) return;
                 
@@ -255,7 +255,7 @@ namespace Insurance_app.ViewModels
                     if (customer !=null)
                     {
                         api.CustomerNotifyEmail(customer.Email, customer.Name, DateTime.Now, $"{answerString}'ed");
-                        await Shell.Current.DisplayAlert("Notice", "Customer has been notified by email.", "close");
+                        await Shell.Current.DisplayAlert(Msg.Notice, Msg.EmailSent, "close");
                     }
                     
                     ClientActionNeeded = false;
@@ -281,7 +281,7 @@ namespace Insurance_app.ViewModels
             CircularWaitDisplay = false;
             timer.Stop();
             rCount = 0;
-            await Shell.Current.DisplayAlert("Error", "Something went wrong, try again in a min", "close");
+            await Shell.Current.DisplayAlert(Msg.Error, "Something went wrong, try again in a min", "close");
         }
 
 //-----------------------------data binding methods ------------------------------------------------

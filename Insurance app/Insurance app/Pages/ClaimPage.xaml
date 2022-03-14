@@ -14,16 +14,20 @@
        
     
        <Grid VerticalOptions="Center"  RowSpacing="20" ColumnSpacing="5" Padding="40"
-             RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="5*,5*" >
+             RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="5*,5*" >
               
-            <Label Text="{Binding DateDisplay}" Style="{StaticResource NormalLabel}" HorizontalTextAlignment="Center"
-                   Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}" />
+              <Label Text="Currently under review" Style="{StaticResource NormalLabel}" FontAttributes="Italic"
+                     IsVisible="{Binding UnderReviewDisplay}" HorizontalTextAlignment="Center"
+                     Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" TextColor="{StaticResource StrongColor}" />
+              
+              <Label Text="{Binding DateDisplay}" Style="{StaticResource NormalLabel}" HorizontalTextAlignment="Center"
+                     Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}" />
             
             <Label Text="Hospital Code :" Style="{StaticResource EndLabel}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
-                   Grid.Column="0" Grid.Row="1" />
+                   Grid.Column="0" Grid.Row="2" />
             <Entry  Keyboard="Email" IsReadOnly="{Binding IsReadOnly}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                     Text="{Binding  HospitalPostCodeDisplay}" Placeholder="R93 V1N6" Style="{StaticResource NormalEntry}"
-                    Grid.Column="1" Grid.Row="1">
+                    Grid.Column="1" Grid.Row="2">
                    <Entry.Behaviors>
                           <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" InvalidStyle="{StaticResource InvalidEntry}" Flags="ValidateOnValueChanging" x:Name="HospitalCodeValidator">
                                  <xct:TextValidationBehavior MinimumLength="4" MaximumLength="200" xct:MultiValidationBehavior.Error="Hospital Code must have 4 char's" />
@@ -34,10 +38,10 @@
             </Entry>
                 
             <Label Text="Patient Nr :" Style="{StaticResource EndLabel}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
-                   Grid.Column="0" Grid.Row="2" />
+                   Grid.Column="0" Grid.Row="3" />
              <Entry  Text="{Binding PatientNrDisplay}" IsReadOnly="{Binding IsReadOnly}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                     Placeholder="123S3DG23S" Style="{StaticResource NormalEntry}"
-                    Grid.Column="1" Grid.Row="2">
+                    Grid.Column="1" Grid.Row="3">
                     <Entry.Behaviors>
                            <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" InvalidStyle="{StaticResource InvalidEntry}"
                                                         Flags="ValidateOnValueChanging" x:Name="PatientNrValidator">
@@ -49,20 +53,20 @@
              </Entry>
               
             <Label Text="Status :" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
-                   Grid.Column="0" Grid.Row="3" Style="{StaticResource EndLabel}" />
+                   Grid.Column="0" Grid.Row="4" Style="{StaticResource EndLabel}" />
             <Label Text="{Binding StatusDisplay}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
-                   Grid.Column="1" Grid.Row="3" Style="{StaticResource NormalLabel}" />
+                   Grid.Column="1" Grid.Row="4" Style="{StaticResource NormalLabel}" />
 
             <Button Text="Create" Padding="10,0,0,0" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                     Style="{StaticResource PrimaryBtn}" Clicked="Button_OnClicked"
-                    Grid.Column="1" Grid.Row="4" IsEnabled="{Binding IsReadOnly,Converter={StaticResource InvertedBoolConverter}}"
+                    Grid.Column="1" Grid.Row="5" IsEnabled="{Binding IsReadOnly,Converter={StaticResource InvertedBoolConverter}}"
                     HorizontalOptions="Fill" />
 
             <Button Text="All Claims" Command="{Binding ViewPreviousClaimsCommand}" IsEnabled="{Binding PreviousBtnIsEnabled}"
                     Style="{StaticResource SecondaryBtn}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
-                    Grid.Column="0" Grid.Row="4"  HorizontalOptions="Fill" Padding="0,0,10,0" />
+                    Grid.Column="0" Grid.Row="5"  HorizontalOptions="Fill" Padding="0,0,10,0" />
             
-            <Button Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" HorizontalOptions="Center" 
+            <Button Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" HorizontalOptions="Center" 
                     Text="Resolve Claim" Command="{Binding ResolveClaimCommand}"
                     IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                     IsVisible="{Binding CanBeResolved}" BackgroundColor="{StaticResource ClientBtnColor}" Style="{StaticResource SecondaryBtn}"/>

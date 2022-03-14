@@ -7,8 +7,7 @@
            xmlns:popups1="clr-namespace:Insurance_app.ViewModels.Popups"
            x:DataType="popups1:EcPopUpViewModel"
            Style="{StaticResource Popup}"
-           IsLightDismissEnabled="False"
-           Size="350,500"
+           Size="350,600"
            x:Class="Insurance_app.Pages.Popups.ExistingClaimsPopup">
     <!--Size = width,height -->
 
@@ -24,21 +23,9 @@
                 <ViewCell>
                     <Grid Padding="10">
                         <Frame Style="{StaticResource ViewModelFrame}">
-                            <Grid VerticalOptions="CenterAndExpand" RowSpacing="10" ColumnSpacing="0" Padding="0,0,0,0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="*" />
-
-                                </Grid.RowDefinitions>
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" />
-                                    <ColumnDefinition Width="5*" />
-                                </Grid.ColumnDefinitions>
+                            <Grid VerticalOptions="CenterAndExpand" RowSpacing="10" ColumnSpacing="0" Padding="10"
+                                  RowDefinitions="*,Auto,Auto,Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="5*,5*" >
+                                
 
                                 <Label Text="Start Date : " Style="{StaticResource EClaimsEndLabel}"
                                        Grid.Column="0" Grid.Row="1" />
@@ -55,7 +42,7 @@
                                 <Label Text="Hospital Code : " Style="{ StaticResource EClaimsEndLabel}"
                                        Grid.Column="0" Grid.Row="3" />
                                 <Label Text="{Binding HospitalPostCode}"
-                                       Style="{ StaticResource InfoDetailLabel}"
+                                       Style="{StaticResource InfoDetailLabel}"
                                        Grid.Column="1" Grid.Row="3" />
 
                                 <Label Text="Type of Claim : " Style="{ StaticResource EClaimsEndLabel}"
@@ -63,6 +50,16 @@
                                 <Label Text="{Binding Type}"
                                        Style="{ StaticResource InfoDetailLabel}"
                                        Grid.Column="1" Grid.Row="4" />
+                                
+                                <Label Text="Accepted : " Style="{ StaticResource EClaimsEndLabel}"
+                                       Grid.Column="0" Grid.Row="5" />
+                                <Label Text="{Binding Accepted}"
+                                       Style="{ StaticResource InfoDetailLabel}"
+                                       Grid.Column="1" Grid.Row="5" />
+                                
+                                <Label Text="{Binding ExtraInfo}" Style="{StaticResource InfoDetailLabel}" HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       Grid.Column="0" Grid.Row="6" Grid.RowSpan="3" Grid.ColumnSpan="2" />
 
                             </Grid>
                         </Frame>
@@ -70,11 +67,6 @@
                 </ViewCell>
             </DataTemplate>
         </ListView.ItemTemplate>
-        <ListView.Footer>
-            <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Padding="30">
-                <Button Text="close" Command="{Binding CloseCommand}" Style="{StaticResource SecondaryBtn}" />
-            </StackLayout>
-        </ListView.Footer>
     </ListView>
 
 

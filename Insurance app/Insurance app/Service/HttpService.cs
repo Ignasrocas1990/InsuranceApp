@@ -55,6 +55,40 @@ namespace Insurance_app.Service
                 Console.WriteLine("error not connected");
             }
         }
+        public void ClaimNotifyEmail(string email, string name, DateTime date,bool action,string reason)
+        {
+            if (!App.NetConnection()) return;
+            var actionString = action ? "Accepted" : "Denied";
+            var content = new StringContent(JsonConvert
+                    .SerializeObject(new Dictionary<string,string>()
+                    {
+                        {"email",email},
+                        {"name",name},
+                        {"date",$"{date:D}"},
+                        {"action",actionString},
+                        {"reason",reason}
+                    })
+                ,Encoding.UTF8, "application/json");
+            
+            if (App.NetConnection())
+            {
+                try
+                {
+                    client.PostAsync(StaticOpt.ClaimEmailUrl, content);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"fail to send { e }");
+                    App.Connected = false;
+                       
+                }
+                    
+            }
+            else
+            {
+                Console.WriteLine("error not connected");
+            }
+        }
         
         public void ResetPasswordEmail(string email, string name, DateTime date,string tempPass)
         {

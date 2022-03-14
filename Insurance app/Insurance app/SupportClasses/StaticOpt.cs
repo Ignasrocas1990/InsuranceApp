@@ -16,10 +16,13 @@ namespace Insurance_app.SupportClasses
     public static class StaticOpt
     {
         //public const string Url = "http://ec2-34-251-148-246.eu-west-1.compute.amazonaws.com/predict";
+        
         public const string PredictUrl = "https://testRESTapi.pythonanywhere.com/predict";
         public const string EmailUrl = "https://testRESTapi.pythonanywhere.com/notifyCustomer";
         public const string PassResetEmailUrl = "https://testRESTapi.pythonanywhere.com/resetPass";
+        public const string ClaimEmailUrl = "https://testRESTapi.pythonanywhere.com/ClaimNotifyCustomer";
         public const string CompanyCodeUrl = "https://testRESTapi.pythonanywhere.com/CompanyCode";
+        
         public static string MyRealmAppId = "application-1-luybv";
         public static readonly double StepNeeded = 10000;
         public static readonly int MovUpdateArraySize = 5;

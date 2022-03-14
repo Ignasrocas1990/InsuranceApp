@@ -44,18 +44,57 @@ namespace Insurance_app.ViewModels
                 WeekChartLabel = "Step done last 7 days";
                 WeekChartIsVisible = true;
             }
-            var weeklyMovData =ReportManager.CountWeeklyMovData(allMovData);
+
+            if ((WeekChartIsVisible && CustomerId == App.RealmApp.CurrentUser.Id) || CustomerId != App.RealmApp.CurrentUser.Id)
+            {
+                var weeklyMovData =ReportManager.CountWeeklyMovData(allMovData);
+                var (emptyWeekCount, weeklyEntries) = ReportManager.CreateWeeklyLineChart(weeklyMovData);
+            
+                if (emptyWeekCount>2)
+                {
+                    WeekChartLabel = "No steps has been taken this month"; 
+                    WeekChartIsVisible = false;
+                    return;
+                }
+                WeeklyLineChart = new LineChart()
+                    {Entries = weeklyEntries, LabelTextSize = 30f,ValueLabelTextSize = 30f};
+                
+                WeeklyChartLabel = "Steps in the last month";
+                WeeklyChartIsVisible = true;  
+            }
+            
             //createWeeklyLineChart
 
         }
+
+        private bool weeklyChartVisible;
+        public bool WeeklyChartIsVisible
+        {
+            get => weeklyChartVisible;
+            set => SetProperty(ref weeklyChartVisible, value);
+        }
+
+        private string weeklyLabel;
+        public string WeeklyChartLabel
+        {
+            get => weeklyLabel;
+            set => SetProperty(ref weeklyLabel, value);
+        }
         
-       
+
         private LineChart lineChart;
         public LineChart LineChart
         {
             get => lineChart;
             set => SetProperty(ref lineChart, value);
         }
+        private LineChart weeklyLineChart;
+        public LineChart WeeklyLineChart
+        {
+            get => weeklyLineChart;
+            set => SetProperty(ref weeklyLineChart, value);
+        }
+        
         private bool setUpWait;
         public bool SetUpWaitDisplay
         {
