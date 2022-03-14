@@ -24,7 +24,7 @@
                     <Grid Padding="10">
                         <Frame Style="{StaticResource ViewModelFrame}">
                             <Grid VerticalOptions="CenterAndExpand" RowSpacing="10" ColumnSpacing="0" Padding="10"
-                                  RowDefinitions="*,Auto,Auto,Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="5*,5*" >
+                                  RowDefinitions="*,Auto,Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="5*,5*" >
                                 
 
                                 <Label Text="Start Date : " Style="{StaticResource EClaimsEndLabel}"
@@ -57,9 +57,10 @@
                                        Style="{ StaticResource InfoDetailLabel}"
                                        Grid.Column="1" Grid.Row="5" />
                                 
-                                <Label Text="{Binding ExtraInfo}" Style="{StaticResource InfoDetailLabel}" HorizontalOptions="Center"
+                                <Label Text="{Binding ExtraInfo}" HeightRequest="100"
+                                       Style="{StaticResource InfoDetailLabel}" HorizontalOptions="Center"
                                        HorizontalTextAlignment="Center"
-                                       Grid.Column="0" Grid.Row="6" Grid.RowSpan="3" Grid.ColumnSpan="2" />
+                                       Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" />
 
                             </Grid>
                         </Frame>

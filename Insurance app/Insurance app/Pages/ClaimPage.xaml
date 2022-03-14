@@ -52,10 +52,10 @@
                     </Entry.Behaviors>
              </Entry>
               
-            <Label Text="Status :" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
-                   Grid.Column="0" Grid.Row="4" Style="{StaticResource EndLabel}" />
-            <Label Text="{Binding StatusDisplay}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
-                   Grid.Column="1" Grid.Row="4" Style="{StaticResource NormalLabel}" />
+              <Button Text="{Binding ExtraBtnText}" Command="{Binding AddInfoCommand}"
+                      IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
+                      IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                      Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Style="{StaticResource WhiteBtn}" />
 
             <Button Text="Create" Padding="10,0,0,0" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                     Style="{StaticResource PrimaryBtn}" Clicked="Button_OnClicked"

@@ -32,7 +32,7 @@ namespace Insurance_app.Pages
         {
             base.OnDisappearing();
             var vm = (LogInViewModel)BindingContext;
-            vm.userManager.Dispose();
+            vm.Dispose();
             
         }
     }

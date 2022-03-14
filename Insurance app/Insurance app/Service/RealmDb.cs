@@ -337,7 +337,7 @@ namespace Insurance_app.Service
 
 // ---------------------------- Claim methods --------------------------
 
-        public async Task AddClaim( string hospitalCode,string patientNr,string type,User user,string customerId)
+        public async Task AddClaim( string hospitalCode,string patientNr,string type,User user,string customerId,string extraInfo)
         {
             try
             {
@@ -353,7 +353,8 @@ namespace Insurance_app.Service
                         HospitalPostCode = hospitalCode,
                         PatientNr = patientNr,
                         Type = type,
-                        Owner = user.Id
+                        Owner = customerId,
+                        ExtraInfo = extraInfo
 
                     },true));
                 });

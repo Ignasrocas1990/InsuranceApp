@@ -103,7 +103,7 @@
               
               
               <Button Command="{Binding AddressCommand}" x:Name="AddressValidator"
-                      Text="{Binding AddressDisplay}" TextTransform="None" FontSize="20" TextColor="Black" BackgroundColor="White"
+                      Text="{Binding AddressDisplay}" Style="{StaticResource WhiteBtn}"
                       IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                       Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" />
               

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Android.Telecom;
 using Insurance_app.Logic;
 using Insurance_app.Models;
 using Insurance_app.Pages;
@@ -21,6 +22,7 @@ namespace Insurance_app.ViewModels
         public ICommand CreateClaimCommand { get; }
         public ICommand ViewPreviousClaimsCommand { get; }
         public ICommand ResolveClaimCommand { get; }
+        public ICommand AddInfoCommand{ get; }
 
         public readonly ClaimManager ClaimManager;
 
@@ -29,7 +31,10 @@ namespace Insurance_app.ViewModels
         private string patientNr="";
         private string status = "Not Created";
         private const string Type = "health"; //If application extended, this has to be moved to App
+        private const string ViewExtraStr = "View Extra info";
+        private const string AddExtraStr = "Add Extra info";
         private string customerId = "";
+        private string extraInfo="";
         private HttpService api;
         
 
@@ -39,9 +44,12 @@ namespace Insurance_app.ViewModels
             ViewPreviousClaimsCommand = new AsyncCommand(GetClaims);
             ResolveClaimCommand = new AsyncCommand(ResolveClaim);
             ClaimManager = new ClaimManager();
+            AddInfoCommand = new AsyncCommand(AddExtraInfo);
             api = new HttpService();
 
         }
+        
+
         public async Task SetUp()
         {
             try
@@ -55,6 +63,7 @@ namespace Insurance_app.ViewModels
                 var claim = ClaimManager.GetCurrentClaim();
                 if (claim != null)
                 {
+                    extraInfo = claim.ExtraInfo;
                     var dtoDate = claim.StartDate;
                     string displayDate = "Date Not found";
                     if (dtoDate !=null)
@@ -62,12 +71,13 @@ namespace Insurance_app.ViewModels
                         displayDate = dtoDate.Value.Date.ToString("d");
 
                     }
+                    
                     IsReadOnly = true;
                     DateDisplay = displayDate;
                     HospitalPostCodeDisplay = claim.HospitalPostCode;
                     PatientNrDisplay = claim.PatientNr;
-                    StatusDisplay = "open";
                     UnderReviewDisplay = true;
+                    ExtraBtnText = ViewExtraStr;
                     if (customerId != App.RealmApp.CurrentUser.Id)
                     {
                         CanBeResolved = true;
@@ -75,11 +85,11 @@ namespace Insurance_app.ViewModels
                 }
                 else
                 {
+                    ExtraBtnText = AddExtraStr;
                     IsReadOnly = false;
                     DateDisplay = DateTimeOffset.Now.Date.ToString("d");
                     HospitalPostCodeDisplay = "";
                     PatientNrDisplay = "";
-                    StatusDisplay = "Not Created";
                     CanBeResolved = false;
                 }
 
@@ -117,41 +127,27 @@ namespace Insurance_app.ViewModels
             CircularWaitDisplay = true;
             IsReadOnly = true;
 
-            await ClaimManager.CreateClaim(hospitalPostcode, patientNr, Type,App.RealmApp.CurrentUser,customerId);
-            
-            StatusDisplay = "open";
+            await ClaimManager.CreateClaim(hospitalPostcode, patientNr, Type,App.RealmApp.CurrentUser,customerId,extraInfo);
             
             await Shell.Current.DisplayAlert(Msg.Notice, 
                 "New Claim has been Opened.\nClient will take a look at it shortly",
                 "close");
+            ExtraBtnText = ViewExtraStr;
             CircularWaitDisplay = false;
+            UnderReviewDisplay = true;
+            if (customerId != App.RealmApp.CurrentUser.Id)
+            {
+                CanBeResolved = true; 
+            }
         }
         
         private async Task ResolveClaim()
         {
             try
             {
-                var action = await Shell.Current.DisplayAlert(Msg.Notice, 
-                    "Do you want to Resolve claim by Accepting or Denying it?", "Accept", "Deny");
-
-                var answerString  = action ? "Accept" : "Deny";
+                var (reason, action) = await ClaimManager.GetClientAction(extraInfo);
+                if (reason=="-1") return;
                 
-                var result = await Shell.Current.DisplayAlert(Msg.Notice, 
-                    $"Are you sure you want to {answerString} the Claim?", "Yes", "No");
-                if (!result) return;
-
-                string reason="";
-                if (!action)
-                {
-                    reason =await Application.Current.MainPage.Navigation.ShowPopupAsync(new EditorPopup());
-                    if (reason is "")
-                    {
-                        await Shell.Current.DisplayAlert
-                            (Msg.Notice, "Claim cant be Denied without a reason", "close");
-                        return;
-                    }
-                }
-                // pass in reason, and action to save to claim
                 CircularWaitDisplay = true;
                 var customer = await ClaimManager.ResolveClaim(customerId,App.RealmApp.CurrentUser,reason,action);
                 if (customer !=null)
@@ -162,13 +158,30 @@ namespace Insurance_app.ViewModels
                 
                 CircularWaitDisplay = false;
                 CanBeResolved = false;
+                extraBtnText = AddExtraStr;
+                extraInfo = "";
                 await SetUp();
-
+                
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
+        }
+        private async Task AddExtraInfo()
+        {
+            string popupDisplayText = "";
+            if (extraInfo.Length > 10)
+                popupDisplayText = extraInfo;
+            
+            var tempStr = await Application.Current.MainPage.Navigation.ShowPopupAsync(
+                new EditorPopup("Please enter extra claim info",underReview,popupDisplayText));
+            if (tempStr != null && tempStr.Length > 10)
+            {
+                ExtraBtnText = ViewExtraStr;
+                extraInfo = tempStr;
+            }
+            
         }
 
 
@@ -185,12 +198,6 @@ namespace Insurance_app.ViewModels
             set => SetProperty(ref patientNr, value);
 
         }
-        
-        public string StatusDisplay
-        {
-            get => status;
-            set => SetProperty(ref status, value);
-        }
         private bool wait;
         public bool CircularWaitDisplay
         {
@@ -198,7 +205,7 @@ namespace Insurance_app.ViewModels
             set => SetProperty(ref wait, value);
         }
         private bool fieldsEnabled;
-        public bool IsReadOnly// opposite to this
+        public bool IsReadOnly
         {
             get => fieldsEnabled;
             set => SetProperty(ref fieldsEnabled, value);
@@ -244,6 +251,14 @@ namespace Insurance_app.ViewModels
             get => underReview;
             set => SetProperty(ref underReview, value);
         }
+
+        private string extraBtnText;
+        public string ExtraBtnText
+        {
+            get => extraBtnText;
+            set => SetProperty(ref extraBtnText, value);
+        }
+
 
         public void Dispose()
         {

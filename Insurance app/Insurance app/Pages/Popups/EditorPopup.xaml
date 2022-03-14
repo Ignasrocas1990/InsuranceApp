@@ -8,26 +8,29 @@
            IsLightDismissEnabled="False"
            BackgroundColor="{StaticResource BackColor}"
            x:TypeArguments="local:String"
-           Size="350,350"
+           Size="400,450"
            x:DataType="popups:EditorViewModel"
            x:Class="Insurance_app.Pages.Popups.EditorPopup">
     
-    <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="10,0,10,0"
-          RowDefinitions="*,Auto,Auto,*" ColumnDefinitions="5*,5*">
+    <Grid VerticalOptions="CenterAndExpand" RowSpacing="10" ColumnSpacing="5" Padding="15,0,15,0"
+          RowDefinitions="*,Auto,Auto,Auto,*" ColumnDefinitions="5*,5*">
         
-        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
-               Style="{StaticResource NormalLabel}" HorizontalOptions="Center" Text="Please Enter extra information" FontSize="Subtitle"  />
-        <Editor Text="{Binding ExtraInfoDisplay}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HeightRequest="200" WidthRequest="300">
+        <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+               Style="{StaticResource NormalLabel}" HorizontalOptions="Center" Text="{Binding HeadingDisplay}" FontSize="Subtitle"  />
+        <Editor Text="{Binding ExtraInfoDisplay}" Grid.Row="2" Grid.Column="0" 
+             IsReadOnly="{Binding ReadOnlyDisplay}"   Grid.ColumnSpan="2" HeightRequest="200" WidthRequest="300" BackgroundColor="LightGray">
             <Editor.Behaviors>
                 <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
                                              Flags="ValidateOnValueChanging" x:Name="ExtraInfoValidator"
                                              InvalidStyle="{StaticResource InvalidEntry}">
                     <xct:TextValidationBehavior MinimumLength="10" xct:MultiValidationBehavior.Error="Extra info must have at least 6 chars" />
                     <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="No special characters allowed" />
+                    
                 </xct:MultiValidationBehavior>
             </Editor.Behaviors>
         </Editor>
         <Button Clicked="Button_OnClicked" Style="{StaticResource PrimaryBtn}" Text="Submit"
+                IsEnabled="{Binding ReadOnlyDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Grid.Column="1" Grid.Row="3" />
               
         <Button Text="Close" Command="{Binding CloseCommand}"

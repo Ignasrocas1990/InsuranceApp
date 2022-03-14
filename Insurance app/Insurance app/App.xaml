@@ -25,6 +25,16 @@
                 <Setter Property="TextColor" Value="{StaticResource BackColor}"/>
             </Style>
             
+            <Style x:Key="WhiteBtn" TargetType="Button"
+                   BasedOn="{StaticResource BasicBtn}">
+                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="BackgroundColor" Value="White"/> 
+                <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="BorderColor" Value="{StaticResource SecondaryColor}"/>
+                <Setter Property="BorderWidth" Value="2"/>
+
+            </Style>
+            
             <Style x:Key="PrimaryBtn" TargetType="Button"
                    BasedOn="{StaticResource BasicBtn}">
                 <Setter Property="BackgroundColor" Value="ForestGreen"/>              
@@ -53,7 +63,7 @@
             </Style>
             <Style x:Key="NormalLabel" TargetType="Label" BasedOn="{StaticResource BasicLabel}">
                 <Setter Property="VerticalTextAlignment" Value="Center" />
-                <Setter Property="FontSize" Value="20" />
+                <Setter Property="FontSize" Value="18" />
             </Style>
             <Style x:Key="EndLabel" TargetType="Label" BasedOn="{StaticResource NormalLabel}">
                 <Setter Property="HorizontalTextAlignment" Value="End" />
@@ -80,7 +90,7 @@
                 <Setter Property="TextColor" Value="Black"/>
                 <Setter Property="BackgroundColor" Value="{StaticResource BackColor}"/>
                 <Setter Property="PlaceholderColor" Value="Gray" />
-                <Setter Property="FontSize" Value="20" />
+                <Setter Property="FontSize" Value="18" />
             </Style>
             <Style x:Key="InvalidEntry" TargetType="Entry" BasedOn="{StaticResource NormalEntry}">
                 <Setter Property="TextColor" Value="Red"/>
@@ -94,7 +104,7 @@
                 <Setter Property="TextColor" Value="Black"/>
                 <Setter Property="BackgroundColor" Value="{StaticResource Transparent}"/>
                 <Setter Property="VerticalTextAlignment" Value="Center" />
-                <Setter Property="FontSize" Value="20" />
+                <Setter Property="FontSize" Value="18" />
             </Style>
             
             <!-- Fame  -->

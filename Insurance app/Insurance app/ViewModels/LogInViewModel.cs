@@ -26,7 +26,7 @@ namespace Insurance_app.ViewModels
         private const string AcceptExpiredStr = "Create new account.";
         private const string CancelExpiredStr = "Reset the old account.";
         
-        public readonly UserManager userManager;
+        private readonly UserManager userManager;
 
         public ICommand LogInCommand { get; }
         public ICommand QuoteCommand { get; }
@@ -72,7 +72,6 @@ namespace Insurance_app.ViewModels
             try
             {
                 CircularWaitDisplay = true;
-                //await Shell.Current.GoToAsync($"//{nameof(QuotePage)}");
                 await Application.Current.MainPage.Navigation.PushAsync(new QuotePage(""));
             }
             catch (Exception e)
@@ -182,9 +181,14 @@ namespace Insurance_app.ViewModels
             get => setUpWait;
             set => SetProperty(ref setUpWait, value);
         }
+
+        public void Dispose()
+        {
+            userManager.Dispose();
+        }
         private async Task CleanDatabase()//TODO Remove when submitting
         {
-            //await RealmDb.GetInstance().CleanDatabase(App.RealmApp.CurrentUser);
+            await userManager.CleanDatabase(App.RealmApp.CurrentUser);
         }
         
 

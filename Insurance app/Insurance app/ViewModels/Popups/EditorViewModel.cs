@@ -11,11 +11,14 @@ namespace Insurance_app.ViewModels.Popups
         private readonly EditorPopup popup;
         public ICommand CloseCommand { get; }
         public ICommand SubmitCommand { get; }
-        public EditorViewModel(EditorPopup popup)
+        public EditorViewModel(EditorPopup popup, string heading, bool readOnly, string popupDisplayText)
         {
             this.popup = popup;
             CloseCommand = new Command(Close);
             SubmitCommand = new Command(Submit);
+            HeadingDisplay = heading;
+            ReadOnlyDisplay = readOnly;
+            ExtraInfoDisplay = popupDisplayText;
         }
 
         private void Submit()
@@ -28,15 +31,29 @@ namespace Insurance_app.ViewModels.Popups
             popup.Dismiss("");
         }
 
+        private string heading;
+        public string HeadingDisplay
+        {
+            get => heading;
+            set => SetProperty(ref heading, value);
+        }
+
         private string extraInfo;
         public string ExtraInfoDisplay
         {
             get => extraInfo;
             set => SetProperty(ref extraInfo, value);
         }
-        
-        
-        
-        
+
+        private bool readOnly;
+        public bool ReadOnlyDisplay
+        {
+            get => readOnly;
+            set => SetProperty(ref readOnly, value);
+        }
+
+
+
+
     }
 }

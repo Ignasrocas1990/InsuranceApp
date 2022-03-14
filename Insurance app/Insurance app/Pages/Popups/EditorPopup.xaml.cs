@@ -14,10 +14,10 @@ namespace Insurance_app.Pages.Popups
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class EditorPopup: Popup<string>
     {
-        public EditorPopup()
+        public EditorPopup(string heading, bool readOnly, string popupDisplayText)
         {
             InitializeComponent();
-            BindingContext = new EditorViewModel(this);
+            BindingContext = new EditorViewModel(this,heading,readOnly,popupDisplayText);
         }
 
         private async void  Button_OnClicked(object sender, EventArgs e)
@@ -27,7 +27,7 @@ namespace Insurance_app.Pages.Popups
                 
                 if (ExtraInfoValidator.IsValid)
                 {
-                    vm.CloseCommand.Execute(null);
+                    vm.SubmitCommand.Execute(null);
                 }
                 else
                 {
