@@ -83,5 +83,10 @@ namespace Insurance_app.Logic
         {
           return  await realmDb.GetAllUpdatedPolicies(user);
         }
+
+        public void UpdatePolicyPrice(User user, string customerId, double price)
+        {
+            Task.FromResult(realmDb.UpdatePolicyPrice(user, customerId, price));
+        }
     }
 }

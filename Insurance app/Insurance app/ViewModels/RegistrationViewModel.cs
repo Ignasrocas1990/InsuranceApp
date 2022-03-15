@@ -29,6 +29,7 @@ namespace Insurance_app.ViewModels
         private string fName="";
         private string lName="";
         private string phoneNr="";
+        private string customerId="";
         //private string qString="";
         public string AddressText = "Add address please";
         public readonly UserManager UserManager;
@@ -62,26 +63,16 @@ namespace Insurance_app.ViewModels
                         
                    if (customer is null)throw new Exception("registration failed");
                    var expiryDate = DateTimeOffset.Now.AddMonths(1);
-                   var priceFloat = Converter.GetPrice(this.price);
-                   customer.Policy.Add(policyManager.RegisterPolicy(priceFloat,priceFloat, quote["Cover"]
+                   var priceFloat = Converter.GetPrice(price);
+                   customer.Policy.Add(policyManager.RegisterPolicy(priceFloat,0, quote["Cover"]
                        , int.Parse(quote["Hospital_Excess"]), quote["Hospitals"], quote["Plan"],
                        int.Parse(quote["Smoker"]), false,expiryDate,user.Id));
 
                    await UserManager.AddCustomer(customer, App.RealmApp.CurrentUser);
-                   await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
-                   //UserManager.Dispose();
 
-                   if (App.RealmApp.CurrentUser != null)
-                   {
-                       await App.RealmApp.CurrentUser.LogOutAsync();
-                   }
-                   else
-                   {
-                       Console.WriteLine("user longed out");
-                   }
-                   
                    await Application.Current.MainPage.DisplayAlert("Notice", "Registration completed successfully", "Close");
-                   await Application.Current.MainPage.Navigation.PopToRootAsync();
+                   await Application.Current.MainPage.Navigation.PushAsync(new PaymentPage(customerId,Converter.StringToDouble(price)));
+                   //await Application.Current.MainPage.Navigation.PopToRootAsync();
                 }
                 else
                 {

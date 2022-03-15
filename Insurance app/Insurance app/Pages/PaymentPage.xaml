@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<pages:LoadingPage xmlns="http://xamarin.com/schemas/2014/forms"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                   xmlns:viewModels="clr-namespace:Insurance_app.ViewModels;assembly=Insurance app"
+                   xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+                   xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
+                   Title="Payment Page"
+                   BackgroundColor="{StaticResource BackColor}"
+                   RootViewModel="{Binding .}"
+                   ControlTemplate="{StaticResource LoaderViewTemplate}"
+                   x:DataType="viewModels:PaymentViewModel"
+                   IsTabStop="True"
+                   x:Class="Insurance_app.Pages.PaymentPage">
+
+
+       <StackLayout Orientation="Vertical" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"
+                    IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}">
+           
+           <Label Text="{Binding PriceDisplay}" Style="{StaticResource NormalLabel}" HorizontalTextAlignment="Center"/>
+        <Image x:Name="HeroImage" HeightRequest="100" Margin="30" />
+        <Label Text="Please enter your card details" Style="{StaticResource NormalLabel}" HorizontalTextAlignment="Center" />
+
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Padding="10">
+            <Image Source="{Binding ImageDisplay}" WidthRequest="35" Aspect="AspectFit" />
+            <Entry Placeholder="4242 4242 4242 4242" Text="{Binding NumberDisplay}" Keyboard="Numeric"
+                       Style="{StaticResource NormalEntry}" Focused="FieldFocused">
+                <Entry.Behaviors>
+                    <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
+                                                         Flags="ValidateOnValueChanging" x:Name="NumberValidator"
+                                                         InvalidStyle="{StaticResource InvalidEntry}">
+                        <xct:TextValidationBehavior MinimumLength="{Binding Length}" xct:MultiValidationBehavior.Error="{Binding LengthError}" />
+                        <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MinimumCharacterCount="0" xct:MultiValidationBehavior.Error="Card Number has special char" />
+                        <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Card Number has spaces" />
+                    </xct:MultiValidationBehavior>
+                </Entry.Behaviors>
+            </Entry>
+        </StackLayout>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Padding="10">
+            <Label Text="Expires End :" Style="{StaticResource NormalLabel}" />
+            <Entry Style="{StaticResource NormalEntry}" Placeholder="MM" Text="{Binding MonthDisplay}" Focused="FieldFocused" Keyboard="Numeric">
+                <Entry.Behaviors>
+                    <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
+                                                         Flags="ValidateOnValueChanging" x:Name="MonthValidator"
+                                                         InvalidStyle="{StaticResource InvalidEntry}">
+                        <xct:TextValidationBehavior MinimumLength="2" xct:MultiValidationBehavior.Error="Month must have two numbers " />
+                        <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MinimumCharacterCount="0" xct:MultiValidationBehavior.Error="Month has special char" />
+                        <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Month has spaces" />
+                    </xct:MultiValidationBehavior>
+                </Entry.Behaviors>
+
+            </Entry>
+            <Label Text="/" Style="{StaticResource NormalLabel}"/>
+            <Entry Placeholder="YY" Text="{Binding YearDisplay}" Focused="FieldFocused" Style="{StaticResource NormalEntry}" Keyboard="Numeric">
+                <Entry.Behaviors>
+                    <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
+                                                         Flags="ValidateOnValueChanging" x:Name="YearValidator"
+                                                         InvalidStyle="{StaticResource InvalidEntry}">
+                        <xct:TextValidationBehavior MinimumLength="2" xct:MultiValidationBehavior.Error="Year must have two numbers " />
+                        <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MinimumCharacterCount="0" xct:MultiValidationBehavior.Error="Year has special char" />
+                        <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Year has spaces" />
+                    </xct:MultiValidationBehavior>
+                </Entry.Behaviors>
+            </Entry>
+
+        </StackLayout>
+
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Padding="10,10,85,10">
+            <Label Text="Security Code :" Style="{StaticResource NormalLabel}"/>
+            <Entry Placeholder="123" Keyboard="Numeric" Text="{Binding VerificationCodeDisplay}" 
+                   Style="{StaticResource NormalEntry}" HorizontalTextAlignment="Center" x:Name="VerificationCode"
+                   Focused="FieldFocused">
+                <Entry.Behaviors>
+                    <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
+                                                         Flags="ValidateOnValueChanging" x:Name="SecurityCodeValidator"
+                                                         InvalidStyle="{StaticResource InvalidEntry}">
+                        <xct:TextValidationBehavior MinimumLength="3" MaximumLength="4" xct:MultiValidationBehavior.Error="Security Code must have between 3-4 numbers " />
+                        <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MinimumCharacterCount="0" xct:MultiValidationBehavior.Error="Security Code has special char" />
+                        <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Security Code has spaces" />
+                    </xct:MultiValidationBehavior>
+                </Entry.Behaviors>
+            </Entry>
+        </StackLayout >
+
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Padding="25,10,10,20">
+            <Label Text="Post Code :" Style="{StaticResource NormalLabel}"/>
+            <Label  Text="{Binding ZipDisplay}" Style="{StaticResource NormalLabel}"/>
+        </StackLayout>
+
+        <Button Text="Proceed with payment" Clicked="Button_OnClicked" Style="{StaticResource PrimaryBtn}" Padding="10"
+                                IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"/>
+       </StackLayout>
+
+    
+</pages:LoadingPage>

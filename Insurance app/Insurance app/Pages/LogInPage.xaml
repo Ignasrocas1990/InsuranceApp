@@ -17,7 +17,8 @@
         <ToolbarItem IconImageSource="logInlogo.png"/>
     </pages:LoadingPage.ToolbarItems>
     
-    <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="20" Padding="40">
+    <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="20" Padding="40"
+          IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}">
         
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -34,7 +35,6 @@
         
         <Entry Text="{Binding EmailDisplay}" Placeholder="email@gmail.com" HorizontalTextAlignment="Center"
                Keyboard="Plain" Style="{StaticResource NormalEntry}"
-               IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
             <Entry.Behaviors>
                 <xct:EmailValidationBehavior ValidStyle="{StaticResource NormalEntry}" IsValid="{Binding EmailIsValid}"
@@ -44,7 +44,6 @@
         
         <Entry Text= "{Binding PasswordDisplay}" Placeholder="password" HorizontalTextAlignment="Center"
                IsPassword="True" Keyboard="Plain" Style="{StaticResource NormalEntry}"
-               IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
             <Entry.Behaviors>
                 <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
@@ -63,17 +62,14 @@
         
         <Button Text="Log In" IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Command="{Binding LogInCommand}" HorizontalOptions="Fill" Style="{StaticResource PrimaryBtn}"
-                IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                 Grid.Column="1" Grid.Row="2"/>
         <Button  Text="Client Reg." IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                  Command="{Binding ClientRegCommand}" HorizontalOptions="Fill" Style="{StaticResource SecondaryBtn}"
-                 IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                  BackgroundColor="{StaticResource ClientBtnColor}"
                  Grid.Column="0" Grid.Row="2"/>
         
         <Button Text="Get a Quote" IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Command="{Binding QuoteCommand}" HorizontalOptions="Fill" Style="{StaticResource SecondaryBtn}" 
-                IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
                 Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2"/>
     </Grid>
     

@@ -100,8 +100,11 @@ namespace Insurance_app.Logic
                 {
                     // expired
                     var currentPolicy= FindLatestPolicy(customer);
-                
-                    if (currentPolicy != null && currentPolicy.ExpiryDate < now)
+                    if (currentPolicy != null && Convert.ToDouble(currentPolicy.Price) is 0.0 )
+                    {
+                        return "UnpaidCustomer";
+                    }
+                    if (currentPolicy.ExpiryDate < now)
                     {
                         if (!customer.DirectDebitSwitch)
                         {

@@ -156,10 +156,12 @@ namespace Insurance_app.ViewModels
             var expiryDate = DateTimeOffset.Now.AddMonths(1);
             var priceFloat = Converter.GetPrice(price);
 
-            var policy = policyManager.RegisterPolicy(priceFloat,priceFloat, CoverList[cover],
+            var policy = policyManager.RegisterPolicy(priceFloat,0.0f, CoverList[cover],
                 hospitalExcess, HospitalList[hospitals], PlanList[plan],
                 smoker, false,expiryDate,customerId);
            await policyManager.AddPolicy(customerId, App.RealmApp.CurrentUser, policy);
+           
+           await Application.Current.MainPage.Navigation.PushAsync(new PaymentPage(App.RealmApp.CurrentUser.Id,priceFloat));
         }
 
         private async Task TransferToRegistration(int age,string price)

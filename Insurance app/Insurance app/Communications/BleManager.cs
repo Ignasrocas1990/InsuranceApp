@@ -308,7 +308,7 @@ namespace Insurance_app.Communications
                 IsMonitoring = false;
                 return false;
             }
-            ConnectToDevice();
+            await ConnectToDevice();
             
             return state;
             

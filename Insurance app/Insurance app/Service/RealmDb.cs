@@ -825,6 +825,22 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
         }
 
 
-        
+        public async Task UpdatePolicyPrice(User user, string customerId, double price)
+        {
+            try
+            {
+                await GetRealm(partition, user);
+                realm.Write(() =>
+                {
+                    var policy = realm.All<Policy>().FirstOrDefault(
+                        p => p.Owner == customerId && p.Price == 0.0 && p.DelFlag != false);
+                    if (policy != null) policy.PayedPrice = (float?) price;
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
     }
 }

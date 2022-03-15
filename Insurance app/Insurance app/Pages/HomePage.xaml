@@ -10,9 +10,9 @@
                    xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
                    Title="Home Page"
                    BackgroundColor="{StaticResource BackColor}"
-                   x:DataType="viewModels:HomeViewModel"
                    RootViewModel="{Binding .}"
                    ControlTemplate="{StaticResource LoaderViewTemplate}"
+                   x:DataType="viewModels:HomeViewModel"
                    Shell.PresentationMode="Modal"
                    x:Class="Insurance_app.Pages.HomePage">
     

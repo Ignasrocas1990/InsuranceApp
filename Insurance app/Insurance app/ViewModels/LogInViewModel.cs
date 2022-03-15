@@ -107,6 +107,9 @@ namespace Insurance_app.ViewModels
                      {
                          Application.Current.MainPage = new ClientShell();
                          await Shell.Current.GoToAsync($"//{nameof(ClientMainPage)}",true);
+                     }else if (typeUser.Equals($"{UserType.UnpaidCustomer}"))
+                     {
+                         await Application.Current.MainPage.Navigation.PushAsync(new PaymentPage(user.Id,0.0));
                      }
                      else if(typeUser.Equals(""))
                      {
