@@ -367,7 +367,7 @@ namespace Insurance_app.Service
             try
             {
                 await GetRealm(partition,user);
-                if (realm is null) throw new Exception("getTotalRewards realm null my exception");
+                if (realm is null) throw new Exception("getTotalRewards :::::::::::: realm  is null");
                 realm.Write(() =>
                 {
                     var customer = realm.Find<Customer>(id);

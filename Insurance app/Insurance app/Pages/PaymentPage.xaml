@@ -95,7 +95,7 @@
                </CheckBox>
            </StackLayout>
            
-           <Button Text="Proceed with payment" Clicked="Button_OnClicked" Style="{StaticResource PrimaryBtn}" Padding="10"
+           <Button Text="Proceed with payment" Clicked="Button_OnClicked"  Style="{StaticResource PrimaryBtn}" Padding="10"
                    IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"/>
        </StackLayout>
 

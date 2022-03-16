@@ -26,7 +26,7 @@ namespace Insurance_app.SupportClasses
         public static string MyRealmAppId = "application-1-luybv";
         public static readonly double StepNeeded = 10000;
         public static readonly int MovUpdateArraySize = 5;
-        public static readonly int MaxResponseTime = 60;
+        public static readonly int MaxResponseTime = 120;
         public static readonly int MaxNameLen = 20;
         public static readonly int blockTime = 180;
 

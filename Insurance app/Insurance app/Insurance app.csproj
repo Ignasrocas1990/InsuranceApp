@@ -12,6 +12,30 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\stp_card_discover%403x.png" />
+    <None Remove="Resources\stp_card_error%403x.png" />
+    <None Remove="Resources\stp_card_form_back%403x.png" />
+    <None Remove="Resources\stp_card_form_front%403x.png" />
+    <None Remove="Resources\stp_card_jcb%403x.png" />
+    <None Remove="Resources\stp_card_mastercard%403x.png" />
+    <None Remove="Resources\stp_card_unionpay_en%403x.png" />
+    <None Remove="Resources\stp_card_unknown%403x.png" />
+    <None Remove="Resources\stp_card_visa%403x.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\stp_card_discover@3x.png" />
+    <EmbeddedResource Include="Resources\stp_card_error@3x.png" />
+    <EmbeddedResource Include="Resources\stp_card_form_back@3x.png" />
+    <EmbeddedResource Include="Resources\stp_card_form_front@3x.png" />
+    <EmbeddedResource Include="Resources\stp_card_jcb@3x.png" />
+    <EmbeddedResource Include="Resources\stp_card_mastercard@3x.png" />
+    <EmbeddedResource Include="Resources\stp_card_unionpay_en@3x.png" />
+    <EmbeddedResource Include="Resources\stp_card_unknown@3x.png" />
+    <EmbeddedResource Include="Resources\stp_card_visa@3x.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="IeuanWalker.CustomSwitch" Version="2.2.1" />
     <PackageReference Include="Microcharts.Forms" Version="1.0.0-preview1" />
     <PackageReference Include="MongoDB.Driver" Version="2.14.1" />

@@ -22,7 +22,7 @@ namespace Insurance_app.Service {
     public ImageSource CardUnknown { get; } = Load("stp_card_unknown@3x.png");
 
     private static ImageSource Load(string name) {
-      return ImageSource.FromResource($"Insurance app.Resources.{name}",
+      return ImageSource.FromResource($"Insurance_app.Resources.{name}",
         typeof(ImageService).GetTypeInfo().Assembly);
     }
   }

@@ -31,6 +31,7 @@ namespace Insurance_app.Pages
         {
             base.OnDisappearing();
             var vm = (PaymentViewModel)BindingContext;
+            HeroImage.Source = ImageService.Instance.CardFront;
             vm.Dispose();
         }
 

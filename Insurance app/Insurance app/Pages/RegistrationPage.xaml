@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<pages:LoadingPage xmlns="http://xamarin.com/schemas/2014/forms"
+<pages1:LoadingPage  xmlns:pages1="clr-namespace:Insurance_app.Pages"
+                     xmlns="http://xamarin.com/schemas/2014/forms"
                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                    xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
                    xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
-                   xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
-                   x:DataType="viewModels1:RegistrationViewModel"
+                     x:DataType="viewModels1:RegistrationViewModel"
                    Shell.FlyoutBehavior="Disabled"
                    Title="Customer Registration"
                    BackgroundColor="{StaticResource BackColor}"
@@ -113,4 +113,4 @@
                       Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" HorizontalOptions="Center" />
     </Grid>           
 
-</pages:LoadingPage>
+</pages1:LoadingPage>

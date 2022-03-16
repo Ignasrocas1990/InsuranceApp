@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Insurance app.Android", "In
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Insurance app.iOS", "Insurance app\Insurance app.iOS\Insurance app.iOS.csproj", "{84FCD85E-60C3-43D9-82DE-4F78DC0AD471}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Insurance app", "Insurance app\Insurance app\Insurance app.csproj", "{6EAED30E-E65A-4C53-B114-57E08A21F42C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Insurance app", "Insurance app\Insurance app\Insurance app.csproj", "{6EAED30E-E65A-4C53-B114-57E08A21F42C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "watch", "watch\watch\watch.csproj", "{73BA7675-477B-4A4E-8FD2-5461D1650102}"
 EndProject

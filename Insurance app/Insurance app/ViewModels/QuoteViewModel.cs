@@ -128,9 +128,9 @@ namespace Insurance_app.ViewModels
                timer.Stop();
                responseCounter = 0;
                await Application.Current.MainPage.DisplayAlert(Msg.Error, Msg.ApiSendErrorMsg, "close");
+               CircularWaitDisplay = false;
                return;
            }
-
            CircularWaitDisplay = false;
            responseCounter = 0;
            bool action =

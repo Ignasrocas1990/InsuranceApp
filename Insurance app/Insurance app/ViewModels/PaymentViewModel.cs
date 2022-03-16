@@ -52,7 +52,7 @@ namespace Insurance_app.ViewModels {
         SetUpWaitDisplay = true;
         RewardsIsVisible = false;
         float earnedRewards = 0;
-        if (price is 0.0)
+        if (price is 0)
         {
           var (_, policy) = await policyManager.FindPolicy(customerId, App.RealmApp.CurrentUser);
           if (policy.Price != null)
@@ -65,7 +65,7 @@ namespace Insurance_app.ViewModels {
         {
            (_,earnedRewards)=  await rewardManager.GetTotalRewards(App.RealmApp.CurrentUser, customerId);
         }
-        var customer =await userManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
+        var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
         ZipDisplay = customer.Address.PostCode;
         if (earnedRewards > 0)
         {
@@ -235,6 +235,7 @@ namespace Insurance_app.ViewModels {
 
     public string IsValid()
     {
+      if (MonthDisplay.Length < 1 || YearDisplay.Length < 1) return "";
       string error = "";
       var intMonth = int.Parse(MonthDisplay);
       var intYear = int.Parse(YearDisplay);
@@ -243,7 +244,7 @@ namespace Insurance_app.ViewModels {
         error = "Expiry month's value is not valid";
 
 
-      year += DateTime.Now.Year / 100 * 100;
+      intYear += DateTime.Now.Year / 100 * 100;
       
       if (intYear < DateTime.Now.Year || intYear > DateTime.Now.AddYears(16).Year)
         error += "\nExpiry year's value is not valid";
