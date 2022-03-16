@@ -71,7 +71,7 @@ namespace Insurance_app.ViewModels
                    await UserManager.AddCustomer(customer, App.RealmApp.CurrentUser);
 
                    await Application.Current.MainPage.DisplayAlert("Notice", "Registration completed successfully", "Close");
-                   await Application.Current.MainPage.Navigation.PushAsync(new PaymentPage(customerId,Converter.StringToDouble(price)));
+                   await Application.Current.MainPage.Navigation.PushModalAsync(new PaymentPage(customerId,Converter.StringToDouble(price)));
                    //await Application.Current.MainPage.Navigation.PopToRootAsync();
                 }
                 else

@@ -887,9 +887,11 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
                 await GetRealm(partition, user);
                 realm.Write(() =>
                 {
+                   var now= DateTimeOffset.Now;
                     customer = realm.Find<Customer>(customerId);
                     var policy = customer.Policy.FirstOrDefault(
-                        p => p.Owner == customerId && p.Price == 0.0 && p.DelFlag != false);
+                        p => p.Owner == customerId && p.ExpiryDate > now
+                             && p.PayedPrice == 0 && p.DelFlag == false);
                     if (policy != null) policy.PayedPrice = (float?) price;
                 });
             }

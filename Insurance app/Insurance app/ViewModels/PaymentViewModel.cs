@@ -115,7 +115,7 @@ namespace Insurance_app.ViewModels {
             rewardManager.UserRewards(App.RealmApp.CurrentUser, customerId);
             break;
         }
-        var customer = await policyManager.UpdatePolicyPrice(App.RealmApp.CurrentUser,customerId,Converter.StringToDouble(PriceDisplay));
+        var customer = await policyManager.UpdatePolicyPrice(App.RealmApp.CurrentUser,customerId,Converter.StringToDouble(pDisplay));
         //TODO can send an invoice also here... (use customer email etc...s)
 
         await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);

@@ -10,7 +10,7 @@
                    RootViewModel="{Binding .}"
                    ControlTemplate="{StaticResource LoaderViewTemplate}"
                    x:DataType="viewModels:PaymentViewModel"
-                   IsTabStop="True"
+                   IsTabStop="False"
                    x:Class="Insurance_app.Pages.PaymentPage">
 
 
@@ -38,7 +38,7 @@
         </StackLayout>
         <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Padding="10">
             <Label Text="Expires End :" Style="{StaticResource NormalLabel}" />
-            <Entry Style="{StaticResource NormalEntry}" Placeholder="MM" Text="{Binding MonthDisplay}" Focused="FieldFocused" Keyboard="Numeric">
+            <Entry Style="{StaticResource NormalEntry}" HorizontalTextAlignment="End" WidthRequest="50" Placeholder="MM" Text="{Binding MonthDisplay}" Focused="FieldFocused" Keyboard="Numeric">
                 <Entry.Behaviors>
                     <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
                                                          Flags="ValidateOnValueChanging" x:Name="MonthValidator"
