@@ -16,7 +16,6 @@ namespace Insurance_app.Pages
         public PaymentPage(string customerId,double price)
         {
             InitializeComponent();
-            HeroImage.Source = ImageService.Instance.CardFront;
             BindingContext = new PaymentViewModel(customerId,price);
         }
 
@@ -24,6 +23,7 @@ namespace Insurance_app.Pages
         {
             base.OnAppearing();
             var vm = (PaymentViewModel)BindingContext;
+            HeroImage.Source = ImageService.Instance.CardFront;
             await vm.Setup();
         }
 
@@ -31,7 +31,6 @@ namespace Insurance_app.Pages
         {
             base.OnDisappearing();
             var vm = (PaymentViewModel)BindingContext;
-            HeroImage.Source = ImageService.Instance.CardFront;
             vm.Dispose();
         }
 

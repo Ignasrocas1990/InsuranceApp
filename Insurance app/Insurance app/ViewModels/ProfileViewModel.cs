@@ -128,7 +128,7 @@ namespace Insurance_app.ViewModels
             {
                 CircularWaitDisplay = true;
                 
-               await UserManager.updateCustomer(name,lastName,phoneNr,address, App.RealmApp.CurrentUser,customerId);
+               await UserManager.UpdateCustomer(name,lastName,phoneNr,address, App.RealmApp.CurrentUser,customerId);
             }
             catch (Exception e)
             {

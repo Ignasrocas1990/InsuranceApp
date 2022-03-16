@@ -59,7 +59,7 @@ namespace Insurance_app.ViewModels
                     
                     if (user is null)throw new Exception("registration failed");
                         
-                   var customer = UserManager.CreateCustomer(GetDob(),fName, lName,phoneNr,email,address,direct);
+                   var customer = UserManager.CreateCustomer(GetDob(),fName, lName,phoneNr,email,address);
                         
                    if (customer is null)throw new Exception("registration failed");
                    var expiryDate = DateTimeOffset.Now.AddMonths(1);
@@ -157,13 +157,7 @@ namespace Insurance_app.ViewModels
             get => price;
             set => SetProperty(ref price, value);
         }
-
-        private bool direct;
-        public bool DirectDebit
-        {
-            get => direct;
-            set => SetProperty(ref direct, value);
-        }
+        
         private bool setUpWait;
 
         public bool SetUpWaitDisplay

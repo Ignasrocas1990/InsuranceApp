@@ -44,15 +44,15 @@ namespace Insurance_app.Logic
             return new Customer();
         }
 
-        public Customer CreateCustomer(DateTimeOffset dob, string fName, string lName, string phoneNr, string email,Address address,bool direct)
+        public Customer CreateCustomer(DateTimeOffset dob, string fName, string lName, string phoneNr, string email,Address address)
         {
             try
             {
                 return new Customer()
                 {
                 
-                    Dob = dob,DirectDebitSwitch = direct,
-                    Name = fName, LastName = lName, PhoneNr = phoneNr, Email=email,
+                    Dob = dob, Name = fName, LastName = lName, 
+                    PhoneNr = phoneNr, Email=email,
                     Address = new Address()
                     {
                         HouseN = address.HouseN,
@@ -77,7 +77,7 @@ namespace Insurance_app.Logic
         }
 
 
-        public async Task updateCustomer(string name, string lastName, 
+        public async Task UpdateCustomer(string name, string lastName, 
             string phoneNr,Address address, User user,string customerId)
         {
            await realmDb.UpdateCustomer(name, lastName,
@@ -136,39 +136,7 @@ namespace Insurance_app.Logic
 
             return null;
         }
-        private async Task UpdatePolicy(DateTimeOffset now, Customer customer, User user, Policy currentPolicy)
-        {
-            try
-            {
-                float totalCost = 0;
-                var newDate = ChangeDate(currentPolicy.ExpiryDate.Value, now);
-                if (customer.AutoRewardUse)
-                {
-                    var rewards = customer.Reward.Where(r => r.FinDate != null && r.DelFlag != false).ToList();
-                    totalCost = GetTotalRewardCost(rewards);
-                }
-                await realmDb.UpdatePolicyDate(newDate, currentPolicy,totalCost,user);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-
-        private float GetTotalRewardCost(IEnumerable<Reward> rewards)
-        {
-            return rewards.Where(reward => reward.Cost != null).Sum(reward => (float) reward.Cost);
-        }
-        private DateTimeOffset ChangeDate(DateTimeOffset policyDate,DateTimeOffset now)
-        {
-            while (policyDate<now)
-            {
-                policyDate = policyDate.AddMonths(1);
-            }
-
-            return policyDate;
-        }
-
+        
         public async Task<List<Customer>>GetAllCustomer(User user)
         {
             
@@ -194,11 +162,7 @@ namespace Insurance_app.Logic
         { 
          await  realmDb.UpdateCustomerSwitch(user, switchState);
         }
-
-        public void UpdateAccountSettings(User user,string userId,bool directDebit, bool useRewards)
-        {
-            Task.FromResult(realmDb.UpdateAccountSettings(user,userId,directDebit,useRewards));
-        }
+        
         public async Task ResetPassword(string email,string name,HttpService api)
         {
             try

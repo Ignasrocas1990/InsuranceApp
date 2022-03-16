@@ -142,24 +142,6 @@ namespace Insurance_app.Service
                 Console.WriteLine("UpdateCustomerSwitch :: "+e);
             }
         }
-        public async Task UpdateAccountSettings(User user, string userId, bool directDebit, bool useRewards)
-        {
-            try
-            {
-                await GetRealm(partition, user);
-                realm.Write(() =>
-                {
-                   var customer = realm.Find<Customer>(userId);
-                   customer.DirectDebitSwitch = directDebit;
-                   customer.AutoRewardUse = useRewards;
-                });
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
         
 // --------------------------- Mov Data  methods --------------------------------     
         public async Task AddMovData(float x,float y,float z,User user)

@@ -1,22 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Insurance_app.ViewModels.Popups;
-using Xamarin.CommunityToolkit.UI.Views;
+using Insurance_app.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace Insurance_app.Pages.Popups
+namespace Insurance_app.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ChangePassPopup
+    public partial class ChangePasswordPage : LoadingPage
     {
-        public ChangePassPopup(string email)
+        public ChangePasswordPage()
         {
             InitializeComponent();
-            BindingContext = new ChangePassViewModel(this,email);
+            BindingContext = new ChangePassViewModel();
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            var vm = (ChangePassViewModel)BindingContext;
+            vm.Dispose();
         }
 
         private async void Button_OnClicked(object sender, EventArgs e)

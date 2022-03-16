@@ -14,7 +14,7 @@
                    x:Class="Insurance_app.Pages.RegistrationPage">
     
     <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40"
-          RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="5*,5*"   >
+          RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="5*,5*"   >
         
                 
               <Label Text="Email :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="0" />
@@ -98,19 +98,15 @@
                   </Entry.Behaviors>
               </Entry>
               
-              <Label Text="DirectDebit :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="5" />
-              <CheckBox IsChecked="{Binding DirectDebit}" Grid.Column="1" Grid.Row="5" />
-              
-              
               <Button Command="{Binding AddressCommand}" x:Name="AddressValidator"
                       Text="{Binding AddressDisplay}" Style="{StaticResource WhiteBtn}"
                       IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
-                      Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" />
+                      Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" />
               
               <Button Text="Register" Clicked="Button_OnClicked"
                       Style="{StaticResource PrimaryBtn}"
                       IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
-                      Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" HorizontalOptions="Center" />
+                      Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" HorizontalOptions="Center" />
     </Grid>           
 
 </pages1:LoadingPage>

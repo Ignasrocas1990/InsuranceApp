@@ -55,7 +55,7 @@
         <ShellContent ContentTemplate="{DataTemplate pages:PolicyPage}"/>
     </FlyoutItem>
     <FlyoutItem Title="Settings" Icon="settingsIcon.png">
-        <ShellContent ContentTemplate="{DataTemplate pages:AccountSettingsPage}"/>
+        <ShellContent ContentTemplate="{DataTemplate pages:ChangePasswordPage}"/>
     </FlyoutItem>
     
     <Shell.FlyoutFooterTemplate>

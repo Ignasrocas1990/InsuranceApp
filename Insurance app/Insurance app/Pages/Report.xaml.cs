@@ -18,7 +18,7 @@ namespace Insurance_app.Pages
         public Report()
         {
             InitializeComponent();
-            BindingContext = new ReportViewModel {SetUpWaitDisplay = true};
+            BindingContext = new ReportViewModel();
             //BindingContext = (ReportViewModel) ShellViewModel.GetInstance()
             //  .GetViewModel(Converter.ReportViewModel);
             //BindingContext = new ReportViewModel();
