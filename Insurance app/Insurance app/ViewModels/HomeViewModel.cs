@@ -91,7 +91,7 @@ namespace Insurance_app.ViewModels
         private async Task SetUpEarningsDisplay()
         {
             
-               var data = await rewardManager.getTotalRewards(App.RealmApp.CurrentUser,App.RealmApp.CurrentUser.Id);
+               var data = await rewardManager.GetTotalRewards(App.RealmApp.CurrentUser,App.RealmApp.CurrentUser.Id);
                if (data is null) return;
                TotalEarnedDisplay = $"{data.Item2}";
                Console.WriteLine("ble manager SetUpEarningsDisplay");

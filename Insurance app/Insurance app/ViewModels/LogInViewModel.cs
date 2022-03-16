@@ -23,8 +23,8 @@ namespace Insurance_app.ViewModels
         private const string ExpiredCustomerStr = "Accounts policy has been expired" +
                                             "\nPlease select one of the following options.";
 
-        private const string AcceptExpiredStr = "Create new account.";
-        private const string CancelExpiredStr = "Reset the old account.";
+        private const string CreateNewAccStr = "Create new account.";
+        private const string ResetStr = "Reset the old account.";
         
         private readonly UserManager userManager;
 
@@ -117,9 +117,9 @@ namespace Insurance_app.ViewModels
                      }
                      else
                      {
-                         var anwer = await Application.Current.MainPage.DisplayAlert(Msg.Notice, ExpiredCustomerStr,
-                            AcceptExpiredStr,CancelExpiredStr );
-                         if (anwer)
+                         var answer = await Application.Current.MainPage.DisplayAlert(Msg.Notice, ExpiredCustomerStr,
+                            CreateNewAccStr,ResetStr );
+                         if (answer)
                          {
                              await ExistUser();
                              QuoteCommand.Execute(null);

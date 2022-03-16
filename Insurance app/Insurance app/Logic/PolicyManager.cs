@@ -79,14 +79,14 @@ namespace Insurance_app.Logic
             PreviousPolicies = null;
         }
 
-        public async Task<IEnumerable<Policy>> GetAllUpdatedPolicies(User user)
+        public Task<IEnumerable<Policy>> GetAllUpdatedPolicies(User user)
         {
-          return  await realmDb.GetAllUpdatedPolicies(user);
+          return realmDb.GetAllUpdatedPolicies(user);
         }
 
-        public void UpdatePolicyPrice(User user, string customerId, double price)
+        public Task<Customer> UpdatePolicyPrice(User user, string customerId, double price)
         {
-            Task.FromResult(realmDb.UpdatePolicyPrice(user, customerId, price));
+           return realmDb.UpdatePolicyPrice(user, customerId, price);
         }
     }
 }

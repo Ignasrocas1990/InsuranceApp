@@ -1,7 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Insurance_app.Logic;
+using Insurance_app.Models;
 using Insurance_app.Service;
 using Insurance_app.SupportClasses;
 using Xamarin.CommunityToolkit.ObjectModel;
@@ -21,37 +23,55 @@ namespace Insurance_app.ViewModels {
     private string year = "";
     private string zip = "";
     private double price;
+    private double totalRewards;
+    private bool rewardOverDraft;
+
     private readonly string customerId;
     public ICommand PayCommand { get; }
+    public ICommand RewardsCommand { get; }
+
     private readonly UserManager userManager;
     private readonly PolicyManager policyManager;
-
+    private readonly RewardManager rewardManager;
     public PaymentViewModel(string customerId, double price)
     {
       this.price = price;
       this.customerId = customerId;
-      PriceDisplay = $"€{price}";
+      PriceDisplay = $"{price}";
       PayCommand = new AsyncCommand(Pay);
       userManager = new UserManager();
       policyManager = new PolicyManager();
+      rewardManager = new RewardManager();
+      RewardsCommand = new Command(UseRewards);
     }
+    
     public async Task Setup()
     {
       try
       {
+        SetUpWaitDisplay = true;
+        RewardsIsVisible = false;
+        float earnedRewards = 0;
         if (price is 0.0)
         {
-          SetUpWaitDisplay = true;
           var (_, policy) = await policyManager.FindPolicy(customerId, App.RealmApp.CurrentUser);
           if (policy.Price != null)
           {
-            var priceFloat = policy.Price.Value;
-            price = Math.Round(Convert.ToDouble(priceFloat),2);
-            PriceDisplay = "€"+priceFloat.ToString("F");
+            price = Converter.FloatToDouble(policy.Price.Value);
+            PriceDisplay = $"{price}";
           }
+        }
+        else
+        {
+           (_,earnedRewards)=  await rewardManager.GetTotalRewards(App.RealmApp.CurrentUser, customerId);
         }
         var customer =await userManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
         ZipDisplay = customer.Address.PostCode;
+        if (earnedRewards > 0)
+        {
+          totalRewards = Converter.FloatToDouble(earnedRewards);
+          RewardsIsVisible = true;
+        }
       }
       catch (Exception e)
       {
@@ -59,24 +79,47 @@ namespace Insurance_app.ViewModels {
       }
       SetUpWaitDisplay = false;
     }
-    
-    private void UpdateCardDetails()
+    private void UseRewards()
     {
-      (Length, ImageDisplay) = CardDefinitionService.Instance.DetailsFor(NumberDisplay);
+      if (IsCheckedDisplay)
+      {
+        var (newPrice, rewardLeftover)= rewardManager.ChangePrice(totalRewards, price);
+        PriceDisplay = $"{newPrice}";
+        RewardsDisplay = $"{rewardLeftover}";
+        if (newPrice is 1)
+        {
+          rewardOverDraft = true;
+        }
+      }
+      else
+      {
+        rewardOverDraft = false;
+        PriceDisplay = $"{price}";
+        RewardsDisplay = $"{totalRewards}";
+      }
     }
-
+    
     private async Task Pay()
     {
       try
       {
-        //MAKE sure we have internet connection here !!!!
-        //TODO implement payment service======================
-        //update customer Realm object (with payed price)
-        
-        policyManager.UpdatePolicyPrice(App.RealmApp.CurrentUser,customerId,price);
+        switch (IsCheckedDisplay)
+        {
+          //MAKE sure we have internet connection here !!!!
+          // Take priceDisplay & RewardsDisplay when updating objects/and paying 
+          //TODO implement payment service======================
+          case true when rewardOverDraft:
+            rewardManager.UpdateRewardsWithOverdraft((float)price, App.RealmApp.CurrentUser, customerId);
+            break;
+          case true:
+            rewardManager.UserRewards(App.RealmApp.CurrentUser, customerId);
+            break;
+        }
+        var customer = await policyManager.UpdatePolicyPrice(App.RealmApp.CurrentUser,customerId,Converter.StringToDouble(PriceDisplay));
+        //TODO can send an invoice also here... (use customer email etc...s)
+
         await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
         await Application.Current.MainPage.DisplayAlert(Msg.Notice, "Payment Successful,you can log in now", "close");
-        //can send an invoice also here...
         if (App.RealmApp.CurrentUser != null)
         {
           await App.RealmApp.CurrentUser.LogOutAsync();
@@ -92,12 +135,17 @@ namespace Insurance_app.ViewModels {
         Console.WriteLine(e);
       }
     }
+    //----------------------- Binding/support methods ------------------------------------------
+    private void UpdateCardDetails()
+    {
+      (Length, ImageDisplay) = CardDefinitionService.Instance.DetailsFor(NumberDisplay);
+    }
 
     string pDisplay;
 
     public string PriceDisplay
     {
-      get => pDisplay;
+      get => "€"+pDisplay;
       set => SetProperty(ref pDisplay, value);
     }
 
@@ -159,12 +207,30 @@ namespace Insurance_app.ViewModels {
       set => SetProperty(ref setUpWait, value);
     }
 
+    private bool isChecked;
+    public bool IsCheckedDisplay
+    {
+      get => isChecked;
+      set => SetProperty(ref isChecked, value);
+    }
+    private string rewards;
+    public string RewardsDisplay
+    {
+      get => "€"+rewards;
+      set => SetProperty(ref rewards, value);
+    }
     private bool circularWait;
-
     public bool CircularWaitDisplay
     {
       get => circularWait;
       set => SetProperty(ref circularWait, value);
+    }
+
+    private bool rewardsIsVisible;
+    public bool RewardsIsVisible
+    {
+      get => rewardsIsVisible;
+      set => SetProperty(ref rewardsIsVisible, value);
     }
 
     public string IsValid()

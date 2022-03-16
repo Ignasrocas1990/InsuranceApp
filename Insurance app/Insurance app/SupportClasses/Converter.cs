@@ -10,7 +10,8 @@ namespace Insurance_app.SupportClasses
     {
         public static Func<String,float>StringToFloat =  x => float.Parse(x, CultureInfo.InvariantCulture.NumberFormat);
         public static Func<String, double> StringToDouble = x => Math.Round(Convert.ToDouble(x),2);
-        
+        public static Func<float, double> FloatToDouble = x => Math.Round(Convert.ToDouble(x), 2);
+
         private static string nameSpace = nameof(Insurance_app) + "." + nameof(ViewModels) + ".";
 
 

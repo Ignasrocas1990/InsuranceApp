@@ -269,6 +269,60 @@ namespace Insurance_app.Service
         }
         
 //------------------------------------------------   reward methods ----------------------
+
+        public async Task UpdateRewardsWithOverdraft(float price, User user, string customerId)
+        {
+            try
+            {
+                await GetRealm(partition,user);
+                if (realm is null)
+                    throw new Exception(" UpdateRewardsWithOverdraft :::::::::::; real is null");
+                realm.Write(() =>
+                {
+                   var customer = realm.Find<Customer>(customerId);
+                    if (customer is null)
+                        throw new Exception(" UpdateRewardsWithOverdraft ::::::::::::::; customer is null");
+                    var rewards = customer.Reward.Where(r => r.FinDate != null && r.DelFlag == false);
+                    float? payedPrice=0;
+                    foreach (var reward in rewards)
+                    {
+                        if (payedPrice >= price) break;
+                        payedPrice += reward.Cost;
+                        reward.DelFlag = true;
+                    }
+
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+        
+        public async Task UseRewards(User user, string customerId)
+        {
+            try
+            {
+                await GetRealm(partition,user);
+                if (realm is null)
+                    throw new Exception(" UseRewards :::::::::::::::::::::::::; real is null");
+                realm.Write(() =>
+                {
+                  var customer= realm.Find<Customer>(customerId);
+                   if (customer is null)
+                       throw new Exception(" UseRewards ::::::::::::::; customer is null");
+                   var rewards = customer.Reward.Where(r => r.FinDate != null && r.DelFlag == false);
+                   foreach (var reward in rewards)
+                   {
+                       reward.DelFlag = true;
+                   }
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
         public async Task<Reward> FindReward(User user)
         {
             Reward reward = null;
@@ -316,14 +370,14 @@ namespace Insurance_app.Service
                 if (realm is null) throw new Exception("getTotalRewards realm null my exception");
                 realm.Write(() =>
                 {
-                    var c = realm.Find<Customer>(id);
+                    var customer = realm.Find<Customer>(id);
                     var sum = (from r in 
-                        c.Reward where r.FinDate != null && r.DelFlag == false && 
+                        customer.Reward where r.FinDate != null && r.DelFlag == false && 
                                        r.Cost != null select r.Cost).Aggregate<float?, 
                         float?>(0, (current, f) => current + f.Value);
 
                     if (sum != null) totalEarnings = (float) sum;
-                    rewardsAndSwitch = new Tuple<bool, float>(c.DataSendSwitch,totalEarnings);
+                    rewardsAndSwitch = new Tuple<bool, float>(customer.DataSendSwitch,totalEarnings);
                     
                 });
             }
@@ -825,14 +879,16 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
         }
 
 
-        public async Task UpdatePolicyPrice(User user, string customerId, double price)
+        public async Task<Customer> UpdatePolicyPrice(User user, string customerId, double price)
         {
+            Customer customer = null;
             try
             {
                 await GetRealm(partition, user);
                 realm.Write(() =>
                 {
-                    var policy = realm.All<Policy>().FirstOrDefault(
+                    customer = realm.Find<Customer>(customerId);
+                    var policy = customer.Policy.FirstOrDefault(
                         p => p.Owner == customerId && p.Price == 0.0 && p.DelFlag != false);
                     if (policy != null) policy.PayedPrice = (float?) price;
                 });
@@ -841,6 +897,11 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
             {
                 Console.WriteLine(e);
             }
+
+            return customer;
         }
+
+
+        
     }
 }

@@ -80,15 +80,23 @@
                     </xct:MultiValidationBehavior>
                 </Entry.Behaviors>
             </Entry>
-        </StackLayout >
-
-        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Padding="25,10,10,20">
+        </StackLayout>
+           <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Padding="25,10,10,20">
             <Label Text="Post Code :" Style="{StaticResource NormalLabel}"/>
             <Label  Text="{Binding ZipDisplay}" Style="{StaticResource NormalLabel}"/>
         </StackLayout>
-
-        <Button Text="Proceed with payment" Clicked="Button_OnClicked" Style="{StaticResource PrimaryBtn}" Padding="10"
-                                IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"/>
+           
+           <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Padding="10,10,10,10" IsVisible="{Binding RewardsIsVisible}">
+               <Label Text="{Binding RewardsDisplay}" Style="{StaticResource NormalLabel}" />
+               <CheckBox IsChecked="{Binding IsCheckedDisplay}">
+                   <CheckBox.Behaviors>
+                       <xct:EventToCommandBehavior EventName="CheckedChanged" Command="{Binding RewardsCommand}" />
+                   </CheckBox.Behaviors>
+               </CheckBox>
+           </StackLayout>
+           
+           <Button Text="Proceed with payment" Clicked="Button_OnClicked" Style="{StaticResource PrimaryBtn}" Padding="10"
+                   IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"/>
        </StackLayout>
 
     

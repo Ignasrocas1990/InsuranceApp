@@ -104,13 +104,9 @@ namespace Insurance_app.Logic
                     {
                         return "UnpaidCustomer";
                     }
-                    if (currentPolicy.ExpiryDate < now)
+                    if (currentPolicy != null && currentPolicy.ExpiryDate < now)
                     {
-                        if (!customer.DirectDebitSwitch)
-                        {
-                            return currentPolicy.Id.ToString();
-                        }
-                        await UpdatePolicy(now,customer,user,currentPolicy);
+                        return currentPolicy.Id.ToString();
                     }
                     return "Customer";
                 }
