@@ -30,7 +30,6 @@ namespace Insurance_app.ViewModels
         private string lName="";
         private string phoneNr="";
         private string customerId="";
-        //private string qString="";
         public string AddressText = "Add address please";
         public readonly UserManager UserManager;
         private readonly PolicyManager policyManager;
@@ -70,21 +69,20 @@ namespace Insurance_app.ViewModels
 
                    await UserManager.AddCustomer(customer, App.RealmApp.CurrentUser);
 
-                   await Application.Current.MainPage.DisplayAlert("Notice", "Registration completed successfully", "Close");
-                   await Application.Current.MainPage.Navigation.PushModalAsync(new PaymentPage(customerId,Converter.StringToDouble(price)));
-                   //await Application.Current.MainPage.Navigation.PopToRootAsync();
+                  await Msg.Alert("Registration completed successfully.\nRedirecting to payment page");
+                   await Application.Current.MainPage.Navigation
+                       .PushModalAsync(new PaymentPage(customerId,Converter.StringToDouble(price),address.PostCode));
                 }
                 else
                 {
-                    
-                    await Application.Current.MainPage.DisplayAlert("error", $"{registered}", "close");
+                    await Msg.AlertError($"{registered}");
                 }
                 CircularWaitDisplay = false;
             }
             catch (Exception e)
             {
                 CircularWaitDisplay = false;
-                await Application.Current.MainPage.DisplayAlert("error", "registration failed", "close");
+                await Msg.AlertError("registration failed");
                 Console.WriteLine(e);
             }
         }

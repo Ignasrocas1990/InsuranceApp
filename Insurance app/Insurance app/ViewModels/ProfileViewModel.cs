@@ -48,8 +48,6 @@ namespace Insurance_app.ViewModels
             UpdateCommand = new AsyncCommand(Update);
             ResetPasswordCommand = new AsyncCommand(ResetPassword);
             api = new HttpService();
-
-
         }
         public async Task Setup()
         {

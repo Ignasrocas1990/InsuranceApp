@@ -33,10 +33,11 @@ namespace Insurance_app.ViewModels {
     private readonly UserManager userManager;
     private readonly PolicyManager policyManager;
     private readonly RewardManager rewardManager;
-    public PaymentViewModel(string customerId, double price)
+    public PaymentViewModel(string customerId, double price,string zip)
     {
       this.price = price;
       this.customerId = customerId;
+      ZipDisplay = zip;
       PriceDisplay = $"{price}";
       PayCommand = new AsyncCommand(Pay);
       userManager = new UserManager();
@@ -52,7 +53,11 @@ namespace Insurance_app.ViewModels {
         SetUpWaitDisplay = true;
         RewardsIsVisible = false;
         float earnedRewards = 0;
-        if (price is 0)
+        if (price>1 && !zip.Equals(""))
+        {
+          (_,earnedRewards)=  await rewardManager.GetTotalRewards(App.RealmApp.CurrentUser, customerId);
+        }
+        if (price < 1)
         {
           var (_, policy) = await policyManager.FindPolicy(customerId, App.RealmApp.CurrentUser);
           if (policy.Price != null)
@@ -61,12 +66,13 @@ namespace Insurance_app.ViewModels {
             PriceDisplay = $"{price}";
           }
         }
-        else
+        if (zip.Equals(""))
         {
-           (_,earnedRewards)=  await rewardManager.GetTotalRewards(App.RealmApp.CurrentUser, customerId);
+          var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
+          ZipDisplay = customer.Address.PostCode;
         }
-        var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
-        ZipDisplay = customer.Address.PostCode;
+
+        
         if (earnedRewards > 0)
         {
           totalRewards = Converter.FloatToDouble(earnedRewards);
@@ -115,19 +121,12 @@ namespace Insurance_app.ViewModels {
             rewardManager.UserRewards(App.RealmApp.CurrentUser, customerId);
             break;
         }
-        var customer = await policyManager.UpdatePolicyPrice(App.RealmApp.CurrentUser,customerId,Converter.StringToDouble(pDisplay));
+        var customer = await policyManager.UpdatePolicyPrice
+          (App.RealmApp.CurrentUser,customerId,Converter.StringToDouble(pDisplay));
         //TODO can send an invoice also here... (use customer email etc...s)
 
-        await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
-        await Application.Current.MainPage.DisplayAlert(Msg.Notice, "Payment Successful,you can log in now", "close");
-        if (App.RealmApp.CurrentUser != null)
-        {
-          await App.RealmApp.CurrentUser.LogOutAsync();
-        }
-        else
-        {
-          Console.WriteLine("user longed out");
-        }
+        await StaticOpt.Logout();
+        await Msg.Alert("Payment Successful,you can log in now");
         await Application.Current.MainPage.Navigation.PopToRootAsync();
       }
       catch (Exception e)
@@ -136,9 +135,10 @@ namespace Insurance_app.ViewModels {
       }
     }
     //----------------------- Binding/support methods ------------------------------------------
-    private void UpdateCardDetails()
+    private string UpdateCardDetails(string value)
     {
-      (Length, ImageDisplay) = CardDefinitionService.Instance.DetailsFor(NumberDisplay);
+      (LengthDisplay, ImageDisplay) = CardDefinitionService.Instance.DetailsFor(value);
+      return value;
     }
 
     string pDisplay;
@@ -161,7 +161,7 @@ namespace Insurance_app.ViewModels {
       set => SetProperty(ref image, value);
     }
 
-    public int Length
+    public int LengthDisplay
     {
       get => length;
       set => SetProperty(ref length, value);
@@ -169,8 +169,8 @@ namespace Insurance_app.ViewModels {
 
     public string NumberDisplay
     {
-      get => number;
-      set => SetProperty(ref number, value, "", UpdateCardDetails);
+      get => UpdateCardDetails(number);
+      set => SetProperty(ref number, value);
     }
 
     public string MonthDisplay
@@ -185,7 +185,7 @@ namespace Insurance_app.ViewModels {
       set => SetProperty(ref year, value);
     }
 
-    public string LengthError => $"Maximum length has to be : {Length}";
+    public string LengthError => $"Maximum length has to be : {LengthDisplay}";
 
     public string VerificationCodeDisplay
     {

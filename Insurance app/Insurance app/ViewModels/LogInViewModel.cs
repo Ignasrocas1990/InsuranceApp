@@ -109,7 +109,8 @@ namespace Insurance_app.ViewModels
                          await Shell.Current.GoToAsync($"//{nameof(ClientMainPage)}",true);
                      }else if (typeUser.Equals($"{UserType.UnpaidCustomer}"))
                      {
-                         await Application.Current.MainPage.Navigation.PushAsync(new PaymentPage(user.Id,0.0));
+                         await Msg.Alert( "Seems like you haven't payed yet.\nDirecting to payment page...");
+                         await Application.Current.MainPage.Navigation.PushAsync(new PaymentPage(user.Id,0,""));
                      }
                      else if(typeUser.Equals(""))
                      {
@@ -135,12 +136,11 @@ namespace Insurance_app.ViewModels
                     throw new Exception(Msg.NetworkConMsg);
                 }
             }
-            catch (Exception e)
+            catch // throws error in-case password is invalid
             {
-                Console.WriteLine(e);
-                await Application.Current.MainPage.DisplayAlert(Msg.Error, e.Message, "close");
-                CircularWaitDisplay = false;
+                await Msg.AlertError("Invalid Credentials");
             }
+            CircularWaitDisplay = false;
         }
 
 

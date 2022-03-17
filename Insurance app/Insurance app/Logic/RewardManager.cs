@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Insurance_app.Models;
 using Insurance_app.Service;
@@ -13,9 +14,13 @@ namespace Insurance_app.Logic
         {
             realmDb = RealmDb.GetInstancePerPage();
         }
-        public async Task<Tuple<bool, float>> GetTotalRewards(User user,string id)
+        public async Task<(bool toggle, float totalSum)> GetTotalRewards(User user,string id)
         {
-            return await realmDb.GetTotalRewards(user,id);
+            var (toggle,rewards)= await realmDb.GetTotalRewards(user,id);
+            if (rewards.Count == 0) return (toggle, 0);
+            
+            var totalSum = rewards.Where(reward => reward.Cost != null).Sum(reward => (float) reward.Cost);
+            return (toggle,totalSum);
         }
         public async Task<Reward> FindReward(User user)
         {

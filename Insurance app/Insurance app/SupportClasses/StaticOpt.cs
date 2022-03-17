@@ -5,7 +5,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Insurance_app.Models;
+using Insurance_app.Pages;
 using Insurance_app.Pages.Popups;
+using Realms.Sync;
 using SkiaSharp;
 using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.Forms;
@@ -114,6 +116,18 @@ namespace Insurance_app.SupportClasses
         public static async Task InfoPopup(string type)
         {
             await Application.Current.MainPage.Navigation.ShowPopupAsync(new InfoPopup(type));
+        }
+        public static async Task Logout()
+        {
+            try
+            {
+                await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
+                Application.Current.MainPage = new NavigationPage(new LogInPage());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 }

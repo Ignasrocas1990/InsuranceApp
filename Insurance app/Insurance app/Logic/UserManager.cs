@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Insurance_app.Models;
+using Insurance_app.Pages;
 using Insurance_app.Service;
 using Insurance_app.SupportClasses;
 using Realms;
@@ -38,12 +39,7 @@ namespace Insurance_app.Logic
             return await realmDb.FindCustomer(user,id);
            // return currentCustomer;
         }
-
-        public Customer EditCustomer()
-        {
-            return new Customer();
-        }
-
+        
         public Customer CreateCustomer(DateTimeOffset dob, string fName, string lName, string phoneNr, string email,Address address)
         {
             try
@@ -178,6 +174,7 @@ namespace Insurance_app.Logic
                 Console.WriteLine(e);
             }
         }
+
         public void Dispose()
         {
             realmDb.Dispose();

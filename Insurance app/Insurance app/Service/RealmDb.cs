@@ -41,7 +41,7 @@ namespace Insurance_app.Service
             try
             {
                 await GetRealm(partition,user);
-                if (realm is null) throw new Exception("AddCustomer, real is null #########################");
+                if (realm is null) throw new Exception("AddCustomer, >>>>>>>>>>>>>>>>>>>>>>>> real is null");
                 
                 realm.Write(() =>
                 {
@@ -51,7 +51,7 @@ namespace Insurance_app.Service
             }
             catch (Exception e)
             {
-                Console.WriteLine($"problem adding customer : \n {e}");
+                Console.WriteLine($"problem adding customer > \n {e}");
             }
         }
 
@@ -71,7 +71,7 @@ namespace Insurance_app.Service
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Find Customer went wrong : \n {e}");
+                Console.WriteLine($"Find Customer went wrong > \n {e}");
                 return null;
 
             }
@@ -85,7 +85,7 @@ namespace Insurance_app.Service
                 
                 
                 await GetRealm(partition,user);
-                if (realm is null) throw new Exception("UpdateCustomer, real is null");
+                if (realm is null) throw new Exception("UpdateCustomer, >>>>>>>>>>>>>>> real is null");
                 realm.Write(() =>
                 {
                     var customer = realm.All<Customer>().FirstOrDefault(c => c.Id == customerId);
@@ -129,7 +129,7 @@ namespace Insurance_app.Service
             try
             {
                 var  otherRealm =  await GetOtherRealm(partition,user);
-                if (otherRealm is null)throw new Exception("UpdateCustomerSwitch ::: realm is null");
+                if (otherRealm is null)throw new Exception("UpdateCustomerSwitch >>>>>>>>>>> realm is null");
                 otherRealm.Write(() =>
                 {
                     var c =otherRealm.Find<Customer>(user.Id);
@@ -139,22 +139,24 @@ namespace Insurance_app.Service
             }
             catch (Exception e)
             {
-                Console.WriteLine("UpdateCustomerSwitch :: "+e);
+                Console.WriteLine("UpdateCustomerSwitch >> "+e);
             }
         }
         
 // --------------------------- Mov Data  methods --------------------------------     
+
+/*
         public async Task AddMovData(float x,float y,float z,User user)
         {
             try
             {
                 var  otherRealm =  await GetOtherRealm(partition,user);
-                if (otherRealm is null)throw new Exception("AddMovData ::: realm is null");
+                if (otherRealm is null)throw new Exception("AddMovData >>> realm is null");
 
                 otherRealm.Write(() =>
                 {
                     var customer = otherRealm.Find<Customer>(user.Id);
-                    if (customer is null) throw new Exception("AddMvData ::: Customer is null");
+                    if (customer is null) throw new Exception("AddMvData >>> Customer is null");
                     var currentDate = DateTimeOffset.Now;
                     var rewardCount = customer.Reward.Count(r => r.FinDate != null 
                                                                  && r.FinDate.Value.Month == currentDate.Month
@@ -203,7 +205,7 @@ namespace Insurance_app.Service
                 var prev = DateTime.Now.AddHours(-hourDif);
                 
                 await GetRealm(partition,user);
-                if (realm is null) throw new Exception("GetWeeksMovData ::::::: real null");
+                if (realm is null) throw new Exception("GetWeeksMovData >>>>>>> real null");
                 realm.Write(() =>
                 {
                    
@@ -228,7 +230,7 @@ namespace Insurance_app.Service
                 return null;
             }
         }
-
+*/
         public async Task<List<MovData>> GetAllMovData(string customerId,User user)
         {
             List<MovData> movData = null;
@@ -236,7 +238,7 @@ namespace Insurance_app.Service
             {
                 await GetRealm(partition,user);
                 if (realm is null)
-                    throw new Exception(" GetAllMovData :::::::::::::::::::::::::; real is null");
+                    throw new Exception(" GetAllMovData >>>>>>>>>>>>>>>>>>>>>>>>>; real is null");
                 realm.Write(() =>
                 {
                     movData = realm.All<MovData>().Where(data => data.Owner == customerId && data.DelFlag == false).ToList();
@@ -258,12 +260,12 @@ namespace Insurance_app.Service
             {
                 await GetRealm(partition,user);
                 if (realm is null)
-                    throw new Exception(" UpdateRewardsWithOverdraft :::::::::::; real is null");
+                    throw new Exception(" UpdateRewardsWithOverdraft >>>>>>>>>>>; real is null");
                 realm.Write(() =>
                 {
                    var customer = realm.Find<Customer>(customerId);
                     if (customer is null)
-                        throw new Exception(" UpdateRewardsWithOverdraft ::::::::::::::; customer is null");
+                        throw new Exception(" UpdateRewardsWithOverdraft >>>>>>>>>>>>>>; customer is null");
                     var rewards = customer.Reward.Where(r => r.FinDate != null && r.DelFlag == false);
                     float? payedPrice=0;
                     foreach (var reward in rewards)
@@ -287,12 +289,12 @@ namespace Insurance_app.Service
             {
                 await GetRealm(partition,user);
                 if (realm is null)
-                    throw new Exception(" UseRewards :::::::::::::::::::::::::; real is null");
+                    throw new Exception(" UseRewards >>>>>>>>>>>>>>>>>>>>>>>>>; real is null");
                 realm.Write(() =>
                 {
                   var customer= realm.Find<Customer>(customerId);
                    if (customer is null)
-                       throw new Exception(" UseRewards ::::::::::::::; customer is null");
+                       throw new Exception(" UseRewards >>>>>>>>>>>>>>; customer is null");
                    var rewards = customer.Reward.Where(r => r.FinDate != null && r.DelFlag == false);
                    foreach (var reward in rewards)
                    {
@@ -312,7 +314,7 @@ namespace Insurance_app.Service
             {
                 await GetRealm(partition,user);
                 if (realm is null)
-                    throw new Exception(" FindReward :::::::::::::::::::::::::; real is null");
+                    throw new Exception(" FindReward >>>>>>>>>>>>>>>>>>>>>>>>>; real is null");
                 realm.Write(()=>
                 {
                     var customer = realm.Find<Customer>(user.Id);
@@ -342,24 +344,29 @@ namespace Insurance_app.Service
             }
             return reward;
         }
-        public async Task<Tuple<bool, float>> GetTotalRewards(User user,string id)
+        public async Task<Tuple<bool, List<Reward>>> GetTotalRewards(User user,string id)
         {
-            Tuple<bool, float> rewardsAndSwitch = null;
-            float totalEarnings = 0;
+            var rewards = new List<Reward>();
+            var rewardsAndSwitch = new Tuple<bool, List<Reward>>(false,rewards);
+            //float totalEarnings = 0;
             try
             {
                 await GetRealm(partition,user);
-                if (realm is null) throw new Exception("getTotalRewards :::::::::::: realm  is null");
+                if (realm is null) throw new Exception("getTotalRewards >>>>>>>>>>>> realm  is null");
                 realm.Write(() =>
                 {
                     var customer = realm.Find<Customer>(id);
+                    if (customer is null) throw new Exception("GetTotalRewards >>>>>>>>>>>>>>>> Customer is null");
+                    rewards = customer.Reward.Where(r => r.FinDate != null && r.DelFlag == false).ToList();
+                    /*
                     var sum = (from r in 
                         customer.Reward where r.FinDate != null && r.DelFlag == false && 
                                        r.Cost != null select r.Cost).Aggregate<float?, 
                         float?>(0, (current, f) => current + f.Value);
 
                     if (sum != null) totalEarnings = (float) sum;
-                    rewardsAndSwitch = new Tuple<bool, float>(customer.DataSendSwitch,totalEarnings);
+                    */
+                    rewardsAndSwitch = new Tuple<bool, List<Reward>>(customer.DataSendSwitch,rewards);
                     
                 });
             }
@@ -379,7 +386,7 @@ namespace Insurance_app.Service
             {
                 await SubmitActivity(customerId, user, $"AddClaim");
                 await GetRealm(partition,user);
-                if (realm is null) throw new Exception(" AddClaim ::::::::::: realm null");
+                if (realm is null) throw new Exception(" AddClaim >>>>>>>>>>> realm null");
                 realm.Write(() =>
                 {
                     var customer = realm.Find<Customer>(customerId);
@@ -411,13 +418,13 @@ namespace Insurance_app.Service
                 
                 await GetRealm(partition,user);
                 if (realm is null)
-                    throw new Exception(" ResolveClaim ::::::::::::::; realm null");
+                    throw new Exception(" ResolveClaim >>>>>>>>>>>>>>>>>>; realm null");
                 realm.Write(() =>
                 {
                     customer = realm.Find<Customer>(customerId);
                     var claim = customer.Claim
                         .FirstOrDefault(c => c.CloseDate == null && c.DelFlag == false);
-                    if (claim == null) throw new Exception(" ResolveClaim ::::::::::::::; claim null");
+                    if (claim == null) throw new Exception(" ResolveClaim >>>>>>>>>>>>>>>>>>; claim null");
                     
                     claim.CloseDate = DateTimeOffset.Now.Date;
                     claim.Accepted = action;
@@ -437,7 +444,7 @@ namespace Insurance_app.Service
             try
             {
                 await GetRealm(partition,user);
-                if (realm is null) throw new Exception(" GetClaims ::::::::: realm null");
+                if (realm is null) throw new Exception(" GetClaims >>>>>>>>> realm null");
                 realm.Write(() =>
                 {
                     //claims = realm.All<Claim>().Where(c => c.Partition == user.Id && c.DelFlag == false).ToList();
@@ -462,7 +469,7 @@ namespace Insurance_app.Service
             try
             {
                 await GetRealm(partition,user);
-                if (realm is null) throw new Exception("GetAllOpenClaims :::::::::::::::::::::: realm null");
+                if (realm is null) throw new Exception("GetAllOpenClaims >>>>>>>>>>>>>>>>>>>>>>>>>> realm null");
                 realm.Write(() =>
                 {
                     openClaims = realm.All<Claim>().Where(c => c.CloseDate == null && c.DelFlag == false).ToList();
@@ -531,7 +538,7 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
             try
             {
                 await GetRealm(partition,user);
-                if (realm is null) throw new Exception("GetPreviousPolicies :::::::::::::::::::::: realm null");
+                if (realm is null) throw new Exception("GetPreviousPolicies >>>>>>>>>>>>>>>>>>>>>>>>>> realm null");
                 realm.Write(()=>
                 {
                     previousPolicies = realm.Find<Customer>(customerId)
@@ -553,7 +560,7 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
             try
             {
                 await GetRealm(partition,user);
-                if (realm is null) throw new Exception("GetAllUpdatedPolicies :::::::::::::::::::::: realm null");
+                if (realm is null) throw new Exception("GetAllUpdatedPolicies >>>>>>>>>>>>>>>>>>>>>>>>>> realm null");
                 realm.Write(() =>
                 {
                     var now = DateTimeOffset.Now;
@@ -583,14 +590,14 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
                 await SubmitActivity(customerId, user, $"ResolvePolicyUpdate,Allow={allowUpdate}");
                 
                 await GetRealm(partition,user);
-                if (realm is null) throw new Exception("AllowPolicyUpdate :::::::::::::::::::::: realm null");
+                if (realm is null) throw new Exception("AllowPolicyUpdate >>>>>>>>>>>>>>>>>>>>>>>>>> realm null");
                 realm.Write(()=>
                 {
                      customer = realm.Find<Customer>(customerId);
                     var policy = customer?.Policy?
                         .Where(p => p.UpdateDate != null && p.UnderReview == true && p.DelFlag == false)
                         .FirstOrDefault();
-                    if (policy is null) throw new Exception("AllowPolicyUpdate  :::::::::::::::::::::: policy null");
+                    if (policy is null) throw new Exception("AllowPolicyUpdate  >>>>>>>>>>>>>>>>>>>>>>>>>> policy null");
                     
                     if (!allowUpdate) policy.DelFlag = true;
                     policy.UnderReview = false;
@@ -612,7 +619,7 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
                 
                 
                 await GetRealm(partition,user);
-                if (realm is null) throw new Exception("UpdatePolicy :::::::::::::::::::::: realm null");
+                if (realm is null) throw new Exception("UpdatePolicy >>>>>>>>>>>>>>>>>>>>>>>>>> realm null");
                 realm.Write(() =>
                 {
                     realm.Find<Customer>(customerId)?.Policy?.Add(realm.Add(newPolicy));
@@ -628,7 +635,7 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
             try
             {
                 await GetRealm(partition,user);
-                if (realm is null) throw new Exception("UpdatePolicyDate ::::::::::: realm was null");
+                if (realm is null) throw new Exception("UpdatePolicyDate >>>>>>>>>>> realm was null");
                 realm.Write(() =>
                 {
                    var customer = realm.Find<Customer>(user.Id);
@@ -668,7 +675,7 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
             try
             {
                 await GetRealm(user.Id,user);
-                if (realm is null) throw new Exception("CreateClient ::::::::::: realm was null");
+                if (realm is null) throw new Exception("CreateClient >>>>>>>>>>> realm was null");
                 realm.Write(() =>
                 {
                     realm.Add(new Client()
@@ -722,11 +729,11 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
 
                 var otherRealm = await GetOtherRealm(user.Id, user);
                 if (otherRealm is null)
-                    throw new Exception(" SubmitActivity ::::::::::::::; realm null");
+                    throw new Exception(" SubmitActivity >>>>>>>>>>>>>>>>>>; realm null");
                 otherRealm.Write(() =>
                 {
                    var c = otherRealm.Find<Client>(user.Id);
-                    if (c is null) throw new Exception(" SubmitActivity ::::::::::::::; no client found");
+                    if (c is null) throw new Exception(" SubmitActivity >>>>>>>>>>>>>>>>>>; no client found");
                     c.Activities.Add(otherRealm.Add(new ClientActivity()
                     {
                         ActivityOwnerId = customerId,
@@ -785,8 +792,8 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
             catch (Exception e)
             {
                 realm = null;
-                Console.WriteLine($"GetRealm,realm error : \n {e.Message}");
-                Console.WriteLine($"GetRealm, inner exception : {e.InnerException}");
+                Console.WriteLine($"GetRealm,realm error > \n {e.Message}");
+                Console.WriteLine($"GetRealm, inner exception > {e.InnerException}");
             }
         }
 
@@ -807,8 +814,8 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
             }
             catch (Exception e)
             {
-                Console.WriteLine($"GetRealm,realm error : \n {e.Message}");
-                Console.WriteLine($"GetRealm, inner exception : {e.InnerException}");
+                Console.WriteLine($"GetRealm,realm error > \n {e.Message}");
+                Console.WriteLine($"GetRealm, inner exception > {e.InnerException}");
                 return null;
 
             }
@@ -838,7 +845,7 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
             {
                 await GetRealm(partition,user);
                 if (realm is null)
-                    throw new Exception(" CleanDatabase ::::::::::::::; realm null");
+                    throw new Exception(" CleanDatabase >>>>>>>>>>>>>>>>>>; realm null");
 
                 realm.Write(() =>
                 {
@@ -847,7 +854,7 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
                 /*
                 await GetRealm(user.Id, user);
                 if (realm is null)
-                    throw new Exception(" CleanClient ::::::::::::::; realm null");
+                    throw new Exception(" CleanClient >>>>>>>>>>>>>>>>>>; realm null");
                 realm.Write(() =>
                 {
                     realm.RemoveAll();

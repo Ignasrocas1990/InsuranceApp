@@ -39,7 +39,7 @@ namespace Insurance_app.ViewModels
         private bool isSmokerChecker=false;
         private readonly Timer timer;
         private string elegalChars = "";
-        private string policyId = "";
+        private readonly string policyId = "";
         private string customerId = "";
         
         public ICommand InfoCommand { get; }
@@ -98,12 +98,12 @@ namespace Insurance_app.ViewModels
        {
            if (!App.NetConnection())
            {
-               await Application.Current.MainPage.DisplayAlert(Msg.Error,Msg.NetworkConMsg, "close");
+              await Msg.AlertError(Msg.NetworkConMsg);
                return;
            }
            if (elegalChars != "")
            {
-               await Application.Current.MainPage.DisplayAlert(Msg.Error,elegalChars , "close");
+              await Msg.AlertError(elegalChars);
                return;
            }
             
@@ -127,7 +127,7 @@ namespace Insurance_app.ViewModels
            {
                timer.Stop();
                responseCounter = 0;
-               await Application.Current.MainPage.DisplayAlert(Msg.Error, Msg.ApiSendErrorMsg, "close");
+              await Msg.AlertError(Msg.ApiSendErrorMsg);
                CircularWaitDisplay = false;
                return;
            }
@@ -146,7 +146,7 @@ namespace Insurance_app.ViewModels
                await CreatePolicy(price);
                await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
                UserManager.Dispose();
-               await Application.Current.MainPage.DisplayAlert(Msg.Notice, Msg.SuccessUpdateMsg, "Close");
+               await Msg.Alert( Msg.SuccessUpdateMsg);
                await Application.Current.MainPage.Navigation.PopToRootAsync();
            }
        }
@@ -161,7 +161,7 @@ namespace Insurance_app.ViewModels
                 smoker, false,expiryDate,customerId);
            await policyManager.AddPolicy(customerId, App.RealmApp.CurrentUser, policy);
            
-           await Application.Current.MainPage.Navigation.PushModalAsync(new PaymentPage(App.RealmApp.CurrentUser.Id,priceFloat));
+           await Application.Current.MainPage.Navigation.PushModalAsync(new PaymentPage(App.RealmApp.CurrentUser.Id,priceFloat,""));
         }
 
         private async Task TransferToRegistration(int age,string price)
@@ -190,13 +190,13 @@ namespace Insurance_app.ViewModels
         {
             if (!App.NetConnection())
             {
-                await Application.Current.MainPage.DisplayAlert(Msg.Notice, Msg.NetworkConMsg, "close");
+               await Msg.Alert(Msg.NetworkConMsg);
                 return;
             }
             CircularWaitDisplay = true;
             await UserManager.ResetPassword(name, email,api);
             CircularWaitDisplay = false;
-            await Application.Current.MainPage.DisplayAlert(Msg.Notice,Msg.ResetPassMsg, "close");
+           await Msg.Alert(Msg.ResetPassMsg);
         }
 
         private async void CheckResponseTime(object o, ElapsedEventArgs e)
@@ -206,7 +206,7 @@ namespace Insurance_app.ViewModels
            tooLate = true;
            CircularWaitDisplay=false;
            responseCounter = 0;
-           await Application.Current.MainPage.DisplayAlert(Msg.Error,Msg.NetworkConMsg, "close");
+          await Msg.AlertError(Msg.NetworkConMsg);
        }
 
 //-----------------------------data binding methods ------------------------------------------------

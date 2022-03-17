@@ -27,8 +27,8 @@ namespace Insurance_app.ViewModels
     {
 
         private readonly BleManager bleManager;
-        private UserManager UserManager;
-        private RewardManager rewardManager;
+        private readonly UserManager userManager;
+        private readonly RewardManager rewardManager;
 
         //private Customer customer;
 
@@ -49,7 +49,7 @@ namespace Insurance_app.ViewModels
             bleManager = BleManager.GetInstance();
             bleManager.InfferEvent +=InferredRawData;
             rewardManager = new RewardManager();
-            UserManager = new UserManager();
+            userManager = new UserManager();
             SwitchCommand = new AsyncCommand(StartDataReceive);
             LogoutCommand = new AsyncCommand(Logout);
         }
@@ -91,14 +91,14 @@ namespace Insurance_app.ViewModels
         private async Task SetUpEarningsDisplay()
         {
             
-               var data = await rewardManager.GetTotalRewards(App.RealmApp.CurrentUser,App.RealmApp.CurrentUser.Id);
-               if (data is null) return;
-               TotalEarnedDisplay = $"{data.Item2}";
+               var (toggle, totalSum) = await rewardManager
+                   .GetTotalRewards(App.RealmApp.CurrentUser,App.RealmApp.CurrentUser.Id);
+               TotalEarnedDisplay = $"{totalSum}";
                Console.WriteLine("ble manager SetUpEarningsDisplay");
                if (firstSetup)
                {
-                   ToggleStateDisplay = data.Item1;
-                   if (data.Item1)
+                   ToggleStateDisplay = toggle;
+                   if (toggle)
                    {
                        await StartDataReceive();
                    }
@@ -108,11 +108,11 @@ namespace Insurance_app.ViewModels
         {
             await Step();
         }
+
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="state">Switch on the data receive (true=on/false=off)</param>
-        public async Task StartDataReceive()
+        private async Task StartDataReceive()
         {
             if (++counter % 2==0) return;
             
@@ -215,23 +215,14 @@ namespace Insurance_app.ViewModels
         }
         private async Task Logout()
         {
-            try
-            {
-                CircularWaitDisplay = true;
-                await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
-                Application.Current.MainPage = new NavigationPage(new LogInPage());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-
-            CircularWaitDisplay = false;
+          CircularWaitDisplay = true;
+          await StaticOpt.Logout();
+          CircularWaitDisplay = false;
         }
 
         public void Dispose()
         {
-            UserManager.Dispose();
+            userManager.Dispose();
         }
     }
 }

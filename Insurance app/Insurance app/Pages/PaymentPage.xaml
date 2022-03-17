@@ -29,7 +29,7 @@
                     <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
                                                          Flags="ValidateOnValueChanging" x:Name="NumberValidator"
                                                          InvalidStyle="{StaticResource InvalidEntry}">
-                        <xct:TextValidationBehavior MinimumLength="{Binding Length}" xct:MultiValidationBehavior.Error="{Binding LengthError}" />
+                        <xct:TextValidationBehavior MinimumLength="{Binding LengthDisplay}" xct:MultiValidationBehavior.Error="{Binding LengthError}" />
                         <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MinimumCharacterCount="0" xct:MultiValidationBehavior.Error="Card Number has special char" />
                         <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Card Number has spaces" />
                     </xct:MultiValidationBehavior>

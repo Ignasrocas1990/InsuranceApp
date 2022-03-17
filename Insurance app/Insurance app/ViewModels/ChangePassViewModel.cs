@@ -26,20 +26,26 @@ namespace Insurance_app.ViewModels
         {
             try
             {
+                if (!App.NetConnection())
+                {
+                    await Msg.Alert(Msg.NetworkConMsg);
+                    return;
+                }
                 CircularWaitDisplay = true;
+
                 var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, App.RealmApp.CurrentUser.Id);
                 if (customer != null)
                 {
                     await App.RealmApp.EmailPasswordAuth
                         .CallResetPasswordFunctionAsync(customer.Email,password);
                 }
-                await Application.Current.MainPage.DisplayAlert(
-                    Msg.Error, "Password changed successfully.", "close");                
+                
+                await Msg.Alert("Password changed successfully.\nPlease login again...");
+                await StaticOpt.Logout();
             }
             catch (Exception e)
             {
-                await Application.Current.MainPage.DisplayAlert(
-                    Msg.Error, "Password change failed.\nTry again later.", "close");
+                await Msg.Alert("Password change failed.\nTry again later.");
                 Console.WriteLine(e);
             }
             CircularWaitDisplay = false;

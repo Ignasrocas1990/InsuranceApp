@@ -13,10 +13,10 @@ namespace Insurance_app.Pages
     public partial class PaymentPage : LoadingPage
     {
         private bool back;
-        public PaymentPage(string customerId,double price)
+        public PaymentPage(string customerId, double price, string zip)
         {
             InitializeComponent();
-            BindingContext = new PaymentViewModel(customerId,price);
+            BindingContext = new PaymentViewModel(customerId,price,zip);
         }
 
         protected override async void OnAppearing()
