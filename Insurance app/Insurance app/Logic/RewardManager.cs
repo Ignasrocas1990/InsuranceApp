@@ -17,7 +17,7 @@ namespace Insurance_app.Logic
         public async Task<(bool toggle, float totalSum)> GetTotalRewards(User user,string id)
         {
             var (toggle,rewards)= await realmDb.GetTotalRewards(user,id);
-            if (rewards.Count == 0) return (toggle, 0);
+            if (rewards.Count == 0) return (toggle, 0.0f);
             
             var totalSum = rewards.Where(reward => reward.Cost != null).Sum(reward => (float) reward.Cost);
             return (toggle,totalSum);

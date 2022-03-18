@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Insurance_app.Pages;
 using Insurance_app.Pages.ClientPages;
-using Insurance_app.Service;
 using Insurance_app.SupportClasses;
 using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
@@ -78,6 +77,7 @@ namespace Insurance_app.ViewModels
             {
                 Console.WriteLine(e);
             }
+            CircularWaitDisplay = false;
         }
 
         private async Task LogIn()
@@ -110,7 +110,7 @@ namespace Insurance_app.ViewModels
                      }else if (typeUser.Equals($"{UserType.UnpaidCustomer}"))
                      {
                          await Msg.Alert( "Seems like you haven't payed yet.\nDirecting to payment page...");
-                         await Application.Current.MainPage.Navigation.PushAsync(new PaymentPage(user.Id,0,""));
+                         await Application.Current.MainPage.Navigation.PushAsync(new PaymentPage(user.Id,0,"","",""));
                      }
                      else if(typeUser.Equals(""))
                      {

@@ -6,15 +6,15 @@ using Insurance_app.Logic;
 using Insurance_app.Models;
 using Insurance_app.Service;
 using Insurance_app.SupportClasses;
+using Stripe;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
+using Application = Xamarin.Forms.Application;
 
 namespace Insurance_app.ViewModels {
   internal class PaymentViewModel: ObservableObject,IDisposable
   {
     private ImageSource image = ImageService.Instance.CardUnknown;
-    //public ImageSource CardFront => ImageService.Instance.CardFront;
-    //public ImageSource CardBack => ImageService.Instance.CardBack;
     private int length = 16;
     private string month = "";
     private string number = "";
@@ -23,6 +23,8 @@ namespace Insurance_app.ViewModels {
     private string year = "";
     private string zip = "";
     private double price;
+    private string email;
+    private string name;
     private double totalRewards;
     private bool rewardOverDraft;
 
@@ -33,12 +35,14 @@ namespace Insurance_app.ViewModels {
     private readonly UserManager userManager;
     private readonly PolicyManager policyManager;
     private readonly RewardManager rewardManager;
-    public PaymentViewModel(string customerId, double price,string zip)
+    public PaymentViewModel(string customerId, double price,string zip,string email,string name)
     {
       this.price = price;
       this.customerId = customerId;
       ZipDisplay = zip;
       PriceDisplay = $"{price}";
+      this.email = email;
+      this.name = name;
       PayCommand = new AsyncCommand(Pay);
       userManager = new UserManager();
       policyManager = new PolicyManager();
@@ -53,7 +57,7 @@ namespace Insurance_app.ViewModels {
         SetUpWaitDisplay = true;
         RewardsIsVisible = false;
         float earnedRewards = 0;
-        if (price>1 && !zip.Equals(""))
+        if (!zip.Equals(""))
         {
           (_,earnedRewards)=  await rewardManager.GetTotalRewards(App.RealmApp.CurrentUser, customerId);
         }
@@ -70,6 +74,8 @@ namespace Insurance_app.ViewModels {
         {
           var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
           ZipDisplay = customer.Address.PostCode;
+          email = customer.Email;
+          name = customer.Name;
         }
 
         
@@ -109,11 +115,20 @@ namespace Insurance_app.ViewModels {
     {
       try
       {
+        //MAKE sure we have internet connection here !!!!
+        // Take priceDisplay & RewardsDisplay when updating objects/and paying 
+        //TODO implement payment service======================
+        if (!App.NetConnection())
+        {
+          await Msg.Alert(Msg.NetworkConMsg);
+        }
+        CircularWaitDisplay = true;
+
+        if (!await PaymentService.PaymentAsync(number, Int32.Parse(year), Int32.Parse(month), verificationCode, zip, price, name, email))
+            throw new Exception("payment failed");
+        
         switch (IsCheckedDisplay)
         {
-          //MAKE sure we have internet connection here !!!!
-          // Take priceDisplay & RewardsDisplay when updating objects/and paying 
-          //TODO implement payment service======================
           case true when rewardOverDraft:
             rewardManager.UpdateRewardsWithOverdraft((float)price, App.RealmApp.CurrentUser, customerId);
             break;
@@ -121,18 +136,19 @@ namespace Insurance_app.ViewModels {
             rewardManager.UserRewards(App.RealmApp.CurrentUser, customerId);
             break;
         }
-        var customer = await policyManager.UpdatePolicyPrice
-          (App.RealmApp.CurrentUser,customerId,Converter.StringToDouble(pDisplay));
+        await policyManager.UpdatePolicyPrice(App.RealmApp.CurrentUser,customerId,Converter.StringToDouble(pDisplay));
         //TODO can send an invoice also here... (use customer email etc...s)
 
         await StaticOpt.Logout();
-        await Msg.Alert("Payment Successful,you can log in now");
+        await Msg.Alert("Payment completed successfully\nYou can log in now");
         await Application.Current.MainPage.Navigation.PopToRootAsync();
       }
       catch (Exception e)
       {
         Console.WriteLine(e);
+        await Msg.AlertError("Failed to complete\nPlease try again later...");
       }
+      CircularWaitDisplay = false;
     }
     //----------------------- Binding/support methods ------------------------------------------
     private string UpdateCardDetails(string value)
@@ -163,10 +179,15 @@ namespace Insurance_app.ViewModels {
 
     public int LengthDisplay
     {
-      get => length;
+      get => SetError(length);
       set => SetProperty(ref length, value);
     }
 
+    private int SetError(int value)
+    {
+      LengthError = $"{value}";
+      return value;
+    }
     public string NumberDisplay
     {
       get => UpdateCardDetails(number);
@@ -185,7 +206,12 @@ namespace Insurance_app.ViewModels {
       set => SetProperty(ref year, value);
     }
 
-    public string LengthError => $"Maximum length has to be : {LengthDisplay}";
+    private string lenError;
+    public string LengthError
+    {
+      get => $"\nCard has to be exactly {LengthDisplay} digits long\n";
+      set => SetProperty(ref lenError, value);
+    }
 
     public string VerificationCodeDisplay
     {
@@ -227,28 +253,36 @@ namespace Insurance_app.ViewModels {
     }
 
     private bool rewardsIsVisible;
+
     public bool RewardsIsVisible
     {
       get => rewardsIsVisible;
       set => SetProperty(ref rewardsIsVisible, value);
     }
 
-    public string IsValid()
+    public string Valid()
     {
-      if (MonthDisplay.Length < 1 || YearDisplay.Length < 1) return "";
-      string error = "";
-      var intMonth = int.Parse(MonthDisplay);
-      var intYear = int.Parse(YearDisplay);
-
-      if (intMonth < 1 || intMonth > 12) 
-        error = "Expiry month's value is not valid";
-
-
-      intYear += DateTime.Now.Year / 100 * 100;
+      var error = "";
+      if (NumberDisplay.Length < LengthDisplay)
+      {
+        error += $"{LengthError}\n";
+      }
       
-      if (intYear < DateTime.Now.Year || intYear > DateTime.Now.AddYears(16).Year)
-        error += "\nExpiry year's value is not valid";
+      if (MonthDisplay.Length < 1 || YearDisplay.Length < 2 || MonthDisplay.Length > 2 || YearDisplay.Length > 2)
+      {
+        error += "Month & Year values must be between 1 & 2 digits long\n";
+      }
+      else
+      {
+        var intMonth = int.Parse(MonthDisplay);
+        var intYear = int.Parse(YearDisplay);
+        if (intMonth < 1 || intMonth > 12) 
+          error += "Expiry month's value is not valid\n";
 
+        var thisYear = DateTime.Now.Year % 100;
+        if (intYear  < thisYear || intYear  > thisYear+16)
+          error += "Expiry year's value is not valid\n";
+      }
       return error;
     }
 

@@ -84,7 +84,7 @@ namespace Insurance_app.Logic
           return realmDb.GetAllUpdatedPolicies(user);
         }
 
-        public Task<Customer> UpdatePolicyPrice(User user, string customerId, double price)
+        public Task UpdatePolicyPrice(User user, string customerId, double price)
         {
            return realmDb.UpdatePolicyPrice(user, customerId, price);
         }

@@ -868,17 +868,18 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
         }
 
 
-        public async Task<Customer> UpdatePolicyPrice(User user, string customerId, double price)
+        public async Task UpdatePolicyPrice(User user, string customerId, double price)
         {
-            Customer customer = null;
             try
             {
                 await GetRealm(partition, user);
                 realm.Write(() =>
                 {
                    var now= DateTimeOffset.Now;
-                    customer = realm.Find<Customer>(customerId);
-                    var policy = customer.Policy.FirstOrDefault(
+                    var customer = realm.Find<Customer>(customerId);
+                    if (customer is null) throw new Exception("Customer is null :::::::::::::::UpdatePolicyPrice");
+                    
+                        var policy = customer.Policy.FirstOrDefault(
                         p => p.Owner == customerId && p.ExpiryDate > now
                              && p.PayedPrice == 0 && p.DelFlag == false);
                     if (policy != null) policy.PayedPrice = (float?) price;
@@ -888,11 +889,6 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
             {
                 Console.WriteLine(e);
             }
-
-            return customer;
         }
-
-
-        
     }
 }

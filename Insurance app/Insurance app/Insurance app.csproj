@@ -47,6 +47,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.0-preview.187" />
+    <PackageReference Include="Stripe.net" Version="39.97.0" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
     <PackageReference Include="Xam.Plugins.Forms.ProgressRing" Version="0.1.2" />
     <PackageReference Include="Xamarin.CommunityToolkit" Version="2.0.0" />

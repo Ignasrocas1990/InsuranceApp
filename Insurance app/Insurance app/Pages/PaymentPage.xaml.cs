@@ -13,10 +13,10 @@ namespace Insurance_app.Pages
     public partial class PaymentPage : LoadingPage
     {
         private bool back;
-        public PaymentPage(string customerId, double price, string zip)
+        public PaymentPage(string customerId, double price, string zip,string email,string name)
         {
             InitializeComponent();
-            BindingContext = new PaymentViewModel(customerId,price,zip);
+            BindingContext = new PaymentViewModel(customerId,price,zip,email,name);
         }
 
         protected override async void OnAppearing()
@@ -58,7 +58,7 @@ namespace Insurance_app.Pages
             try
             {
                 var vm = (PaymentViewModel)BindingContext;
-                var expiryDate = vm.IsValid();
+                var expiryDate = vm.Valid();
                 if (NumberValidator.IsValid && MonthValidator.IsValid && YearValidator.IsValid &&
                     SecurityCodeValidator.IsValid && expiryDate.Length<5)
                 {

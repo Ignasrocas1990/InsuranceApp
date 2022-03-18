@@ -29,9 +29,9 @@
                     <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
                                                          Flags="ValidateOnValueChanging" x:Name="NumberValidator"
                                                          InvalidStyle="{StaticResource InvalidEntry}">
-                        <xct:TextValidationBehavior MinimumLength="{Binding LengthDisplay}" xct:MultiValidationBehavior.Error="{Binding LengthError}" />
-                        <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MinimumCharacterCount="0" xct:MultiValidationBehavior.Error="Card Number has special char" />
-                        <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Card Number has spaces" />
+                        <xct:TextValidationBehavior MinimumLength="{Binding LengthDisplay}" MaximumLength="{Binding LengthDisplay}"/>
+                        <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Card Number cant have special char" />
+                        <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Card Number cant have spaces" />
                     </xct:MultiValidationBehavior>
                 </Entry.Behaviors>
             </Entry>
@@ -43,9 +43,9 @@
                     <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
                                                          Flags="ValidateOnValueChanging" x:Name="MonthValidator"
                                                          InvalidStyle="{StaticResource InvalidEntry}">
-                        <xct:TextValidationBehavior MinimumLength="2" xct:MultiValidationBehavior.Error="Month must have two numbers " />
-                        <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MinimumCharacterCount="0" xct:MultiValidationBehavior.Error="Month has special char" />
-                        <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Month has spaces" />
+                        <xct:TextValidationBehavior MinimumLength="1" MaximumLength="2"/>
+                        <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Month cant have special char" />
+                        <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Month cant have spaces" />
                     </xct:MultiValidationBehavior>
                 </Entry.Behaviors>
 
@@ -56,9 +56,9 @@
                     <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
                                                          Flags="ValidateOnValueChanging" x:Name="YearValidator"
                                                          InvalidStyle="{StaticResource InvalidEntry}">
-                        <xct:TextValidationBehavior MinimumLength="2" xct:MultiValidationBehavior.Error="Year must have two numbers " />
-                        <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MinimumCharacterCount="0" xct:MultiValidationBehavior.Error="Year has special char" />
-                        <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Year has spaces" />
+                        <xct:TextValidationBehavior MinimumLength="2" MaximumLength="2"/>
+                        <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Year cant have special char" />
+                        <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Year cant have spaces" />
                     </xct:MultiValidationBehavior>
                 </Entry.Behaviors>
             </Entry>
@@ -74,9 +74,9 @@
                     <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
                                                          Flags="ValidateOnValueChanging" x:Name="SecurityCodeValidator"
                                                          InvalidStyle="{StaticResource InvalidEntry}">
-                        <xct:TextValidationBehavior MinimumLength="3" MaximumLength="4" xct:MultiValidationBehavior.Error="Security Code must have between 3-4 numbers " />
-                        <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MinimumCharacterCount="0" xct:MultiValidationBehavior.Error="Security Code has special char" />
-                        <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Security Code has spaces" />
+                        <xct:TextValidationBehavior MinimumLength="3" MaximumLength="4" xct:MultiValidationBehavior.Error="Security Code must be between 3-4 numbers " />
+                        <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Security Code cant have special char" />
+                        <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Security Code cant have spaces" />
                     </xct:MultiValidationBehavior>
                 </Entry.Behaviors>
             </Entry>

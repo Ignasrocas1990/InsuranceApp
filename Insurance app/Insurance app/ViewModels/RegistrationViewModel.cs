@@ -71,7 +71,8 @@ namespace Insurance_app.ViewModels
 
                   await Msg.Alert("Registration completed successfully.\nRedirecting to payment page");
                    await Application.Current.MainPage.Navigation
-                       .PushModalAsync(new PaymentPage(customerId,Converter.StringToDouble(price),address.PostCode));
+                       .PushModalAsync(new PaymentPage(
+                           customerId,Converter.StringToDouble(price),address.PostCode,customer.Email,customer.Name));
                 }
                 else
                 {
