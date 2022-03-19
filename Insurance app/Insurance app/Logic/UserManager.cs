@@ -21,7 +21,7 @@ namespace Insurance_app.Logic
             realmDb = RealmDb.GetInstancePerPage();
 
         }
-        public async Task<string> Register(String email, String password)
+        public async Task<string> Register(string email, string password)
         {
             try
             {
@@ -159,15 +159,13 @@ namespace Insurance_app.Logic
          await  realmDb.UpdateCustomerSwitch(user, switchState);
         }
         
-        public async Task ResetPassword(string email,string name,HttpService api)
+        public async Task ResetPassword(string email,string name)
         {
             try
             {
-             
                 var tempPass = StaticOpt.TempPassGenerator();
                 await App.RealmApp.EmailPasswordAuth.CallResetPasswordFunctionAsync(email,tempPass);
-                api.ResetPasswordEmail(email,name, DateTime.Now, tempPass);
-               
+                HttpService.ResetPasswordEmail(email,name, DateTime.Now, tempPass);
             }
             catch (Exception e)
             {

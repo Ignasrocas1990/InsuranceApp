@@ -9,23 +9,13 @@ using Newtonsoft.Json;
 namespace Insurance_app.Service
 {
     
-    public class HttpService
+    public static class HttpService
     {
-        
-
-        
-        private HttpClient client;
-        //Func<String,double>convertToDouble =  x => double.Parse(x, CultureInfo.InvariantCulture);
-        public HttpService()
-        {
-            client = new HttpClient();
-        }
-        
-
-        public void CustomerNotifyEmail(string email, string name, DateTime date, string action)
+        public static void CustomerNotifyEmail(string email, string name, DateTime date, string action)
         {
             if (!App.NetConnection()) return;
 
+            var client = new HttpClient();
             var content = new StringContent(JsonConvert
                 .SerializeObject(new Dictionary<string,string>()
                 {
@@ -55,9 +45,10 @@ namespace Insurance_app.Service
                 Console.WriteLine("error not connected");
             }
         }
-        public void ClaimNotifyEmail(string email, string name, DateTime date,bool action,string reason)
+        public static void ClaimNotifyEmail(string email, string name, DateTime date,bool action,string reason)
         {
             if (!App.NetConnection()) return;
+            var client = new HttpClient();
             var actionString = action ? "Accepted" : "Denied";
             var content = new StringContent(JsonConvert
                     .SerializeObject(new Dictionary<string,string>()
@@ -90,10 +81,10 @@ namespace Insurance_app.Service
             }
         }
         
-        public void ResetPasswordEmail(string email, string name, DateTime date,string tempPass)
+        public static void ResetPasswordEmail(string email, string name, DateTime date,string tempPass)
         {
             if (!App.NetConnection()) return ;
-
+            var client = new HttpClient();
             var content = new StringContent(JsonConvert
                     .SerializeObject(new Dictionary<string,string>()
                     {
@@ -129,9 +120,10 @@ namespace Insurance_app.Service
         
         
         
-        public Task<HttpResponseMessage> CheckCompanyCode(string code)
+        public static Task<HttpResponseMessage> CheckCompanyCode(string code)
         {
             if (!App.NetConnection()) return null;
+            var client = new HttpClient();
             var content = new StringContent(JsonConvert
                     .SerializeObject(new Dictionary<string,string>(){{"code",code}})
                 ,Encoding.UTF8, "application/json");
@@ -158,7 +150,7 @@ namespace Insurance_app.Service
             return null;
         }
 
-        public async Task<string> SendQuoteRequest(int hospitals, int age, int cover, int hospitalExcess, int plan, int smoker)
+        public static async Task<string> SendQuoteRequest(int hospitals, int age, int cover, int hospitalExcess, int plan, int smoker)
         {
             var tempQuote = new Dictionary<string, int>()
             {
@@ -176,10 +168,10 @@ namespace Insurance_app.Service
          * Take raw data from sensor and pass it by http to predict
          * if customer walking
          */
-        private Task<HttpResponseMessage> Predict(Dictionary<String,int>quote)
+        private static Task<HttpResponseMessage> Predict(Dictionary<String,int>quote)
         {
             if (!App.NetConnection()) return null;
-
+            var client = new HttpClient();
             var content = new StringContent(JsonConvert.SerializeObject(quote),Encoding.UTF8, "application/json");
             if (App.NetConnection())
             {
@@ -194,7 +186,6 @@ namespace Insurance_app.Service
                     App.Connected = false;
                        
                 }
-                    
             }
             else
             {

@@ -12,13 +12,13 @@ namespace Insurance_app.ViewModels.ClientViewModels
 {
     public class ClientOClaimsViewModel:ObservableObject,IDisposable
     {
-        public ClaimManager ClaimManager;
+        private readonly ClaimManager claimManager;
         public ObservableRangeCollection<Claim> Claims { get; set; }
         public ICommand ClaimSelectedCommand { get; }
 
         public ClientOClaimsViewModel()
         {
-            ClaimManager = new ClaimManager();
+            claimManager = new ClaimManager();
             Claims = new ObservableRangeCollection<Claim>();
             ClaimSelectedCommand = new AsyncCommand<Claim>(SelectedClaim);
         }
@@ -30,7 +30,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
             try
             {
                 SetUpWaitDisplay = true;
-                Claims.ReplaceRange(await ClaimManager.GetAllOpenClaims(App.RealmApp.CurrentUser));
+                Claims.ReplaceRange(await claimManager.GetAllOpenClaims(App.RealmApp.CurrentUser));
             }
             catch (Exception e)
             {
@@ -69,7 +69,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
         }
         public void Dispose()
         {
-            Claims.Clear();
+            claimManager.Dispose();
         }
     }
 }

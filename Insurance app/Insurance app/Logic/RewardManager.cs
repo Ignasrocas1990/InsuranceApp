@@ -24,7 +24,8 @@ namespace Insurance_app.Logic
         public float GetRewardSum(List<Reward>rewards)
         {
             if (rewards.Count == 0) return 0;
-            return rewards.Where(reward => reward.Cost != null).Sum(reward => (float) reward.Cost);
+            return rewards.Where(r => r.FinDate != null && r.DelFlag == false)
+                .Sum(reward => (float) reward.Cost);
         }
         public async Task<Reward> FindReward(User user)
         {

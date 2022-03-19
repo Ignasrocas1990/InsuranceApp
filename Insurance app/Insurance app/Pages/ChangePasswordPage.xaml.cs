@@ -19,8 +19,7 @@ namespace Insurance_app.Pages
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            var vm = (ChangePassViewModel)BindingContext;
-            vm.Dispose();
+            ((ChangePassViewModel)BindingContext).Dispose();
         }
 
         private async void Button_OnClicked(object sender, EventArgs e)

@@ -37,8 +37,7 @@ namespace Insurance_app.Pages
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            var vm = (ReportViewModel) BindingContext;
-            vm.ReportManager.Dispose();
+            ((ReportViewModel) BindingContext).Dispose();
         }
     }
 }

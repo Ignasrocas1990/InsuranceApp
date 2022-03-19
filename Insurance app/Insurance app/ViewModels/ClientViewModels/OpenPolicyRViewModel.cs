@@ -13,21 +13,21 @@ namespace Insurance_app.ViewModels.ClientViewModels
     {
         public ObservableRangeCollection<Policy> Policies { get; set; }
         public ICommand PolicySelectedCommand { get; }
-        public PolicyManager PolicyManager;
+        private readonly PolicyManager policyManager;
         
         
         public OpenPolicyRViewModel()
         {
             Policies = new ObservableRangeCollection<Policy>();
             PolicySelectedCommand = new AsyncCommand<Policy>(SelectedPolicy);
-            PolicyManager = new PolicyManager();
+            policyManager = new PolicyManager();
         }
         public async Task Setup()
         {
             try
             {
                 SetUpWaitDisplay = true;
-                Policies.ReplaceRange(await PolicyManager.GetAllUpdatedPolicies(App.RealmApp.CurrentUser));
+                Policies.ReplaceRange(await policyManager.GetAllUpdatedPolicies(App.RealmApp.CurrentUser));
             }
             catch (Exception e)
             {
@@ -66,7 +66,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
         }
         public void Dispose()
         {
-            Policies.Clear();
+            policyManager.Dispose();
         }
     }
 }

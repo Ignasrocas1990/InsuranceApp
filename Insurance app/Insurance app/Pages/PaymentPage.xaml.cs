@@ -31,8 +31,8 @@ namespace Insurance_app.Pages
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            var vm = (PaymentViewModel)BindingContext;
-            vm.Dispose();
+            ((PaymentViewModel)BindingContext).Dispose();
+            
         }
 
 

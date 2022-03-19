@@ -28,16 +28,6 @@ namespace Insurance_app.Pages
                 Console.WriteLine(e);
             }
         }
-        
-        /*
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-            vm.Dispose();
-            return base.OnBackButtonPressed();
-           
-        }
-*/
         private async void Button_OnClicked(object sender, EventArgs e)
         {
              try

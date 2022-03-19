@@ -20,8 +20,7 @@ namespace Insurance_app.Pages.ClientPages
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            var vm = (ClientRegViewModel) BindingContext;
-            vm.UserManager.Dispose();
+            ((ClientRegViewModel) BindingContext).Dispose();
         }
 
         private async void OnClickedRegister(object sender, EventArgs e)

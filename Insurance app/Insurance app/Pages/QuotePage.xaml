@@ -14,6 +14,7 @@
     
     
         <Grid VerticalOptions="CenterAndExpand" RowSpacing="25" ColumnSpacing="0" Padding="30,0,30,0"
+              IsVisible="{Binding SetUpWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
               RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,*"  ColumnDefinitions="5*,5*">
         
                 <Label Text="Dob :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="0" />

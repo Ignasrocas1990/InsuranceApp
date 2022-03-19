@@ -4,6 +4,8 @@ using System.Windows.Input;
 using Insurance_app.Logic;
 using Insurance_app.Models;
 using Insurance_app.Pages;
+using Insurance_app.Service;
+using Insurance_app.SupportClasses;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
 
@@ -13,16 +15,15 @@ namespace Insurance_app.ViewModels.ClientViewModels
     public class ClientMainViewModel : ObservableObject,IDisposable
     {
         public ObservableRangeCollection<Customer> Customers { get; set; }
-        public readonly UserManager UserManager;
+        private readonly UserManager userManager;
         public ICommand StepViewCommand { get; }
         public ICommand CustomerDetailsCommand { get; }
         public ICommand CustomerClaimsCommand { get; }
-        
         public ICommand PolicyCommand { get; }
-        
+
         public ClientMainViewModel()
         {
-            UserManager = new UserManager();
+            userManager = new UserManager();
             Customers = new ObservableRangeCollection<Customer>();
             StepViewCommand = new AsyncCommand<string>(ViewSteps);
             CustomerDetailsCommand = new AsyncCommand<string>(ManageDetails);
@@ -35,7 +36,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
             try
             {
                 SetUpWaitDisplay = true;
-                Customers.ReplaceRange(await UserManager.GetAllCustomer(App.RealmApp.CurrentUser));
+                Customers.ReplaceRange(await userManager.GetAllCustomer(App.RealmApp.CurrentUser));
             }
             catch (Exception e)
             {
@@ -79,7 +80,6 @@ namespace Insurance_app.ViewModels.ClientViewModels
             var route = $"//{nameof(Report)}?CustomerId={customerId}";
             await Shell.Current.GoToAsync(route);
         }
-        
         private bool wait;
         public bool SetUpWaitDisplay
         {
@@ -97,6 +97,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
         public void Dispose()
         {
             Customers.Clear();
+            userManager.Dispose();
         }
     }
 }

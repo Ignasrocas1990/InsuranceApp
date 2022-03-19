@@ -14,8 +14,7 @@ namespace Insurance_app.Pages
         public LogInPage()
         {
             InitializeComponent();
-            var vm = new LogInViewModel();
-            BindingContext = vm;
+            BindingContext = new LogInViewModel();
 
         }
 
@@ -31,9 +30,7 @@ namespace Insurance_app.Pages
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            var vm = (LogInViewModel)BindingContext;
-            vm.Dispose();
-            
+            ((LogInViewModel)BindingContext).Dispose();
         }
     }
 }

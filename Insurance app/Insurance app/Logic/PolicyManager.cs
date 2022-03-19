@@ -12,7 +12,7 @@ namespace Insurance_app.Logic
     public class PolicyManager : IDisposable
     {
         public List<Policy> PreviousPolicies;
-        private RealmDb realmDb;
+        private readonly RealmDb realmDb;
 
         public PolicyManager()
         {

@@ -27,7 +27,6 @@ namespace Insurance_app.ViewModels
     {
 
         private readonly BleManager bleManager;
-        private readonly UserManager userManager;
         private readonly RewardManager rewardManager;
 
         //private Customer customer;
@@ -49,7 +48,6 @@ namespace Insurance_app.ViewModels
             bleManager = BleManager.GetInstance();
             bleManager.InfferEvent +=InferredRawData;
             rewardManager = new RewardManager();
-            userManager = new UserManager();
             SwitchCommand = new AsyncCommand(StartDataReceive);
             LogoutCommand = new AsyncCommand(Logout);
         }
@@ -93,8 +91,8 @@ namespace Insurance_app.ViewModels
             
                var (toggle, totalSum) = await rewardManager
                    .GetTotalRewards(App.RealmApp.CurrentUser,App.RealmApp.CurrentUser.Id);
-               TotalEarnedDisplay = $"{totalSum}";
-               Console.WriteLine("ble manager SetUpEarningsDisplay");
+               
+               TotalEarnedDisplay = totalSum.ToString("F");
                if (firstSetup)
                {
                    ToggleStateDisplay = toggle;
@@ -177,7 +175,7 @@ namespace Insurance_app.ViewModels
         private string totalEarnedDisplay;
         public string TotalEarnedDisplay
         {
-            get => $"Total Earned : {totalEarnedDisplay}";
+            get => $"Total Earned : {totalEarnedDisplay}€";
             set => SetProperty(ref totalEarnedDisplay, value);
         }
         
@@ -222,7 +220,7 @@ namespace Insurance_app.ViewModels
 
         public void Dispose()
         {
-            userManager.Dispose();
+            rewardManager.Dispose();
         }
     }
 }

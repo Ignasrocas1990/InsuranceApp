@@ -23,12 +23,11 @@ using Xamarin.CommunityToolkit.Extensions;
 
 namespace Insurance_app.ViewModels
 {
-    public class QuoteViewModel : ObservableObject
+    public class QuoteViewModel : ObservableObject,IDisposable
     {
         public ICommand GetQuotCommand { get; }
         public ICommand ResetPasswordCommand { get; }
         private int responseCounter = 0;
-        private HttpService api;
         private bool wait;
         private bool tooLate;
         private int hospitals;
@@ -48,8 +47,8 @@ namespace Insurance_app.ViewModels
         public IList<string> CoverList { get; }
         public IList<int> HospitalFeeList { get; }
         public IList<string> PlanList { get; }
-        public readonly UserManager UserManager;
-        private PolicyManager policyManager;
+        private readonly UserManager userManager;
+        private readonly PolicyManager policyManager;
         private string email;
         private string name;
 
@@ -63,11 +62,10 @@ namespace Insurance_app.ViewModels
            timer = new Timer(1000);
            timer.Elapsed += CheckResponseTime;
            GetQuotCommand = new AsyncCommand(GetQuote);
-           api = new HttpService();
            InfoCommand = new AsyncCommand<string>(StaticOpt.InfoPopup);
            ResetPasswordCommand = new AsyncCommand(ResetPassword);
            this.policyId = policyId;
-           UserManager = new UserManager();
+           userManager = new UserManager();
            policyManager = new PolicyManager();
 
        }
@@ -81,16 +79,17 @@ namespace Insurance_app.ViewModels
             {
                 //ObjectId.Parse(policyId);
                 customerId = App.RealmApp.CurrentUser.Id;
-               var customer = await UserManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
+               var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
                if (customer.Dob != null) SelectedDate = customer.Dob.Value.UtcDateTime;
                email = customer.Email;
                name = customer.Name;
+               IsExpiredCustomer = true;
+
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
-            IsExpiredCustomer = true;
             SetUpWaitDisplay = false;
         }
         
@@ -115,7 +114,7 @@ namespace Insurance_app.ViewModels
            {
                CircularWaitDisplay=true;
                 timer.Start();
-                price =  await api.SendQuoteRequest(hospitals, age, cover, hospitalExcess, plan, smoker);
+                price =  await HttpService.SendQuoteRequest(hospitals, age, cover, hospitalExcess, plan, smoker);
                 timer.Stop();
                 if (tooLate)
                 {
@@ -142,26 +141,31 @@ namespace Insurance_app.ViewModels
            }
            else if (action)
            {
-               CircularWaitDisplay = true;
-               await CreatePolicy(price);
-               await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
-               UserManager.Dispose();
-               await Msg.Alert( Msg.SuccessUpdateMsg);
-               await Application.Current.MainPage.Navigation.PopToRootAsync();
+               await CreatePolicyAndPay(price);
            }
+           
        }
 
-        private async Task CreatePolicy(string price)
+        private async Task CreatePolicyAndPay(string price)
         {
-            var expiryDate = DateTimeOffset.Now.AddMonths(1);
-            var priceFloat = Converter.GetPrice(price);
+            try
+            {
+                var expiryDate = DateTimeOffset.Now.AddMonths(1);
+                var priceFloat = Converter.GetPrice(price);
 
-            var policy = policyManager.RegisterPolicy(priceFloat,0.0f, CoverList[cover],
-                hospitalExcess, HospitalList[hospitals], PlanList[plan],
-                smoker, false,expiryDate,customerId);
-           await policyManager.AddPolicy(customerId, App.RealmApp.CurrentUser, policy);
-           
-           await Application.Current.MainPage.Navigation.PushModalAsync(new PaymentPage(null));
+                var policy = policyManager.RegisterPolicy(priceFloat,0.0f, CoverList[cover],
+                    hospitalExcess, HospitalList[hospitals], PlanList[plan],
+                    smoker, false,expiryDate,customerId);
+                CircularWaitDisplay = true;
+                await policyManager.AddPolicy(customerId, App.RealmApp.CurrentUser, policy);
+                await Application.Current.MainPage.Navigation.PushModalAsync(new PaymentPage(null));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            CircularWaitDisplay = false;
         }
 
         private async Task TransferToRegistration(int age,string price)
@@ -195,7 +199,7 @@ namespace Insurance_app.ViewModels
                 return;
             }
             CircularWaitDisplay = true;
-            await UserManager.ResetPassword(name, email,api);
+            await userManager.ResetPassword(email, name);
             CircularWaitDisplay = false;
            await Msg.Alert(Msg.ResetPassMsg);
         }
@@ -281,6 +285,11 @@ namespace Insurance_app.ViewModels
             set => SetProperty(ref setUpWait, value);
         }
 
-       
+
+        public void Dispose()
+        {
+            timer?.Dispose();
+            userManager?.Dispose();
+        }
     }
 }

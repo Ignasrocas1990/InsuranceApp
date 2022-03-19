@@ -15,23 +15,21 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels.ClientViewModels
 {
-    public class ClientRegViewModel : ObservableObject
+    public class ClientRegViewModel : ObservableObject,IDisposable
     {
         private string email="";
         private string pass="";
         private string fname="";
         private bool wait;
         private string lname="";
-        private HttpService inf;
         private int attempt = 0;
         private bool codeIsValid;
-        public readonly UserManager UserManager;
+        private readonly UserManager userManager;
 
 
         public ClientRegViewModel()
         {
-            inf = new HttpService();
-            UserManager = new UserManager();
+            userManager = new UserManager();
         }
 
         public async Task Register()
@@ -43,10 +41,10 @@ namespace Insurance_app.ViewModels.ClientViewModels
                 //TODO need to change the API so takes over the code when used 
                 try
                 {
-                    await UserManager.Register(email, pass);
+                    await userManager.Register(email, pass);
                     var user = await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, pass));
                     if (user is null) throw new Exception("Registration failed");
-                    var saved = await UserManager.CreateClient(user, email, fname, lname, code);
+                    var saved = await userManager.CreateClient(user, email, fname, lname, code);
                     if (!saved)
                     {
                         throw new Exception("Registration failed");
@@ -56,14 +54,15 @@ namespace Insurance_app.ViewModels.ClientViewModels
                     {
                         await App.RealmApp.CurrentUser.LogOutAsync();
                     }
-                    UserManager.Dispose();
+                    userManager.Dispose();
                     
-                    await Application.Current.MainPage.DisplayAlert("notice", "Successfully registered", "close");
+                    await Msg.Alert("Successfully registered");
+                    
                     await Application.Current.MainPage.Navigation.PopToRootAsync();
                 }
                 catch (Exception e)
                 {
-                    await Application.Current.MainPage.DisplayAlert("notice", e.Message, "close");
+                   await Msg.AlertError(e.Message);
                 }
             }
             CircularWaitDisplay = false;
@@ -75,16 +74,15 @@ namespace Insurance_app.ViewModels.ClientViewModels
             {
                 if (!App.NetConnection())
                 {
-                    await Application.Current.MainPage.DisplayAlert(Msg.Notice, Msg.NetworkConMsg, "close");
+                    await Msg.AlertError(Msg.NetworkConMsg);
                     return;
                 }
                 if (attempt >= 3)
                 {
-                    await Application.Current.MainPage.DisplayAlert(Msg.Error,
-                        "You have been blocked for 3min\nToo many attempts", "close");
+                    await Msg.AlertError("You have been blocked for 3min\nToo many attempts");
                     return;
                 }
-                var response = await inf.CheckCompanyCode(code);
+                var response = await HttpService.CheckCompanyCode(code);
                 var sResponse = await response.Content.ReadAsStringAsync();
                 if (sResponse.Equals("ok"))
                 {
@@ -93,8 +91,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
                 else
                 {
                     CheckAttempt();
-                    await Application.Current.MainPage.DisplayAlert("Error", "The code provided is inValid",
-                        "close");
+                    await Msg.AlertError( "The code provided is inValid");
                 }
             }
             catch (Exception e)
@@ -163,6 +160,11 @@ namespace Insurance_app.ViewModels.ClientViewModels
         {
             get => codeIsValid;
             set => SetProperty(ref codeIsValid, value);
+        }
+
+        public void Dispose()
+        {
+            userManager.Dispose();
         }
     }
 }

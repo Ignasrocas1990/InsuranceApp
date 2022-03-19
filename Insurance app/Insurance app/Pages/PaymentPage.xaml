@@ -18,7 +18,7 @@
                     IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}">
            
            <Label Text="{Binding PriceDisplay}" Style="{StaticResource NormalLabel}" HorizontalTextAlignment="Center"/>
-        <Image x:Name="HeroImage" HeightRequest="100" Margin="30" />
+        <Image x:Name="HeroImage" HeightRequest="80" Margin="20" />
         <Label Text="Please enter your card details" Style="{StaticResource NormalLabel}" HorizontalTextAlignment="Center" />
 
         <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Padding="10">
@@ -81,7 +81,7 @@
                 </Entry.Behaviors>
             </Entry>
         </StackLayout>
-           <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Padding="25,10,10,20">
+           <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Padding="15,10,10,10">
             <Label Text="Post Code :" Style="{StaticResource NormalLabel}"/>
             <Label  Text="{Binding ZipDisplay}" Style="{StaticResource NormalLabel}"/>
         </StackLayout>

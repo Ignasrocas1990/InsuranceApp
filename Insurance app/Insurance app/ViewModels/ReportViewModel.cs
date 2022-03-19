@@ -13,11 +13,11 @@ namespace Insurance_app.ViewModels
     [QueryProperty(nameof(CustomerId), "CustomerId")]
     public class ReportViewModel : ObservableObject,IDisposable
     {
-        public readonly ReportManager ReportManager;
+        private readonly ReportManager reportManager;
         private string customerId = "";
         public ReportViewModel()
         {
-            ReportManager = new ReportManager();
+            reportManager = new ReportManager();
         }
         
         public async Task SetUp()
@@ -26,11 +26,11 @@ namespace Insurance_app.ViewModels
             {
                 customerId = App.RealmApp.CurrentUser.Id;
             }
-            var allMovData = await ReportManager.GetAllMovData(customerId, App.RealmApp.CurrentUser);
+            var allMovData = await reportManager.GetAllMovData(customerId, App.RealmApp.CurrentUser);
             if (customerId == App.RealmApp.CurrentUser.Id)
             {
-                var dailyMovData =  ReportManager.CountDailyMovData(allMovData);
-                var (emptyDaysCount, entries) = ReportManager.CreateDailyLineChart(dailyMovData);
+                var dailyMovData =  reportManager.CountDailyMovData(allMovData);
+                var (emptyDaysCount, entries) = reportManager.CreateDailyLineChart(dailyMovData);
 
                 if (emptyDaysCount==7)
                 {
@@ -47,8 +47,8 @@ namespace Insurance_app.ViewModels
 
             if ((WeekChartIsVisible && CustomerId == App.RealmApp.CurrentUser.Id) || CustomerId != App.RealmApp.CurrentUser.Id)
             {
-                var weeklyMovData =ReportManager.CountWeeklyMovData(allMovData);
-                var (emptyWeekCount, weeklyEntries) = ReportManager.CreateWeeklyLineChart(weeklyMovData);
+                var weeklyMovData =reportManager.CountWeeklyMovData(allMovData);
+                var (emptyWeekCount, weeklyEntries) = reportManager.CreateWeeklyLineChart(weeklyMovData);
             
                 if (emptyWeekCount>2)
                 {
@@ -131,7 +131,7 @@ namespace Insurance_app.ViewModels
 
         public void Dispose()
         {
-            ReportManager.Dispose();
+            reportManager.Dispose();
         }
     }
 }

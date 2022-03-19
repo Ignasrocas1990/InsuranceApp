@@ -26,9 +26,8 @@ namespace Insurance_app.Pages.ClientPages
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            var vm = (ClientOClaimsViewModel)BindingContext;
-            vm.Dispose();
-            vm.ClaimManager.Dispose();
+            ((ClientOClaimsViewModel)BindingContext).Dispose();
+
         }
     }
 }

@@ -79,8 +79,7 @@ namespace Insurance_app.Pages
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            var vm = (ProfileViewModel) BindingContext;
-            vm.Dispose();
+            ((ProfileViewModel) BindingContext).Dispose();
         }
     }
 }

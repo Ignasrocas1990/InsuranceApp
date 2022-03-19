@@ -84,60 +84,61 @@ namespace Insurance_app.ViewModels
         {
             try
             {
+                if (!App.NetConnection())
+                { 
+                    await Msg.AlertError(Msg.NetworkConMsg);
+                   return;
+                }
                 CircularWaitDisplay = true;
-                if (App.NetConnection())
-                {
-                    if (!emailIsValid || !passIsValid )
-                    {
-                        throw new Exception("Log in details are not invalid");
-                    }
 
-                    var user = await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
-                    if (user is null) throw new Exception("User fail log in");
+                if (!emailIsValid || !passIsValid )
+                {
+                    throw new Exception("Log in details are not invalid");
+                }
+
+                var user = await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
                     
-                    //await CleanDatabase();//TODO remove when submitting -------------------------------------------------
+                //await CleanDatabase();//TODO remove when submitting -------------------------------------------------
                     
-                     var typeUser = await userManager.FindTypeUser(user);
-                     if (typeUser.Equals($"{UserType.Customer}"))
-                     {
-                         Application.Current.MainPage = new AppShell();
-                         await Shell.Current.GoToAsync($"//{nameof(HomePage)}?Email={email}&Pass={password}",true);
-                     }
-                     else if (typeUser.Equals($"{UserType.Client}"))
-                     {
-                         Application.Current.MainPage = new ClientShell();
-                         await Shell.Current.GoToAsync($"//{nameof(ClientMainPage)}",true);
-                     }else if (typeUser.Equals($"{UserType.UnpaidCustomer}"))
-                     {
-                         await Msg.Alert( "Seems like you haven't payed yet.\nDirecting to payment page...");
-                         await Application.Current.MainPage.Navigation.PushAsync(new PaymentPage(null));
-                     }
-                     else if(typeUser.Equals(""))
-                     {
-                         await ExistUser();
-                     }
-                     else
-                     {
-                         var answer = await Application.Current.MainPage.DisplayAlert(Msg.Notice, ExpiredCustomerStr,
-                            CreateNewAccStr,ResetStr );
-                         if (answer)
-                         {
-                             await ExistUser();
-                             QuoteCommand.Execute(null);
-                         }
-                         else
-                         {
-                             await Application.Current.MainPage.Navigation.PushAsync(new QuotePage(typeUser),true);
-                         }
-                     }
+                var typeUser = await userManager.FindTypeUser(user);
+                if (typeUser.Equals($"{UserType.Customer}"))
+                {
+                    Application.Current.MainPage = new AppShell();
+                    await Shell.Current.GoToAsync($"//{nameof(HomePage)}?Email={email}&Pass={password}",true);
+                }
+                else if (typeUser.Equals($"{UserType.Client}"))
+                {
+                    Application.Current.MainPage = new ClientShell();
+                    await Shell.Current.GoToAsync($"//{nameof(ClientMainPage)}",true);
+                }else if (typeUser.Equals($"{UserType.UnpaidCustomer}"))
+                {
+                    await Msg.Alert( "Seems like you haven't payed yet.\nDirecting to payment page...");
+                    await Application.Current.MainPage.Navigation.PushAsync(new PaymentPage(null));
+                }
+                else if(typeUser.Equals(""))
+                {
+                    await ExistUser();
                 }
                 else
                 {
-                    throw new Exception(Msg.NetworkConMsg);
+                    var answer = await Application.Current.MainPage.DisplayAlert(Msg.Notice, ExpiredCustomerStr,
+                        CreateNewAccStr,ResetStr );
+                    if (answer)
+                    {
+                        await ExistUser();
+                        QuoteCommand.Execute(null);
+                    }
+                    else
+                    {
+                        await Application.Current.MainPage.Navigation.PushAsync(new QuotePage(typeUser),true);
+                    }
                 }
+                
+
             }
-            catch // throws error in-case password is invalid
+            catch (Exception e)
             {
+                Console.WriteLine(e);
                 await Msg.AlertError("Invalid Credentials");
             }
             CircularWaitDisplay = false;

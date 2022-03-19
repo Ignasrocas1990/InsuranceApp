@@ -35,7 +35,6 @@ namespace Insurance_app.ViewModels
         private string city="";
         private Address address;
         private string customerId="";
-        private HttpService api;
         public ICommand UpdateCommand { get; }
         public ICommand AddressCommand { get; }
         public ICommand ResetPasswordCommand { get; }
@@ -47,7 +46,6 @@ namespace Insurance_app.ViewModels
             AddressCommand = new AsyncCommand(UpdateAddress);
             UpdateCommand = new AsyncCommand(Update);
             ResetPasswordCommand = new AsyncCommand(ResetPassword);
-            api = new HttpService();
         }
         public async Task Setup()
         {
@@ -137,15 +135,25 @@ namespace Insurance_app.ViewModels
         }
         private async Task ResetPassword()
         {
-            if (!App.NetConnection())
+
+            try
             {
-                await Application.Current.MainPage.DisplayAlert(Msg.Notice, Msg.NetworkConMsg, "close");
-                return;
+                if (!App.NetConnection())
+                {
+                    await Msg.AlertError(Msg.NetworkConMsg);
+                    return;
+                }
+            
+                CircularWaitDisplay = true;
+                await UserManager.ResetPassword(name, email);
+                CircularWaitDisplay = false;
+                await Msg.Alert(Msg.ResetPassMsg);
             }
-            CircularWaitDisplay = true;
-            await UserManager.ResetPassword(name, email,api);
-            CircularWaitDisplay = false;
-            await Application.Current.MainPage.DisplayAlert(Msg.Notice,Msg.ResetPassMsg, "close");
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                await Msg.AlertError("Password Reset Failed");
+            }
         }
 
         public string NameDisplay

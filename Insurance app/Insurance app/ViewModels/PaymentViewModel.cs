@@ -63,6 +63,7 @@ namespace Insurance_app.ViewModels {
           if (earnedRewards > 0)
           {
             totalRewards = Converter.FloatToDouble(earnedRewards);
+            RewardsDisplay = earnedRewards.ToString("F");
             RewardsIsVisible = true;
           }
          
@@ -113,8 +114,9 @@ namespace Insurance_app.ViewModels {
           await Msg.Alert(Msg.NetworkConMsg);
         }
         CircularWaitDisplay = true;
-        
-        if (!await PaymentService.PaymentAsync(number, Int32.Parse(year), Int32.Parse(month), verificationCode, zip, price, name, email))
+        var payPrice = Converter.StringToFloat(pDisplay);
+        if (!await PaymentService.PaymentAsync(number, 
+              int.Parse(year), int.Parse(month), verificationCode, zip, payPrice, name, email))
             throw new Exception("payment failed");
         var user = App.RealmApp.CurrentUser;
         switch (IsCheckedDisplay)
@@ -130,11 +132,11 @@ namespace Insurance_app.ViewModels {
         var currentPolicy = policyManager.FindUnpayedPolicy(customer);
         if (currentPolicy is null) throw new Exception("Current policy is null");
           
-        await policyManager.UpdatePolicyPrice(currentPolicy,user,Converter.StringToFloat(pDisplay));
+        await policyManager.UpdatePolicyPrice(currentPolicy,user,payPrice);
         
         // can send an invoice also here... (use customer email etc...s)
-        await StaticOpt.Logout();
         await Msg.Alert("Payment completed successfully\nYou can log in now");
+        await StaticOpt.Logout();
         await Application.Current.MainPage.Navigation.PopToRootAsync();
       }
       catch (Exception e)
@@ -236,7 +238,7 @@ namespace Insurance_app.ViewModels {
     private string rewards;
     public string RewardsDisplay
     {
-      get => "€"+rewards;
+      get => $"Use earned rewards : {rewards}€";
       set => SetProperty(ref rewards, value);
     }
     private bool circularWait;

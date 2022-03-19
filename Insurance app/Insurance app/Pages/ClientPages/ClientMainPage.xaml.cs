@@ -27,9 +27,7 @@ namespace Insurance_app.Pages.ClientPages
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            var vm = (ClientMainViewModel)BindingContext;
-            ClientMainViewModel.Dispose();
-            vm.UserManager.Dispose();
+            ((ClientMainViewModel)BindingContext).Dispose();
         }
 
         private void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)

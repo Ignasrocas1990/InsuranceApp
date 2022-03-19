@@ -14,7 +14,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
         public ICommand CloseCommand { get; }
         public ObservableRangeCollection<Policy> PreviousPolicies { get; set; }
 
-        public PPolicyPopupViewModel(PreviousPolicyPopup popup, List<Policy> previousPolicies)
+        public PPolicyPopupViewModel(PreviousPolicyPopup popup, IEnumerable<Policy> previousPolicies)
         {
             this.popup = popup;
             PreviousPolicies = new ObservableRangeCollection<Policy>(previousPolicies);

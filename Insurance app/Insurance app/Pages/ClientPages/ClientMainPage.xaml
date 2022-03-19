@@ -37,6 +37,7 @@
                             
                             <ToolbarItem Text="Mov Report" Command="{Binding Source={x:Reference ClientMainViewModel},
                             Path=StepViewCommand}" CommandParameter="{Binding .Id}"/>
+                            
                         </ViewCell.ContextActions>
                     <Grid Padding="10">
                     <Frame Style="{StaticResource ViewModelFrame}">

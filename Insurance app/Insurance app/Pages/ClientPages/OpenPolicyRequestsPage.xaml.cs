@@ -27,9 +27,7 @@ namespace Insurance_app.Pages.ClientPages
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            var vm = (OpenPolicyRViewModel)BindingContext;
-            vm.Dispose();
-            vm.PolicyManager.Dispose();
+            ((OpenPolicyRViewModel)BindingContext).Dispose();
         }
     }
 }

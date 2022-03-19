@@ -22,7 +22,7 @@ using Xamarin.Forms.Internals;
 namespace Insurance_app.ViewModels
 {
     [QueryProperty(nameof(CustomerId), "CustomerId")]
-    public class PolicyViewModel : ObservableObject
+    public class PolicyViewModel : ObservableObject,IDisposable
     {
         private const string EmailSubject = "Policy update";
         private const string EmailPolicyMsg = "Policy change request has been";
@@ -49,8 +49,7 @@ namespace Insurance_app.ViewModels
         public IList<int> HospitalFeeList { get; }
         public IList<string> PlanList { get; } 
         private readonly PolicyManager policyManager;
-        private readonly HttpService api;
-        public readonly UserManager UserManager;
+        private readonly UserManager userManager;
         private string customerId = "";
         
         
@@ -62,8 +61,7 @@ namespace Insurance_app.ViewModels
             ViewPrevPoliciesCommand = new AsyncCommand(ViewPrevPolicies);
             ResolveUpdateCommand = new AsyncCommand(ResolveUpdate);
             policyManager = new PolicyManager();
-            UserManager = new UserManager();
-            api = new HttpService();
+            userManager = new UserManager();
             timer = new Timer(1000);
             timer.Elapsed += CheckResponseTime;
             CoverList = Enum.GetNames(typeof(StaticOpt.CoverEnum)).ToList();
@@ -151,7 +149,7 @@ namespace Insurance_app.ViewModels
                 var age = DateTime.Now.Year - dob.Value.Year;
                 
                 timer.Start();
-                var newPrice = await api.SendQuoteRequest(hospitals, age, cover, fee, plan, smoker);
+                var newPrice = await HttpService.SendQuoteRequest(hospitals, age, cover, fee, plan, smoker);
                 CircularWaitDisplay = false;
                 timer.Stop();
                 if (tooLate)
@@ -254,7 +252,7 @@ namespace Insurance_app.ViewModels
                     var customer = await policyManager.AllowUpdate(customerId,App.RealmApp.CurrentUser,answer);
                     if (customer !=null)
                     {
-                        api.CustomerNotifyEmail(customer.Email, customer.Name, DateTime.Now, $"{answerString}'ed");
+                        HttpService.CustomerNotifyEmail(customer.Email, customer.Name, DateTime.Now, $"{answerString}'ed");
                         await Shell.Current.DisplayAlert(Msg.Notice, Msg.EmailSent, "close");
                     }
                     
@@ -271,7 +269,7 @@ namespace Insurance_app.ViewModels
         private async Task GetPreviousPolicies() => 
             await policyManager.GetPreviousPolicies(customerId,App.RealmApp.CurrentUser);
         private async Task GetCurrentCustomer() => 
-            dob = await UserManager.GetCustomersDob(customerId,App.RealmApp.CurrentUser);
+            dob = await userManager.GetCustomersDob(customerId,App.RealmApp.CurrentUser);
 
         private async void CheckResponseTime(object o, ElapsedEventArgs e)
         {
@@ -386,6 +384,13 @@ namespace Insurance_app.ViewModels
         {
             get => setUpWait;
             set => SetProperty(ref setUpWait, value);
+        }
+
+        public void Dispose()
+        {
+            timer?.Dispose();
+            policyManager?.Dispose();
+            userManager?.Dispose();
         }
     }
 }

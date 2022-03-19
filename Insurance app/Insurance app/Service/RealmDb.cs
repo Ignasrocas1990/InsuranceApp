@@ -318,7 +318,7 @@ namespace Insurance_app.Service
                 realm.Write(()=>
                 {
                     var customer = realm.Find<Customer>(user.Id);
-                    reward = customer.Reward.FirstOrDefault(r => r.FinDate == null);
+                    reward = customer.Reward.FirstOrDefault(r => r.FinDate == null && r.DelFlag == false);
                     
                     //find reward count this month (25 = 25%)
                     var currentDate = DateTimeOffset.Now;
@@ -791,7 +791,6 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
             }
             catch (Exception e)
             {
-                realm = null;
                 Console.WriteLine($"GetRealm,realm error > \n {e.Message}");
                 Console.WriteLine($"GetRealm, inner exception > {e.InnerException}");
             }

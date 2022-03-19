@@ -35,7 +35,6 @@ namespace Insurance_app.ViewModels
         private const string AddExtraStr = "Add Extra info";
         private string customerId = "";
         private string extraInfo="";
-        private HttpService api;
         
 
         public ClaimViewModel()
@@ -45,8 +44,6 @@ namespace Insurance_app.ViewModels
             ResolveClaimCommand = new AsyncCommand(ResolveClaim);
             ClaimManager = new ClaimManager();
             AddInfoCommand = new AsyncCommand(AddExtraInfo);
-            api = new HttpService();
-
         }
         
 
@@ -152,7 +149,7 @@ namespace Insurance_app.ViewModels
                 var customer = await ClaimManager.ResolveClaim(customerId,App.RealmApp.CurrentUser,reason,action);
                 if (customer !=null)
                 {
-                    api.ClaimNotifyEmail(customer.Email, customer.Name, DateTime.Now,action,reason);
+                    HttpService.ClaimNotifyEmail(customer.Email, customer.Name, DateTime.Now,action,reason);
                     await Shell.Current.DisplayAlert(Msg.Notice, Msg.EmailSent, "close");
                 }
                 
