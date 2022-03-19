@@ -163,7 +163,7 @@ namespace Insurance_app.Logic
         {
             try
             {
-                var tempPass = StaticOpt.TempPassGenerator();
+                var tempPass = StaticOpt.TempPassGenerator(6,true);
                 await App.RealmApp.EmailPasswordAuth.CallResetPasswordFunctionAsync(email,tempPass);
                 HttpService.ResetPasswordEmail(email,name, DateTime.Now, tempPass);
             }

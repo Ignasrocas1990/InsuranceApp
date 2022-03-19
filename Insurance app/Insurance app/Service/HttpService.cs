@@ -11,6 +11,38 @@ namespace Insurance_app.Service
     
     public static class HttpService
     {
+        
+        public static void EmailConfirm(string email, DateTime date, string code)
+        {
+            if (!App.NetConnection()) return;
+
+            var client = new HttpClient();
+            var content = new StringContent(JsonConvert
+                    .SerializeObject(new Dictionary<string,string>()
+                    {
+                        {"email",email},
+                        {"code",code},
+                        {"date",$"{date:D}"}
+                    })
+                ,Encoding.UTF8, "application/json");
+            
+            if (App.NetConnection())
+            {
+                try
+                {
+                    client.PostAsync(StaticOpt.EmailConfirm, content);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"fail to send { e }");
+                    App.Connected = false;
+                }
+            }
+            else
+            {
+                Console.WriteLine("error not connected");
+            }
+        }
         public static void CustomerNotifyEmail(string email, string name, DateTime date, string action)
         {
             if (!App.NetConnection()) return;

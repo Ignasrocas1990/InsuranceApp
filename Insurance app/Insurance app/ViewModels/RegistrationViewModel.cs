@@ -7,6 +7,7 @@ using Insurance_app.Logic;
 using Insurance_app.Models;
 using Insurance_app.Pages;
 using Insurance_app.Pages.Popups;
+using Insurance_app.Service;
 using Insurance_app.SupportClasses;
 using Newtonsoft.Json;
 using Realms.Sync;
@@ -22,6 +23,7 @@ namespace Insurance_app.ViewModels
     {
         private readonly Dictionary<string, string> quote;
         public readonly string AddressSText = "Address saved";
+        public ICommand ConfirmEmailCommand { get; }
         private bool wait;
         private string price="";
         private string email="";
@@ -29,6 +31,7 @@ namespace Insurance_app.ViewModels
         private string fName="";
         private string lName="";
         private string phoneNr="";
+        private string code = "";
         public string AddressText = "Add address please";
         private readonly UserManager userManager;
         private readonly PolicyManager policyManager;
@@ -40,10 +43,10 @@ namespace Insurance_app.ViewModels
             userManager = new UserManager();
             policyManager = new PolicyManager();
             AddressCommand = new AsyncCommand(GetAddress);
-            PriceDisplay = price;
+            ConfirmEmailCommand = new AsyncCommand(ConfirmEmail);
+            this.price = price;
             quote = tempQuote;
         }
-
         public async Task Register()
         {
             try
@@ -85,7 +88,46 @@ namespace Insurance_app.ViewModels
                 Console.WriteLine(e);
             }
         }
-
+        private async Task ConfirmEmail()
+        {
+            try
+            {
+                if (!App.NetConnection())
+                {
+                    await Msg.AlertError(Msg.NetworkConMsg);
+                    return;
+                }
+                if (code == "")
+                {
+                    code = StaticOpt.TempPassGenerator(6,false);
+                    HttpService.EmailConfirm(email, DateTime.Now.Date, code);
+                }
+                var result = await Application.Current
+                    .MainPage.DisplayPromptAsync(
+                        "Email Confirmation", "Please enter email confirmation code",
+                        "submit", "cancel", "check your email");
+                if (result != code)
+                {
+                    var answer = await Application.Current.MainPage
+                        .DisplayAlert("Email code", "Email Code is invalid", "Try again later", "Resend new Code");
+                    if (!answer)
+                    {
+                        code = "";
+                        ConfirmEmailCommand.Execute(null);
+                    }
+                }
+                else
+                {
+                    EmailNotConfirmedDisplay = false;
+                    EmailConfirmedDisplay = true;
+                    await Msg.Alert("Email has been confirmed successfully");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
         private DateTimeOffset GetDob()
         {
             try
@@ -149,18 +191,24 @@ namespace Insurance_app.ViewModels
             get => AddressText;
             set => SetProperty(ref AddressText, value);
         }
-        public string PriceDisplay
+        private bool emailConfirmed;
+        public bool EmailConfirmedDisplay
         {
-            get => price;
-            set => SetProperty(ref price, value);
+            get => emailConfirmed;
+            set => SetProperty(ref emailConfirmed, value);
         }
-        
         private bool setUpWait;
-
         public bool SetUpWaitDisplay
         {
             get => setUpWait;
             set => SetProperty(ref setUpWait, value);
+        }
+
+        private bool notConfirmed;
+        public bool EmailNotConfirmedDisplay
+        {
+            get => notConfirmed;
+            set => SetProperty(ref notConfirmed, value);
         }
 
         public void Dispose()

@@ -5,12 +5,10 @@ from flask import Flask, request
 import joblib
 import smtplib
 from email.mime.text import MIMEText
-import random
-#from flask_restful import Api, Resource, reqparse
-#import numpy as np
 
 app = Flask(__name__)
 model = joblib.load('planModel')
+
 codeList = ["client","client2","client3"]
 codeTaken = [False,False,False]
 
@@ -18,26 +16,30 @@ codeTaken = [False,False,False]
 def home():
     return "nobody is here"
 
-@app.route('/email', methods=['POST'])
-def send_email_confirm():
+
+@app.route('/confirmationEmail', methods=['POST'])
+def confirmation_email():
     try:
         data = request.get_json(force=True)  # Get data posted as a json
-    #Create your secure SMTP session
-        smtp = smtplib.SMTP('smtp.gmail.com', 587)
-        smtp.starttls()
-        smtp.login("dinamicinsuranceapp@gmail.com","3b3f134bec5872745c2ee67e245329777b361ac6fc4c1ee5a738613f8af72d52")
 
-        # create email string
-        text =f"Please follow link below back to your application \n {application}"
-        msg = MIMEText(text)
-        msg['Subject'] = 'Dinamic Insurance Quote'
-        msg['From'] = 'dinamicinsuranceapp@gmail.com'
-        msg['To'] =  data['email']           #Change this
+        if(data != None):
+            #Create your secure SMTP session
+            smtp = smtplib.SMTP('smtp.gmail.com', 587)
+            smtp.starttls()
+            smtp.login("dinamicinsuranceapp@gmail.com","3b3f134bec5872745c2ee67e245329777b361ac6fc4c1ee5a738613f8af72d52")
 
-        #send email
-        smtp.sendmail("dinamicinsuranceapp@gmail.com", data['email'],msg.as_string()) # ignas@gmail.com  to inputed
-        smtp.quit()
-        return "sent"
+            # create email string
+            text =f"\nDear Customer\nPlease find confirmation code below.\n\n\nEmail Confirmation Code : {data['code']}\n\n\nKind regards.\nDynamic Personal Insurance™\n{data['date']}\n\nP.S. This is an automated email.\nPlease do not respond"
+            msg = MIMEText(text)
+            msg['Subject'] = 'Email confirmation '
+            msg['From'] = 'Dynamic Insurance App'
+            msg['To'] =  data['email']
+
+            #send email
+            smtp.sendmail("", data['email'],msg.as_string())
+            smtp.quit()
+            return "sent"
+        return "error"
 
     except Exception as ex:
         return "error"
@@ -54,10 +56,10 @@ def send_email_notification():
             smtp.login("dinamicinsuranceapp@gmail.com","3b3f134bec5872745c2ee67e245329777b361ac6fc4c1ee5a738613f8af72d52")
 
             # create email string
-            text =f"Dear {data['name']}\n\nThe Policy request has been {data['action']}\n\nPlease contact support if any questions arises\nKind regards.\nDinamic Personal Insurance\n{data['date']}"
+            text =f"\nDear {data['name']}\n\nThe Policy request has been {data['action']}\n\nPlease contact support if any questions arises\nKind regards.\nDynamic Personal Insurance\n{data['date']}"
             msg = MIMEText(text)
-            msg['Subject'] = 'Dinamic Insurance Quote'
-            msg['From'] = 'dinamicinsuranceapp@gmail.com'
+            msg['Subject'] = 'Policy update'
+            msg['From'] = 'Dynamic Insurance App'
             msg['To'] =  data['email']
 
             #send email
@@ -82,14 +84,14 @@ def send_email_notification2():
             action = data['action']
             text = ""
             if(action == "Accepted"):
-                text =f"Dear {data['name']}\n\nThe Claim has been Accepted.\nFurther details will be available soon.\n\nKind regards.\nDinamic Personal Insurance\n{data['date']}"
+                text =f"\nDear {data['name']}\n\nThe Claim has been Accepted.\nFurther details will be available soon.\n\nKind regards.\nDynamic Personal Insurance\n{data['date']}"
             elif(action == "Denied"):
-                text =f"Dear {data['name']}\n\nThe Claim has been Denied.\nReason: {data['reason']}\nFurther details will be available soon.\n\nKind regards.\nDinamic Personal Insurance\n{data['date']}"
+                text =f"\nDear {data['name']}\n\nThe Claim has been Denied.\nReason: {data['reason']}\nFurther details will be available soon.\n\nKind regards.\nDynamic Personal Insurance\n{data['date']}"
 
             # create email string
             msg = MIMEText(text)
-            msg['Subject'] = 'Dinamic Insurance Quote'
-            msg['From'] = 'dinamicinsuranceapp@gmail.com'
+            msg['Subject'] = 'Claim'
+            msg['From'] = 'Dynamic Insurance App'
             msg['To'] =  data['email']
 
             #send email
@@ -115,10 +117,10 @@ def send_email_pass():
             smtp.login("dinamicinsuranceapp@gmail.com","3b3f134bec5872745c2ee67e245329777b361ac6fc4c1ee5a738613f8af72d52")
 
             # create email string
-            text =f"Dear {data['name']}\n\nThe temporary password has been reset as requested to : {data['pass']}\n\nPlease contact support if any questions arises\nKind regards.\nDinamic Personal Insurance\n{data['date']}"
+            text =f"\nDear {data['name']}\n\nThe temporary password has been reset as requested to : {data['pass']}\n\nPlease contact support if any questions arises\nKind regards.\nDynamic Personal Insurance\n{data['date']}"
             msg = MIMEText(text)
-            msg['Subject'] = 'Dinamic Insurance Quote'
-            msg['From'] = 'dinamicinsuranceapp@gmail.com'
+            msg['Subject'] = 'Password Reset'
+            msg['From'] = 'Dynamic Insurance App'
             msg['To'] =  data['email']
 
             #send email
@@ -158,3 +160,8 @@ def get_prediction():
 
     prediction = model.predict([temp])  # runs globally loaded model on the data
     return str(round(prediction[0],2))
+
+
+
+
+

@@ -6,28 +6,36 @@
                    xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
                    xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
                      x:DataType="viewModels1:RegistrationViewModel"
-                   Shell.FlyoutBehavior="Disabled"
-                   Title="Customer Registration"
+                     Title="Customer Registration"
                    BackgroundColor="{StaticResource BackColor}"
                    RootViewModel="{Binding .}"
                    ControlTemplate="{StaticResource LoaderViewTemplate}"
                    x:Class="Insurance_app.Pages.RegistrationPage">
     
-    <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="40"
+    <Grid VerticalOptions="CenterAndExpand" RowSpacing="20" ColumnSpacing="5" Padding="30"
           RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="5*,5*"   >
         
-                
-              <Label Text="Email :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="0" />
-              <Entry  Keyboard="Email" Text="{Binding EmailDisplay}" 
-                      Placeholder="__@__.com"
-                      Style="{StaticResource NormalEntry}"
-                      Grid.Column="1" Grid.Row="0">
-                  <Entry.Behaviors>
-                      <xct:EmailValidationBehavior ValidStyle="{StaticResource NormalEntry}" 
-                                                   DecorationFlags="TrimEnd" x:Name="EmailValidation"
-                                                   InvalidStyle="{StaticResource InvalidEntry}" Flags="ValidateOnValueChanging"/> 
-                  </Entry.Behaviors>
-              </Entry>
+        <StackLayout Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalOptions="Center">
+            <Image IsAnimationPlaying="True" Source="btn1" IsVisible="{Binding EmailNotConfirmedDisplay}" HeightRequest="30" WidthRequest="30"/>
+            <Image IsAnimationPlaying="True" Source="btn2" IsVisible="{Binding EmailConfirmedDisplay}" HeightRequest="30"/>
+
+            <Entry  Keyboard="Email" Text="{Binding EmailDisplay}" HorizontalTextAlignment="Center"
+                    Placeholder="Enter your email" WidthRequest="150" Unfocused="VisualElement_OnUnfocused"
+                    IsReadOnly="{Binding EmailConfirmedDisplay}"
+                    Style="{StaticResource NormalEntry}">
+                <Entry.Behaviors>
+                    <xct:EmailValidationBehavior ValidStyle="{StaticResource NormalEntry}"
+                                                 MinimumLength="10"
+                                                 DecorationFlags="TrimEnd" x:Name="EmailValidation"
+                                                 InvalidStyle="{StaticResource InvalidEntry}" Flags="ValidateOnValueChanging"/> 
+                </Entry.Behaviors>
+            </Entry>
+            <Button Text="Confirm"
+                    Style="{StaticResource WhiteBtn}"
+                    Command="{Binding ConfirmEmailCommand}"
+                    IsVisible="{Binding EmailNotConfirmedDisplay}"/>
+        </StackLayout>
+             
                 
               <Label Text="Password :" Style="{StaticResource EndLabel}" Grid.Column="0" Grid.Row="1" />
               <Entry  Text="{Binding PassDisplay}" 
@@ -107,6 +115,5 @@
                       Style="{StaticResource PrimaryBtn}"
                       IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                       Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" HorizontalOptions="Center" />
-    </Grid>           
-
+    </Grid>
 </pages1:LoadingPage>

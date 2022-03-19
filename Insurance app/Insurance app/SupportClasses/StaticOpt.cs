@@ -24,6 +24,7 @@ namespace Insurance_app.SupportClasses
         public const string PassResetEmailUrl = "https://testRESTapi.pythonanywhere.com/resetPass";
         public const string ClaimEmailUrl = "https://testRESTapi.pythonanywhere.com/ClaimNotifyCustomer";
         public const string CompanyCodeUrl = "https://testRESTapi.pythonanywhere.com/CompanyCode";
+        public const string EmailConfirm = "https://testRESTapi.pythonanywhere.com/confirmationEmail";
         
         public static string MyRealmAppId = "application-1-luybv";
         public static readonly double StepNeeded = 10000;
@@ -83,23 +84,28 @@ namespace Insurance_app.SupportClasses
             }
         }
 
-        public static string TempPassGenerator()
+        public static string TempPassGenerator(int length,bool forPass)
         {
             string sourceSL = "qwertyuiopasdfghjklzxcvbnm";
             string sourceCL = "MNBVCXZASDFGHJKLPOIUYTREWQ";
             string sourceN = "1234567890";
             string sourceS = "=-/?#][|!£$%^&*()_+";
+            if (!forPass)
+            {
+                sourceS = "qwertyuiopasdfghjklzxcvbnm";
+            }
             Random r = new Random();
             string pass = "";
-            for (int i = 0; i < 9; i++)
+            for (int i = 0; i <= length; i++)
             {
-                if (i<3)
+                
+                if (i<2)
+                {
+                    pass += sourceSL[r.Next(0, sourceSL.Length-1)];
+                }else if (i < 4)
                 {
                     pass += sourceCL[r.Next(0, sourceCL.Length-1)];
                 }else if (i < 6)
-                {
-                    pass += sourceSL[r.Next(0, sourceSL.Length-1)];
-                }else if (i < 8)
                 {
                     pass += sourceN[r.Next(0, sourceN.Length-1)];
                 }

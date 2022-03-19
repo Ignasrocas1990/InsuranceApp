@@ -35,13 +35,18 @@ namespace Insurance_app.Pages
                  var vm = (RegistrationViewModel)BindingContext;
                 
                  if (EmailValidation.IsValid && PasswordValidator.IsValid && NameValidator.IsValid &&
-                     LNameValidator.IsValid && PhoneNrValidator.IsValid && AddressValidator.Text.Equals(vm.AddressSText))
+                     LNameValidator.IsValid && PhoneNrValidator.IsValid 
+                     && AddressValidator.Text.Equals(vm.AddressSText) && vm.EmailConfirmedDisplay)
                  {
                      await vm.Register();
                  }
                  else
                  {
                      var errBuilder = new StringBuilder();
+                     if (!vm.EmailConfirmedDisplay)
+                     {
+                         errBuilder.AppendLine("Email is not confirmed");
+                     }
                      if (EmailValidation.IsNotValid)
                      {
                          errBuilder.AppendLine("Email is not valid");
@@ -93,6 +98,17 @@ namespace Insurance_app.Pages
              {
                  Console.WriteLine(exception);
              }
+        }
+
+        private void VisualElement_OnUnfocused(object sender, FocusEventArgs e)
+        {
+            var vm = (RegistrationViewModel) BindingContext;
+            if (EmailValidation.IsNotValid)
+            {
+                vm.EmailNotConfirmedDisplay = false;
+                return;
+            }
+            vm.EmailNotConfirmedDisplay = true;
         }
     }
 }

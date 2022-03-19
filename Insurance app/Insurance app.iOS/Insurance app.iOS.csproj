@@ -169,6 +169,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <BundleResource Include="Resources\btn1.gif" />
+    <BundleResource Include="Resources\btn2.gif" />
     <BundleResource Include="Resources\claimIcon.png" />
     <BundleResource Include="Resources\CustomersIcon.png" />
     <BundleResource Include="Resources\logInlogo.png" />
