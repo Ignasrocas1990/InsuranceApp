@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using Insurance_app.Models;
 using Insurance_app.Service;
 using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
@@ -13,10 +14,10 @@ namespace Insurance_app.Pages
     public partial class PaymentPage : LoadingPage
     {
         private bool back;
-        public PaymentPage(string customerId, double price, string zip,string email,string name)
+        public PaymentPage(Customer customer)
         {
             InitializeComponent();
-            BindingContext = new PaymentViewModel(customerId,price,zip,email,name);
+            BindingContext = new PaymentViewModel(customer);
         }
 
         protected override async void OnAppearing()

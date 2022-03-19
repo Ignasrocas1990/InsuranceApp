@@ -110,7 +110,7 @@ namespace Insurance_app.ViewModels
                      }else if (typeUser.Equals($"{UserType.UnpaidCustomer}"))
                      {
                          await Msg.Alert( "Seems like you haven't payed yet.\nDirecting to payment page...");
-                         await Application.Current.MainPage.Navigation.PushAsync(new PaymentPage(user.Id,0,"","",""));
+                         await Application.Current.MainPage.Navigation.PushAsync(new PaymentPage(null));
                      }
                      else if(typeUser.Equals(""))
                      {

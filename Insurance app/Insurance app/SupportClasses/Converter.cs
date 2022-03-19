@@ -8,11 +8,11 @@ namespace Insurance_app.SupportClasses
 {
     public static class Converter
     {
-        public static Func<String,float>StringToFloat =  x => float.Parse(x, CultureInfo.InvariantCulture.NumberFormat);
-        public static Func<String, double> StringToDouble = x => Math.Round(Convert.ToDouble(x),2);
-        public static Func<float, double> FloatToDouble = x => Math.Round(Convert.ToDouble(x), 2);
+        public static readonly Func<string,float>StringToFloat =  x => float.Parse(x, CultureInfo.InvariantCulture.NumberFormat);
+        public static readonly Func<string, double> StringToDouble = x => Math.Round(Convert.ToDouble(x),2);
+        public static readonly Func<float?, double> FloatToDouble = x => Math.Round(Convert.ToDouble(x), 2);
 
-        private static string nameSpace = nameof(Insurance_app) + "." + nameof(ViewModels) + ".";
+        private static readonly string nameSpace = nameof(Insurance_app) + "." + nameof(ViewModels) + ".";
 
 
         public static string HomeViewModel = nameSpace+nameof(HomeViewModel);

@@ -161,7 +161,7 @@ namespace Insurance_app.ViewModels
                 smoker, false,expiryDate,customerId);
            await policyManager.AddPolicy(customerId, App.RealmApp.CurrentUser, policy);
            
-           await Application.Current.MainPage.Navigation.PushModalAsync(new PaymentPage(App.RealmApp.CurrentUser.Id,priceFloat,"","",""));
+           await Application.Current.MainPage.Navigation.PushModalAsync(new PaymentPage(null));
         }
 
         private async Task TransferToRegistration(int age,string price)
@@ -179,12 +179,13 @@ namespace Insurance_app.ViewModels
                     {"Smoker",$"{smoker}"},
                     {selectedDate.ToString("d"), "-1"}
                 };
-                await Application.Current.MainPage.Navigation.PushAsync(new RegistrationPage(tempQuote,price));
+                await Application.Current.MainPage.Navigation.PushModalAsync(new RegistrationPage(tempQuote,price));
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
+            CircularWaitDisplay=false;
         }
         private async Task ResetPassword()
         {

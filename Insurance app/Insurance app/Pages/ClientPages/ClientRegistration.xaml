@@ -118,9 +118,4 @@
                 IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
                 Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" HorizontalOptions="Center" />
     </Grid>
-    
-    
-    
-    
-    
 </pages:LoadingPage>

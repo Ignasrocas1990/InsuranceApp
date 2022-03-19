@@ -18,7 +18,7 @@ using Xamarin.CommunityToolkit.Extensions;
 
 namespace Insurance_app.ViewModels
 {    
-    public class RegistrationViewModel : ObservableObject
+    public class RegistrationViewModel : ObservableObject,IDisposable
     {
         private readonly Dictionary<string, string> quote;
         public readonly string AddressSText = "Address saved";
@@ -29,16 +29,15 @@ namespace Insurance_app.ViewModels
         private string fName="";
         private string lName="";
         private string phoneNr="";
-        private string customerId="";
         public string AddressText = "Add address please";
-        public readonly UserManager UserManager;
+        private readonly UserManager userManager;
         private readonly PolicyManager policyManager;
         private Address address;
         public ICommand AddressCommand { get; }
         public RegistrationViewModel(Dictionary<string, string> tempQuote, string price)
         {
             address = new Address();
-            UserManager = new UserManager();
+            userManager = new UserManager();
             policyManager = new PolicyManager();
             AddressCommand = new AsyncCommand(GetAddress);
             PriceDisplay = price;
@@ -50,7 +49,7 @@ namespace Insurance_app.ViewModels
             try
             {
                 CircularWaitDisplay = true;
-                var registered = await UserManager.Register(email, password);
+                var registered = await userManager.Register(email, password);
 
                 if (registered == "success")
                 {
@@ -58,7 +57,7 @@ namespace Insurance_app.ViewModels
                     
                     if (user is null)throw new Exception("registration failed");
                         
-                   var customer = UserManager.CreateCustomer(GetDob(),fName, lName,phoneNr,email,address);
+                   var customer = userManager.CreateCustomer(GetDob(),fName, lName,phoneNr,email,address);
                         
                    if (customer is null)throw new Exception("registration failed");
                    var expiryDate = DateTimeOffset.Now.AddMonths(1);
@@ -67,12 +66,11 @@ namespace Insurance_app.ViewModels
                        , int.Parse(quote["Hospital_Excess"]), quote["Hospitals"], quote["Plan"],
                        int.Parse(quote["Smoker"]), false,expiryDate,user.Id));
 
-                   await UserManager.AddCustomer(customer, App.RealmApp.CurrentUser);
+                   await userManager.AddCustomer(customer, App.RealmApp.CurrentUser);
 
                   await Msg.Alert("Registration completed successfully.\nRedirecting to payment page");
                    await Application.Current.MainPage.Navigation
-                       .PushModalAsync(new PaymentPage(
-                           customerId,Converter.StringToDouble(price),address.PostCode,customer.Email,customer.Name));
+                       .PushModalAsync(new PaymentPage(customer));
                 }
                 else
                 {
@@ -163,6 +161,11 @@ namespace Insurance_app.ViewModels
         {
             get => setUpWait;
             set => SetProperty(ref setUpWait, value);
+        }
+
+        public void Dispose()
+        {
+            userManager.Dispose();
         }
     }
 }

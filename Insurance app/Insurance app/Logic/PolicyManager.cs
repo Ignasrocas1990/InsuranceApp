@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Insurance_app.Models;
 using Insurance_app.Service;
@@ -84,9 +85,14 @@ namespace Insurance_app.Logic
           return realmDb.GetAllUpdatedPolicies(user);
         }
 
-        public Task UpdatePolicyPrice(User user, string customerId, double price)
+        public async Task UpdatePolicyPrice(Policy policy,User user, float price)
         {
-           return realmDb.UpdatePolicyPrice(user, customerId, price);
+           await realmDb.UpdatePolicyPrice(policy,user, price);
+        }
+
+        public Policy FindUnpayedPolicy(Customer customer)
+        {
+            return customer.Policy.FirstOrDefault(p => p.PayedPrice == 0 && p.DelFlag == false);
         }
     }
 }

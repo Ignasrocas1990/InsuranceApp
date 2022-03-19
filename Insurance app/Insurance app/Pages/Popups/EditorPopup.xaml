@@ -37,6 +37,4 @@
                 Style="{StaticResource SecondaryBtn}"
                 Grid.Column="0" Grid.Row="3" />
     </Grid>
-    
-    
 </xct:Popup>
