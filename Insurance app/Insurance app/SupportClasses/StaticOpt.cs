@@ -1,13 +1,29 @@
-﻿using System;
+﻿/*   Copyright 2020,Ignas Rocas
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    
+              Name : Ignas Rocas
+    Student Number : C00135830
+           Purpose : 4th year project
+ */
+
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Insurance_app.Models;
 using Insurance_app.Pages;
 using Insurance_app.Pages.Popups;
-using Realms.Sync;
 using SkiaSharp;
 using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.Forms;
@@ -26,12 +42,10 @@ namespace Insurance_app.SupportClasses
         public const string CompanyCodeUrl = "https://testRESTapi.pythonanywhere.com/CompanyCode";
         public const string EmailConfirm = "https://testRESTapi.pythonanywhere.com/confirmationEmail";
         
-        public static string MyRealmAppId = "application-1-luybv";
-        public static readonly double StepNeeded = 10000;
-        public static readonly int MovUpdateArraySize = 5;
-        public static readonly int MaxResponseTime = 120;
-        public static readonly int MaxNameLen = 20;
-        public static readonly int blockTime = 180;
+        public static readonly string MyRealmAppId = "application-1-luybv";
+        public const double StepNeeded = 10000;
+        public const int MaxResponseTime = 120;
+
 
         public static Func<string, bool> HasNumbers => s => s.Any(char.IsDigit);
 
@@ -86,17 +100,17 @@ namespace Insurance_app.SupportClasses
 
         public static string TempPassGenerator(int length,bool forPass)
         {
-            string sourceSL = "qwertyuiopasdfghjklzxcvbnm";
-            string sourceCL = "MNBVCXZASDFGHJKLPOIUYTREWQ";
-            string sourceN = "1234567890";
-            string sourceS = "=-/?#][|!£$%^&*()_+";
+            var sourceSL = "qwertyuiopasdfghjklzxcvbnm";
+            var sourceCL = "MNBVCXZASDFGHJKLPOIUYTREWQ";
+            var sourceN = "1234567890";
+            var sourceS = "=-/?#][|!£$%^&*()_+";
             if (!forPass)
             {
                 sourceS = "qwertyuiopasdfghjklzxcvbnm";
             }
-            Random r = new Random();
-            string pass = "";
-            for (int i = 0; i <= length; i++)
+            var r = new Random();
+            var pass = "";
+            for (var i = 0; i <= length; i++)
             {
                 
                 if (i<2)
@@ -118,6 +132,9 @@ namespace Insurance_app.SupportClasses
             
             return pass;
         }
+        public static readonly Func<string,float>StringToFloat =  x => float.Parse(x, CultureInfo.InvariantCulture.NumberFormat);
+        public static readonly Func<float?, double> FloatToDouble = x => Math.Round(Convert.ToDouble(x), 2);
+        public static float GetPrice(string price) =>(float) Math.Round(float.Parse(price) * 100f) / 100f;
         
         public static async Task InfoPopup(string type)
         {

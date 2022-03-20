@@ -1,38 +1,52 @@
-﻿using System;
-using System.Globalization;
+﻿/*
+    Copyright 2020,Ignas Rocas
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    
+              Name : Ignas Rocas
+    Student Number : C00135830
+           Purpose : 4th year project
+ */
+
+using System;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using Android.Text.Style;
 using Insurance_app.Logic;
 using Insurance_app.SupportClasses;
-using Insurance_app.ViewModels;
 using Plugin.BLE;
-using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
-using Plugin.BLE.Abstractions.Exceptions;
 using Xamarin.Essentials;
-using Xamarin.Forms;
-using Exception = System.Exception;
 
 namespace Insurance_app.Communications
 {
+    /// <summary>
+    /// Main class used for connecting to the watch
+    /// And used to transfer details
+    /// </summary>
     public class BleManager
     {
-
-
         private IAdapter adapter;
-        public Ble ble;
-        private ICharacteristic chara=null;
+        private Ble ble;
+        private ICharacteristic chara;
         public EventHandler InfferEvent = delegate {  };
         public event EventHandler ToggleSwitch =delegate {  };
 
-        private int readingDelay = 5000; // reading delay every 5 sec (incase empty read.)
-        private int conErrDelay = 0;
-        private bool bleState = false;
-        public bool IsMonitoring = false;
-        private static BleManager _bleManager =null;
-        private UserManager userManager;
+        private readonly int readingDelay = 5000; // reading delay every 5 sec (incase empty read.)
+        private int conErrDelay;
+        private bool bleState;
+        private bool isMonitoring;
+        private static BleManager _bleManager;
+        private readonly UserManager userManager;
         private bool start=true;
         public string Email;
         public string Pass;
@@ -53,11 +67,13 @@ namespace Insurance_app.Communications
         {
             return _bleManager ??= new BleManager();
         }
-        
+        /// <summary>
+        /// Method used to register event handlers
+        /// </summary>
         private void RegisterEventHandlers()
         {
             
-            ble.ble.StateChanged += (s,e) =>
+            ble.BLE.StateChanged += (s,e) =>
             {
                 Console.WriteLine($"Ble state changed {e.NewState.ToString()}");
                 if (e.NewState == BluetoothState.On)
@@ -75,12 +91,17 @@ namespace Insurance_app.Communications
                 Task.FromResult(GetService(e.Device));
             };
         }
-
+        /// <summary>
+        /// Reads information from the
+        /// Characteristic, in case of empty read
+        /// Waits for certain time and reentry's again.
+        /// After read completed notifies HomeViewModel to change UI
+        /// </summary>
         private async Task ReadAsync()
         {
             try
             {
-                if (!IsMonitoring) return;
+                if (!isMonitoring) return;
 
                 var data = await chara.ReadAsync();
                 
@@ -88,7 +109,7 @@ namespace Insurance_app.Communications
                 str = Encoding.Default.GetString(data);
                 if (str.Equals(" "))
                 {
-                    if (!IsMonitoring) return;
+                    if (!isMonitoring) return;
 
                     Console.WriteLine($"reading empty : wait {readingDelay / 1000}sec > try again");
                     Task t = Task.Run(async () =>
@@ -98,11 +119,8 @@ namespace Insurance_app.Communications
                     });
                     return;
                 }
-
-                //Console.WriteLine($"Read complete, values are : > {str}");
-                Infer(str);
                 InfferEvent.Invoke(this,EventArgs.Empty);
-               Task task = Task.Run(ReadAsync);
+                Task task = Task.Run(ReadAsync);
                
             }
             catch
@@ -119,53 +137,35 @@ namespace Insurance_app.Communications
             }
             
         }
-
-        private void Infer(string rawData)
-        {
-            try
-            {
-                //var split = rawData.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
-                //var x = Converter.StringToFloat(split[0]);
-                //var y = Converter.StringToFloat(split[1]);
-                //var z = Converter.StringToFloat(split[2]);
-                InfferEvent.Invoke(this,EventArgs.Empty);
-                /*
-                Task.Run(async () =>
-                {
-                    //await rewardManager.addNewMovDate(x, y, z,App.RealmApp.CurrentUser);
-                });*/
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"problem pre-paring data for inferring {e}");
-            }
-        }
+        /// <summary>
+        /// Method tries to get service & Characteristic
+        /// In order to read from it.
+        /// </summary>
+        /// <param name="device">Device that has been connected to.</param>
         private async Task GetService(IDevice device)
         {
             try
             {
-                IService service = null;
-                 service = await device.GetServiceAsync(ble.SERVER_GUID);
+                var service = await device.GetServiceAsync(ble.ServerGuid);
                 if (service is null)
                 {
                     Console.WriteLine("service is null ");
-                    IsMonitoring = false;
+                    isMonitoring = false;
                     MainThread.BeginInvokeOnMainThread(MessageUser);
                     return;
                 }
                 chara = null;
-                chara = await service.GetCharacteristicAsync(ble.SERVER_GUID);
+                chara = await service.GetCharacteristicAsync(ble.ServerGuid);
                 if (chara is null)
                 {
                     Console.WriteLine("characteristic is null ");
-                    IsMonitoring = false;
+                    isMonitoring = false;
                     MainThread.BeginInvokeOnMainThread(MessageUser);
                     return;
                 }
                 if (start)
                 {
-                    IsMonitoring = true;
+                    isMonitoring = true;
                     start = false;
                     await WriteToCharacteristic($"{App.RealmApp.CurrentUser.Id}|{Email}|{Pass}");
                    await UpdateCustomerSwitch(true);
@@ -174,7 +174,7 @@ namespace Insurance_app.Communications
                 {
                     turnInprocess = false;
                     stop = false;
-                    IsMonitoring = false;
+                    isMonitoring = false;
                     await WriteToCharacteristic("Stop");
                     await UpdateCustomerSwitch(false);
                     return;
@@ -189,7 +189,10 @@ namespace Insurance_app.Communications
                 await ConnectToDevice();
             }
         }
-
+        /// <summary>
+        /// Method used to send message to the connected watch
+        /// </summary>
+        /// <param name="message">Start/Stop gathering data (with credentials)</param>
         private async Task WriteToCharacteristic(string message)
         {
             if (chara.CanWrite)
@@ -205,7 +208,11 @@ namespace Insurance_app.Communications
                 
             }
         }
-
+        /// <summary>
+        /// Updates connection switch on database
+        /// So the watch can retrieve=> Start/Stop monitoring activity
+        /// </summary>
+        /// <param name="state">Start/Stop monitoring activity</param>
         private async Task UpdateCustomerSwitch(bool state)
         {
             try
@@ -219,28 +226,31 @@ namespace Insurance_app.Communications
             }
         }
 
-
+        /// <summary>
+        /// Notify user of a fault
+        /// </summary>
         private async void MessageUser()
         {
             turnInprocess = false;
             ToggleSwitch.Invoke(this,EventArgs.Empty);
-            await Shell.Current.DisplayAlert("Error", "Please install & turn on the watch app", "close");
-            
-            
+            await Msg.AlertError("Please install & turn on the watch app");
         }
 
+        /// <summary>
+        /// Try to connect to a device given user permission
+        /// </summary>
         private async Task ConnectToDevice()
         {
             if (!ble.IsAvailable() || !await ble.GetPremissionsAsync())
             {
-                IsMonitoring = false;
+                isMonitoring = false;
                 MainThread.BeginInvokeOnMainThread(Action1);
             }
             else if (bleState)
             {
                 try
                 {
-                    var list = adapter.GetSystemConnectedOrPairedDevices(new Guid[] {ble.SERVER_GUID});
+                    var list = adapter.GetSystemConnectedOrPairedDevices(new Guid[] {ble.ServerGuid});
                     await adapter.ConnectToDeviceAsync(list[0]);
                     conErrDelay = 0;
                 }
@@ -248,7 +258,7 @@ namespace Insurance_app.Communications
                 {
                     if (start)
                     {
-                        IsMonitoring = false;
+                        isMonitoring = false;
                         MainThread.BeginInvokeOnMainThread(MessageUser);
                         return;
                     }
@@ -266,20 +276,31 @@ namespace Insurance_app.Communications
             }
         }
 
+        /// <summary>
+        /// Notify user with no permissions
+        /// </summary>
         private async void Action1()
         {
             turnInprocess = false;
             ToggleSwitch.Invoke(this,EventArgs.Empty);
-            await Shell.Current.DisplayAlert("Error", "Type of Bluetooth not available and app needs your permissions", "close");
+            await Msg.AlertError("Type of Bluetooth not available and app needs your permissions");
         }
 
+        /// <summary>
+        /// Notify user with no Bluetooth
+        /// </summary>
         private async void NoBluetooth()
         {
             turnInprocess = false;
             ToggleSwitch.Invoke(this,EventArgs.Empty);
-            await Shell.Current.DisplayAlert("Error", "Bluetooth is off", "close");
+            await Msg.AlertError("Bluetooth is off");
         }
 
+        /// <summary>
+        /// Turn on/off try to connect to bluetooth
+        /// </summary>
+        /// <param name="state">on/off ble state</param>
+        /// <returns>if turning on successful</returns>
         public async Task<bool> ToggleMonitoring(bool state)
         {
             if (!turnInprocess)
@@ -305,7 +326,7 @@ namespace Insurance_app.Communications
             if (!bleState)
             {
                 MainThread.BeginInvokeOnMainThread(NoBluetooth);
-                IsMonitoring = false;
+                isMonitoring = false;
                 return false;
             }
             await ConnectToDevice();
@@ -313,12 +334,5 @@ namespace Insurance_app.Communications
             return state;
             
         }
-    }
-    public class RawDataArgs : EventArgs
-    {
-        public int Type { get; set; }
-        public float x { get; set; }
-        public float y { get; set; }
-        public float z { get; set; }
     }
 }

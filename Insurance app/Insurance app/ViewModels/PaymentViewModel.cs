@@ -1,18 +1,32 @@
-﻿using System;
+﻿/*   Copyright 2020,Ignas Rocas
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    
+              Name : Ignas Rocas
+    Student Number : C00135830
+           Purpose : 4th year project
+ */
+
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Insurance_app.Logic;
 using Insurance_app.Models;
 using Insurance_app.Service;
 using Insurance_app.SupportClasses;
-using Stripe;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
-using Application = Xamarin.Forms.Application;
-using Customer = Insurance_app.Models.Customer;
 
 namespace Insurance_app.ViewModels {
   internal class PaymentViewModel: ObservableObject,IDisposable
@@ -62,7 +76,7 @@ namespace Insurance_app.ViewModels {
           var earnedRewards = rewardManager.GetRewardSum(rewardList);
           if (earnedRewards > 0)
           {
-            totalRewards = Converter.FloatToDouble(earnedRewards);
+            totalRewards = StaticOpt.FloatToDouble(earnedRewards);
             RewardsDisplay = earnedRewards.ToString("F");
             RewardsIsVisible = true;
           }
@@ -75,7 +89,7 @@ namespace Insurance_app.ViewModels {
         var policy = policyManager.FindUnpayedPolicy(customer);
         if (policy != null)
         {
-          price = Converter.FloatToDouble(policy.Price);
+          price = StaticOpt.FloatToDouble(policy.Price);
           PriceDisplay = $"{price}";
         }
       }
@@ -114,7 +128,7 @@ namespace Insurance_app.ViewModels {
           await Msg.Alert(Msg.NetworkConMsg);
         }
         CircularWaitDisplay = true;
-        var payPrice = Converter.StringToFloat(pDisplay);
+        var payPrice = StaticOpt.StringToFloat(pDisplay);
         if (!await PaymentService.PaymentAsync(number, 
               int.Parse(year), int.Parse(month), verificationCode, zip, payPrice, name, email))
             throw new Exception("payment failed");

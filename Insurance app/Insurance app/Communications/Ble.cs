@@ -1,26 +1,58 @@
-﻿using System;
+﻿/*
+    Copyright 2020,Ignas Rocas
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    
+              Name : Ignas Rocas
+    Student Number : C00135830
+           Purpose : 4th year project
+ */
+
+using System;
 using System.Threading.Tasks;
 using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
 using Xamarin.Essentials;
-using Xamarin.Forms;
-using String = System.String;
 
 namespace Insurance_app.Communications
 {
+    /// <summary>
+    /// Class used to get user permissions
+    /// Store connection uuid and using plug in
+    /// check if the Bluetooth Low Energy (BLE) connection is on
+    /// </summary>
     public class Ble
     {
-        public IBluetoothLE ble;
-        public Guid SERVER_GUID { get; set; }
-        private const string uuidString = "a3bb5442-5b61-11ec-bf63-0242ac130002";
-        private readonly Func<String,Guid> setGuid = s => Guid.Parse(s);
+        public readonly IBluetoothLE BLE;
+        public Guid ServerGuid { get; set; }
+        private const string UuidString = "a3bb5442-5b61-11ec-bf63-0242ac130002";
+        private readonly Func<string,Guid> setGuid = s => Guid.Parse(s);
         public Ble()
         {
-            ble = CrossBluetoothLE.Current;
-            SERVER_GUID = setGuid(uuidString);
+            BLE = CrossBluetoothLE.Current;
+            ServerGuid = setGuid(UuidString);
         }
-        public bool BleCheck() => ble.IsOn || ble.State == BluetoothState.TurningOn;
+        /// <summary>
+        /// Checks if Bluetooth is on
+        /// </summary>
+        /// <returns>returns true if Ble is on</returns>
+        public bool BleCheck() => BLE.IsOn || BLE.State == BluetoothState.TurningOn;
         
+        /// <summary>
+        /// Gets permission using xamarin essentials
+        /// Code provided on the website 
+        /// </summary>
+        /// <returns>returns true if user gave permissions</returns>
         public async Task<bool> GetPremissionsAsync()
         {
             var locationPermissionStatus = await Permissions.CheckStatusAsync<Permissions.LocationAlways>();
@@ -33,6 +65,10 @@ namespace Insurance_app.Communications
             var sensorStatus =await Permissions.RequestAsync<Permissions.Sensors>();
             return (locStatus == granted && sensorStatus == granted);
         }
-        public bool IsAvailable() => ble.IsAvailable;
+        /// <summary>
+        /// checks if BLE type Bluetooth available
+        /// </summary>
+        /// <returns> true if available</returns>
+        public bool IsAvailable() => BLE.IsAvailable;
     }
 }

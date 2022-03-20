@@ -15,7 +15,9 @@
               Name : Ignas Rocas
     Student Number : C00135830
            Purpose : 4th year project
+     Code based on : https://damian.fyi/xamarin/2020/08/07/xamarin-stripe.html
  */
+
 using System.Reflection;
 using Xamarin.Forms;
 

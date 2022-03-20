@@ -16,19 +16,21 @@
     Student Number : C00135830
            Purpose : 4th year project
  */
+
 using System;
 using System.Threading.Tasks;
+using Stripe;
 
 namespace Insurance_app.Service
 {
-    using Stripe;
     public static class PaymentService
     {
-        public static async Task<bool> PaymentAsync(string number,int expYear,int expMonth,string cvc,string zip,double price,string name,string email)
+        public static async Task<bool> PaymentAsync(string number, int expYear, int expMonth, string cvc, string zip,
+            double price, string name, string email)
         {
             try
             {
-                var token = await CreateToken(number,expYear,expMonth,cvc,zip,name);
+                var token = await CreateToken(number, expYear, expMonth, cvc, zip, name);
                 if (token != null)
                 {
                     return await Pay(price, email, token);
@@ -38,19 +40,17 @@ namespace Insurance_app.Service
             {
                 Console.WriteLine(e);
             }
+
             return false;
         }
-        
-        private static async Task<bool> Pay(double price,string email,IHasId stripeToken)
+
+        private static async Task<bool> Pay(double price, string email, IHasId stripeToken)
         {
             try
             {
-                
-                var roundedPrice = (long)Math.Round(price,2)*100;
+                var roundedPrice = (long) Math.Round(price, 2) * 100;
                 // value is 49.1 euro
-
-                StripeConfiguration.ApiKey =
-                    (await App.RealmApp.CurrentUser.Functions.CallAsync("getKey")).AsString;
+                StripeConfiguration.ApiKey = (await App.RealmApp.CurrentUser.Functions.CallAsync("getKey")).AsString;
                 var options = new ChargeCreateOptions
                 {
                     Amount = roundedPrice,
@@ -60,11 +60,9 @@ namespace Insurance_app.Service
                     ReceiptEmail = email,
                     Source = stripeToken.Id
                 };
-
                 var service = new ChargeService();
                 await service.CreateAsync(options);
                 return true;
-
             }
             catch (Exception e)
             {
@@ -73,13 +71,12 @@ namespace Insurance_app.Service
             }
         }
 
-        private static async Task<Token> CreateToken(string number,int expYear,int expMonth,string cvc,string zip,string name)
+        private static async Task<Token> CreateToken(string number, int expYear, int expMonth, string cvc, string zip,
+            string name)
         {
             try
             {
-                StripeConfiguration.ApiKey = 
-                    (await App.RealmApp.CurrentUser.Functions.CallAsync("getPKey")).AsString;
-                //var service = new ChargeService();
+                StripeConfiguration.ApiKey = (await App.RealmApp.CurrentUser.Functions.CallAsync("getPKey")).AsString;
                 var option = new TokenCreateOptions()
                 {
                     Card = new TokenCardOptions()
@@ -94,12 +91,12 @@ namespace Insurance_app.Service
                 };
                 var tokenService = new TokenService();
                 return await tokenService.CreateAsync(option);
-                //return stripeToken.Id;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
+
             return null;
         }
     }

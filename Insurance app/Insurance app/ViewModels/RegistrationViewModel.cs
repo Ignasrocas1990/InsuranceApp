@@ -1,4 +1,23 @@
-﻿using System;
+﻿/*   Copyright 2020,Ignas Rocas
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    
+              Name : Ignas Rocas
+    Student Number : C00135830
+           Purpose : 4th year project
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,13 +28,10 @@ using Insurance_app.Pages;
 using Insurance_app.Pages.Popups;
 using Insurance_app.Service;
 using Insurance_app.SupportClasses;
-using Newtonsoft.Json;
 using Realms.Sync;
+using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
-using Exception = System.Exception;
-using Xamarin.CommunityToolkit.Extensions;
-
 
 namespace Insurance_app.ViewModels
 {    
@@ -64,7 +80,7 @@ namespace Insurance_app.ViewModels
                         
                    if (customer is null)throw new Exception("registration failed");
                    var expiryDate = DateTimeOffset.Now.AddMonths(1);
-                   var priceFloat = Converter.GetPrice(price);
+                   var priceFloat = StaticOpt.GetPrice(price);
                    customer.Policy.Add(policyManager.RegisterPolicy(priceFloat,0, quote["Cover"]
                        , int.Parse(quote["Hospital_Excess"]), quote["Hospitals"], quote["Plan"],
                        int.Parse(quote["Smoker"]), false,expiryDate,user.Id));

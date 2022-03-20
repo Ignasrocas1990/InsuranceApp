@@ -16,7 +16,9 @@
               Name : Ignas Rocas
     Student Number : C00135830
            Purpose : 4th year project
+   Code based from : https://damian.fyi/xamarin/2020/08/07/xamarin-stripe.html
  */
+
 using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Forms;
@@ -139,14 +141,12 @@ namespace Insurance_app.Service {
 
       var groupedPrefixes = prefixMatches.GroupBy(p => p.Image).ToList();
 
-      switch (groupedPrefixes.Count) {
-        case 0:
-          return error;
-        case 1:
-          return groupedPrefixes[0].First();
-        default:
-          return unknown;
-      }
+      return groupedPrefixes.Count switch
+      {
+        0 => error,
+        1 => groupedPrefixes[0].First(),
+        _ => unknown
+      };
     }
     private class CardDefinition {
       public ImageSource Image { get; set; }

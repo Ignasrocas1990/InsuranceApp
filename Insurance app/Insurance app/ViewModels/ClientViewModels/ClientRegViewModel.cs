@@ -1,12 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/*   Copyright 2020,Ignas Rocas
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    
+              Name : Ignas Rocas
+    Student Number : C00135830
+           Purpose : 4th year project
+ */
+
+using System;
 using System.Threading.Tasks;
-using System.Timers;
-using System.Windows.Input;
-using Insurance_app.Communications;
 using Insurance_app.Logic;
-using Insurance_app.Pages;
-using Insurance_app.Pages.Popups;
 using Insurance_app.Service;
 using Insurance_app.SupportClasses;
 using Realms.Sync;
@@ -19,7 +32,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
     {
         private string email="";
         private string pass="";
-        private string fname="";
+        private string fName="";
         private bool wait;
         private string lname="";
         private int attempt = 0;
@@ -44,7 +57,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
                     await userManager.Register(email, pass);
                     var user = await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, pass));
                     if (user is null) throw new Exception("Registration failed");
-                    var saved = await userManager.CreateClient(user, email, fname, lname, code);
+                    var saved = await userManager.CreateClient(user, email, fName, lname, code);
                     if (!saved)
                     {
                         throw new Exception("Registration failed");
@@ -125,8 +138,8 @@ namespace Insurance_app.ViewModels.ClientViewModels
 
         public string FNameDisplay
         {
-            get => fname;
-            set => SetProperty(ref fname, value);
+            get => fName;
+            set => SetProperty(ref fName, value);
         }
 
         public string LNameDisplay
