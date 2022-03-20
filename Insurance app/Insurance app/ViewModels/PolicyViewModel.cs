@@ -151,7 +151,7 @@ namespace Insurance_app.ViewModels
         {
             if (!canBeUpdated)
             {
-                await Shell.Current.DisplayAlert("Notice", "Policy can only be updated every 3 months", "close");
+                await Msg.AlertError("Policy can only be updated every 3 months");
                 return;
             }
             try
@@ -185,7 +185,7 @@ namespace Insurance_app.ViewModels
 
                 await SavePolicy(newPrice);
                 PriceDisplay = $"{newPrice}";
-                await Shell.Current.DisplayAlert(Msg.Notice, "Update requested successfully", "close");
+                await Msg.Alert("Update requested successfully");
             }
             catch (Exception e)
             {
@@ -205,8 +205,7 @@ namespace Insurance_app.ViewModels
             }
             catch (Exception e)
             {
-                await Shell.Current.DisplayAlert(Msg.Error, "Update requested failure\nPlease try again later",
-                    "close");
+                await Msg.AlertError("Update requested failure\nPlease try again later");
                 Console.WriteLine(e);
             }
 
@@ -218,17 +217,14 @@ namespace Insurance_app.ViewModels
             Policy policy = null;
             try
             {
-                var tuple = await policyManager.FindPolicy(customerId,App.RealmApp.CurrentUser);
-                canBeUpdated = tuple.Item1;
-                policy = tuple.Item2;
-                policyManager.RemoveIfContains(policy);
+                 (canBeUpdated, policy) = await policyManager.FindPolicy(customerId,App.RealmApp.CurrentUser);
+                 policyManager.RemoveIfContains(policy);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 canBeUpdated = false;
             }
-
             return policy ?? new Policy();
         }
         private async Task ViewPrevPolicies()
@@ -249,8 +245,7 @@ namespace Insurance_app.ViewModels
             {
                 if (!App.NetConnection())
                 {
-                    await Shell.Current.DisplayAlert(Msg.Notice, 
-                        Msg.NetworkConMsg, "close");
+                    await Msg.Alert(Msg.NetworkConMsg);
                     return;
                 }
                 var answer = await Shell.Current.DisplayAlert(Msg.Notice, 

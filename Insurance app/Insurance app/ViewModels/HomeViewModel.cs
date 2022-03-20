@@ -24,6 +24,7 @@ using Insurance_app.Communications;
 using Insurance_app.Logic;
 using Insurance_app.Models;
 using Insurance_app.SupportClasses;
+using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
 
@@ -50,6 +51,7 @@ namespace Insurance_app.ViewModels
         public ICommand LogoutCommand { get; }
 
         private bool switchState = false;
+        private User user;
 
         public HomeViewModel()
         {
@@ -63,8 +65,9 @@ namespace Insurance_app.ViewModels
         {
             try
             {
+                user = App.RealmApp.CurrentUser;
                 SetUpWaitDisplay = true;
-                reward = await rewardManager.FindReward(App.RealmApp.CurrentUser);
+                reward = await rewardManager.FindReward(user);
                 
                 if (reward is null)
                 {
@@ -96,9 +99,8 @@ namespace Insurance_app.ViewModels
 
         private async Task SetUpEarningsDisplay()
         {
-            
                var (toggle, totalSum) = await rewardManager
-                   .GetTotalRewards(App.RealmApp.CurrentUser,App.RealmApp.CurrentUser.Id);
+                   .GetTotalRewards(user,user.Id);
                
                TotalEarnedDisplay = totalSum.ToString("F");
                if (firstSetup)

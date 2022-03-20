@@ -16,6 +16,7 @@
     Student Number : C00135830
            Purpose : 4th year project
  */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,6 @@ using System.Threading.Tasks;
 using Insurance_app.Models;
 using Realms;
 using Realms.Sync;
-using Policy = Insurance_app.Models.Policy;
 
 namespace Insurance_app.Service
 {
@@ -423,8 +423,7 @@ namespace Insurance_app.Service
 /// <exception cref="Exception"></exception>
 public async Task<Tuple<bool,Policy>> FindPolicy(string customerId,User user)
         {
-            //Policy currentPolicy = new Policy();
-           Tuple<bool, Policy> tuplePolicy = null;
+           var tuplePolicy = new Tuple<bool, Policy>(true,new Policy());
            try
            {
                await GetRealm(Partition,user);
@@ -440,6 +439,7 @@ public async Task<Tuple<bool,Policy>> FindPolicy(string customerId,User user)
                            ?.Where(p=> p.DelFlag == false)
                            .OrderByDescending(z => z.ExpiryDate).First();
                   
+                  //check if current policy is updated already
                   if (latestUpdatedPolicy is null) tuplePolicy= new Tuple<bool, Policy>(true, currentPolicy);
                   else if (latestUpdatedPolicy.ExpiryDate.Value.CompareTo((DateTimeOffset) currentPolicy.ExpiryDate) == 0)
                   {

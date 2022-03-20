@@ -30,13 +30,24 @@ using Realms.Sync;
 
 namespace Insurance_app.Logic
 {
+    /// <summary>
+    /// Class used to connect between Database
+    /// and UI, while processing Report
+    /// </summary>
     public class ReportManager : IDisposable
     {
+        
         private readonly RealmDb realmDb;
         public ReportManager()
         {
             realmDb = RealmDb.GetInstancePerPage();
         }
+        /// <summary>
+        /// Create Chart entries which needed to display chart
+        /// For daily steps
+        /// </summary>
+        /// <param name="allMovData">List of movement data found</param>
+        /// <returns>Dictionary Chart entries and their labels</returns>
         public Dictionary<string,int> CountDailyMovData(List<MovData> allMovData)
         {
             var chartEntries = new Dictionary<string, int>();
@@ -64,7 +75,13 @@ namespace Insurance_app.Logic
             }
             return chartEntries;
         }
-        public Dictionary<string,int> CountWeeklyMovData(List<MovData> allMovData) // TODO  NOT STARTED<---------
+        /// <summary>
+        /// Create Chart entries which needed to display chart
+        /// For weekly steps
+        /// </summary>
+        /// <param name="allMovData">List of movement data found</param>
+        /// <returns>Dictionary Chart entries and their labels</returns>
+        public Dictionary<string,int> CountWeeklyMovData(List<MovData> allMovData)
         {
             var chartEntries = new Dictionary<string, int>();
             try
@@ -92,6 +109,12 @@ namespace Insurance_app.Logic
             }
             return chartEntries;
         }
+        /// <summary>
+        /// Reverse Chart entries so the current day is last,
+        /// & input colours
+        /// </summary>
+        /// <param name="chartEntries">Daily Labels and entries</param>
+        /// <returns>Number of empty entries & Reversed ChartEntry</returns>
         public Tuple<int,Stack<ChartEntry>> CreateDailyLineChart(Dictionary<string, int> chartEntries)
         {
             var emptyDaysCount = 0;
@@ -100,10 +123,10 @@ namespace Insurance_app.Logic
             var entries = new Stack<ChartEntry>();
             if (chartEntries != null)
             {
-                foreach (KeyValuePair<string, int> i in chartEntries)
+                foreach (var keyValuePair in chartEntries)
                 {
-                    var label = i.Key;
-                    float value = i.Value;
+                    var label = keyValuePair.Key;
+                    float value = keyValuePair.Value;
                     value = r.Next(0, 20000);//TODO To show that it works this can be uncommented
                     var color = StaticOpt.ChartColors[r.Next(0, StaticOpt.ChartColors.Length - 1)];
                     if (today)
@@ -128,6 +151,12 @@ namespace Insurance_app.Logic
             }
             return Tuple.Create(emptyDaysCount,entries);
         }
+        /// <summary>
+        /// Reverse Chart entries so the current week is last,
+        /// & input colours
+        /// </summary>
+        /// <param name="weeklyMovData">Weekly Labels and entries</param>
+        /// <returns>Number of empty entries & Reversed ChartEntry</returns>
         public Tuple<int,Stack<ChartEntry>> CreateWeeklyLineChart(Dictionary<string, int> weeklyMovData)
         {
             var emptyDaysCount = 0;
@@ -164,10 +193,19 @@ namespace Insurance_app.Logic
             }
             return Tuple.Create(emptyDaysCount,entries);
         }
+        /// <summary>
+        /// Uses RealmDb helper to get Step Data list
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="user">Customer/Client</param>
+        /// <returns>List of found Step data</returns>
         public Task<List<MovData>> GetAllMovData(string customerId, User user)
         {
             return realmDb.GetAllMovData(customerId, user);
         }
+        /// <summary>
+        /// release allocated Realm instance
+        /// </summary>
         public void Dispose()
         {
             realmDb.Dispose();
