@@ -39,5 +39,7 @@ namespace Insurance_app.SupportClasses
         public static async Task AlertError(string msg)=>
             await Application.Current.MainPage.DisplayAlert(Error, msg, Close);
         
+        
+        
     }
 }

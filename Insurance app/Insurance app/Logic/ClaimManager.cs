@@ -63,10 +63,11 @@ namespace Insurance_app.Logic
 
             return 0;
         }
+        
         /// <summary>
-        /// 
+        /// finds claims that are resolved
         /// </summary>
-        /// <returns></returns>
+        /// <returns>null/resolved claims</returns>
         public List<Claim> GetResolvedClaims()
         {
             try
@@ -80,24 +81,39 @@ namespace Insurance_app.Logic
 
             return null;
         }
+        /// <summary>
+        /// Sends information to realm Database
+        /// </summary>
+        /// <param name="hospitalPostcode">User input</param>
+        /// <param name="patientNr">User input</param>
+        /// <param name="type">health (health insurance)</param>
+        /// <param name="user">Current user</param>
+        /// <param name="customerId"></param>
+        /// <param name="extraInfo">User input</param>
         public async Task CreateClaim(string hospitalPostcode, string patientNr, string type, User user,string customerId,string extraInfo)
         {
             await realmDb.AddClaim(hospitalPostcode, patientNr, type, user,customerId,extraInfo);
         }
-
-        public async Task<List<Claim>> GetClaims(User user,string customerId)
+        /// <summary>
+        /// Retrieves claims from RealmDb helper
+        /// </summary>
+        /// <param name="user">Current user</param>
+        /// <param name="customerId">User/Customer Id</param>
+        public async Task GetClaims(User user, string customerId)
         {
             Claims = await realmDb.GetClaims(user,customerId);
-            return Claims;
         }
-
+        
+        /// <summary>
+        /// Find current claim.
+        /// </summary>
+        /// <returns>Current claim/null</returns>
         public Claim GetCurrentClaim()
         {
             try
             {
                 var aClaim = Claims.FirstOrDefault(claim => claim.CloseDate == null);
-                if (aClaim is null) return null;
-                return aClaim;
+                return aClaim ?? null;
             }
             catch (Exception e)
             {
@@ -105,23 +121,41 @@ namespace Insurance_app.Logic
             }
             return null;
         }
-
+        
+        /// <summary>
+        /// Passes Claim to realmDb helper so it can be resolved
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="user">Client</param>
+        /// <param name="reason">Customer Comment / Client deny input</param>
+        /// <param name="action">accept/deny the claim</param>
+        /// <returns></returns>
         public async Task<Customer> ResolveClaim(string customerId, User user,string reason,bool action)
         {
            return await realmDb.ResolveClaim(customerId,user,reason,action);
         }
-
+        /// <summary>
+        /// release allocated memory & Realm instance
+        /// </summary>
         public void Dispose()
         {
             realmDb.Dispose();
             if (Claims != null) Claims = null;
         }
-
+        /// <summary>
+        /// Finds open claims 
+        /// </summary>
+        /// <param name="user">Client</param>
+        /// <returns>Open Claims</returns>
         public async Task<IEnumerable<Claim>> GetAllOpenClaims(User user)
         {
            return await realmDb.GetAllOpenClaims(user);
         }
-
+        /// <summary>
+        /// Find if client want to resolve claim and get reason if not
+        /// </summary>
+        /// <param name="extraInfo">Customer comment</param>
+        /// <returns>Customer comment or Client decline reason and accept/deny claim</returns>
         public async Task<Tuple<string, bool>> GetClientAction(string extraInfo)
         {
             var action = await Application.Current.MainPage.DisplayAlert(Msg.Notice, 
@@ -142,8 +176,7 @@ namespace Insurance_app.Logic
                         new EditorPopup("Please enter reason for Denying Claim",false,""));
                     if (reason is "")
                     {
-                        await Application.Current.MainPage.DisplayAlert
-                            (Msg.Notice, "Claim cant be Denied without a reason", "close");
+                        await Msg.Alert("Claim cant be Denied without a reason");
                         reason="-1";
                     }
 
