@@ -29,15 +29,25 @@ using Realms.Sync;
 
 namespace Insurance_app.Logic
 {
+/// <summary>
+/// Class used to connect between Database and UI,
+/// while processing Users
+/// </summary>
     public class UserManager : IDisposable
     {
-        private RealmDb realmDb;
+        private readonly RealmDb realmDb;
 
         public UserManager()
         {
             realmDb = RealmDb.GetInstancePerPage();
 
         }
+        /// <summary>
+        /// Register user with Realm/Mongo db
+        /// </summary>
+        /// <param name="email">email input</param>
+        /// <param name="password">users password</param>
+        /// <returns>error message</returns>
         public async Task<string> Register(string email, string password)
         {
             try
@@ -51,12 +61,26 @@ namespace Insurance_app.Logic
                 return e.Message;
             }
         }
-        public async Task<Customer> GetCustomer(User user,string id)
+        /// <summary>
+        /// Uses RealmDb helper to get Customer
+        /// </summary>
+        /// <param name="user">Realm user instance</param>
+        /// <param name="userId">Realm userId string</param>
+        /// <returns></returns>
+        public async Task<Customer> GetCustomer(User user,string userId)
         {
-            return await realmDb.FindCustomer(user,id);
-           // return currentCustomer;
+            return await realmDb.FindCustomer(user,userId);
         }
-        
+        /// <summary>
+        /// Creates customer instance
+        /// </summary>
+        /// <param name="dob">customers date of birth DateTimeOffset</param>
+        /// <param name="fName">Customer first name string</param>
+        /// <param name="lName">customer last name string</param>
+        /// <param name="phoneNr">customer phone number string</param>
+        /// <param name="email">customer email string</param>
+        /// <param name="address">customer address instance</param>
+        /// <returns>Customer Instance</returns>
         public Customer CreateCustomer(DateTimeOffset dob, string fName, string lName, string phoneNr, string email,Address address)
         {
             try
@@ -84,12 +108,25 @@ namespace Insurance_app.Logic
             }
 
         }
+        /// <summary>
+        /// Uses RealmDb helper to add customer to database
+        /// </summary>
+        /// <param name="customer">Newly created customer instance</param>
+        /// <param name="user">Realm user instance</param>
         public async Task AddCustomer(Customer customer,User user)
         {
             await realmDb.AddCustomer(customer,user);
         }
-
-
+        
+        /// <summary>
+        /// Passes data to RealmDb helper to update customer.
+        /// </summary>
+        /// <param name="name">customer name string</param>
+        /// <param name="lastName">customer last name string</param>
+        /// <param name="phoneNr">customer phone number string</param>
+        /// <param name="address">customer Address instance</param>
+        /// <param name="user">Realm user instance</param>
+        /// <param name="customerId"></param>
         public async Task UpdateCustomer(string name, string lastName, 
             string phoneNr,Address address, User user,string customerId)
         {
@@ -97,11 +134,25 @@ namespace Insurance_app.Logic
                 phoneNr,  address, user,customerId);
         }
 
+        /// <summary>
+        /// Passes data to RealmDb helper to create client instance
+        /// </summary>
+        /// <param name="user">Realm User instance</param>
+        /// <param name="email">Client email string</param>
+        /// <param name="fname">Client first name string</param>
+        /// <param name="lname">Client last name string</param>
+        /// <param name="code">Client code string</param>
+        /// <returns>true if everything went ok</returns>
         public async Task<bool> CreateClient(User user, string email, string fname, string lname, string code)
         {
             return await realmDb.CreateClient(user, email, fname, lname, code);
         }
 
+        /// <summary>
+        /// Finds type of user that is trying to log in
+        /// </summary>
+        /// <param name="user">Realm user instance</param>
+        /// <returns>Customer or UnpaidCustomer or Current policy id string</returns>
         public async Task<string> FindTypeUser(User user)
         {
             try
@@ -135,6 +186,11 @@ namespace Insurance_app.Logic
             return "";
         }
 
+        /// <summary>
+        /// Finds latest policy
+        /// </summary>
+        /// <param name="customer">Current customer instance</param>
+        /// <returns>Current policy instance</returns>
         private Policy FindLatestPolicy(Customer customer)
         {
             try
@@ -150,32 +206,54 @@ namespace Insurance_app.Logic
             return null;
         }
         
+        /// <summary>
+        ///  Passes data to RealmDb helper to get all the valid customers
+        /// </summary>
+        /// <param name="user">Realm user</param>
+        /// <returns>List of valid Customer instances</returns>
         public async Task<List<Customer>>GetAllCustomer(User user)
         {
-            
-            List<Customer> list = new List<Customer>();
-            var now = DateTimeOffset.Now;
-           foreach (var customer in await realmDb.GetAllCustomer(user))
-           {
-              var policy= FindLatestPolicy(customer);
-              if (policy != null && policy.ExpiryDate > now)
-              {
-                  list.Add(customer);
-              }
-           }
-           return list;
+            try
+            {
+                var now = DateTimeOffset.Now;
+                return (from customer in await realmDb.GetAllCustomer(user) 
+                    let policy = FindLatestPolicy(customer) 
+                    where policy != null && policy.ExpiryDate > now select customer).ToList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return null;
         }
-
+        
+        /// <summary>
+        /// Passes data to RealmDb helper to get customer date of birth
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="user">Realm user instance</param>
+        /// <returns>customers date of birth DateTimeOffset</returns>
         public async Task<DateTimeOffset> GetCustomersDob(string customerId,User user)
         {
             return await realmDb.GetCustomersDob(customerId,user);
         }
-
+        
+        /// <summary>
+        /// Updates customer data monitoring switch
+        /// </summary>
+        /// <param name="user">Realm user instance</param>
+        /// <param name="switchState">boolean state which the monitoring is going to be set to</param>
         public async Task UpdateCustomerSwitch(User user, bool switchState)
         { 
          await  realmDb.UpdateCustomerSwitch(user, switchState);
         }
-        
+        /// <summary>
+        /// Create temporary password,
+        /// Uses Realm app to reset Email password,
+        /// And Using HttpService to send an email
+        /// </summary>
+        /// <param name="email">customer email string</param>
+        /// <param name="name">customer name string</param>
         public async Task ResetPassword(string email,string name)
         {
             try
@@ -189,12 +267,15 @@ namespace Insurance_app.Logic
                 Console.WriteLine(e);
             }
         }
+        /// <summary>
+        /// release Realm instance
+        /// </summary>
 
         public void Dispose()
         {
             realmDb.Dispose();
         }
-
+        
         public async Task CleanDatabase(User user) // TODO REMOVE when submitting
         {
           await realmDb.CleanDatabase(user);
