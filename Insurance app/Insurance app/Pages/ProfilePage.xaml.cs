@@ -35,13 +35,17 @@ namespace Insurance_app.Pages
             InitializeComponent();
             BindingContext = new ProfileViewModel();
         }
-
+        /// <summary>
+        /// Load in customer details
+        /// </summary>
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            var vm = (ProfileViewModel) BindingContext;
-            await vm.Setup();
+            await ((ProfileViewModel) BindingContext).Setup();
         }
+        /// <summary>
+        /// Validation of customer inputs
+        /// </summary>
         private async void Button_OnClicked(object sender, EventArgs e)
         {
             try
@@ -90,7 +94,9 @@ namespace Insurance_app.Pages
                 Console.WriteLine(exception);
             }
         }
-
+        /// <summary>
+        /// When leaving page release Realm instance
+        /// </summary>
         protected override void OnDisappearing()
         {
             base.OnDisappearing();

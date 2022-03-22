@@ -29,7 +29,7 @@ namespace Insurance_app.Pages.ClientPages
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class PreviousPolicyPopup : Popup
     {
-        public PreviousPolicyPopup(List<Policy> previousPolicies)
+        public PreviousPolicyPopup(IEnumerable<Policy> previousPolicies)
         {
             InitializeComponent();
             BindingContext = new PPolicyPopupViewModel(this,previousPolicies);

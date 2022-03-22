@@ -25,14 +25,15 @@ using Realms;
 
 namespace Insurance_app.Models
 {
+    /// <summary>
+    /// Class representation of an object schema that is stored on Mongo/Realm
+    /// </summary>
     public class Reward : RealmObject
     {
         [PrimaryKey] [MapTo("_id")] public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
         public float? Cost { get; set; }
         public IList<MovData> MovData { get; }
-        
         public bool? DelFlag { get; set; } = false;
-        
         public DateTimeOffset? FinDate { get; set; } = null;
         public DateTimeOffset? StartDate { get; set; } = DateTimeOffset.Now.DateTime;
 

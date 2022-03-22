@@ -37,7 +37,9 @@ namespace Insurance_app.Pages.Popups
             InitializeComponent();
             BindingContext = new EditorViewModel(this,heading,readOnly,popupDisplayText);
         }
-
+        /// <summary>
+        /// User input validation
+        /// </summary>
         private async void  Button_OnClicked(object sender, EventArgs e)
         {
    

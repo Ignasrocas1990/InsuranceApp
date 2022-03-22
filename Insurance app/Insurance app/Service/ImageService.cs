@@ -22,6 +22,11 @@ using System.Reflection;
 using Xamarin.Forms;
 
 namespace Insurance_app.Service {
+  /// <summary>
+  /// Used to store ImageSources of card images.
+  /// And selected as needed.
+  /// Based on Someone else code. Please see the header
+  /// </summary>
   internal class ImageService {
     private ImageService() { }
 
@@ -41,6 +46,11 @@ namespace Insurance_app.Service {
 
     public ImageSource CardUnknown { get; } = Load("stp_card_unknown@3x.png");
 
+    /// <summary>
+    /// Selects image from pre-set ImageSources
+    /// </summary>
+    /// <param name="name">name of image files</param>
+    /// <returns>ImageSource Instance</returns>
     private static ImageSource Load(string name) {
       return ImageSource.FromResource($"Insurance_app.Resources.{name}",
         typeof(ImageService).GetTypeInfo().Assembly);

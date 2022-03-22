@@ -35,13 +35,17 @@ namespace Insurance_app.Pages
             InitializeComponent();
             BindingContext = new ChangePassViewModel();
         }
-
+        /// <summary>
+        /// When leaving page release Realm instance
+        /// </summary>
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
             ((ChangePassViewModel)BindingContext).Dispose();
         }
-
+        /// <summary>
+        /// user password validation
+        /// </summary>
         private async void Button_OnClicked(object sender, EventArgs e)
         {
             var vm = (ChangePassViewModel)BindingContext;

@@ -23,8 +23,25 @@ using Stripe;
 
 namespace Insurance_app.Service
 {
+    /// <summary>
+    /// Service the processes the payemtns with
+    /// User inputted card info
+    /// </summary>
     public static class PaymentService
     {
+        /// <summary>
+        /// Uses token created and information provided, by the customer
+        /// while using Stripe library calls its API to process the payment
+        /// </summary>
+        /// <param name="number">card number string</param>
+        /// <param name="expYear">card expiry year int</param>
+        /// <param name="expMonth">card expiry month int</param>
+        /// <param name="cvc">card special code string</param>
+        /// <param name="zip">customer zip code string</param>
+        /// <param name="price">price that is needed to be processed double </param>
+        /// <param name="name">customer name string</param>
+        /// <param name="email">customer email string</param>
+        /// <returns>try/false if translation has been successful</returns>
         public static async Task<bool> PaymentAsync(string number, int expYear, int expMonth, string cvc, string zip,
             double price, string name, string email)
         {
@@ -44,12 +61,18 @@ namespace Insurance_app.Service
             return false;
         }
 
+        /// <summary>
+        /// Creates and process a Stripe charge
+        /// </summary>
+        /// <param name="price">calculated price double</param>
+        /// <param name="email">customer email sting</param>
+        /// <param name="stripeToken">Created Stripe token instance</param>
+        /// <returns>true/false if it is created</returns>
         private static async Task<bool> Pay(double price, string email, IHasId stripeToken)
         {
             try
             {
                 var roundedPrice = (long) Math.Round(price, 2) * 100;
-                // value is 49.1 euro
                 StripeConfiguration.ApiKey = (await App.RealmApp.CurrentUser.Functions.CallAsync("getKey")).AsString;
                 var options = new ChargeCreateOptions
                 {
@@ -71,6 +94,16 @@ namespace Insurance_app.Service
             }
         }
 
+        /// <summary>
+        /// Creates a token which registers customer card details
+        /// </summary>
+        /// <param name="number">card number string</param>
+        /// <param name="expYear">card expiry year int</param>
+        /// <param name="expMonth">card expiry month int</param>
+        /// <param name="cvc">card secret code string</param>
+        /// <param name="zip">customer zip code string</param>
+        /// <param name="name">customer name string</param>
+        /// <returns>Stripe Toke instance</returns>
         private static async Task<Token> CreateToken(string number, int expYear, int expMonth, string cvc, string zip,
             string name)
         {

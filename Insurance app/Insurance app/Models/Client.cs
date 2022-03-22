@@ -23,6 +23,9 @@ using Realms;
 
 namespace Insurance_app.Models
 {
+    /// <summary>
+    /// Class representation of an object schema that is stored on Mongo/Realm
+    /// </summary>
     public class Client : RealmObject
     {
         public Client() { }

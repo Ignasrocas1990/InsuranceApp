@@ -31,7 +31,9 @@ namespace Insurance_app.Pages
             BindingContext = new LogInViewModel();
 
         }
-
+        /// <summary>
+        /// Removes any previous log user.
+        /// </summary>
         protected override async void OnAppearing()
         {
             base.OnAppearing();
@@ -40,7 +42,9 @@ namespace Insurance_app.Pages
             await vm.ExistUser();
             vm.SetUpWaitDisplay = false;
         }
-
+        /// <summary>
+        /// When leaving page release Realm instance
+        /// </summary>
         protected override void OnDisappearing()
         {
             base.OnDisappearing();

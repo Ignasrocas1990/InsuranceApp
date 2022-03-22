@@ -30,7 +30,9 @@ namespace Insurance_app.Pages
             InitializeComponent();
             BindingContext = new ReportViewModel();
         }
-
+        /// <summary>
+        /// Load in steps and create charts
+        /// </summary>
         protected override async void OnAppearing()
         {
             var vm = (ReportViewModel) BindingContext;
@@ -40,7 +42,9 @@ namespace Insurance_app.Pages
             base.OnAppearing();
 
         }
-
+        /// <summary>
+        /// When leaving page release Realm instance
+        /// </summary>
         protected override void OnDisappearing()
         {
             base.OnDisappearing();

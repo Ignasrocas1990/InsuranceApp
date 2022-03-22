@@ -33,16 +33,12 @@ namespace Insurance_app.Pages
     {
         public RegistrationPage(Dictionary<string, string> tempQuote, string price)
         {
-            try
-            {
-                InitializeComponent();
-                BindingContext = new RegistrationViewModel(tempQuote,price);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            InitializeComponent(); 
+            BindingContext = new RegistrationViewModel(tempQuote,price);
         }
+        /// <summary>
+        /// Registration user input validation
+        /// </summary>
         private async void Button_OnClicked(object sender, EventArgs e)
         {
              try

@@ -24,9 +24,16 @@ using System.Linq;
 using Xamarin.Forms;
 
 namespace Insurance_app.Service {
+  /// <summary>
+  /// This class used check numbers entered
+  /// which defines the card what type card(image) it is
+  /// and what length does it requires.
+  /// (Based on someone else code, please see the header)
+  ///  </summary>
   internal class CardDefinitionService {
     private readonly CardDefinition[] cardDefinitions;
 
+    
     private readonly CardDefinition error = new CardDefinition {
       Length = 16,
       Image = ImageService.Instance.CardError
@@ -108,7 +115,12 @@ namespace Insurance_app.Service {
       return (definition.Length, definition.Image);
     }
 
-
+    /// <summary>
+    /// Main method which traverses through CardDefinition object list
+    /// and returns if any card is matching hard coded definition (Based on someone else code, please see the header)
+    /// </summary>
+    /// <param name="cardNumber">User card input string</param>
+    /// <returns>Card definition object instance</returns>
     private CardDefinition DefinitionFor(string cardNumber) {
       if (cardNumber.Length == 0) return unknown;
 
@@ -148,6 +160,11 @@ namespace Insurance_app.Service {
         _ => unknown
       };
     }
+    /// <summary>
+    /// Card object that is used to group
+    /// data such as length,image that needed to identify type of card is user using
+    /// from the number input
+    /// </summary>
     private class CardDefinition {
       public ImageSource Image { get; set; }
       public int Length { get; set; }

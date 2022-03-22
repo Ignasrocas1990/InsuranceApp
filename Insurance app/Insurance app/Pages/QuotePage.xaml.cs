@@ -1,5 +1,6 @@
 ﻿using Insurance_app.ViewModels;
 using Xamarin.Forms.Xaml;
+
 /*    Copyright 2020,Ignas Rocas
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,14 +30,17 @@ namespace Insurance_app.Pages
             InitializeComponent();
             BindingContext = new QuoteViewModel(policyId);
         }
-
+        /// <summary>
+        /// Loading Quote resources
+        /// </summary>
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            var vm = (QuoteViewModel)BindingContext;
-            await vm.SetUp();
+            await ((QuoteViewModel)BindingContext).SetUp();
         }
-
+        /// <summary>
+        /// When leaving page release Realm instance
+        /// </summary>
         protected override void OnDisappearing()
         {
             base.OnDisappearing();

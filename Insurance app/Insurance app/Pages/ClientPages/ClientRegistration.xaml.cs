@@ -32,13 +32,20 @@ namespace Insurance_app.Pages.ClientPages
         {
             InitializeComponent();
         }
-
+        /// <summary>
+        /// When leaving page release Realm instance
+        /// </summary>
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
             ((ClientRegViewModel) BindingContext).Dispose();
         }
 
+        /// <summary>
+        /// Register page validation onclick
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void OnClickedRegister(object sender, EventArgs e)
         {
             try

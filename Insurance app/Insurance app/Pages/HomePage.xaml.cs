@@ -30,25 +30,23 @@ namespace Insurance_app.Pages
         public HomePage()
         {
             InitializeComponent();
-
-            //BindingContext = (HomeViewModel) ShellViewModel.GetInstance()
-              //  .GetViewModel(Converter.HomeViewModel);
-
-              BindingContext = new HomeViewModel();
+            BindingContext = new HomeViewModel();
         }
-
+        /// <summary>
+        /// Load in resources
+        /// </summary>
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            var vm = (HomeViewModel)BindingContext;
-            await vm.Setup();
+            await ((HomeViewModel)BindingContext).Setup();
         }
-
+        /// <summary>
+        /// When leaving page release Realm instance
+        /// </summary>
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            var vm = (HomeViewModel)BindingContext;
-            vm.Dispose();
+            ((HomeViewModel)BindingContext).Dispose();
         }
     }
 }

@@ -30,14 +30,17 @@ namespace Insurance_app.Pages.ClientPages
         {
             InitializeComponent();
         }
-
+        /// <summary>
+        /// Load in open customer policies
+        /// </summary>
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            var vm = (OpenPolicyRViewModel)BindingContext;
-            await vm.Setup();
+            await ((OpenPolicyRViewModel)BindingContext).Setup();
         }
-
+        /// <summary>
+        /// When leaving page release Realm instance
+        /// </summary>
         protected override void OnDisappearing()
         {
             base.OnDisappearing();

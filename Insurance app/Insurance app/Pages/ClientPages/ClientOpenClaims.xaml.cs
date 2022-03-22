@@ -30,13 +30,18 @@ namespace Insurance_app.Pages.ClientPages
         {
             InitializeComponent();
         }
-
+        /// <summary>
+        /// Load in open Claims
+        /// </summary>
         protected override async void OnAppearing()
         {
             base.OnAppearing();
             var vm = (ClientOClaimsViewModel)BindingContext;
             await vm.Setup();
         }
+        /// <summary>
+        /// When leaving page release Realm instanceS
+        /// </summary>
         protected override void OnDisappearing()
         {
             base.OnDisappearing();

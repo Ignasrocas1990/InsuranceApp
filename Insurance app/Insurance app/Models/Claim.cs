@@ -24,6 +24,9 @@ using Realms;
 
 namespace Insurance_app.Models
 {
+    /// <summary>
+    /// Class representation of an object schema that is stored on Mongo/Realm
+    /// </summary>
     public class Claim : RealmObject
     {
         [PrimaryKey] [MapTo("_id")] public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
@@ -39,7 +42,6 @@ namespace Insurance_app.Models
         public string HospitalPostCode { get; set; }
         public string PatientNr { get; set; }
         public string Type { get; set; }
-        
         public string Owner { get; set; }
     }
 }

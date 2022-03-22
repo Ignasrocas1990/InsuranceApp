@@ -37,7 +37,9 @@ namespace Insurance_app.Pages.Popups
             InitializeComponent();
             BindingContext = new AddressViewModel(this,address);
         }
-
+        /// <summary>
+        /// Address validation
+        /// </summary>
         private async void Button_OnClicked(object sender, EventArgs e)
         {
             try

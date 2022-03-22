@@ -24,6 +24,9 @@ using Realms;
 
 namespace Insurance_app.Models
 {
+    /// <summary>
+    /// Class representation of an object schema that is stored on Mongo/Realm
+    /// </summary>
     public class MovData : RealmObject
     {
         [PrimaryKey] [MapTo("_id")] public ObjectId Id { get; set; } = ObjectId.GenerateNewId();

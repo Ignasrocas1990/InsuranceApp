@@ -17,6 +17,7 @@
     Student Number : C00135830
            Purpose : 4th year project
  */
+
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -27,10 +28,22 @@ using Newtonsoft.Json;
 
 namespace Insurance_app.Service
 {
-    
+    /// <summary>
+    /// Class used to send HTTP requests to
+    /// custom API which,
+    /// 1) Using ML predicts the policy price.
+    /// 2) Stores codes that identify user as Client.
+    /// 3) Email service
+    /// </summary>
     public static class HttpService
     {
-        
+        /// <summary>
+        /// Sends http request to custom API so it
+        /// can send customer confirm email code
+        /// </summary>
+        /// <param name="email">customers email string</param>
+        /// <param name="date">today's date DateTime</param>
+        /// <param name="code">Random sequence on characters string</param>
         public static void EmailConfirm(string email, DateTime date, string code)
         {
             if (!App.NetConnection()) return;
@@ -62,6 +75,14 @@ namespace Insurance_app.Service
                 Console.WriteLine("error not connected");
             }
         }
+        /// <summary>
+        /// Sends http request to custom API
+        /// so it can send customer an email about allowing policy update
+        /// </summary>
+        /// <param name="email">customer email string</param>
+        /// <param name="name">customer name string</param>
+        /// <param name="date">today's date DateTime</param>
+        /// <param name="action">Accept/Reject string</param>
         public static void CustomerNotifyEmail(string email, string name, DateTime date, string action)
         {
             if (!App.NetConnection()) return;
@@ -96,6 +117,15 @@ namespace Insurance_app.Service
                 Console.WriteLine("error not connected");
             }
         }
+        /// <summary>
+        /// Sends http request to custom API
+        /// so it can send customer email about open Claim action
+        /// </summary>
+        /// <param name="email">customer email string</param>
+        /// <param name="name">customer name string</param>
+        /// <param name="date">today's date DateTime</param>
+        /// <param name="action">Accept/Deny boolean</param>
+        /// <param name="reason">Reason for client to reject or if accepted is empty</param>
         public static void ClaimNotifyEmail(string email, string name, DateTime date,bool action,string reason)
         {
             if (!App.NetConnection()) return;
@@ -132,6 +162,14 @@ namespace Insurance_app.Service
             }
         }
         
+        /// <summary>
+        /// Sends http request to custom API
+        /// so it can send customer email reset temporary random password
+        /// </summary>
+        /// <param name="email">customer email string</param>
+        /// <param name="name">customer name string</param>
+        /// <param name="date">today's date DateTime</param>
+        /// <param name="tempPass">random password string</param>
         public static void ResetPasswordEmail(string email, string name, DateTime date,string tempPass)
         {
             if (!App.NetConnection()) return ;
@@ -165,12 +203,12 @@ namespace Insurance_app.Service
                 Console.WriteLine("error not connected");
             }
         }
-        
-        
-        
-        
-        
-        
+        /// <summary>
+        /// Sends http request to custom API
+        /// so it can check pre-set client codes
+        /// </summary>
+        /// <param name="code">client input code string</param>
+        /// <returns>Http Response Message instance</returns>
         public static Task<HttpResponseMessage> CheckCompanyCode(string code)
         {
             if (!App.NetConnection()) return null;
@@ -183,10 +221,7 @@ namespace Insurance_app.Service
             {
                 try
                 {
-                    //HttpResponseMessage response = await client.PostAsync(Url, content);
                     return client.PostAsync(StaticOpt.CompanyCodeUrl, content);
-                    //return Task.FromResult(response);
-                    //finRequest?.Invoke(this,response);
                 }
                 catch (Exception e)
                 {
@@ -200,7 +235,17 @@ namespace Insurance_app.Service
             }
             return null;
         }
-
+        /// <summary>
+        /// Creates dictionary for the quote and waits till
+        /// Predict returns the price (sent by API)
+        /// </summary>
+        /// <param name="hospitals">customer selected option int</param>
+        /// <param name="age">calculated customer age int</param>
+        /// <param name="cover">customer selected option int</param>
+        /// <param name="hospitalExcess">customer selected option int</param>
+        /// <param name="plan">customer selected option int</param>
+        /// <param name="smoker">customer selected option int</param>
+        /// <returns>price string</returns>
         public static async Task<string> SendQuoteRequest(int hospitals, int age, int cover, int hospitalExcess, int plan, int smoker)
         {
             var tempQuote = new Dictionary<string, int>()
@@ -215,11 +260,14 @@ namespace Insurance_app.Service
             var result = await Predict(tempQuote);
             return await result.Content.ReadAsStringAsync();
         }
-        /**
-         * Take raw data from sensor and pass it by http to predict
-         * if customer walking
-         */
-        private static Task<HttpResponseMessage> Predict(Dictionary<String,int>quote)
+        /// <summary>
+        /// Posts request request to custom API
+        /// to predict the price which policy has to be payed in
+        /// regards to customer selected options.
+        /// </summary>
+        /// <param name="quote">Combined from user inputs Dictionary</param>
+        /// <returns>null or HttpResponseMessage (depending success)</returns>
+        private static Task<HttpResponseMessage> Predict(Dictionary<string,int>quote)
         {
             if (!App.NetConnection()) return null;
             var client = new HttpClient();
@@ -235,7 +283,6 @@ namespace Insurance_app.Service
                 {
                     Console.WriteLine($"fail to send { e }");
                     App.Connected = false;
-                       
                 }
             }
             else

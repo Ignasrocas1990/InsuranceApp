@@ -29,13 +29,14 @@ namespace Insurance_app.Service
 {
     /// <summary>
     ///  Main Realm/Mongo database helper class
+    /// Which is responsible connection to database
+    /// It is generated one instance per page.
+    /// (Since realm does not allow managed object across multiple threads.)
     /// </summary>
     public class RealmDb
     {
         private static Realm _realm;
-
-        private const string Partition = "CustomerPartition";
-
+        
         private static RealmDb _db;
         private RealmDb() {}
 
@@ -50,21 +51,21 @@ namespace Insurance_app.Service
         }
 //------------------------------------- Customer methods ---------------------
         /// <summary>
-        /// 
+        /// Adds newly created customer instance to database
         /// </summary>
-        /// <param name="c"></param>
-        /// <param name="user"></param>
-        /// <exception cref="Exception"></exception>
-        public async Task AddCustomer(Customer c,User user)
+        /// <param name="customer">Customer object instance</param>
+        /// <param name="user">Realm User instance</param>
+        /// <exception cref="Exception">Throws when realm connection problem</exception>
+        public async Task AddCustomer(Customer customer,User user)
         {
             try
             {
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null) throw new Exception("AddCustomer, >>>>>>>>>>>>>>>>>>>>>>>> real is null");
                 
                 _realm.Write(() =>
                 {
-                     _realm.Add(c,true);
+                     _realm.Add(customer,true);
                 });
                 Console.WriteLine("customer added");
             }
@@ -74,12 +75,18 @@ namespace Insurance_app.Service
             }
         }
 
+        /// <summary>
+        /// Finds a customer in Mongo cloud database
+        /// </summary>
+        /// <param name="user">Realm app user instance</param>
+        /// <param name="id">customer id string</param>
+        /// <returns>Customer instance</returns>
         public async Task<Customer> FindCustomer(User user,string id)
         {
             Customer c = null;
             try
             {
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null) throw new Exception("FindCustomer, real is null");
                 _realm.Write(() =>
                 {
@@ -95,6 +102,16 @@ namespace Insurance_app.Service
 
             }
         }
+        
+        /// <summary>
+        /// Updates pre-existing customer object from mongo database
+        /// </summary>
+        /// <param name="name">customer first name string</param>
+        /// <param name="lastName">customer last name string</param>
+        /// <param name="phoneNr">customer phone number string</param>
+        /// <param name="address"> Customer address instance</param>
+        /// <param name="user">Realm app user instance</param>
+        /// <param name="customerId"></param>
         public async Task UpdateCustomer(string name, string lastName, 
             string phoneNr, Address address, User user,string customerId)
         {
@@ -103,7 +120,7 @@ namespace Insurance_app.Service
                 await SubmitActivity(customerId, user,"UpdateCustomer");
                 
                 
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null) throw new Exception("UpdateCustomer, >>>>>>>>>>>>>>> real is null");
                 _realm.Write(() =>
                 {
@@ -121,12 +138,18 @@ namespace Insurance_app.Service
             }
             
         }
+        /// <summary>
+        /// Get current customer date of birth from cloud database
+        /// </summary>
+        /// <param name="customerId"/>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <returns>Date of birth DateTimeOffset</returns>
         public async Task<DateTimeOffset> GetCustomersDob(string customerId,User user)
         {
             DateTimeOffset dob;
             try
             {
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null) throw new Exception("GetCustomersDob, real is null");
                 _realm.Write(() =>
                 {
@@ -143,11 +166,16 @@ namespace Insurance_app.Service
 
             return dob;
         }
+        /// <summary>
+        /// Updates customer switch for collecting the sensor data
+        /// </summary>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <param name="switchState">bool describing if sensors on the watch to collect data</param>
         public async Task UpdateCustomerSwitch(User user, bool switchState)
         {
             try
             {
-                var  otherRealm =  await GetOtherRealm(Partition,user);
+                var  otherRealm =  await GetOtherRealm((await App.RealmApp.CurrentUser.Functions.CallAsync("getPartition")).AsString,user);
                 if (otherRealm is null)throw new Exception("UpdateCustomerSwitch >>>>>>>>>>> realm is null");
                 otherRealm.Write(() =>
                 {
@@ -163,12 +191,18 @@ namespace Insurance_app.Service
         }
         
 // --------------------------- Mov Data  methods --------------------------------     
+        /// <summary>
+        /// Gets all MoveMovement data for the report creation of the specified customer
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <returns>List of MovData object</returns>
         public async Task<List<MovData>> GetAllMovData(string customerId,User user)
         {
             List<MovData> movData = null;
             try
             {
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null)
                     throw new Exception(" GetAllMovData >>>>>>>>>>>>>>>>>>>>>>>>>; real is null");
                 _realm.Write(() =>
@@ -186,11 +220,19 @@ namespace Insurance_app.Service
         
 //------------------------------------------------   reward methods ----------------------
 
+        /// <summary>
+        /// Updates cloud stored Reward objects.
+        /// This used in-case of customer saving and not using their
+        /// Rewards (Build up processing)
+        /// </summary>
+        /// <param name="price"></param>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <param name="customerId"/>
         public async Task UpdateRewardsWithOverdraft(float price, User user, string customerId)
         {
             try
             {
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null)
                     throw new Exception(" UpdateRewardsWithOverdraft >>>>>>>>>>>; real is null");
                 _realm.Write(() =>
@@ -215,11 +257,17 @@ namespace Insurance_app.Service
             }
         }
         
+        /// <summary>
+        /// Sets Customer rewards to delete flag when it is used at the
+        /// payment page.
+        /// </summary>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <param name="customerId"></param>
         public async Task UseRewards(User user, string customerId)
         {
             try
             {
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null)
                     throw new Exception(" UseRewards >>>>>>>>>>>>>>>>>>>>>>>>>; real is null");
                 _realm.Write(() =>
@@ -239,12 +287,17 @@ namespace Insurance_app.Service
                 Console.WriteLine(e);
             }
         }
+        /// <summary>
+        /// Finds current reward, and creates it in-case it was finished and not created(by the watch)
+        /// </summary>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <returns>Reward current instance</returns>
         public async Task<Reward> FindReward(User user)
         {
             Reward reward = null;
             try
             {
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null)
                     throw new Exception(" FindReward >>>>>>>>>>>>>>>>>>>>>>>>>; real is null");
                 _realm.Write(()=>
@@ -274,6 +327,12 @@ namespace Insurance_app.Service
             }
             return reward;
         }
+        /// <summary>
+        /// Finds completed rewards and movement data collection switch.
+        /// </summary>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <param name="id">Customer id</param>
+        /// <returns>bool collection switch and list of completed Reward instance </returns>
         public async Task<Tuple<bool, List<Reward>>> GetTotalRewards(User user,string id)
         {
             var rewards = new List<Reward>();
@@ -281,7 +340,7 @@ namespace Insurance_app.Service
             //float totalEarnings = 0;
             try
             {
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null) throw new Exception("getTotalRewards >>>>>>>>>>>> realm  is null");
                 _realm.Write(() =>
                 {
@@ -309,13 +368,22 @@ namespace Insurance_app.Service
         }
 
 // ---------------------------- Claim methods --------------------------
-
+        /// <summary>
+        /// Creates and add new Claim instance to Mongo Cloud database
+        /// while accounting with the customer 
+        /// </summary>
+        /// <param name="hospitalCode">user input string</param>
+        /// <param name="patientNr">user input string</param>
+        /// <param name="type">Health, (currently only health insurance)</param>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <param name="customerId"></param>
+        /// <param name="extraInfo">User input string, as comment</param>
         public async Task AddClaim( string hospitalCode,string patientNr,string type,User user,string customerId,string extraInfo)
         {
             try
             {
                 await SubmitActivity(customerId, user, $"AddClaim");
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null) throw new Exception(" AddClaim >>>>>>>>>>> realm null");
                 _realm.Write(() =>
                 {
@@ -338,7 +406,15 @@ namespace Insurance_app.Service
             }
             
         }
-        
+        /// <summary>
+        /// Used to update Claim which is stored on mongo cloud database
+        /// as it is being resolved by the client.
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <param name="reason">Client reason for deny or customer comment if accepted string</param>
+        /// <param name="action">accepted/deny boolean</param>
+        /// <returns>Customer object instance</returns>
         public async Task<Customer> ResolveClaim(string customerId,User user,string reason,bool action)
         {
             Customer customer = null;
@@ -346,7 +422,7 @@ namespace Insurance_app.Service
             {
                 await SubmitActivity(customerId, user,"ResolveClaim");
                 
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null)
                     throw new Exception(" ResolveClaim >>>>>>>>>>>>>>>>>>; realm null");
                 _realm.Write(() =>
@@ -368,12 +444,18 @@ namespace Insurance_app.Service
 
             return customer;
         }
+        /// <summary>
+        /// Gets All the claims that is associated with the customer & stored on Mongo Database
+        /// </summary>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <param name="customerId"></param>
+        /// <returns>List of Claims</returns>
         public async Task<List<Claim>> GetClaims(User user,string customerId)
         {
             var claims = new List<Claim>();
             try
             {
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null) throw new Exception(" GetClaims >>>>>>>>> realm null");
                 _realm.Write(() =>
                 {
@@ -393,12 +475,17 @@ namespace Insurance_app.Service
 
             return claims;
         }
+        /// <summary>
+        /// Get list of open claim by all the customers
+        /// </summary>
+        /// <param name="user">Authorized realm user instance (Client)</param>
+        /// <returns>List of claim object instances</returns>
         public async Task<List<Claim>> GetAllOpenClaims(User user)
         {
             var openClaims = new List<Claim>();
             try
             {
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null) throw new Exception("GetAllOpenClaims >>>>>>>>>>>>>>>>>>>>>>>>>> realm null");
                 _realm.Write(() =>
                 {
@@ -413,20 +500,20 @@ namespace Insurance_app.Service
             return openClaims;
         }
 //---------------------------------------------------- policy methods --------------------------------------
-/// <summary>
-/// 
-/// </summary>
-/// <param name="customerId">customer id </param>
-/// <param name="user">Customer or client</param>
-/// <returns>Tuple with current policy & can be updated or not.
-/// if the policy can be updated. true/false=cant </returns>
-/// <exception cref="Exception"></exception>
-public async Task<Tuple<bool,Policy>> FindPolicy(string customerId,User user)
+        /// <summary>
+        /// Retrieves current policy and if user
+        /// will be able to update it.
+        /// </summary>
+        /// <param name="customerId"/>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <returns>Tuple with current policy & bool, can be updated or not.
+        /// if the policy can be updated=true,false=cant </returns>
+        public async Task<Tuple<bool,Policy>> FindPolicy(string customerId,User user)
         {
            var tuplePolicy = new Tuple<bool, Policy>(true,new Policy());
            try
            {
-               await GetRealm(Partition,user);
+               await GetRealm(user);
                if (_realm is null) throw new Exception("FindPolicy realm null");
                
                _realm.Write(() =>
@@ -462,14 +549,42 @@ public async Task<Tuple<bool,Policy>> FindPolicy(string customerId,User user)
            }
            return tuplePolicy;
         }
-public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user)
+        /// <summary>
+        /// Updates policy price after user has payed for it.
+        /// </summary>
+        /// <param name="policy">Current policy instance that is payed for</param>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <param name="price">Calculated payed price float</param>
+        public async Task UpdatePolicyPrice(Policy policy, User user, float price)
+        {
+            try
+            {
+                await GetRealm(user);
+                _realm.Write(() =>
+                {
+                    policy.PayedPrice = price;
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        /// <summary>
+        /// Get all previous policies of the associated customer
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <returns>List of Policy instances</returns>
+        public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user)
         {
             List<Policy> previousPolicies = null;
             try
             {
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null) throw new Exception("GetPreviousPolicies >>>>>>>>>>>>>>>>>>>>>>>>>> realm null");
-                _realm.Write(()=>
+                _realm.Write(() =>
                 {
                     previousPolicies = _realm.Find<Customer>(customerId)
                         .Policy.Where(p => p.UnderReview == false && p.DelFlag == false)
@@ -483,13 +598,17 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
 
             return previousPolicies ??= new List<Policy>();
         }
-
+        /// <summary>
+        /// Gets all updated policies that is stored on Mongo cloud Database.
+        /// </summary>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <returns>Group of update policy instances</returns>
         public async Task<IEnumerable<Policy>> GetAllUpdatedPolicies(User user)
         {
             IEnumerable<Policy> policies = new List<Policy>();
             try
             {
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null) throw new Exception("GetAllUpdatedPolicies >>>>>>>>>>>>>>>>>>>>>>>>>> realm null");
                 _realm.Write(() =>
                 {
@@ -506,12 +625,12 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
         }
         
         /// <summary>
-        /// 
+        /// Update current policy that customer what to change which
+        /// is stored on Mongo cloud database.
         /// </summary>
         /// <param name="customerId"></param>
-        /// <param name="user">Client only</param>
+        /// <param name="user">Authorized realm user instance(Client)</param>
         /// <param name="allowUpdate"> true = allow update/false = dont allow update </param>
-        /// <exception cref="Exception"></exception>
         public async Task<Customer> ResolvePolicyUpdate(string customerId, User user,bool allowUpdate)
         {
             Customer customer =null;
@@ -519,7 +638,7 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
             {
                 await SubmitActivity(customerId, user, $"ResolvePolicyUpdate,Allow={allowUpdate}");
                 
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null) throw new Exception("AllowPolicyUpdate >>>>>>>>>>>>>>>>>>>>>>>>>> realm null");
                 _realm.Write(()=>
                 {
@@ -548,7 +667,7 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
                 await SubmitActivity(customerId, user, "UpdatePolicy");
                 
                 
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null) throw new Exception("UpdatePolicy >>>>>>>>>>>>>>>>>>>>>>>>>> realm null");
                 _realm.Write(() =>
                 {
@@ -566,7 +685,7 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
         {
             try
             {
-                await GetRealm(user.Id,user);
+                var _realm = await GetOtherRealm(user.Id,user);
                 if (_realm is null) throw new Exception("CreateClient >>>>>>>>>>> realm was null");
                 _realm.Write(() =>
                 {
@@ -642,16 +761,13 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
         }
         public async Task<List<Customer>>GetAllCustomer(User user)
         {
-            List<Customer> customers = new List<Customer>();
+            var customers = new List<Customer>();
             try
             {
                 _realm = null;
-                await GetRealm(Partition, user);
-                
-                _realm.Write(() =>
-                {
-                    customers = _realm.All<Customer>().Where(c => c.DelFlag == false).ToList();
-                });
+                await GetRealm(user);
+
+                _realm?.Write(() => { customers = _realm.All<Customer>().Where(c => c.DelFlag == false).ToList(); });
             }
             catch (Exception e)
             {
@@ -662,13 +778,13 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
         }
 // -------------------------------- support methods ---------------------------------        
        
-        private async Task GetRealm(string p,User user)//ne
+        private async Task GetRealm(User user)
         {
             try
             {
                 if (_realm is null)
                 {
-                    var config = new SyncConfiguration(p,user);
+                    var config = new SyncConfiguration(await GetPartition(),user);
                     _realm = await Realm.GetInstanceAsync(config);
                 }
                 
@@ -679,6 +795,8 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
                 Console.WriteLine($"GetRealm, inner exception > {e.InnerException}");
             }
         }
+
+        private async Task<string> GetPartition() => (await App.RealmApp.CurrentUser.Functions.CallAsync("getPartition")).AsString;
 
         private async Task<Realm> GetOtherRealm(string partitionId,User user)
         {
@@ -702,8 +820,6 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
             try
             {
                 if (_realm is null) return;
-                //realm.SyncSession.Stop();
-               
                 if (!_realm.IsClosed)
                 {
                     _realm.Dispose();
@@ -719,7 +835,7 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
         {
             try
             {
-                await GetRealm(Partition,user);
+                await GetRealm(user);
                 if (_realm is null)
                     throw new Exception(" CleanDatabase >>>>>>>>>>>>>>>>>>; realm null");
 
@@ -735,20 +851,6 @@ public async Task<List<Policy>> GetPreviousPolicies(string customerId, User user
         }
 
 
-        public async Task UpdatePolicyPrice(Policy policy, User user, float price)
-        {
-            try
-            {
-                await GetRealm(Partition, user);
-                _realm.Write(() =>
-                {
-                    policy.PayedPrice = price;
-                });
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
+
     }
 }

@@ -70,7 +70,6 @@ namespace Insurance_app.ViewModels
         }
         public async Task ExistUser()
         {
-            CircularWaitDisplay = false;
             try
             {
                 if (App.RealmApp.CurrentUser != null)

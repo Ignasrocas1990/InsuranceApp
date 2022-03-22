@@ -33,26 +33,26 @@ namespace Insurance_app.Pages
         {
             InitializeComponent();
             BindingContext  = new ClaimViewModel();
-            
-            //BindingContext = (ClaimViewModel) ShellViewModel.GetInstance()
-            //   .GetViewModel(Converter.ClaimViewModel);
-            //BindingContext = new ClaimViewModel();
         }
-
+        /// <summary>
+        /// Load in current open claim
+        /// </summary>
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            var vm = (ClaimViewModel)BindingContext;
-             await vm.SetUp();
+            await ((ClaimViewModel)BindingContext).SetUp();
         }
-
+        /// <summary>
+        /// When leaving page release Realm instance
+        /// </summary>
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            var vm = (ClaimViewModel)BindingContext;
-            vm.ClaimManager.Dispose();
+            ((ClaimViewModel)BindingContext).Dispose();
         }
-
+        /// <summary>
+        /// Validate user inputs
+        /// </summary>
         private async void Button_OnClicked(object sender, EventArgs e)
         {
             try

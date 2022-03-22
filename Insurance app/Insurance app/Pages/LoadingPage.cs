@@ -23,17 +23,20 @@ using Xamarin.Forms;
 
 namespace Insurance_app.Pages
 {
+    /// <summary>
+    /// For each page set current page as root page.
+    /// (Used one Activity indicator throughout the project)
+    /// </summary>
     public class LoadingPage: ContentPage
     {
         public static readonly BindableProperty RootViewModelProperty =
             BindableProperty.Create(
-                "RootViewModel", typeof(object), typeof(LoadingPage),
-                defaultValue: default(object));
+                "RootViewModel", typeof(object), typeof(LoadingPage));
 
         public object RootViewModel
         {
-            get { return (object)GetValue(RootViewModelProperty); }
-            set { SetValue(RootViewModelProperty, value); }
+            get => GetValue(RootViewModelProperty);
+            set => SetValue(RootViewModelProperty, value);
         }
     }
 }

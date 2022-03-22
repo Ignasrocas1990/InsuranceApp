@@ -30,13 +30,17 @@ namespace Insurance_app.Pages
             InitializeComponent();
             BindingContext = new PolicyViewModel();
         }
+        /// <summary>
+        /// load in policy resources
+        /// </summary>
         protected override async void OnAppearing()
         {
-            var vm = (PolicyViewModel)BindingContext;
-            await vm.Setup();
+           await ((PolicyViewModel)BindingContext).Setup();
             base.OnAppearing();
         }
-
+        /// <summary>
+        /// When leaving page release Realm instance
+        /// </summary>
         protected override void OnDisappearing()
         {
             base.OnDisappearing();

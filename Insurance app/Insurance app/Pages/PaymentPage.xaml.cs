@@ -39,7 +39,9 @@ namespace Insurance_app.Pages
             InitializeComponent();
             BindingContext = new PaymentViewModel(customer);
         }
-
+        /// <summary>
+        /// Set default image on appearing
+        /// </summary>
         protected override async void OnAppearing()
         {
             base.OnAppearing();
@@ -47,7 +49,9 @@ namespace Insurance_app.Pages
             HeroImage.Source = ImageService.Instance.CardFront;
             await vm.Setup();
         }
-
+        /// <summary>
+        /// When leaving page release Realm instance
+        /// </summary>
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
@@ -55,7 +59,10 @@ namespace Insurance_app.Pages
             
         }
 
-
+        /// <summary>
+        /// When focused on code field use's animation to flip the card
+        /// And display different image
+        /// </summary>
         private void FieldFocused(object sender, FocusEventArgs e)
         {
             var oldValue = back;
@@ -73,7 +80,9 @@ namespace Insurance_app.Pages
             animation.Add(0.5, 1, rotateAnimation2);
             animation.Commit(this, "rotateCard");
         }
-
+        /// <summary>
+        /// Payment input validation
+        /// </summary>
         private async void Button_OnClicked(object sender, EventArgs e)
         {
             try
