@@ -23,6 +23,11 @@ using Xamarin.Forms;
 
 namespace Insurance_app.SupportClasses
 {
+    /// <summary>
+    /// Implementation of IValueConverter
+    /// which converts double to object.
+    /// Used to display circular progress bar as user performs steps.
+    /// </summary>
     public class ValueProgressBarConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -39,9 +44,6 @@ namespace Insurance_app.SupportClasses
             }
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
     }
 }

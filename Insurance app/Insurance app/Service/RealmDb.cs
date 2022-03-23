@@ -660,13 +660,19 @@ namespace Insurance_app.Service
             return customer;
 
         }
+        
+        /// <summary>
+        /// Updates cloud stored Policy object and if user is client,
+        /// It will SubmitActivity.
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <param name="newPolicy">New Policy instance</param>
         public async Task UpdatePolicy(string customerId,User user,Policy newPolicy)
         {
             try
             {
                 await SubmitActivity(customerId, user, "UpdatePolicy");
-                
-                
                 await GetRealm(user);
                 if (_realm is null) throw new Exception("UpdatePolicy >>>>>>>>>>>>>>>>>>>>>>>>>> realm null");
                 _realm.Write(() =>
@@ -681,6 +687,15 @@ namespace Insurance_app.Service
         }
 
         //--------------------------------- client methods -------------------------------
+        /// <summary>
+        /// Creates Client instance & saves it to Mongo Cloud database
+        /// </summary>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <param name="email">email input string</param>
+        /// <param name="fname">first name input string</param>
+        /// <param name="lname">last name input string</param>
+        /// <param name="code">code input string which is verified while calling custom API</param>
+        /// <returns>boolean, successful/failed process</returns>
         public async Task<bool> CreateClient(User user, string email, string fname, string lname, string code)
         {
             try
@@ -707,10 +722,14 @@ namespace Insurance_app.Service
 
             return false;
         }
-
+        /// <summary>
+        /// Checks if user that has been logged in is a Client
+        /// </summary>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <returns>is a client? boolean</returns>
         public async Task<bool> IsClient(User user)
         {
-            bool isClient = false;
+            var isClient = false;
             try
             {
                 var otherRealm=await GetOtherRealm(user.Id,user);
@@ -732,6 +751,13 @@ namespace Insurance_app.Service
             }
             return isClient;
         }
+        /// <summary>
+        /// Submits activity of client (example register, updates customer details etc...)
+        /// (Not used, created in-case administrator is added)
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <param name="type">Type of action performed string</param>
         private async Task SubmitActivity(string customerId,User user,string type)
         {
             try
@@ -759,6 +785,11 @@ namespace Insurance_app.Service
             }
             
         }
+        /// <summary>
+        /// Gets all customers
+        /// </summary>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <returns>List of Customer instances</returns>
         public async Task<List<Customer>>GetAllCustomer(User user)
         {
             var customers = new List<Customer>();
@@ -777,7 +808,11 @@ namespace Insurance_app.Service
 
         }
 // -------------------------------- support methods ---------------------------------        
-       
+       /// <summary>
+       /// Config method, which initializes a realm instance (per page)
+       /// Uses Realm Function(See GetPartition)
+       /// </summary>
+       /// <param name="user">Authorized realm user instance</param>
         private async Task GetRealm(User user)
         {
             try
@@ -795,9 +830,20 @@ namespace Insurance_app.Service
                 Console.WriteLine($"GetRealm, inner exception > {e.InnerException}");
             }
         }
-
+        /// <summary>
+        /// retrieves partition key from
+        /// cloud real functions (Can only be done when user is authorized)
+        /// </summary>
+        /// <returns>customer partition key</returns>
         private async Task<string> GetPartition() => (await App.RealmApp.CurrentUser.Functions.CallAsync("getPartition")).AsString;
 
+        /// <summary>
+        /// Initializes a temporary Realm instance (per use)
+        /// While is released after task is completed
+        /// </summary>
+        /// <param name="partitionId">Usually Client Id string</param>
+        /// <param name="user">Authorized realm user instance</param>
+        /// <returns></returns>
         private async Task<Realm> GetOtherRealm(string partitionId,User user)
         {
             try
@@ -814,7 +860,9 @@ namespace Insurance_app.Service
 
             }
         }
-        
+        /// <summary>
+        /// Release Initialized realm instance
+        /// </summary>
         public void Dispose()
         {
             try

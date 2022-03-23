@@ -18,6 +18,9 @@
  */
 namespace Insurance_app.SupportClasses
 {
+    /// <summary>
+    /// Used when log in (when identifying the user)
+    /// </summary>
     public enum UserType
     {
         Client,Customer,UnpaidCustomer

@@ -22,6 +22,10 @@ using Xamarin.Forms;
 
 namespace Insurance_app.SupportClasses
 {
+    /// <summary>
+    /// Class used to store Pop up notifications text
+    /// And Displays some of the messages
+    /// </summary>
     public static class Msg
     {
         public const string Notice = "Notice";
@@ -33,9 +37,17 @@ namespace Insurance_app.SupportClasses
         public const string NetworkConMsg = "Network connectivity is not available";
         public const string EmailSent = "Customer has been notified by email.";
 
+        /// <summary>
+        /// Displays a general type of message to the user (pop up)
+        /// </summary>
+        /// <param name="msg">message string</param>
         public static async Task Alert(string msg)=>
         await Application.Current.MainPage.DisplayAlert(Notice, msg, Close);
 
+        /// <summary>
+        /// Displays a error type of message to the user (pop up)
+        /// </summary>
+        /// <param name="msg">message string</param>
         public static async Task AlertError(string msg)=>
             await Application.Current.MainPage.DisplayAlert(Error, msg, Close);
         

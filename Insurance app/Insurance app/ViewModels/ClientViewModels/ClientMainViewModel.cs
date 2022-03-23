@@ -28,6 +28,9 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels.ClientViewModels
 {
+    /// <summary>
+    /// Class used to store and manipulate ClientMainPage UI inputs in real time via BindingContext.
+    /// </summary>
     public class ClientMainViewModel : ObservableObject,IDisposable
     {
         public ObservableRangeCollection<Customer> Customers { get; set; }
@@ -47,6 +50,9 @@ namespace Insurance_app.ViewModels.ClientViewModels
             PolicyCommand = new AsyncCommand<string>(ManagePolicy);
         }
         
+        /// <summary>
+        /// Gets and sets ListView source to customer list.
+        /// </summary>
         public async Task Setup()
         {
             try
@@ -60,6 +66,10 @@ namespace Insurance_app.ViewModels.ClientViewModels
             }
             SetUpWaitDisplay = false;
         }
+        /// <summary>
+        /// Navigates user to Profile Page with parameters
+        /// </summary>
+        /// <param name="customerId">Selected customers parameter string</param>
         private async Task ManageDetails(string customerId)
         {
             SetUpWaitDisplay = true;
