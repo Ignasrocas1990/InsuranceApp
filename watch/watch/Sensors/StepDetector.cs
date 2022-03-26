@@ -1,61 +1,81 @@
-﻿using System;
-using Android.Util;
-using Math = Java.Lang.Math;
+﻿/*
+    Copyright 2020,Ignas Rocas
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    
+              Name : Ignas Rocas
+    Student Number : C00135830
+           Purpose : 4th year project
+          Based on : http://www.gadgetsaint.com/android/create-pedometer-step-counter-android/
+ */
+
+using Java.Lang;
 
 namespace watch.Sensors
 {
     public class StepDetector
     {
-        private static int ACCEL_RING_SIZE = 50;
-        private static  int VEL_RING_SIZE = 10;
+        private const int AccelRingSize = 50;
+        private const int VelRingSize = 10;
 
         // change this threshold according to your sensitivity preferences
         private static  float STEP_THRESHOLD = 1.5f;//50
 
-        private static int STEP_DELAY_MS = 150;
+        private const int StepDelayMs = 150;
 
         private int accelRingCounter = 0;
-        private float[] accelRingX = new float[ACCEL_RING_SIZE];
-        private float[] accelRingY = new float[ACCEL_RING_SIZE];
-        private float[] accelRingZ = new float[ACCEL_RING_SIZE];
+        private readonly float[] accelRingX = new float[AccelRingSize];
+        private readonly float[] accelRingY = new float[AccelRingSize];
+        private readonly float[] accelRingZ = new float[AccelRingSize];
         private int velRingCounter = 0;
-        private float[] velRing = new float[VEL_RING_SIZE];
+        private readonly float[] velRing = new float[VelRingSize];
         private long lastStepTimeNs = 0;
         private float oldVelocityEstimate = 0;
 
 
-        public int updateAccel(long timeMSec, float x, float y, float z)
+        public int UpdateAccel(long timeMSec, float x, float y, float z)
         {
-            float[] currentAccel = new float[3];
-            currentAccel[0] = x;
-            currentAccel[1] = y;
-            currentAccel[2] = z;
+            var currentAccel = new[] {x,y,z};
 
             // First step is to update our guess of where the global z vector is.
             accelRingCounter++;
-            accelRingX[accelRingCounter % ACCEL_RING_SIZE] = currentAccel[0];
-            accelRingY[accelRingCounter % ACCEL_RING_SIZE] = currentAccel[1];
-            accelRingZ[accelRingCounter % ACCEL_RING_SIZE] = currentAccel[2];
+            var pos = accelRingCounter % AccelRingSize;
+            accelRingX[pos] = currentAccel[0];
+            accelRingY[pos] = currentAccel[1];
+            accelRingZ[pos] = currentAccel[2];
+            
+            var min = Math.Min(accelRingCounter, AccelRingSize);
+            var worldZ = new[]
+            {
+                SensorFilter.Sum(accelRingX) / min, 
+                SensorFilter.Sum(accelRingY) / min, 
+                SensorFilter.Sum(accelRingZ) / min
+            };
 
-            float[] worldZ = new float[3];
-            worldZ[0] = SensorFilter.sum(accelRingX) / Math.Min(accelRingCounter, ACCEL_RING_SIZE);
-            worldZ[1] = SensorFilter.sum(accelRingY) / Math.Min(accelRingCounter, ACCEL_RING_SIZE);
-            worldZ[2] = SensorFilter.sum(accelRingZ) / Math.Min(accelRingCounter, ACCEL_RING_SIZE);
+            var normalizationFactor = SensorFilter.Norm(worldZ);
 
-            float normalization_factor = SensorFilter.Norm(worldZ);
+            worldZ[0] /= normalizationFactor;
+            worldZ[1] /= normalizationFactor;
+            worldZ[2] /= normalizationFactor;
 
-            worldZ[0] = worldZ[0] / normalization_factor;
-            worldZ[1] = worldZ[1] / normalization_factor;
-            worldZ[2] = worldZ[2] / normalization_factor;
-
-            float currentZ = SensorFilter.dot(worldZ, currentAccel) - normalization_factor;
+            var currentZ = SensorFilter.Dot(worldZ, currentAccel) - normalizationFactor;
             velRingCounter++;
-            velRing[velRingCounter % VEL_RING_SIZE] = currentZ;
+            velRing[velRingCounter % VelRingSize] = currentZ;
 
-            float velocityEstimate = SensorFilter.sum(velRing);
+            var velocityEstimate = SensorFilter.Sum(velRing);
            // Log.Verbose(TAG,$"{velocityEstimate} > {STEP_THRESHOLD} and {oldVelocityEstimate}<= {STEP_THRESHOLD} " +
     //                        $"and {timeMSec - lastStepTimeNs} > {STEP_DELAY_MS}");
-            if (velocityEstimate > STEP_THRESHOLD && oldVelocityEstimate <= STEP_THRESHOLD && (timeMSec - lastStepTimeNs > STEP_DELAY_MS))
+            if (velocityEstimate > STEP_THRESHOLD && oldVelocityEstimate <= STEP_THRESHOLD && (timeMSec - lastStepTimeNs > StepDelayMs))
             {
                 lastStepTimeNs = timeMSec;
                 return 1;

@@ -32,6 +32,9 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
 {
+    /// <summary>
+    /// Class used to store and manipulate ClaimPage UI inputs in real time via BindingContext and its properties
+    /// </summary>
     [QueryProperty(nameof(CustomerId),"CustomerId")]
     public class ClaimViewModel : ObservableObject,IDisposable
     {
@@ -40,12 +43,11 @@ namespace Insurance_app.ViewModels
         public ICommand ResolveClaimCommand { get; }
         public ICommand AddInfoCommand{ get; }
 
-        public readonly ClaimManager ClaimManager;
+        private readonly ClaimManager claimManager;
 
         private string dateString;
         private string hospitalPostcode="";
         private string patientNr="";
-        private string status = "Not Created";
         private const string Type = "health"; //If application extended, this has to be moved to App
         private const string ViewExtraStr = "View Extra info";
         private const string AddExtraStr = "Add Extra info";
@@ -58,11 +60,13 @@ namespace Insurance_app.ViewModels
             CreateClaimCommand = new AsyncCommand(CreateClaim);
             ViewPreviousClaimsCommand = new AsyncCommand(GetClaims);
             ResolveClaimCommand = new AsyncCommand(ResolveClaim);
-            ClaimManager = new ClaimManager();
+            claimManager = new ClaimManager();
             AddInfoCommand = new AsyncCommand(AddExtraInfo);
         }
         
-
+        /// <summary>
+        /// Loads in data using manager classes via database and set it to Bindable properties(UI)
+        /// </summary>
         public async Task SetUp()
         {
             try
@@ -72,21 +76,21 @@ namespace Insurance_app.ViewModels
                 if (customerId  == "")
                     customerId = App.RealmApp.CurrentUser.Id;
             
-                await ClaimManager.GetClaims(App.RealmApp.CurrentUser,customerId);
-                var claim = ClaimManager.GetCurrentClaim();
+                await claimManager.GetClaims(App.RealmApp.CurrentUser,customerId);
+                var claim = claimManager.GetCurrentClaim();
                 if (claim != null)
                 {
                     extraInfo = claim.ExtraInfo;
                     var dtoDate = claim.StartDate;
-                    string displayDate = "Date Not found";
+                    var displayDateString = "Date Not found";
                     if (dtoDate !=null)
                     {
-                        displayDate = dtoDate.Value.Date.ToString("d");
+                        displayDateString = dtoDate.Value.Date.ToString("d");
 
                     }
                     
                     IsReadOnly = true;
-                    DateDisplay = displayDate;
+                    DateDisplay = displayDateString;
                     HospitalPostCodeDisplay = claim.HospitalPostCode;
                     PatientNrDisplay = claim.PatientNr;
                     UnderReviewDisplay = true;
@@ -106,7 +110,7 @@ namespace Insurance_app.ViewModels
                     CanBeResolved = false;
                 }
 
-                PreviousBtnIsEnabled = ClaimManager.GetResolvedClaimCount()>0;
+                PreviousBtnIsEnabled = claimManager.GetResolvedClaimCount()>0;
                 SetUpWaitDisplay = false;
             }
             catch (Exception e)
@@ -114,12 +118,14 @@ namespace Insurance_app.ViewModels
                 Console.WriteLine(e);
             }
         }
-
+        /// <summary>
+        /// Get Resolved claims via manager and display pop up with them
+        /// </summary>
         private async Task GetClaims()
         {
             try
             {
-                var closedClaims = ClaimManager.GetResolvedClaims() ?? new List<Claim>();
+                var closedClaims = claimManager.GetResolvedClaims() ?? new List<Claim>();
                 
                 await Application.Current.MainPage.Navigation
                     .ShowPopupAsync(new ExistingClaimsPopup(closedClaims));
@@ -130,21 +136,22 @@ namespace Insurance_app.ViewModels
             }
             
         }
-        
+        /// <summary>
+        /// Creates Claim instance on user click
+        /// while changing UI elements
+        /// </summary>
         private async Task CreateClaim()
         {
-            bool answer = await Shell.Current.DisplayAlert("Notice",
+            var answer = await Shell.Current.DisplayAlert(Msg.Notice,
                "Are you sure to open new Claim?", "create", "cancel");
            if (!answer) return;
 
             CircularWaitDisplay = true;
             IsReadOnly = true;
 
-            await ClaimManager.CreateClaim(hospitalPostcode, patientNr, Type,App.RealmApp.CurrentUser,customerId,extraInfo);
+            await claimManager.CreateClaim(hospitalPostcode, patientNr, Type,App.RealmApp.CurrentUser,customerId,extraInfo);
             
-            await Shell.Current.DisplayAlert(Msg.Notice, 
-                "New Claim has been Opened.\nClient will take a look at it shortly",
-                "close");
+            await Msg.Alert("New Claim has been Opened.\nClient will take a look at it shortly");
             ExtraBtnText = ViewExtraStr;
             CircularWaitDisplay = false;
             UnderReviewDisplay = true;
@@ -153,20 +160,23 @@ namespace Insurance_app.ViewModels
                 CanBeResolved = true; 
             }
         }
-        
+        /// <summary>
+        /// Updates Claim (resolve) by client.
+        /// And sends an email
+        /// </summary>
         private async Task ResolveClaim()
         {
             try
             {
-                var (reason, action) = await ClaimManager.GetClientAction(extraInfo);
+                var (reason, action) = await claimManager.GetClientAction(extraInfo);
                 if (reason=="-1") return;
                 
                 CircularWaitDisplay = true;
-                var customer = await ClaimManager.ResolveClaim(customerId,App.RealmApp.CurrentUser,reason,action);
+                var customer = await claimManager.ResolveClaim(customerId,App.RealmApp.CurrentUser,reason,action);
                 if (customer !=null)
                 {
                     HttpService.ClaimNotifyEmail(customer.Email, customer.Name, DateTime.Now,action,reason);
-                    await Shell.Current.DisplayAlert(Msg.Notice, Msg.EmailSent, "close");
+                    await Msg.Alert(Msg.EmailSent);
                 }
                 
                 CircularWaitDisplay = false;
@@ -181,6 +191,9 @@ namespace Insurance_app.ViewModels
                 Console.WriteLine(e);
             }
         }
+        /// <summary>
+        /// Displays a pop up so the user can add extra info.
+        /// </summary>
         private async Task AddExtraInfo()
         {
             string popupDisplayText = "";
@@ -198,7 +211,7 @@ namespace Insurance_app.ViewModels
         }
 
 
-        //property bindings
+        //---------------------Bindable properties below------------------------------------
         public string HospitalPostCodeDisplay
         {
             get => hospitalPostcode;
@@ -275,7 +288,7 @@ namespace Insurance_app.ViewModels
 
         public void Dispose()
         {
-            ClaimManager.Dispose();
+            claimManager.Dispose();
         }
     }
 }

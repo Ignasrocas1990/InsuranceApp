@@ -26,6 +26,10 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels.ClientViewModels
 {
+    /// <summary>
+    /// It used to set & view ListView data(previous policy instances) of
+    /// PreviousPolicyPopup page UI in real time via BindingContext.
+    /// </summary>
     public class PPolicyPopupViewModel:ObservableObject
     {
         private readonly PreviousPolicyPopup popup;

@@ -26,6 +26,9 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
 {
+    /// <summary>
+    /// Class used to store and manipulate Report Page UI components in real time via BindingContext and its properties
+    /// </summary>
     [QueryProperty(nameof(CustomerId), "CustomerId")]
     public class ReportViewModel : ObservableObject,IDisposable
     {
@@ -36,6 +39,10 @@ namespace Insurance_app.ViewModels
             reportManager = new ReportManager();
         }
         
+        /// <summary>
+        /// Loads in data using ReportManager class via database,
+        /// and set it to Bindable properties(UI)
+        /// </summary>
         public async Task SetUp()
         {
             if (CustomerId.Equals(""))
@@ -78,11 +85,9 @@ namespace Insurance_app.ViewModels
                 WeeklyChartLabel = "Steps in the last month";
                 WeeklyChartIsVisible = true;  
             }
-            
-            //createWeeklyLineChart
-
         }
-
+        
+        //------------------------- Bindable properties below ----------------------------------
         private bool weeklyChartVisible;
         public bool WeeklyChartIsVisible
         {
@@ -97,7 +102,6 @@ namespace Insurance_app.ViewModels
             set => SetProperty(ref weeklyLabel, value);
         }
         
-
         private LineChart lineChart;
         public LineChart LineChart
         {
@@ -142,7 +146,6 @@ namespace Insurance_app.ViewModels
         {
             get => customerId;
             set =>  customerId = Uri.UnescapeDataString(value ?? string.Empty);
-
         }
 
         public void Dispose()

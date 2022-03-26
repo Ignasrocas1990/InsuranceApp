@@ -32,6 +32,9 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
 {
+    /// <summary>
+    /// Class used to store and manipulate QuotePage UI components in real time via BindingContext and its properties
+    /// </summary>
     public class QuoteViewModel : ObservableObject,IDisposable
     {
         public ICommand GetQuotCommand { get; }
@@ -52,7 +55,6 @@ namespace Insurance_app.ViewModels
         
         public ICommand InfoCommand { get; }
         public IList<string> HospitalList { get; }
-        //age
         public IList<string> CoverList { get; }
         public IList<int> HospitalFeeList { get; }
         public IList<string> PlanList { get; }
@@ -78,7 +80,9 @@ namespace Insurance_app.ViewModels
            policyManager = new PolicyManager();
 
        }
-
+        /// <summary>
+        /// Loads in data(customer) using manager classes via database and set it to Bindable properties(UI)
+        /// </summary>
         public async Task SetUp()
         {
             IsExpiredCustomer = false;
@@ -86,7 +90,6 @@ namespace Insurance_app.ViewModels
             SetUpWaitDisplay = true;
             try
             {
-                //ObjectId.Parse(policyId);
                 customerId = App.RealmApp.CurrentUser.Id;
                var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
                if (customer.Dob != null) SelectedDate = customer.Dob.Value.UtcDateTime;
@@ -101,7 +104,10 @@ namespace Insurance_app.ViewModels
             }
             SetUpWaitDisplay = false;
         }
-        
+        /// <summary>
+        /// Gets a Quoted price while using HttpService class
+        /// And navigates to Registration/Payment page
+        /// </summary>
         private async Task GetQuote()
        {
            if (!App.NetConnection())
@@ -114,11 +120,8 @@ namespace Insurance_app.ViewModels
               await Msg.AlertError(elegalChars);
                return;
            }
-            
            var age = DateTime.Now.Year - selectedDate.Year;
-          
            string price;
-           
            try
            {
                CircularWaitDisplay=true;
@@ -144,17 +147,22 @@ namespace Insurance_app.ViewModels
            bool action =
                await Application.Current.MainPage.DisplayAlert(Msg.Notice,
                    $"Price for the quote is : {price}", "Accept", "Deny");
-           if (action && policyId == "")
+           switch (action)
            {
-               await TransferToRegistration(age, price);
-           }
-           else if (action)
-           {
-               await CreatePolicyAndPay(price);
+               case true when policyId == "":
+                   await TransferToRegistration(age, price);
+                   break;
+               case true:
+                   await CreatePolicyAndPay(price);
+                   break;
            }
            
        }
 
+        /// <summary>
+        /// Creates new policy and navigates to PaymentPage
+        /// </summary>
+        /// <param name="price">predicted price string</param>
         private async Task CreatePolicyAndPay(string price)
         {
             try
@@ -177,6 +185,12 @@ namespace Insurance_app.ViewModels
             CircularWaitDisplay = false;
         }
 
+        /// <summary>
+        /// Transfers to registration page with Quote data
+        /// and its price
+        /// </summary>
+        /// <param name="age"></param>
+        /// <param name="price"></param>
         private async Task TransferToRegistration(int age,string price)
         {
             CircularWaitDisplay=true;
@@ -200,6 +214,11 @@ namespace Insurance_app.ViewModels
             }
             CircularWaitDisplay=false;
         }
+        
+        /// <summary>
+        /// Resets password via UserManager class
+        /// and displays confirmation
+        /// </summary>
         private async Task ResetPassword()
         {
             if (!App.NetConnection())
@@ -213,6 +232,9 @@ namespace Insurance_app.ViewModels
            await Msg.Alert(Msg.ResetPassMsg);
         }
 
+        /// <summary>
+        /// Limits requests time.
+        /// </summary>
         private async void CheckResponseTime(object o, ElapsedEventArgs e)
        {
            responseCounter += 1;
@@ -223,7 +245,7 @@ namespace Insurance_app.ViewModels
           await Msg.AlertError(Msg.NetworkConMsg);
        }
 
-//-----------------------------data binding methods ------------------------------------------------
+//-----------------------------Bindable properties below ------------------------------------------------
        public bool CircularWaitDisplay
        {
            get => wait;

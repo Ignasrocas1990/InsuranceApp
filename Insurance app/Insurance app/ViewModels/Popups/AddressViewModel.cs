@@ -25,6 +25,10 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels.Popups
 {
+    /// <summary>
+    /// Class used to store and manipulate AddressPopup Page UI inputs
+    /// in real time via BindingContext and its properties
+    /// </summary>
     public class AddressViewModel : ObservableObject
     {
         private readonly AddressPopup popup;
@@ -39,10 +43,14 @@ namespace Insurance_app.ViewModels.Popups
         public AddressViewModel(AddressPopup popup, Address address)
         {
             this.popup = popup;
-            Init(address);
+            Setup(address);
             CancelCommand = new Command(Close);
         }
-        private void Init(Address address)
+        /// <summary>
+        /// Sets received data to the UI bindable properties
+        /// </summary>
+        /// <param name="address">Address instance</param>
+        private void Setup(Address address)
         {
             if (address.HouseN != null) HouseNDisplay =  (int) address.HouseN;
             StreetDisplay = address.Street;
@@ -52,7 +60,10 @@ namespace Insurance_app.ViewModels.Popups
             PostCodeDisplay = address.PostCode;
             
         }
-
+        /// <summary>
+        /// Creates new Address instance using
+        /// user inputted data and returns it to main page
+        /// </summary>
         public void Save()
         {
             popup.Dismiss(new Address()
@@ -71,7 +82,7 @@ namespace Insurance_app.ViewModels.Popups
             popup.Dismiss(null);
             
         }
-
+//---------------------------- Bindable properties below -------------------------------
         public string CityDisplay
         {
             get => city;

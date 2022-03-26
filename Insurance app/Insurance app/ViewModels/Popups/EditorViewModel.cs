@@ -24,7 +24,10 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels.Popups
 {
-    
+    /// <summary>
+    /// Class used to store and manipulate EditorPopup Page UI inputs
+    /// in real time via BindingContext and its properties
+    /// </summary>
     public class EditorViewModel : ObservableObject
     {
         private readonly EditorPopup popup;
@@ -39,17 +42,21 @@ namespace Insurance_app.ViewModels.Popups
             ReadOnlyDisplay = readOnly;
             ExtraInfoDisplay = popupDisplayText;
         }
-
+/// <summary>
+/// closes the pop up with data inserted
+/// </summary>
         private void Submit()
         {
             popup.Dismiss(extraInfo);
-
         }
+/// <summary>
+/// closes pop up with no data inserted
+/// </summary>
         private void Close()
         {
             popup.Dismiss("");
         }
-
+//----------------------------- Bindable properties below --------------------------
         private string heading;
         public string HeadingDisplay
         {

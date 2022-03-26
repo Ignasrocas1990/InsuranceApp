@@ -29,6 +29,9 @@ using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels {
+  /// <summary>
+  /// Class used to store and manipulate PaymentPage UI components in real time via BindingContext and its properties
+  /// </summary>
   internal class PaymentViewModel: ObservableObject,IDisposable
   {
     private ImageSource image = ImageService.Instance.CardUnknown;
@@ -60,7 +63,9 @@ namespace Insurance_app.ViewModels {
       policyManager = new PolicyManager();
       RewardsCommand = new Command(UseRewards);
     }
-    
+    /// <summary>
+    /// Loads in data(customer,rewards sum) using manager classes via database and set it to Bindable properties(UI)
+    /// </summary>
     public async Task Setup()
     {
       try
@@ -85,7 +90,6 @@ namespace Insurance_app.ViewModels {
         ZipDisplay = customer.Address.PostCode;
         email = customer.Email;
         name = customer.Name;
-        //var policyPrice = //notNewCustomer.Policy.FirstOrDefault(p => p.PayedPrice == 0 && p.DelFlag == false)!.Price;
         var policy = policyManager.FindUnpayedPolicy(customer);
         if (policy != null)
         {
@@ -99,6 +103,10 @@ namespace Insurance_app.ViewModels {
       }
       SetUpWaitDisplay = false;
     }
+    /// <summary>
+    /// Changes the price UI components as user
+    /// clicks to use the Rewards
+    /// </summary>
     private void UseRewards()
     {
       if (IsCheckedDisplay)
@@ -118,7 +126,10 @@ namespace Insurance_app.ViewModels {
         RewardsDisplay = $"{totalRewards}";
       }
     }
-    
+    /// <summary>
+    /// Process payment using PaymentService, updates necessary used rewards via manager
+    /// and navigates to log in page
+    /// </summary>
     private async Task Pay()
     {
       try
@@ -160,7 +171,7 @@ namespace Insurance_app.ViewModels {
       }
       CircularWaitDisplay = false;
     }
-    //----------------------- Binding/support methods ------------------------------------------
+    //----------------------- Bindable properties /support methods ------------------------------------------
     private string UpdateCardDetails(string value)
     {
       (LengthDisplay, ImageDisplay) = CardDefinitionService.Instance.DetailsFor(value);
@@ -269,7 +280,10 @@ namespace Insurance_app.ViewModels {
       get => rewardsIsVisible;
       set => SetProperty(ref rewardsIsVisible, value);
     }
-
+/// <summary>
+/// Extra input validation
+/// </summary>
+/// <returns>Error string</returns>
     public string Valid()
     {
       var error = "";

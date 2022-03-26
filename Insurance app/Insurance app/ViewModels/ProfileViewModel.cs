@@ -30,10 +30,13 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
 {
+    /// <summary>
+    /// Class used to store and manipulate ProfilePage UI components in real time via BindingContext and its properties
+    /// </summary>
     [QueryProperty(nameof(CustomerId), "CustomerId")]
     public class ProfileViewModel:ObservableObject,IDisposable
     {
-        public readonly UserManager UserManager;
+        private readonly UserManager userManager;
         private string name="";
         private string lastName="";
         private string phoneNr="";
@@ -57,14 +60,16 @@ namespace Insurance_app.ViewModels
 
         public ProfileViewModel()
         {
-            UserManager = new UserManager();
+            userManager = new UserManager();
             AddressCommand = new AsyncCommand(UpdateAddress);
             UpdateCommand = new AsyncCommand(Update);
             ResetPasswordCommand = new AsyncCommand(ResetPassword);
         }
+        /// <summary>
+        /// Loads in data using manager classes via database and set it to Bindable properties(UI)
+        /// </summary>
         public async Task Setup()
         {
-           
             try
             {
                 if(customerId.Equals(""))
@@ -75,7 +80,7 @@ namespace Insurance_app.ViewModels
                 {
                     IsClientDisplay = true;
                 }
-                var customer = await UserManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
+                var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
                 if (customer !=null)
                 {
                     NameDisplay = customer.Name;
@@ -110,6 +115,11 @@ namespace Insurance_app.ViewModels
 
             SetUpWaitDisplay = false;
         }
+        
+        /// <summary>
+        /// displays address pop up with a existing address
+        /// and updates the old address backing field to new address
+        /// </summary>
         private async Task UpdateAddress()
         {
             
@@ -128,6 +138,9 @@ namespace Insurance_app.ViewModels
                 address = newAddress;
             }
         }
+        /// <summary>
+        /// Updates user details via UserManager class
+        /// </summary>
         private async Task Update()
         {
             var answer = await Shell.Current.CurrentPage.DisplayAlert(
@@ -138,19 +151,21 @@ namespace Insurance_app.ViewModels
             try
             {
                 CircularWaitDisplay = true;
-                
-               await UserManager.UpdateCustomer(name,lastName,phoneNr,address, App.RealmApp.CurrentUser,customerId);
+                await userManager.UpdateCustomer(name,lastName,phoneNr,address, App.RealmApp.CurrentUser,customerId);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
             CircularWaitDisplay = false;
-            await Shell.Current.DisplayAlert(Msg.Notice, Msg.SuccessUpdateMsg, "close");
+            await Msg.Alert(Msg.SuccessUpdateMsg);
         }
+        
+        /// <summary>
+        /// Resets password to a random password generated via userManager
+        /// </summary>
         private async Task ResetPassword()
         {
-
             try
             {
                 if (!App.NetConnection())
@@ -160,7 +175,7 @@ namespace Insurance_app.ViewModels
                 }
             
                 CircularWaitDisplay = true;
-                await UserManager.ResetPassword(name, email);
+                await userManager.ResetPassword(name, email);
                 CircularWaitDisplay = false;
                 await Msg.Alert(Msg.ResetPassMsg);
             }
@@ -170,7 +185,7 @@ namespace Insurance_app.ViewModels
                 await Msg.AlertError("Password Reset Failed");
             }
         }
-
+// --------- Bindable properties below --------------------------
         public string NameDisplay
         {
             get => name;
@@ -221,7 +236,7 @@ namespace Insurance_app.ViewModels
         public void Dispose()
         {
             address = null;
-            UserManager.Dispose();
+            userManager.Dispose();
         }
 
       

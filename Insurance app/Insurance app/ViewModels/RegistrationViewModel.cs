@@ -35,13 +35,16 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
 {    
+    /// <summary>
+    /// Class used to store and manipulate RegistrationPage UI components in real time via BindingContext and its properties
+    /// </summary>
     public class RegistrationViewModel : ObservableObject,IDisposable
     {
         private readonly Dictionary<string, string> quote;
-        public readonly string AddressSText = "Address saved";
+        public const string AddressSText = "Address saved";
         public ICommand ConfirmEmailCommand { get; }
         private bool wait;
-        private string price="";
+        private readonly string price="";
         private string email="";
         private string password="";
         private string fName="";
@@ -63,6 +66,10 @@ namespace Insurance_app.ViewModels
             this.price = price;
             quote = tempQuote;
         }
+        /// <summary>
+        /// Performs registration which creates Customer & policy while updating
+        /// the database
+        /// </summary>
         public async Task Register()
         {
             try
@@ -104,6 +111,10 @@ namespace Insurance_app.ViewModels
                 Console.WriteLine(e);
             }
         }
+        /// <summary>
+        /// Performs email confirmation, which sends an email using httpservice,
+        /// and compares with randomly created string
+        /// </summary>
         private async Task ConfirmEmail()
         {
             try
@@ -125,7 +136,8 @@ namespace Insurance_app.ViewModels
                 if (result != code)
                 {
                     var answer = await Application.Current.MainPage
-                        .DisplayAlert("Email code", "Email Code is invalid", "Try again later", "Resend new Code");
+                        .DisplayAlert("Email code", 
+                            "Email Code is invalid", "Try again later", "Resend new Code");
                     if (!answer)
                     {
                         code = "";
@@ -144,6 +156,10 @@ namespace Insurance_app.ViewModels
                 Console.WriteLine(e);
             }
         }
+        /// <summary>
+        /// get customers date of birth from transferred quote (from QuoteViewModel)
+        /// </summary>
+        /// <returns>Dob DateTimeOffset</returns>
         private DateTimeOffset GetDob()
         {
             try
@@ -158,6 +174,11 @@ namespace Insurance_app.ViewModels
 
             return DateTimeOffset.Now.AddYears(-18);
         }
+        
+        /// <summary>
+        /// Displays a address pop up
+        /// and receives nearly created Address instance
+        /// </summary>
         private async Task GetAddress()
         {
            var newAddress = await Application.Current.MainPage.Navigation.ShowPopupAsync<Address>(new AddressPopup(address));
@@ -168,7 +189,7 @@ namespace Insurance_app.ViewModels
             }
         }
         
-        // property bindings
+        // -------------------------- Bindable properties ------------------------------
         public string PhoneNrDisplay
         {
             get => phoneNr;
@@ -226,7 +247,6 @@ namespace Insurance_app.ViewModels
             get => notConfirmed;
             set => SetProperty(ref notConfirmed, value);
         }
-
         public void Dispose()
         {
             userManager.Dispose();

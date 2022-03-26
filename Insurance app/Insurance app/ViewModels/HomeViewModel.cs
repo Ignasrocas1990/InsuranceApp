@@ -30,6 +30,10 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
 {
+    /// <summary>
+    /// Class used to store and manipulate HomePage UI components
+    /// in real time via BindingContext and its properties
+    /// </summary>
     [QueryProperty(nameof(Email),"Email")]
     [QueryProperty(nameof(Pass),"Pass")]
     public class HomeViewModel : ObservableObject,IDisposable
@@ -37,12 +41,10 @@ namespace Insurance_app.ViewModels
 
         private readonly BleManager bleManager;
         private readonly RewardManager rewardManager;
-
-        //private Customer customer;
-
+        
         private double stepsDisplayValue = 0;
         private double currentProgressBars = 0.0;
-        private double max = 0 ;
+        private const double Max = 0;
         private bool firstSetup = true;
         private int counter = 0;
         private double startUpSteps;
@@ -61,6 +63,9 @@ namespace Insurance_app.ViewModels
             SwitchCommand = new AsyncCommand(StartDataReceive);
             LogoutCommand = new AsyncCommand(Logout);
         }
+        /// <summary>
+        /// Loads in data using manager classes via database and set it to Bindable properties(UI)
+        /// </summary>
         public async Task Setup()
         {
             try
@@ -96,7 +101,10 @@ namespace Insurance_app.ViewModels
             SetUpWaitDisplay = false;
             firstSetup = false;
         }
-
+        /// <summary>
+        /// gets sum of total earned rewards & toggle switch
+        /// for theUI elements
+        /// </summary>
         private async Task SetUpEarningsDisplay()
         {
                var (toggle, totalSum) = await rewardManager
@@ -112,13 +120,18 @@ namespace Insurance_app.ViewModels
                    }
                }
         }
+        /// <summary>
+        /// This method gets called by EventHandler when received info
+        /// via bluetooth (BleManager).
+        /// It increments Circular progress bar view
+        /// </summary>
         private async void InferredRawData(object s, EventArgs eventArgs)
         {
             await Step();
         }
 
         /// <summary>
-        /// 
+        /// Starts/Stops connect/receiving data from the BleManager/Watch
         /// </summary>
         private async Task StartDataReceive()
         {
@@ -129,25 +142,33 @@ namespace Insurance_app.ViewModels
             ToggleStateDisplay = switchState;
             CircularWaitDisplay = false;
         }
-
+        /// <summary>
+        /// Resets circular progress bar view
+        /// </summary>
         private void ResetView()
         {
             ProgressBarDisplay = StaticOpt.StepNeeded;
             StepsDisplayLabel = 0;
             stepsDisplayValue = 0;
         }
+        /// <summary>
+        /// initializes the circular progress bar view
+        /// </summary>
+        /// <param name="steps">number of steps double</param>
         private void SetUpView(double steps)
         {
             ProgressBarDisplay = StaticOpt.StepNeeded - steps;
             StepsDisplayLabel = steps;
             stepsDisplayValue = steps;
         }
-        
+        /// <summary>
+        /// Increments the progress bar view and the label display
+        /// </summary>
         private async Task Step()
         {
             ProgressBarDisplay--;
             StepsDisplayLabel=stepsDisplayValue+1;
-            if (ProgressBarDisplay <= max)
+            if (ProgressBarDisplay <= Max)
             {
                 CircularWaitDisplay = true;
                 ProgressBarDisplay = StaticOpt.StepNeeded;
@@ -157,6 +178,7 @@ namespace Insurance_app.ViewModels
 
             }
         }
+        //--------------------- Bindable Properties below ---------------------------------
         private bool toggleState;
         public bool ToggleStateDisplay
         {

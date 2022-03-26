@@ -25,6 +25,9 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels.Popups
 {
+    /// <summary>
+    /// Used to set UI viewable elements of InfoPopup Page
+    /// </summary>
     public class InfoPopupViewModel : ObservableObject
     {
         private readonly InfoPopup infoPopup;
@@ -37,15 +40,21 @@ namespace Insurance_app.ViewModels.Popups
             CloseCommand = new Command(Close);
             InfoPicker(type);
         }
-
+        /// <summary>
+        /// close the pop up
+        /// </summary>
         private void Close()
         {
             infoPopup.Dismiss("");
         }
-
+        /// <summary>
+        /// Splits info into columns so it
+        /// can be displayed
+        /// </summary>
+        /// <param name="type">What type of info selected string</param>
         private void InfoPicker(string type)
         {
-            string longInfoString = StaticOpt.InfoTest(type);
+            var longInfoString = StaticOpt.InfoTest(type);
             var splitInfo = longInfoString.Split('~');
             InfoDisplayH1 = splitInfo[0];
             InfoDisplayH2 = splitInfo[1];
@@ -55,6 +64,7 @@ namespace Insurance_app.ViewModels.Popups
             InfoDisplayC3 = splitInfo[5];
             
         }
+        //------------------ Bindable properties below --------------------------
         private string column1Head;
         public string InfoDisplayH1
         {

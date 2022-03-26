@@ -1,61 +1,47 @@
-﻿using Java.Lang;
+﻿/*
+    Copyright 2020,Ignas Rocas
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    
+              Name : Ignas Rocas
+    Student Number : C00135830
+           Purpose : 4th year project
+          Based on : http://www.gadgetsaint.com/android/create-pedometer-step-counter-android/
+ */
+
+using System.Collections.Generic;
+using System.Linq;
+using Java.Lang;
 
 namespace watch.Sensors
 {
-    public class SensorFilter
+    /// <summary>
+    /// used to filter measurements
+    /// </summary>
+    public static class SensorFilter
     {
-        private SensorFilter()
-        {
-        }
+        public static float Sum(IEnumerable<float> array)=> array.Sum();
 
-        public static float sum(float[] array)
-        {
-            float retval = 0;
-            for (int i = 0; i < array.Length; i++)
-            {
-                retval += array[i];
-            }
-
-            return retval;
-        }
-
-        public static float[] Cross(float[] arrayA, float[] arrayB)
-        {
-            float[] retArray = new float[3];
-            retArray[0] = arrayA[1] * arrayB[2] - arrayA[2] * arrayB[1];
-            retArray[1] = arrayA[2] * arrayB[0] - arrayA[0] * arrayB[2];
-            retArray[2] = arrayA[0] * arrayB[1] - arrayA[1] * arrayB[0];
-            return retArray;
-        }
-
-        public static float Norm(float[] array)
-        {
-            float retval = 0;
-            for (int i = 0; i < array.Length; i++)
-            {
-                retval += array[i] * array[i];
-            }
-
-            return (float) Math.Sqrt(retval);
-        }
-
-
-        public static float dot(float[] a, float[] b)
-        {
-            float retval = a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-            return retval;
-        }
-
-        public static float[] Normalize(float[] a)
-        {
-            float[] retval = new float[a.Length];
-            float norm = Norm(a);
-            for (int i = 0; i < a.Length; i++)
-            {
-                retval[i] = a[i] / norm;
-            }
-
-            return retval;
-        }
+        /// <summary>
+        /// Normalization performed
+        /// </summary>
+        public static float Norm(IEnumerable<float> array) =>
+         (float) Math.Sqrt(array.Sum(t => t * t));
+        
+        /// <summary>
+        /// Dot product performed
+        /// </summary>
+        public static float Dot(float[] a, float[] b) =>
+            a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
     }
 }

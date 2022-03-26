@@ -28,6 +28,10 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels.ClientViewModels
 {
+    /// <summary>
+    /// Class used to store and manipulate ClientRegistration Page UI
+    /// inputs in real time via BindingContext & its properties
+    /// </summary>
     public class ClientRegViewModel : ObservableObject,IDisposable
     {
         private string email="";
@@ -44,7 +48,10 @@ namespace Insurance_app.ViewModels.ClientViewModels
         {
             userManager = new UserManager();
         }
-
+        /// <summary>
+        /// Loads in data using manager classes via database
+        /// and set it to Bindable properties(UI)
+        /// </summary>
         public async Task Register()
         {
             CircularWaitDisplay = true;
@@ -80,7 +87,9 @@ namespace Insurance_app.ViewModels.ClientViewModels
             }
             CircularWaitDisplay = false;
         }
-
+        /// <summary>
+        /// Verifies that client code is valid via HttpService/email
+        /// </summary>
         public async Task ValidateCode()
         {
             try
@@ -111,7 +120,10 @@ namespace Insurance_app.ViewModels.ClientViewModels
             {
                 Console.WriteLine(e);
             }
-        } 
+        }
+        /// <summary>
+        /// Security measure which prevents too many attempts. 
+        /// </summary>
         private void CheckAttempt()
         {
             attempt++;
@@ -125,6 +137,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
                 });
             }
         }
+        //------------------ Bindable properties below ----------------------
         public string EmailDisplay
         {
             get => email;

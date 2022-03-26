@@ -47,7 +47,7 @@ namespace Insurance_app.Pages
                 
                  if (EmailValidation.IsValid && PasswordValidator.IsValid && NameValidator.IsValid &&
                      LNameValidator.IsValid && PhoneNrValidator.IsValid 
-                     && AddressValidator.Text.Equals(vm.AddressSText) && vm.EmailConfirmedDisplay)
+                     && AddressValidator.Text.Equals(RegistrationViewModel.AddressSText) && vm.EmailConfirmedDisplay)
                  {
                      await vm.Register();
                  }
@@ -98,7 +98,7 @@ namespace Insurance_app.Pages
                              }
                      }
 
-                     if (!AddressValidator.Text.Equals(vm.AddressSText))
+                     if (!AddressValidator.Text.Equals(RegistrationViewModel.AddressSText))
                      {
                          errBuilder.AppendLine(vm.AddressText);
                      }

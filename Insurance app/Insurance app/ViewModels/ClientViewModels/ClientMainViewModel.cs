@@ -29,7 +29,8 @@ using Xamarin.Forms;
 namespace Insurance_app.ViewModels.ClientViewModels
 {
     /// <summary>
-    /// Class used to store and manipulate ClientMainPage UI inputs in real time via BindingContext.
+    /// It used to set & view ListView data(Customers) of
+    /// ClientMainPage UI in real time via BindingContext.
     /// </summary>
     public class ClientMainViewModel : ObservableObject,IDisposable
     {
@@ -67,7 +68,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
             SetUpWaitDisplay = false;
         }
         /// <summary>
-        /// Navigates user to Profile Page with parameters
+        /// Navigates user to Profile Page with parameter
         /// </summary>
         /// <param name="customerId">Selected customers parameter string</param>
         private async Task ManageDetails(string customerId)
@@ -79,6 +80,10 @@ namespace Insurance_app.ViewModels.ClientViewModels
                 await Shell.Current.GoToAsync(route);
             }
         }
+        /// <summary>
+        /// Navigates user to Claim Page with parameter
+        /// </summary>
+        /// <param name="customerId">Selected customers parameter string</param>
         private async Task ManageClaim(string customerId)
         {
             SetUpWaitDisplay = true;
@@ -89,6 +94,10 @@ namespace Insurance_app.ViewModels.ClientViewModels
             }
                
         }
+        /// <summary>
+        /// Navigates user to Policy Page with parameter
+        /// </summary>
+        /// <param name="customerId">Selected customers parameter string</param>
         private async Task ManagePolicy(string customerId)
         {
             SetUpWaitDisplay = true;
@@ -97,7 +106,10 @@ namespace Insurance_app.ViewModels.ClientViewModels
             var route = $"//{nameof(PolicyPage)}?CustomerId={customerId}";
             await Shell.Current.GoToAsync(route);
         }
-        
+        /// <summary>
+        /// Navigates user to Report Page with parameter
+        /// </summary>
+        /// <param name="customerId">Selected customers parameter string</param>
         private async Task ViewSteps(string customerId)
         {
             SetUpWaitDisplay = true;
@@ -106,6 +118,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
             var route = $"//{nameof(Report)}?CustomerId={customerId}";
             await Shell.Current.GoToAsync(route);
         }
+        // -------------- Bindable properties -----------------------
         private bool wait;
         public bool SetUpWaitDisplay
         {
@@ -119,7 +132,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
             get => w;
             set => SetProperty(ref w, value);
         }
-
+        
         public void Dispose()
         {
             Customers.Clear();

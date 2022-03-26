@@ -35,11 +35,12 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels
 {
+    /// <summary>
+    /// Class used to store and manipulate PolicyPage UI components in real time via BindingContext and its properties
+    /// </summary>
     [QueryProperty(nameof(CustomerId), "CustomerId")]
     public class PolicyViewModel : ObservableObject,IDisposable
     {
-        private const string EmailSubject = "Policy update";
-        private const string EmailPolicyMsg = "Policy change request has been";
         private bool wait;
         private int hospitals;
         private int cover;
@@ -83,7 +84,9 @@ namespace Insurance_app.ViewModels
             HospitalList = StaticOpt.HospitalsEnum();
             PlanList = Enum.GetNames(typeof(StaticOpt.PlanEnum)).ToList();
         }
-        
+        /// <summary>
+        /// Loads in data(policies) using manager classes via database and set it to Bindable properties(UI)
+        /// </summary>
         public async Task Setup()
         {
             PrevPoliciesIsVisible = false;
@@ -119,10 +122,13 @@ namespace Insurance_app.ViewModels
                 ClientActionNeeded = true;
             }
         }
-
+        /// <summary>
+        /// Sets UI components to policy data
+        /// </summary>
+        /// <param name="policy">Current policy instance</param>
+        /// <returns>true if it can be updated</returns>
         private bool SelectPreviousPolicy(Policy policy)
         {
-
             try
             {
                 if (policy.Price != null) price = (float) policy.Price;
@@ -130,23 +136,26 @@ namespace Insurance_app.ViewModels
                 if (policy.Hospitals != null) SelectedHospital = HospitalList.IndexOf(policy.Hospitals);
                 if (policy.Cover != null) SelectedCover =  CoverList.IndexOf(policy.Cover);
                 if (policy.HospitalFee != null) SelectedItemHospitalFee = (int) policy.HospitalFee;
-                if (policy.Plan != null) SelectedPlan = PlanList.IndexOf(policy.Plan) ;
+                if (policy.Plan != null) SelectedPlan = PlanList.IndexOf(policy.Plan);
+                
                 IsSmokerDisplay = Convert.ToBoolean(policy.Smoker);
-                if (policy.ExpiryDate != null)
-                {
-                    ExpiryDateDisplay = policy.ExpiryDate.Value.Date.ToString("d");
-                    date = (DateTimeOffset) policy.ExpiryDate;
-                }
+                if (policy.ExpiryDate == null) 
+                    return policy.UnderReview != null && (bool) policy.UnderReview;
+                
+                ExpiryDateDisplay = policy.ExpiryDate.Value.Date.ToString("d");
+                date = (DateTimeOffset) policy.ExpiryDate;
                 return policy.UnderReview != null && (bool) policy.UnderReview;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
-
             return true;
         }
-
+        /// <summary>
+        /// If policy is updatable, predicts new price using HTTPService &
+        /// creates new policy using users inputs.
+        /// </summary>
         private async Task Update()
         {
             if (!canBeUpdated)
@@ -194,6 +203,10 @@ namespace Insurance_app.ViewModels
             timer.Stop();
         }
 
+        /// <summary>
+        /// Creates and updates new Policy using manager
+        /// </summary>
+        /// <param name="newPrice">New predicted price string</param>
         private async Task SavePolicy(string newPrice)
         {
             try
@@ -212,6 +225,11 @@ namespace Insurance_app.ViewModels
             CircularWaitDisplay = false;
         }
 
+        /// <summary>
+        /// Finds current policy & if it can be updated
+        /// using manager class
+        /// </summary>
+        /// <returns>Policy instance</returns>
         private async Task<Policy> FindPolicy()
         {
             Policy policy = null;
@@ -227,6 +245,9 @@ namespace Insurance_app.ViewModels
             }
             return policy ?? new Policy();
         }
+        /// <summary>
+        /// Displays PreviousPolicyPopup with previous policy data
+        /// </summary>
         private async Task ViewPrevPolicies()
         {
             try
@@ -239,6 +260,10 @@ namespace Insurance_app.ViewModels
                 Console.WriteLine(e);
             }
         }
+        /// <summary>
+        /// Updates current policy(resolve/deny)
+        /// and notifies customer via email(Httpserver)
+        /// </summary>
         private async Task ResolveUpdate()
         {
             try
@@ -262,7 +287,7 @@ namespace Insurance_app.ViewModels
                     if (customer !=null)
                     {
                         HttpService.CustomerNotifyEmail(customer.Email, customer.Name, DateTime.Now, $"{answerString}'ed");
-                        await Shell.Current.DisplayAlert(Msg.Notice, Msg.EmailSent, "close");
+                        await Msg.Alert(Msg.EmailSent);
                     }
                     
                     ClientActionNeeded = false;
@@ -274,12 +299,21 @@ namespace Insurance_app.ViewModels
                 Console.WriteLine(e);
             }
         }
-
+        /// <summary>
+        /// Gets previous policies via policyManager class
+        /// </summary>
         private async Task GetPreviousPolicies() => 
             await policyManager.GetPreviousPolicies(customerId,App.RealmApp.CurrentUser);
+        /// <summary>
+        /// Gets current user via UserManager class
+        /// </summary>
         private async Task GetCurrentCustomer() => 
             dob = await userManager.GetCustomersDob(customerId,App.RealmApp.CurrentUser);
-
+        
+        /// <summary>
+        /// checks that response time of the http request to api does
+        /// not go above the limit
+        /// </summary>
         private async void CheckResponseTime(object o, ElapsedEventArgs e)
         {
             rCount += 1;
@@ -288,10 +322,10 @@ namespace Insurance_app.ViewModels
             CircularWaitDisplay = false;
             timer.Stop();
             rCount = 0;
-            await Shell.Current.DisplayAlert(Msg.Error, "Something went wrong, try again in a min", "close");
+            await Msg.AlertError("Something went wrong, try again in a min");
         }
 
-//-----------------------------data binding methods ------------------------------------------------
+//-----------------------------Bindable properties below ------------------------------------------------
 
 
         public int SelectedHospital

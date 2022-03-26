@@ -28,6 +28,10 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels.ClientViewModels
 {
+    /// <summary>
+    /// It used to set & view ListView data(customer open policy requests) of
+    /// ClientOpenClaims page UI in real time via BindingContext.
+    /// </summary>
     public class OpenPolicyRViewModel:ObservableObject
     {
         public ObservableRangeCollection<Policy> Policies { get; set; }
@@ -41,6 +45,10 @@ namespace Insurance_app.ViewModels.ClientViewModels
             PolicySelectedCommand = new AsyncCommand<Policy>(SelectedPolicy);
             policyManager = new PolicyManager();
         }
+        /// <summary>
+        /// Loads in data by using manager and
+        /// sets it to ListView
+        /// </summary>
         public async Task Setup()
         {
             try
@@ -55,6 +63,11 @@ namespace Insurance_app.ViewModels.ClientViewModels
             ListVisibleDisplay = Policies.Count>0;
             SetUpWaitDisplay = false;
         }
+        /// <summary>
+        /// Navigates to PolicyPage after item being selected
+        /// on the list view
+        /// </summary>
+        /// <param name="policy">Select policy instance</param>
         private async Task SelectedPolicy(Policy policy)
         {
             if (policy is null) return;
@@ -63,6 +76,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
             await Shell.Current.GoToAsync(route);
         }
         
+        //--------------------- Bindable properties ---------------------------------
         private bool wait;
         public bool SetUpWaitDisplay
         {

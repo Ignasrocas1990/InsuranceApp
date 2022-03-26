@@ -1,27 +1,44 @@
-﻿using System;
+﻿/*
+    Copyright 2020,Ignas Rocas
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    
+              Name : Ignas Rocas
+    Student Number : C00135830
+           Purpose : 4th year project
+ */
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Android.Nfc;
 using Android.Util;
-using Java.Lang;
-using watch.Services;
 using Xamarin.Essentials;
-using Exception = System.Exception;
 
 namespace watch.Sensors
 {
-
+    /// <summary>
+    /// Uses Xamarin Essentials to monitor sensor movement data
+    /// using accelerometer.
+    /// </summary>
     public class SensorManager
     {
-        private const string TAG = "mono-stdout";
+        private const string Tag = "mono-stdout";
         
         public event EventHandler<SensorArgs> AccEventHandler;
-        private StepDetector detector;
-        SensorSpeed speed = SensorSpeed.UI;
+        private readonly StepDetector detector;
+        private const SensorSpeed Speed = SensorSpeed.UI;
         private long shakeDetected = 0;
         private const long ShakeTimeGap = 500;
-        private static int NUM_TUPLES = 80; //80 sets of accelerometer readings
         private int count = 0;
         private List<float> data;
 
@@ -34,19 +51,23 @@ namespace watch.Sensors
             Accelerometer.ShakeDetected += ShakeDetected;
             data = new List<float>();
         }
-
-        private void ShakeDetected(object sender, EventArgs e)
-        {
+        
+        /// <summary>
+        /// When detecting shake initialize when it happened
+        /// </summary>
+        private void ShakeDetected(object sender, EventArgs e)=>
             shakeDetected = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
-        }
-
+        
+        /// <summary>
+        /// Detects a movement, checks vs shake detected, and using StepDetector 
+        /// </summary>
         void AcceReadingChanged(object s, AccelerometerChangedEventArgs args)
         {
             var vec = args.Reading.Acceleration;
             var timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
-            if (detector.updateAccel(timeStamp, vec.X, vec.Y, vec.Z) == 1 && (shakeDetected+ShakeTimeGap) <= timeStamp)
+            if (detector.UpdateAccel(timeStamp, vec.X, vec.Y, vec.Z) == 1 && (shakeDetected+ShakeTimeGap) <= timeStamp)
             {
-                Log.Verbose(TAG,$"step counted {++count}");
+                Log.Verbose(Tag,$"step counted {++count}");
                 AccEventHandler?.Invoke(this, new SensorArgs()
                 {
                     Data = $"{vec.X},{vec.Y},{vec.Z}"
@@ -61,28 +82,28 @@ namespace watch.Sensors
                 if (Accelerometer.IsMonitoring && state.Equals("Disconnected"))
                 {
                     Accelerometer.Stop();
-                    Log.Verbose(TAG, "ToggleSensors,stop to monitor");
+                    Log.Verbose(Tag, "ToggleSensors,stop to monitor");
                 }
                 else if(!Accelerometer.IsMonitoring && state.Equals("Connected"))
                 {
-                    Accelerometer.Start(speed);
-                    Log.Verbose(TAG, "ToggleSensors,start to monitor");
+                    Accelerometer.Start(Speed);
+                    Log.Verbose(Tag, "ToggleSensors,start to monitor");
 
                 }
             }
             catch (FeatureNotSupportedException fe)
             {
-                Log.Verbose(TAG,fe.Message);
+                Log.Verbose(Tag,fe.Message);
             }
             catch (Exception ex)
             {
-                Log.Verbose(TAG,ex.Message);
+                Log.Verbose(Tag,ex.Message);
 
             }
         }
         public void UnsubscribeSensors()
         {
-            Log.Verbose(TAG, "SensorManager : unsubscribed");
+            Log.Verbose(Tag, "SensorManager : unsubscribed");
             Accelerometer.ReadingChanged -= AcceReadingChanged;
         }
         public  bool isMonitoring() => Accelerometer.IsMonitoring;

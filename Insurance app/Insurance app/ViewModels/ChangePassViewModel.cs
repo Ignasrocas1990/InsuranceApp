@@ -26,6 +26,9 @@ using Xamarin.CommunityToolkit.ObjectModel;
 
 namespace Insurance_app.ViewModels
 {
+    /// <summary>
+    /// Class used to store and manipulate ChangePasswordPage UI inputs in real time via BindingContext and its properties
+    /// </summary>
     public class ChangePassViewModel : ObservableObject,IDisposable
     {
         private string password;
@@ -38,7 +41,9 @@ namespace Insurance_app.ViewModels
             ChangePassCommand = new AsyncCommand(ChangePassword);
             userManager = new UserManager();
         }
-        
+        /// <summary>
+        /// updates user password, if successful redirects to log in page
+        /// </summary>
         private async Task ChangePassword()
         {
             try
@@ -66,8 +71,8 @@ namespace Insurance_app.ViewModels
                 Console.WriteLine(e);
             }
             CircularWaitDisplay = false;
-
         }
+        //---------------------- Bindable properties below ----------------------------
         public string PassDisplay
         {
             get => password;

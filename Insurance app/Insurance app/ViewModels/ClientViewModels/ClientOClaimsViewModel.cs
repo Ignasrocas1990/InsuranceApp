@@ -28,6 +28,10 @@ using Xamarin.Forms;
 
 namespace Insurance_app.ViewModels.ClientViewModels
 {
+    /// <summary>
+    /// It used to set & view ListView data(customer open claims) of
+    /// ClientOpenClaims page UI in real time via BindingContext.
+    /// </summary>
     public class ClientOClaimsViewModel:ObservableObject,IDisposable
     {
         private readonly ClaimManager claimManager;
@@ -40,9 +44,10 @@ namespace Insurance_app.ViewModels.ClientViewModels
             Claims = new ObservableRangeCollection<Claim>();
             ClaimSelectedCommand = new AsyncCommand<Claim>(SelectedClaim);
         }
-
-
-
+        /// <summary>
+        /// Loads in data using manager classes via database
+        /// And set it to Bindable properties(UI)
+        /// </summary>
         public async Task Setup()
         {
             try
@@ -57,6 +62,11 @@ namespace Insurance_app.ViewModels.ClientViewModels
             ListVisibleDisplay = Claims.Count>0;
             SetUpWaitDisplay = false;
         }
+        /// <summary>
+        /// Navigates to Claims page after client clicks on list view claim
+        /// with parameter
+        /// </summary>
+        /// <param name="claim">Selected Claim Instance</param>
         private async Task SelectedClaim(Claim claim)
         {
             if (claim is null) return;
@@ -64,7 +74,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
             var route = $"//{nameof(ClaimPage)}?CustomerId={claim.Owner}";
             await Shell.Current.GoToAsync(route);
         }
-        
+        //------------------------   Bindable properties ----------------------
         private bool wait;
         public bool SetUpWaitDisplay
         {

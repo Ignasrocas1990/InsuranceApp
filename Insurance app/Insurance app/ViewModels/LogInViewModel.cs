@@ -32,6 +32,9 @@ using Xamarin.Forms.Xaml;
 
 namespace Insurance_app.ViewModels
 {
+    /// <summary>
+    /// Class used to store and manipulate LogInPage UI components in real time via BindingContext and its properties
+    /// </summary>
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public class LogInViewModel : ObservableObject
     {
@@ -61,13 +64,18 @@ namespace Insurance_app.ViewModels
             };
             userManager = new UserManager();
         }
-
+        /// <summary>
+        /// Transfers to Client Registration page
+        /// </summary>
         private async Task ClientRegister()
         {
             CircularWaitDisplay = true;
             await Application.Current.MainPage.Navigation.PushAsync(new ClientRegistration());
             CircularWaitDisplay = false;
         }
+        /// <summary>
+        /// logs outs current user.
+        /// </summary>
         public async Task ExistUser()
         {
             try
@@ -82,7 +90,9 @@ namespace Insurance_app.ViewModels
                 Console.WriteLine(e);
             }
         }
-
+        /// <summary>
+        /// Navigate to QuotePage
+        /// </summary>
         private async Task NavigateToQuote()
         {
             try
@@ -96,7 +106,11 @@ namespace Insurance_app.ViewModels
             }
             CircularWaitDisplay = false;
         }
-
+        /// <summary>
+        /// Check which type of user it is via manager and
+        /// sets navigation for that particular type while
+        /// checking if the credentials are valid
+        /// </summary>
         private async Task LogIn()
         {
             try
@@ -150,8 +164,6 @@ namespace Insurance_app.ViewModels
                         await Application.Current.MainPage.Navigation.PushAsync(new QuotePage(typeUser),true);
                     }
                 }
-                
-
             }
             catch (Exception e)
             {
@@ -160,7 +172,7 @@ namespace Insurance_app.ViewModels
             }
             CircularWaitDisplay = false;
         }
-
+//-------------------- Bindable properties below -------------------
 
         public string EmailDisplay
         {

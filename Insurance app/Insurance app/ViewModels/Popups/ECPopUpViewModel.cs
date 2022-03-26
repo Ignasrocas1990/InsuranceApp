@@ -24,12 +24,15 @@ using Xamarin.CommunityToolkit.ObjectModel;
 
 namespace Insurance_app.ViewModels.Popups
 {
+    /// <summary>
+    /// Used to set data in ListView
+    /// </summary>
     public class EcPopUpViewModel : ObservableObject
     {
         public ObservableRangeCollection<Claim> Claims { get; set; }
         private readonly ExistingClaimsPopup popup;
 
-        public EcPopUpViewModel(ExistingClaimsPopup popup, List<Claim> existingClaims)
+        public EcPopUpViewModel(ExistingClaimsPopup popup, IEnumerable<Claim> existingClaims)
         {
             this.popup = popup;
             Claims = new ObservableRangeCollection<Claim>(existingClaims);
