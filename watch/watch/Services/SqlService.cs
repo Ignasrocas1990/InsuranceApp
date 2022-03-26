@@ -22,71 +22,84 @@ using System;
 using System.IO;
 using Android.Util;
 using SQLite;
+using watch.Models;
 using Xamarin.Essentials;
 
 namespace watch.Services
 {
+    /// <summary>
+    /// Used to connect to local SQL database
+    /// using 3rd party nuget
+    /// </summary>
     public class SqlService : IDisposable
     {
-        private static SqlService db;
-        SQLiteConnection connection;
-        private const string TAG = "mono-stdout";
+        private static SqlService _db;
+        private readonly SQLiteConnection connection;
+        private const string Tag = "mono-stdout";
 
         private SqlService()
         {
             try
             {
                 var databasePath = Path.Combine(FileSystem.AppDataDirectory, "MyData.db");
-                Log.Verbose(TAG,$"SQL Service dataPath : {databasePath}");
+                Log.Verbose(Tag,$"SQL Service dataPath : {databasePath}");
                 connection = new SQLiteConnection(databasePath);
                 connection.CreateTable<User>();
-                Log.Verbose(TAG, $"SQL AddUser, Is Connection closed?: {connection.Handle.IsClosed}");
+                Log.Verbose(Tag, $"SQL AddUser, Is Connection closed?: {connection.Handle.IsClosed}");
             }
             catch (Exception e)
             {
-                Log.Verbose(TAG,"SQL CREATION ERROR : "+e.Message);
+                Log.Verbose(Tag,"SQL CREATION ERROR : "+e.Message);
             }
         }
         public static SqlService GetInstance()
         {
-            return db ??= new SqlService();
+            return _db ??= new SqlService();
         }
-        
+        /// <summary>
+        /// adds user to database
+        /// </summary>
+        /// <param name="userId">customerId string</param>
+        /// <param name="email">customer email string</param>
+        /// <param name="pass">password string</param>
         public void AddUser(string userId, string email, string pass)
         {
              try
              {
-                 Log.Verbose(TAG, $"SQL AddUser, Is Connection closed?: {connection.Handle.IsClosed}");
+                 Log.Verbose(Tag, $"SQL AddUser, Is Connection closed?: {connection.Handle.IsClosed}");
                  connection.Insert(new User()
                  {
                              UserId = userId,
                              Email = email,
                              Pass = pass
                  });
-                 Log.Verbose(TAG, "User Added successfully");
+                 Log.Verbose(Tag, "User Added successfully");
              }
              catch (Exception e)
              {
-                 Log.Verbose(TAG,"SQL AddUser Error : "+e.Message);
+                 Log.Verbose(Tag,"SQL AddUser Error : "+e.Message);
              }
             
         }
-
+        /// <summary>
+        /// finds if user exist 
+        /// </summary>
+        /// <returns>User instance or null</returns>
         public User FindUser()
         {
             try
             {
-                Log.Verbose(TAG, $"SQL FindUser, Is Connection closed?: {connection.Handle.IsClosed}");
+                Log.Verbose(Tag, $"SQL FindUser, Is Connection closed?: {connection.Handle.IsClosed}");
                 var user =  connection.Get<User>(user => user.DelFlag == false);
-                Log.Verbose(TAG, $"SQL,User is found : {user.Email}");
+                Log.Verbose(Tag, $"SQL,User is found : {user.Email}");
                 return user;
                 
             }
             catch (Exception e)
             {
-                Log.Verbose(TAG,"SQL FindUser Error : "+e.Message);
+                Log.Verbose(Tag,"SQL FindUser Error : "+e.Message);
             }
-            Log.Verbose(TAG,"SQL FindUser is NULL");
+            Log.Verbose(Tag,"SQL FindUser is NULL");
             return null;
         }
         public User ReplaceUser(string userId,string email,string pass)
@@ -94,7 +107,7 @@ namespace watch.Services
             try
             {
                 connection.DeleteAll<User>();
-                User user = new User()
+                var user = new User()
                 {
                     UserId = userId,
                     Email = email,
@@ -105,23 +118,23 @@ namespace watch.Services
             }
             catch (Exception e)
             {
-                Log.Verbose(TAG,e.Message);
+                Log.Verbose(Tag,e.Message);
             }
 
             return null;
         }
 
-        public void ClearDatabase()
+        public void ClearDatabase()//TODO ---------------- REMOVE when submitting
         {
             try
             {
                 connection.DeleteAll<User>();
-                Log.Verbose(TAG,"Database Cleared successfully");
+                Log.Verbose(Tag,"Database Cleared successfully");
 
             }
             catch (Exception e)
             {
-                Log.Verbose(TAG,e.Message);
+                Log.Verbose(Tag,e.Message);
             }
         }
 

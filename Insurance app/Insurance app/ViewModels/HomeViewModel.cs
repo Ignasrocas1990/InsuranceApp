@@ -46,7 +46,7 @@ namespace Insurance_app.ViewModels
         private double currentProgressBars = 0.0;
         private const double Max = 0;
         private bool firstSetup = true;
-        private int counter = 0;
+        private int c = 0;
         private double startUpSteps;
         private Reward reward;
         public ICommand SwitchCommand { get; }
@@ -135,7 +135,7 @@ namespace Insurance_app.ViewModels
         /// </summary>
         private async Task StartDataReceive()
         {
-            if (++counter % 2==0) return;
+            if (++c % 2 == 0) return;
             
             CircularWaitDisplay = true;
             switchState = await bleManager.ToggleMonitoring(toggleState);

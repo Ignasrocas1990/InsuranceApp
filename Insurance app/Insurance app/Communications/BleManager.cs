@@ -1,12 +1,9 @@
 ﻿/*
     Copyright 2020,Ignas Rocas
-
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
-
     http://www.apache.org/licenses/LICENSE-2.0
-
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,6 +49,7 @@ namespace Insurance_app.Communications
         public string Pass;
         private bool stop;
         private bool turnInprocess;
+        private bool firstTime = true;
 
 
         private BleManager()
@@ -85,10 +83,10 @@ namespace Insurance_app.Communications
                     bleState = false;
                 }
             };
-            adapter.DeviceConnected += (s, e) =>
+            adapter.DeviceConnected += async (s, e) =>
             {
                 Console.WriteLine($"device connected : {e.Device.Name}");
-                Task.FromResult(GetService(e.Device));
+               await GetService(e.Device);
             };
         }
         /// <summary>
@@ -99,10 +97,11 @@ namespace Insurance_app.Communications
         /// </summary>
         private async Task ReadAsync()
         {
+           
             try
             {
                 if (!isMonitoring) return;
-
+                firstTime = false;
                 var data = await chara.ReadAsync();
                 
                 string str = " ";
@@ -311,18 +310,25 @@ namespace Insurance_app.Communications
             {
                 return state;
             }
-            switch (state)
+            
+            if (state)
             {
-                case true:
-                    start = true;
-                    stop = false;
-                    break;
                 
-                case false:
-                    stop = true;
-                    start = false;
-                    break;
+                start = true;
+                stop = false;
             }
+            else 
+            {
+                if (firstTime)// here means states was on when the app turned on
+                {
+                    isMonitoring = false;
+                    await UpdateCustomerSwitch(false);
+                    return false;
+                }
+                stop = true;
+                start = false;
+            }
+
             if (!bleState)
             {
                 MainThread.BeginInvokeOnMainThread(NoBluetooth);

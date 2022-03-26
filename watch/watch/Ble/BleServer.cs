@@ -1,22 +1,41 @@
-﻿using System;
+﻿/*
+    Copyright 2020,Ignas Rocas
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    
+              Name : Ignas Rocas
+    Student Number : C00135830
+           Purpose : 4th year project
+ */
+
+using System;
 using System.Collections.Generic;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
 using Android.Content;
 using Android.Util;
-using Java.Lang;
 using Java.Util;
-using Plugin.BLE.Abstractions.Contracts;
-using watch.Sensors;
-using Exception = System.Exception;
-using String = System.String;
 
 namespace watch.Ble
 {
+    /// <summary>
+    /// Used to initialize a Bluetooth server that waits for connections
+    /// so it can transmit the data 
+    /// </summary>
     public class BleServer : IDisposable
     {
         private const string DefaultUuid = "a3bb5442-5b61-11ec-bf63-0242ac130002";
-        public const string TAG = "mono-stdout";
+        public const string Tag = "mono-stdout";
         private readonly UUID serverUuid;
         private BluetoothManager bltManager;
         private BluetoothAdapter bltAdapter;
@@ -27,7 +46,6 @@ namespace watch.Ble
         public readonly Queue<string> SensorData;
 
         
-        //public event EventHandler ToggleSensorsEventHandler;
         private readonly BleAdvertiseCallback bltAdvertiserCallback;
         private BluetoothGattService service;
 
@@ -35,16 +53,21 @@ namespace watch.Ble
         {
             
             SensorData = new Queue<string>();
-            serverUuid = GetUUID(DefaultUuid);
+            serverUuid = GetUuid(DefaultUuid);
             CreateServer(context);
             BltCallback.ReadHandler += SendData;
             bltAdvertiserCallback = new BleAdvertiseCallback();
             bltAdvertiser = bltAdapter.BluetoothLeAdvertiser;
             StartAdvertising();
-
         }
 
-        public void SendData(object s, BleEventArgs e)
+        /// <summary>
+        /// Sends accelerometer data as the bluetooth client
+        /// performs read request.
+        /// </summary>
+        /// <param name="s"/>
+        /// <param name="e">Accelerometer String</param>
+        private void SendData(object s, BleEventArgs e)
         {
             var data = " ";
             if (SensorData.Count > 0)
@@ -55,6 +78,12 @@ namespace watch.Ble
             bltServer.SendResponse(e.Device, e.RequestId, GattStatus.Success, e.Offset, e.Characteristic.GetValue() ?? throw new InvalidOperationException());
             bltServer.NotifyCharacteristicChanged(e.Device, e.Characteristic, false);
         }
+        
+        /// <summary>
+        /// Creates server with its rules that allow
+        /// to read,write,notify its properties such as Characteristic & Descriptor
+        /// (only characteristic used at this movement)
+        /// </summary>
         private void CreateServer(Context context)
         {
             
@@ -76,8 +105,12 @@ namespace watch.Ble
 
             service.AddCharacteristic(bltCharac);
 
-            if (bltServer != null) bltServer.AddService(service);
+            bltServer?.AddService(service);
         }
+        /// <summary>
+        /// Start advertising the server connection after
+        /// it is been created
+        /// </summary>
         private void StartAdvertising()
         {
             var builder = new AdvertiseSettings.Builder()
@@ -92,30 +125,30 @@ namespace watch.Ble
             if (builder != null && dataBuilder != null)
                 bltAdvertiser.StartAdvertising(builder.Build(), dataBuilder.Build(), bltAdvertiserCallback);
         }
-        private UUID GetUUID(string uuid) => UUID.FromString(uuid);
+        /// <summary>
+        /// Converts chosen string as uuid to UUID instance
+        /// </summary>
+        /// <param name="uuid">server access code string</param>
+        /// <returns>server access UUID Instance</returns>
+        private static UUID GetUuid(string uuid) => UUID.FromString(uuid);
+        
+        /// <summary>
+        /// Disables advertisement of servers connection
+        /// </summary>
         public void StopAdvertising()
         {
-            if (bltAdvertiser != null)
+            if (bltAdvertiser == null) return;
+            try
             {
-                try
-                {
                     
-                    bltAdvertiser.StopAdvertising(bltAdvertiserCallback);
-                    if (service != null)
-                    {
-                        if (service.Characteristics !=null)
-                        {
-                            service.Characteristics.Clear();
-                        }
-                    }
-                    if (bltServer.Services != null) bltServer.Services.Clear();
-                    BltCallback.Dispose();
-                }
-                catch (Exception e)
-                {
-                    Log.Verbose(TAG, $"Fail to stop the server...{e}");
-                }
-                
+                bltAdvertiser.StopAdvertising(bltAdvertiserCallback);
+                service?.Characteristics?.Clear();
+                bltServer.Services?.Clear();
+                BltCallback.Dispose();
+            }
+            catch (Exception e)
+            {
+                Log.Verbose(Tag, $"Fail to stop the server...{e}");
             }
         }
 
@@ -137,13 +170,13 @@ namespace watch.Ble
         public override void OnStartFailure(AdvertiseFailure errorCode)
         {
             base.OnStartFailure(errorCode);
-            Log.Verbose(BleServer.TAG, $"Advertise : Start error : {errorCode}");
+            Log.Verbose(BleServer.Tag, $"Advertise : Start error : {errorCode}");
         }
 
         public override void OnStartSuccess(AdvertiseSettings settingsInEffect)
         {
             base.OnStartSuccess(settingsInEffect);
-            Log.Verbose(BleServer.TAG, "Advertise : Start Success ");
+            Log.Verbose(BleServer.Tag, "Advertise : Start Success ");
         }
         
 

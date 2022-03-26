@@ -59,7 +59,8 @@ namespace watch.Sensors
             shakeDetected = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
         
         /// <summary>
-        /// Detects a movement, checks vs shake detected, and using StepDetector 
+        /// Detects a Acceleration reading, checks vs shake detected, and using StepDetector
+        /// and sends reading to WatchService via EventHandler
         /// </summary>
         void AcceReadingChanged(object s, AccelerometerChangedEventArgs args)
         {
@@ -75,20 +76,24 @@ namespace watch.Sensors
 
             }
         }
+        /// <summary>
+        /// Starts/Stops monitoring
+        /// </summary>
+        /// <param name="state">start stop monitoring</param>
         public void ToggleSensors(string state)
         {
             try
             {
-                if (Accelerometer.IsMonitoring && state.Equals("Disconnected"))
+                switch (Accelerometer.IsMonitoring)
                 {
-                    Accelerometer.Stop();
-                    Log.Verbose(Tag, "ToggleSensors,stop to monitor");
-                }
-                else if(!Accelerometer.IsMonitoring && state.Equals("Connected"))
-                {
-                    Accelerometer.Start(Speed);
-                    Log.Verbose(Tag, "ToggleSensors,start to monitor");
-
+                    case true when state.Equals("Disconnected"):
+                        Accelerometer.Stop();
+                        Log.Verbose(Tag, "ToggleSensors,stop to monitor");
+                        break;
+                    case false when state.Equals("Connected"):
+                        Accelerometer.Start(Speed);
+                        Log.Verbose(Tag, "ToggleSensors,start to monitor");
+                        break;
                 }
             }
             catch (FeatureNotSupportedException fe)
@@ -101,6 +106,9 @@ namespace watch.Sensors
 
             }
         }
+        /// <summary>
+        /// Unsubscribes from monitoring
+        /// </summary>
         public void UnsubscribeSensors()
         {
             Log.Verbose(Tag, "SensorManager : unsubscribed");

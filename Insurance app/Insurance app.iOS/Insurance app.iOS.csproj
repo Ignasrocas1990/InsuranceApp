@@ -173,6 +173,7 @@
     <BundleResource Include="Resources\btn2.gif" />
     <BundleResource Include="Resources\claimIcon.png" />
     <BundleResource Include="Resources\CustomersIcon.png" />
+    <BundleResource Include="Resources\image.jpg" />
     <BundleResource Include="Resources\logInlogo.png" />
     <BundleResource Include="Resources\openClaimsIcon.png" />
     <BundleResource Include="Resources\policyIcon.png" />

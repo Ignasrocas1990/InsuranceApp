@@ -27,12 +27,15 @@ using watch.Services;
 
 namespace watch
 {
+    /// <summary>
+    /// Its only used to start the service... That is it.
+    /// </summary>
     [Activity(Label = "@string/app_name", MainLauncher = true)]
     public class MainActivity : WearableActivity
     {
         private Button btn;
         private Intent intent;
-        public static MainActivity Instance;
+        private static MainActivity _instance;
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -50,12 +53,12 @@ namespace watch
             };
             intent = new Intent(this, typeof(WatchService));
             StartForegroundService(intent);
-            Instance = this;
+            _instance = this;
         }
 
         public static void Fin()
         {
-            Instance.Finish();
+            _instance.Finish();
         } 
 
 

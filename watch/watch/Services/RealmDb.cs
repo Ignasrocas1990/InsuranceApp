@@ -31,17 +31,20 @@ using Xamarin.Essentials;
 
 namespace watch.Services
 {
-
+    /// <summary>
+    /// User to connect to Mongo cloud database
+    /// and save accelerometer readings
+    /// </summary>
     public class RealmDb
     {
-        private static string MyRealmAppId = "application-1-luybv";
+        private const string MyRealmAppId = "application-1-luybv";
         private static RealmDb _db = null;
-        private readonly string partition = "CustomerPartition";
+        private const string Partition = "CustomerPartition";
         public static App RealmApp;
-        private const string TAG = "mono-stdout";
+        private const string Tag = "mono-stdout";
         public event EventHandler LoggedInCompleted = delegate{ };
         public event EventHandler StopDataGathering = delegate{ };
-        private static Func<String,float>toFloat =  x => float.Parse(x, CultureInfo.InvariantCulture.NumberFormat);
+        private static readonly Func<string,float>ToFloat =  x => float.Parse(x, CultureInfo.InvariantCulture.NumberFormat);
 
         private RealmDb()
         {
@@ -51,18 +54,19 @@ namespace watch.Services
             }
             catch (Exception e)
             {
-                Log.Verbose(TAG, $"Create(RealmApp) error : \n {e.Message}");
+                Log.Verbose(Tag, $"Create(RealmApp) error : \n {e.Message}");
             }
         }
 
         public static RealmDb GetInstance()
         {
-            if (_db is null)
-            { 
-                _db = new RealmDb();
-            }
-            return _db;
+            return _db ??= new RealmDb();
         }
+        /// <summary>
+        /// Login's to Realm database
+        /// </summary>
+        /// <param name="email">email passed via bluetooth or from SQL database</param>
+        /// <param name="password">password passed via bluetooth or from SQL database</param>
         public async Task LogIn(string email, string password)
         {
             try
@@ -72,7 +76,7 @@ namespace watch.Services
                     var user =  await RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
                     if (user is null)
                     {
-                        Log.Verbose(TAG, "fail to log in realm");
+                        Log.Verbose(Tag, "fail to log in realm");
                         return;
                     }
                 }
@@ -83,16 +87,17 @@ namespace watch.Services
             }
             catch (Exception e)
             {
-                Log.Verbose(TAG,$"LogIn,realm error : \n {e.Message}");
+                Log.Verbose(Tag,$"LogIn,realm error : \n {e.Message}");
             }
         }
+        /// <summary>
+        /// Adds movement data to Mongo, cloud database
+        /// </summary>
+        /// <param name="dataToBeSaved"></param>
          public async Task AddMovData(List<string> dataToBeSaved)
         {
             try
             {
-                //if (RealmApp is null) return;
-                //if (RealmApp.CurrentUser is null) return;
-                
                 var  otherRealm =  await GetRealm();
                 if (otherRealm is null) throw new Exception("AddMvData ::: Realm is null");
                 otherRealm.Write( ()=>
@@ -103,9 +108,9 @@ namespace watch.Services
                             .Select(sd => 
                                 new MovData() 
                                     {AccData = new Acc() 
-                                        {X = toFloat(sd[0]), Y = toFloat(sd[1]), Z = toFloat(sd[2])}, 
+                                        {X = ToFloat(sd[0]), Y = ToFloat(sd[1]), Z = ToFloat(sd[2])}, 
                                         Type = "step"}).ToList();
-                    Log.Verbose(TAG,$"data date stamp is : {movDataList.First().DateTimeStamp}");//TODO Remove ===========
+                    Log.Verbose(Tag,$"data date stamp is : {movDataList.First().DateTimeStamp}");//TODO Remove ===========
                     var customer = otherRealm.Find<Customer>(RealmApp.CurrentUser.Id);
                     if (customer is null) throw new Exception("AddMvData ::: Customer is null");
                     if (customer.DataSendSwitch is false)
@@ -145,15 +150,19 @@ namespace watch.Services
                             reward.MovData.Add(d);
                         customer.Reward.Add(reward);
                     }
-                    Log.Verbose(TAG, "Saved Data to Realm");
+                    Log.Verbose(Tag, "Saved Data to Realm");
                 });
             }
             catch (Exception e)
             {
                  // in-case connection loss ignore
-                 Log.Verbose(TAG, $"Data is not saved {e.Message}");
+                 Log.Verbose(Tag, $"Data is not saved {e.Message}");
             }
         }
+        /// <summary>
+        /// Checks if customer still monitoring
+        /// </summary>
+        /// <returns>true if monitoring</returns>
          public async Task<bool> CheckIfMonitoring()
          {
              bool switchOn=false;
@@ -180,11 +189,14 @@ namespace watch.Services
              }
              catch (Exception e)
              {
-                 Log.Verbose(TAG,e.Message);
+                 Log.Verbose(Tag,e.Message);
              }
 
              return switchOn;
          }
+        /// <summary>
+        /// updates customer monitoring switch
+        /// </summary>
          public async Task UpdateSwitch()
          {
              try
@@ -199,27 +211,31 @@ namespace watch.Services
              }
              catch (Exception e)
              {
-                 Log.Verbose(TAG,e.Message);
+                 Log.Verbose(Tag,e.Message);
              }
          }
-
+        /// <summary>
+        /// Gets an instance of Realm using partition and current user
+        /// </summary>
+        /// <returns>Realm instance</returns>
         private async Task<Realm> GetRealm()
         {
             try
             {
-               // if (!NetConnection()) return realm;
-                
                 return await Realm.GetInstanceAsync(
-                    new PartitionSyncConfiguration(partition,RealmApp.CurrentUser,"RealmDb"));
+                    new PartitionSyncConfiguration(Partition,RealmApp.CurrentUser,"RealmDb"));
             }
             catch (Exception e)
             {
-                Log.Verbose(TAG,$"GetRealm,realm error : \n {e.Message}");
-                Log.Verbose(TAG,$"GetRealm, inner exception : {e.InnerException}");
+                Log.Verbose(Tag,$"GetRealm,realm error : \n {e.Message}");
+                Log.Verbose(Tag,$"GetRealm, inner exception : {e.InnerException}");
             }
             return null;
         }
-
+        /// <summary>
+        /// checks for internet connection
+        /// </summary>
+        /// <returns></returns>
         private static bool NetConnection()
         {
             var profiles = Connectivity.ConnectionProfiles;

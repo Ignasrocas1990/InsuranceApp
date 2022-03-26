@@ -23,13 +23,16 @@ using Java.Lang;
 
 namespace watch.Sensors
 {
+    /// <summary>
+    /// Used to detect steps by detecting spike in accelerometer reading 
+    /// </summary>
     public class StepDetector
     {
         private const int AccelRingSize = 50;
         private const int VelRingSize = 10;
 
         // change this threshold according to your sensitivity preferences
-        private static  float STEP_THRESHOLD = 1.5f;//50
+        private const float StepThreshold = 1.5f; //50
 
         private const int StepDelayMs = 150;
 
@@ -75,7 +78,7 @@ namespace watch.Sensors
             var velocityEstimate = SensorFilter.Sum(velRing);
            // Log.Verbose(TAG,$"{velocityEstimate} > {STEP_THRESHOLD} and {oldVelocityEstimate}<= {STEP_THRESHOLD} " +
     //                        $"and {timeMSec - lastStepTimeNs} > {STEP_DELAY_MS}");
-            if (velocityEstimate > STEP_THRESHOLD && oldVelocityEstimate <= STEP_THRESHOLD && (timeMSec - lastStepTimeNs > StepDelayMs))
+            if (velocityEstimate > StepThreshold && oldVelocityEstimate <= StepThreshold && (timeMSec - lastStepTimeNs > StepDelayMs))
             {
                 lastStepTimeNs = timeMSec;
                 return 1;

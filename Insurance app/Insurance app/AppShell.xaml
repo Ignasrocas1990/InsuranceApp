@@ -10,17 +10,12 @@
              x:Class="Insurance_app.AppShell">
     <Shell.FlyoutHeaderTemplate>
         <DataTemplate>
-            <Grid BackgroundColor="Black"
-                  HeightRequest="200">
+            <Grid BackgroundColor="Gray"
+                  HeightRequest="250">
                 <Image Aspect="AspectFill"
                        BackgroundColor="White"
                        Source="image.jpg"
                        Opacity="0.6" />
-                <Label Text="Logo"
-                       TextColor="Black"
-                       FontAttributes="Bold"
-                       HorizontalTextAlignment="Center"
-                       VerticalTextAlignment="Center" />
             </Grid>            
         </DataTemplate>
     </Shell.FlyoutHeaderTemplate>

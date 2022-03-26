@@ -1,12 +1,38 @@
-﻿using System;
+﻿/*
+    Copyright 2020,Ignas Rocas
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    
+              Name : Ignas Rocas
+    Student Number : C00135830
+           Purpose : 4th year project
+ */
+
+using System;
 using Android.Bluetooth;
 using Android.Util;
 
 namespace watch.Ble
 {
+    /// <summary>
+    /// Implementation of BluetoothGattServerCallback
+    /// Which is used for communication.
+    /// (Like Broadcast receiver it listens to incoming requests to the server)
+    /// ( from Client => bluetooth connection => (BleServerCallback) => server)
+    /// </summary>
     public class BleServerCallback : BluetoothGattServerCallback
     {
-        private const string TAG = "mono-stdout";
+        private const string Tag = "mono-stdout";
 
         public event EventHandler<BleEventArgs> ReadHandler;
         public event EventHandler<ConnectEventArgs> StateHandler;
@@ -28,34 +54,26 @@ namespace watch.Ble
             switch (newState)
             {
                 case ProfileState.Disconnected:
-                    Log.Verbose(TAG, $"State changed to : {newState}");
+                    Log.Verbose(Tag, $"State changed to : {newState}");
 
                     StateHandler?.Invoke(this,new ConnectEventArgs(){State ="Disconnected"});
                     break;
                 case ProfileState.Connected:
-                    Log.Verbose(TAG, $"State changed to : {newState}");
+                    Log.Verbose(Tag, $"State changed to : {newState}");
                     StateHandler?.Invoke(this,new ConnectEventArgs(){State ="Connected"});
                     break;
             }
-            Log.Verbose(TAG, $"State changed to : {newState}");
+            Log.Verbose(Tag, $"State changed to : {newState}");
         }
 
         public override void OnCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic,
             bool preparedWrite, bool responseNeeded, int offset, byte[] value)
         {
             base.OnCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
-            if (DataWriteHandler != null)
+            DataWriteHandler?.Invoke(this, new BleEventArgs()
             {
-                DataWriteHandler(this, new BleEventArgs()
-                {
-                    Device = device, Characteristic = characteristic, Value = value, RequestId = requestId, Offset = offset
-                });
-            }
-        }
-        public override void OnDescriptorWriteRequest(BluetoothDevice device, int requestId, BluetoothGattDescriptor descriptor,
-            bool preparedWrite, bool responseNeeded, int offset, byte[] value)
-        {
-            base.OnDescriptorWriteRequest(device, requestId, descriptor, preparedWrite, responseNeeded, offset, value);
+                Device = device, Characteristic = characteristic, Value = value, RequestId = requestId, Offset = offset
+            });
         }
         private BleEventArgs createArgs(BluetoothDevice device, BluetoothGattCharacteristic chara, int requestId, int offset)
         {
@@ -72,7 +90,6 @@ namespace watch.Ble
     public class BleEventArgs : EventArgs
     {
         public BluetoothDevice Device { get; set; }
-        public GattStatus GattStatus { get; set; }
         public BluetoothGattCharacteristic Characteristic { get; set; }
         public byte[] Value { get; set; }
         public int RequestId { get; set; }
