@@ -18,7 +18,6 @@
            Purpose : 4th year project
  */
 
-using System.Collections.Generic;
 using Realms;
 
 namespace Insurance_app.Models
@@ -34,7 +33,6 @@ namespace Insurance_app.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string CompanyCode { get; set; }
-        public IList<ClientActivity> Activities { get; }
         public bool DelFlag { get; set; } = false;
         
 

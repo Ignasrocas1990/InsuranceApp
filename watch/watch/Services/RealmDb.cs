@@ -42,9 +42,11 @@ namespace watch.Services
         private const string Partition = "CustomerPartition";
         public static App RealmApp;
         private const string Tag = "mono-stdout";
-        public event EventHandler LoggedInCompleted = delegate{ };
-        public event EventHandler StopDataGathering = delegate{ };
+        public  EventHandler LoggedInCompleted = delegate{ };
+        public  EventHandler StopDataGathering = delegate{ };
         private static readonly Func<string,float>ToFloat =  x => float.Parse(x, CultureInfo.InvariantCulture.NumberFormat);
+        private string email = "";
+        private string pass = "";
 
         private RealmDb()
         {
@@ -71,6 +73,8 @@ namespace watch.Services
         {
             try
             {
+                this.email = email;
+                pass = password;
                 if (RealmApp.CurrentUser == null)
                 {
                     var user =  await RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
@@ -98,8 +102,12 @@ namespace watch.Services
         {
             try
             {
+                Console.WriteLine($"RealmApp.CurrentUser is null ?={RealmApp.CurrentUser is null}");
                 var  otherRealm =  await GetRealm();
-                if (otherRealm is null) throw new Exception("AddMvData ::: Realm is null");
+                if (otherRealm is null)
+                {
+                  await LogIn(email,pass);
+                }
                 otherRealm.Write( ()=>
                 {
                     var movDataList = 
@@ -113,9 +121,12 @@ namespace watch.Services
                     Log.Verbose(Tag,$"data date stamp is : {movDataList.First().DateTimeStamp}");//TODO Remove ===========
                     var customer = otherRealm.Find<Customer>(RealmApp.CurrentUser.Id);
                     if (customer is null) throw new Exception("AddMvData ::: Customer is null");
-                    if (customer.DataSendSwitch is false)
+                     var MinDifference = GetTimeDifference(customer.DataSendSwitch.changeDate);
+                     Log.Verbose(Tag, $"the difference is {MinDifference} && switch is {customer.DataSendSwitch.Switch}");
+                    if (customer.DataSendSwitch.Switch is false && MinDifference>10)
                     {
                         StopDataGathering.Invoke(this, EventArgs.Empty);
+                        return;
                     }
                     otherRealm.Add(movDataList);
                     
@@ -159,6 +170,13 @@ namespace watch.Services
                  Log.Verbose(Tag, $"Data is not saved {e.Message}");
             }
         }
+
+        private int GetTimeDifference(DateTimeOffset changeDate)
+        {
+            var now = DateTimeOffset.Now;
+            return now.Minute - changeDate.Minute;
+        }
+
         /// <summary>
         /// Checks if customer still monitoring
         /// </summary>
@@ -184,7 +202,7 @@ namespace watch.Services
                    {
                        throw new Exception("No policy found (expired or not created) = Switch is false");
                    }
-                     switchOn = customer.DataSendSwitch;
+                     switchOn = customer.DataSendSwitch.Switch;
                  });
              }
              catch (Exception e)
@@ -206,7 +224,8 @@ namespace watch.Services
                  otherRealm.Write(() =>
                  {
                     var c = otherRealm.Find<Customer>(RealmApp.CurrentUser.Id);
-                    c.DataSendSwitch = false;
+                    c.DataSendSwitch.Switch = false;
+                    c.DataSendSwitch.changeDate = DateTimeOffset.Now;
                  });
              }
              catch (Exception e)
@@ -222,12 +241,12 @@ namespace watch.Services
         {
             try
             {
-                return await Realm.GetInstanceAsync(
-                    new PartitionSyncConfiguration(Partition,RealmApp.CurrentUser,"RealmDb"));
+                var config = new SyncConfiguration(Partition,RealmApp.CurrentUser);
+                return await Realm.GetInstanceAsync(config);
             }
             catch (Exception e)
             {
-                Log.Verbose(Tag,$"GetRealm,realm error : \n {e.Message}");
+                Log.Verbose(Tag,$"GetRealm,realm error : {e.Message}");
                 Log.Verbose(Tag,$"GetRealm, inner exception : {e.InnerException}");
             }
             return null;

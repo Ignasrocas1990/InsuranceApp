@@ -139,7 +139,7 @@ namespace Insurance_app.Logic
         /// </summary>
         public void Dispose()
         {
-            realmDb.Dispose();
+            RealmDb.Dispose();
             if (Claims != null) Claims = null;
         }
         /// <summary>

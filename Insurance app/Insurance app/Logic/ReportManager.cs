@@ -208,7 +208,7 @@ namespace Insurance_app.Logic
         /// </summary>
         public void Dispose()
         {
-            realmDb.Dispose();
+            RealmDb.Dispose();
         }
 
 

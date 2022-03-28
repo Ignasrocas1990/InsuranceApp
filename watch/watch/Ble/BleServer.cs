@@ -18,6 +18,7 @@
            Purpose : 4th year project
  */
 
+
 using System;
 using System.Collections.Generic;
 using Android.Bluetooth;
@@ -36,14 +37,14 @@ namespace watch.Ble
     {
         private const string DefaultUuid = "a3bb5442-5b61-11ec-bf63-0242ac130002";
         public const string Tag = "mono-stdout";
-        private readonly UUID serverUuid;
+        private UUID serverUuid;
         private BluetoothManager bltManager;
         private BluetoothAdapter bltAdapter;
         public BleServerCallback BltCallback;
         private BluetoothGattServer bltServer;
         private BluetoothGattCharacteristic bltCharac;
-        private readonly BluetoothLeAdvertiser bltAdvertiser;
-        public readonly Queue<string> SensorData;
+        private BluetoothLeAdvertiser bltAdvertiser;
+        public Queue<string> SensorData;
 
         
         private readonly BleAdvertiseCallback bltAdvertiserCallback;
@@ -59,6 +60,7 @@ namespace watch.Ble
             bltAdvertiserCallback = new BleAdvertiseCallback();
             bltAdvertiser = bltAdapter.BluetoothLeAdvertiser;
             StartAdvertising();
+            Log.Verbose(BleServer.Tag, $"service started with id {service.Uuid}");
         }
 
         /// <summary>
@@ -140,7 +142,6 @@ namespace watch.Ble
             if (bltAdvertiser == null) return;
             try
             {
-                    
                 bltAdvertiser.StopAdvertising(bltAdvertiserCallback);
                 service?.Characteristics?.Clear();
                 bltServer.Services?.Clear();
@@ -172,13 +173,10 @@ namespace watch.Ble
             base.OnStartFailure(errorCode);
             Log.Verbose(BleServer.Tag, $"Advertise : Start error : {errorCode}");
         }
-
         public override void OnStartSuccess(AdvertiseSettings settingsInEffect)
         {
             base.OnStartSuccess(settingsInEffect);
             Log.Verbose(BleServer.Tag, "Advertise : Start Success ");
         }
-        
-
     }
 }

@@ -36,7 +36,7 @@ namespace Insurance_app.Communications
         public readonly IBluetoothLE BLE;
         public Guid ServerGuid { get; set; }
         private const string UuidString = "a3bb5442-5b61-11ec-bf63-0242ac130002";
-        private readonly Func<string,Guid> setGuid = s => Guid.Parse(s);
+        private readonly Func<string,Guid> setGuid = Guid.Parse;
         public Ble()
         {
             BLE = CrossBluetoothLE.Current;

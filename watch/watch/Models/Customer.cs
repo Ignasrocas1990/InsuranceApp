@@ -37,11 +37,11 @@ namespace watch.Models
         public string PhoneNr { get;set; }
         public string Email { get; set; }
         
+        public DataSendSwitch DataSendSwitch { get; set; }
         public IList<Policy> Policy { get; }
-        public IList<watch.Models.Reward> Reward { get; }
-        public IList<watch.Models.Claim> Claim { get; }
+        public IList<Reward> Reward { get; }
+        public IList<Claim> Claim { get; }
 
-        public bool DataSendSwitch { get; set; } = false;
         public bool? DelFlag { get; set; } = false;
         [MapTo("_partition")] public string Partition { get; set; } = "CustomerPartition";
     }
@@ -53,5 +53,10 @@ namespace watch.Models
         public int? HouseN { get; set; } = 0;
         public string PostCode { get; set; } = "";
         public string Street { get; set; } = "";
+    }
+    public class DataSendSwitch  : EmbeddedObject
+    {
+        public bool Switch { get; set; } = false;
+        public DateTimeOffset changeDate { get; set; } = DateTimeOffset.Now;
     }
 }

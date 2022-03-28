@@ -46,7 +46,7 @@ namespace Insurance_app.Logic
         /// <param name="user">Current user</param>
         /// <param name="userId">current user Id</param>
         /// <returns>Is data collected & reward completed sum</returns>
-        public async Task<(bool toggle, float totalSum)> GetTotalRewards(User user,string userId)
+        public async Task<(DataSendSwitch toggle, float totalSum)> GetTotalRewards(User user,string userId)
         {
             var (toggle,rewards)= await realmDb.GetTotalRewards(user,userId);
             return rewards.Count == 0 ? (toggle, 0.0f) : (toggle,GetRewardSum(rewards));
@@ -76,7 +76,7 @@ namespace Insurance_app.Logic
         /// </summary>
         public void Dispose()
         {
-            realmDb.Dispose();
+            RealmDb.Dispose();
         }
         /// <summary>
         /// Compares total rewards vs price

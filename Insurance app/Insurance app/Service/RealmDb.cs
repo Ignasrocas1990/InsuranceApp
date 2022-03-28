@@ -65,6 +65,7 @@ namespace Insurance_app.Service
                 
                 _realm.Write(() =>
                 {
+                    customer.DataSendSwitch = new DataSendSwitch();
                      _realm.Add(customer,true);
                 });
                 Console.WriteLine("customer added");
@@ -117,9 +118,6 @@ namespace Insurance_app.Service
         {
             try
             {
-                await SubmitActivity(customerId, user,"UpdateCustomer");
-                
-                
                 await GetRealm(user);
                 if (_realm is null) throw new Exception("UpdateCustomer, >>>>>>>>>>>>>>> real is null");
                 _realm.Write(() =>
@@ -180,7 +178,8 @@ namespace Insurance_app.Service
                 otherRealm.Write(() =>
                 {
                     var c =otherRealm.Find<Customer>(user.Id);
-                    c.DataSendSwitch= switchState;
+                    c.DataSendSwitch.Switch= switchState;
+                    c.DataSendSwitch.changeDate = DateTimeOffset.Now;
                 });
                 Console.WriteLine($"Updated Switch to {switchState} ");
             }
@@ -328,15 +327,16 @@ namespace Insurance_app.Service
             return reward;
         }
         /// <summary>
-        /// Finds completed rewards and movement data collection switch.
+        /// Finds completed rewards and monitoring movement data switch instance
+        /// that's keeps if the customer is monitoring the movement data and its change date
         /// </summary>
         /// <param name="user">Authorized realm user instance</param>
         /// <param name="id">Customer id</param>
-        /// <returns>bool collection switch and list of completed Reward instance </returns>
-        public async Task<Tuple<bool, List<Reward>>> GetTotalRewards(User user,string id)
+        /// <returns>DataSendSwitch instance(for mov monitoring) and list of completed Reward instance </returns>
+        public async Task<Tuple<DataSendSwitch, List<Reward>>> GetTotalRewards(User user,string id)
         {
             var rewards = new List<Reward>();
-            var rewardsAndSwitch = new Tuple<bool, List<Reward>>(false,rewards);
+            var rewardsAndSwitch = new Tuple<DataSendSwitch, List<Reward>>(null,rewards);
             //float totalEarnings = 0;
             try
             {
@@ -347,15 +347,7 @@ namespace Insurance_app.Service
                     var customer = _realm.Find<Customer>(id);
                     if (customer is null) throw new Exception("GetTotalRewards >>>>>>>>>>>>>>>> Customer is null");
                     rewards = customer.Reward.Where(r => r.FinDate != null && r.DelFlag == false).ToList();
-                    /*
-                    var sum = (from r in 
-                        customer.Reward where r.FinDate != null && r.DelFlag == false && 
-                                       r.Cost != null select r.Cost).Aggregate<float?, 
-                        float?>(0, (current, f) => current + f.Value);
-
-                    if (sum != null) totalEarnings = (float) sum;
-                    */
-                    rewardsAndSwitch = new Tuple<bool, List<Reward>>(customer.DataSendSwitch,rewards);
+                    rewardsAndSwitch = new Tuple<DataSendSwitch, List<Reward>>(customer.DataSendSwitch,rewards);
                     
                 });
             }
@@ -382,7 +374,6 @@ namespace Insurance_app.Service
         {
             try
             {
-                await SubmitActivity(customerId, user, $"AddClaim");
                 await GetRealm(user);
                 if (_realm is null) throw new Exception(" AddClaim >>>>>>>>>>> realm null");
                 _realm.Write(() =>
@@ -420,8 +411,6 @@ namespace Insurance_app.Service
             Customer customer = null;
             try
             {
-                await SubmitActivity(customerId, user,"ResolveClaim");
-                
                 await GetRealm(user);
                 if (_realm is null)
                     throw new Exception(" ResolveClaim >>>>>>>>>>>>>>>>>>; realm null");
@@ -636,8 +625,6 @@ namespace Insurance_app.Service
             Customer customer =null;
             try
             {
-                await SubmitActivity(customerId, user, $"ResolvePolicyUpdate,Allow={allowUpdate}");
-                
                 await GetRealm(user);
                 if (_realm is null) throw new Exception("AllowPolicyUpdate >>>>>>>>>>>>>>>>>>>>>>>>>> realm null");
                 _realm.Write(()=>
@@ -672,7 +659,6 @@ namespace Insurance_app.Service
         {
             try
             {
-                await SubmitActivity(customerId, user, "UpdatePolicy");
                 await GetRealm(user);
                 if (_realm is null) throw new Exception("UpdatePolicy >>>>>>>>>>>>>>>>>>>>>>>>>> realm null");
                 _realm.Write(() =>
@@ -712,7 +698,6 @@ namespace Insurance_app.Service
                         CompanyCode = code
                     });
                 });
-                await SubmitActivity(user.Id, user, "Register");
                 return true;
             }
             catch (Exception e)
@@ -751,40 +736,7 @@ namespace Insurance_app.Service
             }
             return isClient;
         }
-        /// <summary>
-        /// Submits activity of client (example register, updates customer details etc...)
-        /// (Not used, created in-case administrator is added)
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="user">Authorized realm user instance</param>
-        /// <param name="type">Type of action performed string</param>
-        private async Task SubmitActivity(string customerId,User user,string type)
-        {
-            try
-            {
-                if (customerId == user.Id) return;
 
-                var otherRealm = await GetOtherRealm(user.Id, user);
-                if (otherRealm is null)
-                    throw new Exception(" SubmitActivity >>>>>>>>>>>>>>>>>>; realm null");
-                otherRealm.Write(() =>
-                {
-                   var c = otherRealm.Find<Client>(user.Id);
-                    if (c is null) throw new Exception(" SubmitActivity >>>>>>>>>>>>>>>>>>; no client found");
-                    c.Activities.Add(otherRealm.Add(new ClientActivity()
-                    {
-                        ActivityOwnerId = customerId,
-                        Type = type
-                    }));
-                });
-                otherRealm.Dispose();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            
-        }
         /// <summary>
         /// Gets all customers
         /// </summary>
@@ -863,7 +815,7 @@ namespace Insurance_app.Service
         /// <summary>
         /// Release Initialized realm instance
         /// </summary>
-        public void Dispose()
+        public static void Dispose()
         {
             try
             {

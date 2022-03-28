@@ -32,7 +32,7 @@ namespace watch.Sensors
         private const int VelRingSize = 10;
 
         // change this threshold according to your sensitivity preferences
-        private const float StepThreshold = 1.5f; //50
+        private const float StepThreshold = 1.0f; //50
 
         private const int StepDelayMs = 150;
 

@@ -54,7 +54,7 @@ namespace watch.Services
         private SqlService localDb;
         private List<string> dataToBeSaved;
         private bool savingData;
-
+        private bool firstTime = true;
         /// <summary>
         /// Initialize the service, and if null re-log in (restart of monitoring)
         /// </summary>
@@ -98,7 +98,6 @@ namespace watch.Services
                         runCounter = 0;
                         runTimeTimer.Start();
                         sensorManager.ToggleSensors("Connected");
-                        
                         //sensorManager.sendDataCounter = 0;//TODO remove from here -------------------------------------
                         //sensorManager.SendTestData(); //TODO remove from here -------------------------------------
                     }
@@ -109,6 +108,8 @@ namespace watch.Services
                         sensorManager.sendDataCounter = -1;//TODO remove from here -------------------------------------
                         Dispose();
                     }
+
+                    firstTime = false;
                 }
             }
             catch (Exception e)
@@ -119,18 +120,20 @@ namespace watch.Services
         /// <summary>
         /// When above 5 steps saves the steps to database
         /// </summary>
-        private async Task SaveData()
+        private async void SaveData()
         {
             try
             {
                 Log.Verbose(Tag,$"are we SavingData ? {savingData}");
-                if (!savingData) return;
+                //if (!savingData) return;
                Log.Verbose(Tag,$"count SavingData? {dataToBeSaved.Count}");
+               
                     if (dataToBeSaved.Count >= 5)
                     {
-                        var data = new List<string>(dataToBeSaved);
-                       dataToBeSaved.Clear();
-                       await RealmDb.GetInstance().AddMovData(data); 
+                    var data = new List<string>(dataToBeSaved);
+                    dataToBeSaved.Clear();
+                    await RealmDb.GetInstance().AddMovData(data);
+
                     }
             }
             catch (Exception e)
@@ -168,7 +171,7 @@ namespace watch.Services
             };
             RealmDb.GetInstance().LoggedInCompleted += (s,e) =>
             {
-                Console.WriteLine("logged IN Completed =============================");
+                Log.Verbose(Tag,"logged IN Completed =============================");
                 savingData = true;
                 //sensorManager.sendDataCounter = 0;//TODO Remove-----------------
                 //sensorManager.SendTestData();//TODO Remove-----------------
@@ -177,7 +180,7 @@ namespace watch.Services
             };
             RealmDb.GetInstance().StopDataGathering += (s,e) =>//stop gathering data for 4min before shut down
             {
-                if (switchCounter != 0) return;
+                //if (switchCounter != 0) return;
                 switchCounter = 0;
                 switchTimer.Start();
                 savingData = false;
@@ -204,7 +207,7 @@ namespace watch.Services
                 }
                 else
                 { 
-                    LogIn(detailsString);
+                    await LogIn(detailsString);
                 }
                 Log.Verbose(Tag,$"received write details");
             };
@@ -225,7 +228,7 @@ namespace watch.Services
                         runTimeTimer.Stop();
                         runCounter = 0;
                         sensorManager.ToggleSensors("Connected");
-                        sensorManager.sendDataCounter = 0;
+                        //sensorManager.sendDataCounter = 0;
                         //sensorManager.SendTestData(); //TODO remove from here -------------------------------------##################
                         Log.Verbose(Tag, $" is monitoring ? : {sensorManager.isMonitoring()}");
                         break;
@@ -242,7 +245,7 @@ namespace watch.Services
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine(exception);
+                   Log.Verbose(Tag,exception.Message);
                 }
             };
         }
@@ -255,14 +258,17 @@ namespace watch.Services
             try
             {
                 var splitData = detailsString.Split(new[] {'|'}, StringSplitOptions.RemoveEmptyEntries);
-                var user = localDb.FindUser();
-                if (user is null)
+                if (firstTime)
                 {
-                    localDb.AddUser(splitData[0], splitData[1], splitData[2]);
-                    user = localDb.FindUser();
+                    var user = localDb.FindUser();
+                    if (user is null)
+                    {
+                        localDb.AddUser(splitData[0], splitData[1], splitData[2]);
+                        user = localDb.FindUser();
+                    }
                 }
-                await RealmDb.GetInstance().LogIn(user.Email, user.Pass);
-                
+                await RealmDb.GetInstance().LogIn(splitData[1], splitData[2]);
+                firstTime = false;
             }
             catch (Exception e)
             {
@@ -276,13 +282,13 @@ namespace watch.Services
         private void RunTimeCheck(object sender, ElapsedEventArgs e)
         {
             
-            Console.WriteLine($"r.c.:{runCounter}");
+            Log.Verbose(Tag,$"r.c.:{runCounter}");
             if (++runCounter == MaxRunTime) OnDestroy();
             
         }
         private void SwitchTimeCheck(object sender, ElapsedEventArgs e)
         {
-            Console.WriteLine($"s.c.:{switchCounter}");
+            Log.Verbose(Tag,$"s.c.:{switchCounter}");
             if (switchCounter++ == MaxTimeAfterSwitchOff) OnDestroy();
         }
 

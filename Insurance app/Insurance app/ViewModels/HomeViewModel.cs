@@ -41,11 +41,12 @@ namespace Insurance_app.ViewModels
 
         private readonly BleManager bleManager;
         private readonly RewardManager rewardManager;
-        
+        private DateTimeOffset onTime;
         private double stepsDisplayValue = 0;
         private double currentProgressBars = 0.0;
         private const double Max = 0;
         private bool firstSetup = true;
+        private bool previousState;
         private int c = 0;
         private double startUpSteps;
         private Reward reward;
@@ -53,6 +54,7 @@ namespace Insurance_app.ViewModels
         public ICommand LogoutCommand { get; }
 
         private bool switchState = false;
+        private DateTimeOffset switchDate;
         private User user;
 
         public HomeViewModel()
@@ -113,13 +115,16 @@ namespace Insurance_app.ViewModels
                TotalEarnedDisplay = totalSum.ToString("F");
                if (firstSetup)
                {
-                   ToggleStateDisplay = toggle;
-                   if (toggle)
+                   onTime = DateTimeOffset.Now;
+                   previousState = toggle.Switch;
+                   if (toggle.Switch)
                    {
                        await StartDataReceive();
                    }
                }
         }
+
+
         /// <summary>
         /// This method gets called by EventHandler when received info
         /// via bluetooth (BleManager).
@@ -135,11 +140,12 @@ namespace Insurance_app.ViewModels
         /// </summary>
         private async Task StartDataReceive()
         {
-            if (++c % 2 == 0) return;
+            c += 1;
+            if (c % 2 == 0) return;
             
             CircularWaitDisplay = true;
-            switchState = await bleManager.ToggleMonitoring(toggleState);
-            ToggleStateDisplay = switchState;
+            switchState = await bleManager.ToggleMonitoring(toggleState,previousState);//previousState is DB state
+            //ToggleStateDisplay = switchState;
             CircularWaitDisplay = false;
         }
         /// <summary>

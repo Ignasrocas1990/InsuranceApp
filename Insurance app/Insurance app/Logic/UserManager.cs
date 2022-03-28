@@ -273,7 +273,7 @@ namespace Insurance_app.Logic
 
         public void Dispose()
         {
-            realmDb.Dispose();
+            RealmDb.Dispose();
         }
         
         public async Task CleanDatabase(User user) // TODO REMOVE when submitting

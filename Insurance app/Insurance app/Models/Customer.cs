@@ -42,10 +42,11 @@ namespace Insurance_app.Models
         public IList<Policy> Policy { get; }
         public IList<Reward> Reward { get; }
         public IList<Claim> Claim { get; }
-
-        public bool DataSendSwitch { get; set; } = false;
+        
         public bool? DelFlag { get; set; } = false;
         [MapTo("_partition")] public string Partition { get; set; } = "CustomerPartition";
+        
+        public DataSendSwitch DataSendSwitch { get; set; }
     }
     public class Address  : EmbeddedObject
     {
@@ -55,5 +56,10 @@ namespace Insurance_app.Models
         public int? HouseN { get; set; } = 0;
         public string PostCode { get; set; } = "";
         public string Street { get; set; } = "";
+    }
+    public class DataSendSwitch  : EmbeddedObject
+    {
+        public bool Switch { get; set; } = false;
+        public DateTimeOffset changeDate { get; set; } = DateTimeOffset.Now;
     }
 }

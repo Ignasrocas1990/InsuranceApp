@@ -39,6 +39,7 @@
     <PackageReference Include="IeuanWalker.CustomSwitch" Version="2.2.1" />
     <PackageReference Include="Microcharts.Forms" Version="1.0.0-preview1" />
     <PackageReference Include="MongoDB.Driver" Version="2.14.1" />
+    <PackageReference Include="MvvmCross" Version="6.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Plugin.BLE" Version="2.2.0-pre2" />
     <PackageReference Include="Realm" Version="10.9.0" />
