@@ -71,14 +71,21 @@ namespace watch.Ble
         /// <param name="e">Accelerometer String</param>
         private void SendData(object s, BleEventArgs e)
         {
-            var data = " ";
-            if (SensorData.Count > 0)
+            try
             {
-                data =  SensorData.Dequeue();
+                var data = "send";
+                if (SensorData.Count > 0)
+                {
+                    data =  SensorData.Dequeue();
+                }
+                e.Characteristic.SetValue(data);
+                bltServer.SendResponse(e.Device, e.RequestId, GattStatus.Success, e.Offset, e.Characteristic.GetValue() ?? throw new InvalidOperationException());
+                bltServer.NotifyCharacteristicChanged(e.Device, e.Characteristic, false);
             }
-            e.Characteristic.SetValue(data);
-            bltServer.SendResponse(e.Device, e.RequestId, GattStatus.Success, e.Offset, e.Characteristic.GetValue() ?? throw new InvalidOperationException());
-            bltServer.NotifyCharacteristicChanged(e.Device, e.Characteristic, false);
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+            }
         }
         
         /// <summary>
@@ -107,7 +114,7 @@ namespace watch.Ble
 
             service.AddCharacteristic(bltCharac);
 
-            bltServer?.AddService(service);
+            if (bltServer != null) bltServer.AddService(service);
         }
         /// <summary>
         /// Start advertising the server connection after

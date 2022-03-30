@@ -47,7 +47,6 @@ namespace Insurance_app.Communications
         private bool start=true;
         public string Email;
         public string Pass;
-        private bool stop;
         private bool firstTime = true;
         private bool previousState;
         private bool currentState;
@@ -101,8 +100,10 @@ namespace Insurance_app.Communications
            
             try
             {
+                Console.WriteLine("monitoring is ="+isMonitoring);
                 if (!isMonitoring) return;
                 firstTime = false;
+                Console.WriteLine("can read? "+chara.CanRead);
                 var data = await chara.ReadAsync();
                 
                 var str = " ";
@@ -128,7 +129,7 @@ namespace Insurance_app.Communications
                     await Task.Run(ReadAsync);
                 }
             }catch(Exception e) {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("Exception"+e+" counter="+count);
                 
                 count += 1;
                 if(count>=60)
@@ -143,7 +144,6 @@ namespace Insurance_app.Communications
                     {
                         await Task.Delay(readingDelay);
                         await ConnectToDevice();
-                    
                     });
                 }
             }
@@ -157,13 +157,8 @@ namespace Insurance_app.Communications
         {
             try
             {
-                Console.WriteLine($"my uuid{ble.ServerGuid}");
-              var services = await device.GetServicesAsync();
-              foreach (var i in services)
-              {
-                  Console.WriteLine(i.Id);
-              }
-              var service = await device.GetServiceAsync(ble.ServerGuid);
+                
+                var service = await device.GetServiceAsync(ble.ServerGuid);
               if (service is null)
               {
                   Console.WriteLine("service is null ");
@@ -197,8 +192,9 @@ namespace Insurance_app.Communications
               await ReadAsync();
                 
             }
-            catch //fail to connect
-            {
+            catch (Exception e) //fail to connect
+            { 
+                Console.WriteLine(e.Message);
                await ConnectToDevice();
             }
         }
@@ -230,7 +226,7 @@ namespace Insurance_app.Communications
         {
             try
             {
-                await userManager.UpdateCustomerSwitch(App.RealmApp.CurrentUser, state);
+                //await userManager.UpdateCustomerSwitch(App.RealmApp.CurrentUser, state);
             }
             catch (Exception e)
             {

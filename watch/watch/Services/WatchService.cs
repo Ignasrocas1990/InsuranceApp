@@ -132,8 +132,7 @@ namespace watch.Services
                     {
                     var data = new List<string>(dataToBeSaved);
                     dataToBeSaved.Clear();
-                    await RealmDb.GetInstance().AddMovData(data);
-
+                    //await RealmDb.GetInstance().AddMovData(data);// TODO uncloment
                     }
             }
             catch (Exception e)
@@ -228,8 +227,8 @@ namespace watch.Services
                         runTimeTimer.Stop();
                         runCounter = 0;
                         sensorManager.ToggleSensors("Connected");
-                        //sensorManager.sendDataCounter = 0;
-                        //sensorManager.SendTestData(); //TODO remove from here -------------------------------------##################
+                        sensorManager.sendDataCounter = 0;
+                        sensorManager.SendTestData(); //TODO remove from here -------------------------------------##################
                         Log.Verbose(Tag, $" is monitoring ? : {sensorManager.isMonitoring()}");
                         break;
                 }

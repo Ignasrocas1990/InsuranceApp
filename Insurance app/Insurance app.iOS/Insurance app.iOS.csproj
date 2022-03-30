@@ -123,9 +123,6 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="IeuanWalker.CustomSwitch">
-      <Version>2.2.1</Version>
-    </PackageReference>
     <PackageReference Include="Microcharts.Forms">
       <Version>1.0.0-preview1</Version>
     </PackageReference>
@@ -133,7 +130,7 @@
       <Version>2.14.1</Version>
     </PackageReference>
     <PackageReference Include="Plugin.BLE">
-      <Version>2.2.0-pre2</Version>
+      <Version>2.1.2</Version>
     </PackageReference>
     <PackageReference Include="Realm">
       <Version>10.9.0</Version>

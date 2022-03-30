@@ -45,6 +45,7 @@ namespace watch.Ble
             BluetoothGattCharacteristic chara)
         {
             base.OnCharacteristicReadRequest(device, requestId, offset, chara);
+            Log.Verbose(Tag,"Got ReadRequest in BleServerCallback");
             ReadHandler?.Invoke(this, createArgs(device, chara, requestId, offset));
         }
         public override void OnConnectionStateChange(BluetoothDevice device, ProfileState status, ProfileState newState)

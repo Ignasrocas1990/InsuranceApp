@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MongoDB.Driver" Version="2.14.1" />
+    <PackageReference Include="Plugin.BLE" Version="2.1.2" />
     <PackageReference Include="Realm" Version="10.9.0" />
     <PackageReference Include="Realm.Fody" Version="10.9.0">
       <PrivateAssets>all</PrivateAssets>
