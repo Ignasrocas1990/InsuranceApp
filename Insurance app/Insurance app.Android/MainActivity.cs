@@ -1,9 +1,7 @@
-﻿using System;
-using Android.App;
+﻿using Android.App;
 using Android.Content.PM;
-using Android.Runtime;
 using Android.OS;
-using Xamarin.Forms;
+using Android.Runtime;
 
 namespace Insurance_app.Droid
 {
@@ -26,5 +24,10 @@ namespace Insurance_app.Droid
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
+        protected override void OnPause()
+        {
+            App.onPause = true;
+            base.OnPause();
+        }
     }
 }

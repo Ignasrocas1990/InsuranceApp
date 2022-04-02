@@ -21,7 +21,6 @@
 using System;
 using System.Linq;
 using System.Text;
-using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels.ClientViewModels;
 using Xamarin.Forms;
 
@@ -34,10 +33,10 @@ namespace Insurance_app.Pages.ClientPages
             InitializeComponent();
         }
 
-        protected override void OnAppearing()
+        protected override void OnDisappearing()
         {
-            base.OnAppearing();
-            StaticOpt.IsCurrentPage(nameof(ClientRegistration));
+            base.OnDisappearing();
+            ((ClientRegViewModel)BindingContext).Dispose();
         }
 
         /// <summary>

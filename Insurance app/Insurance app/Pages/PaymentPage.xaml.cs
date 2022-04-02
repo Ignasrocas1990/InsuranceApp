@@ -45,10 +45,16 @@ namespace Insurance_app.Pages
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            var vm = (PaymentViewModel)BindingContext;
             HeroImage.Source = ImageService.Instance.CardFront;
-            await vm.Setup();
+            await ((PaymentViewModel)BindingContext).Setup();
         }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            ((PaymentViewModel)BindingContext).Dispose();
+        }
+
         /// <summary>
         /// When focused on code field use's animation to flip the card
         /// And display different image

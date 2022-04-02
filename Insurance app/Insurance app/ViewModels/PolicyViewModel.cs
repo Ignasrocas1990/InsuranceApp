@@ -96,14 +96,12 @@ namespace Insurance_app.ViewModels
                 SetUpWaitDisplay = true;
                 UnderReviewDisplay = false;
                 InfoIsVisible = false;
-
-                if (customerId == "")
+                if (customerId=="")
+                    customerId=App.RealmApp.CurrentUser.Id;
+                
+                if(customerId != App.RealmApp.CurrentUser.Id)
                 {
-                    customerId = App.RealmApp.CurrentUser.Id;
-                }
-                else if(customerId != App.RealmApp.CurrentUser.Id)
-                {
-                    await GetPreviousPolicies();
+                    await policyManager.GetPreviousPolicies(customerId,App.RealmApp.CurrentUser);
                 }
                 var policy = await FindPolicy();
                 tempUpdate= SelectPreviousPolicy(policy);
@@ -299,11 +297,14 @@ namespace Insurance_app.ViewModels
                 Console.WriteLine(e);
             }
         }
+
         /// <summary>
         /// Gets previous policies via policyManager class
         /// </summary>
-        private async Task GetPreviousPolicies() => 
+        private async Task GetPreviousPolicies()
+        {
             await policyManager.GetPreviousPolicies(customerId,App.RealmApp.CurrentUser);
+        }
         /// <summary>
         /// Gets current user via UserManager class
         /// </summary>

@@ -23,6 +23,6 @@ namespace Insurance_app.SupportClasses
     /// </summary>
     public enum UserType
     {
-        Client,Customer,UnpaidCustomer
+        Client,Customer,UnpaidCustomer,OldCustomer
     }
 }

@@ -19,7 +19,6 @@
  */
 
 using System;
-using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels.ClientViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -40,9 +39,15 @@ namespace Insurance_app.Pages.ClientPages
         protected  override async void OnAppearing()
         {
             base.OnAppearing();
-            StaticOpt.IsCurrentPage(nameof(ClientMainPage));
            await ((ClientMainViewModel) BindingContext).Setup();
         }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            ((ClientMainViewModel) BindingContext).Dispose();
+        }
+
         private void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
             try

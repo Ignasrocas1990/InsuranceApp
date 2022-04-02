@@ -165,13 +165,14 @@ namespace Insurance_app.Logic
                 {
                     // expired
                     var currentPolicy= FindLatestPolicy(customer);
-                    if (currentPolicy != null && (Convert.ToDouble(currentPolicy.PayedPrice) < 1))
+                    if (currentPolicy != null && (Convert.ToDouble(currentPolicy.PayedPrice) < 1) 
+                        || currentPolicy.ExpiryDate.Value.AddMonths(1) <= now )
                     {
                         return "UnpaidCustomer";
                     }
-                    if (currentPolicy != null && currentPolicy.ExpiryDate < now)
+                    if (currentPolicy != null && currentPolicy.ExpiryDate.Value.AddMonths(2) < now)
                     {
-                        return currentPolicy.Id.ToString();
+                        return UserType.OldCustomer.ToString();
                     }
                     return "Customer";
                 }

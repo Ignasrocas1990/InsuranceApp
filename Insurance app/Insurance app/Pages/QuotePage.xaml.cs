@@ -1,5 +1,4 @@
-﻿using Insurance_app.SupportClasses;
-using Insurance_app.ViewModels;
+﻿using Insurance_app.ViewModels;
 using Xamarin.Forms.Xaml;
 
 /*    Copyright 2020,Ignas Rocas
@@ -37,7 +36,6 @@ namespace Insurance_app.Pages
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            StaticOpt.IsCurrentPage(nameof(QuotePage));
             await ((QuoteViewModel)BindingContext).SetUp();
         }
     }
