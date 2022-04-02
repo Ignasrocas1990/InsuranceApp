@@ -24,6 +24,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Insurance_app.Pages;
 using Insurance_app.Pages.Popups;
+using Insurance_app.Service;
 using SkiaSharp;
 using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.Forms;
@@ -49,6 +50,7 @@ namespace Insurance_app.SupportClasses
         public static readonly string MyRealmAppId = "application-1-luybv";
         public const double StepNeeded = 10000;
         public const int MaxResponseTime = 120;
+        private static string CurrentPage = "";
 
 
         public static Func<string, bool> HasNumbers => s => s.Any(char.IsDigit);
@@ -178,5 +180,13 @@ namespace Insurance_app.SupportClasses
                 Console.WriteLine(e);
             }
         }
+
+        public static void IsCurrentPage(string page)
+        {
+            if (page == CurrentPage) return;
+            CurrentPage = page;
+            RealmDb.Dispose();
+        }
+
     }
 }

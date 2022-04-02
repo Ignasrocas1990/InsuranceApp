@@ -199,9 +199,13 @@ namespace Insurance_app.ViewModels
             string popupDisplayText = "";
             if (extraInfo.Length > 10)
                 popupDisplayText = extraInfo;
-            
+            var popUpHeading = "Please enter extra claim info";
+            if (underReview)
+            {
+                popUpHeading = "Previously entered extra information";
+            }
             var tempStr = await Application.Current.MainPage.Navigation.ShowPopupAsync(
-                new EditorPopup("Please enter extra claim info",underReview,popupDisplayText));
+                new EditorPopup(popUpHeading,underReview,popupDisplayText));
             if (tempStr != null && tempStr.Length > 10)
             {
                 ExtraBtnText = ViewExtraStr;

@@ -17,6 +17,7 @@
            Purpose : 4th year project
  */
 
+using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
 using Xamarin.Forms.Xaml;
 
@@ -35,20 +36,13 @@ namespace Insurance_app.Pages
         /// </summary>
         protected override async void OnAppearing()
         {
+            StaticOpt.IsCurrentPage(nameof(Report));
             var vm = (ReportViewModel) BindingContext;
             vm.SetUpWaitDisplay = true;
             await vm.SetUp();
             vm.SetUpWaitDisplay = false;
             base.OnAppearing();
 
-        }
-        /// <summary>
-        /// When leaving page release Realm instance
-        /// </summary>
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-            ((ReportViewModel) BindingContext).Dispose();
         }
     }
 }

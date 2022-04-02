@@ -21,6 +21,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -41,6 +42,7 @@ namespace Insurance_app.Pages
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
+            StaticOpt.IsCurrentPage(nameof(ChangePasswordPage));
             ((ChangePassViewModel)BindingContext).Dispose();
         }
         /// <summary>

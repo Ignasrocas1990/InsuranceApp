@@ -22,6 +22,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Support.Wearable.Activity;
+using Android.Views;
 using Android.Widget;
 using watch.Services;
 
@@ -36,14 +37,21 @@ namespace watch
         private Button btn;
         private Intent intent;
         private static MainActivity _instance;
+        public static PowerManager.WakeLock mWakeLock;
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
             Xamarin.Essentials.Platform.Init(this, bundle);
             SetContentView(Resource.Layout.activity_main);
-
             SetAmbientEnabled();
-            
+
+
+            if (Window != null)
+                Window.AddFlags(WindowManagerFlags.KeepScreenOn | WindowManagerFlags.DismissKeyguard |
+                                WindowManagerFlags.ShowWhenLocked | WindowManagerFlags.TurnScreenOn);
+
+
+            intent = new Intent(this, typeof(WatchService));
             btn = FindViewById<Button>(Resource.Id.closeApp);
             btn.Click += (s,e) =>
             {
@@ -51,7 +59,8 @@ namespace watch
                 this.OnDestroy();
                 Finish();
             };
-            intent = new Intent(this, typeof(WatchService));
+            PowerManager pm = (PowerManager)GetSystemService(PowerService);
+            mWakeLock = pm.NewWakeLock(WakeLockFlags.Full, "systemService");
             StartForegroundService(intent);
             _instance = this;
         }

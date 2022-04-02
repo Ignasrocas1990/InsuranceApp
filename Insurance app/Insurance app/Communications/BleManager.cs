@@ -60,7 +60,6 @@ namespace Insurance_app.Communications
             RegisterEventHandlers();
             bleState=ble.BleCheck();
             userManager = new UserManager();
-
         }
         public static BleManager GetInstance()
         {
@@ -97,13 +96,11 @@ namespace Insurance_app.Communications
         /// </summary>
         private async Task ReadAsync()
         {
-           
+            Console.WriteLine("Reading data from ble ");
             try
             {
-                Console.WriteLine("monitoring is ="+isMonitoring);
                 if (!isMonitoring) return;
                 firstTime = false;
-                Console.WriteLine("can read? "+chara.CanRead);
                 var data = await chara.ReadAsync();
                 
                 var str = " ";
@@ -126,7 +123,7 @@ namespace Insurance_app.Communications
                 {
                     count = 0;
                     InfferEvent.Invoke(this,EventArgs.Empty);
-                    await Task.Run(ReadAsync);
+                   await ReadAsync();
                 }
             }catch(Exception e) {
                 Console.WriteLine("Exception"+e+" counter="+count);
@@ -140,11 +137,7 @@ namespace Insurance_app.Communications
                 }
                 else
                 {
-                    await Task.Run(async () =>
-                    {
-                        await Task.Delay(readingDelay);
-                        await ConnectToDevice();
-                    });
+                    await ConnectToDevice();
                 }
             }
         }
@@ -163,7 +156,7 @@ namespace Insurance_app.Communications
               {
                   Console.WriteLine("service is null ");
                   isMonitoring = false;
-                  MainThread.BeginInvokeOnMainThread(MessageUser);
+                  await MainThread.InvokeOnMainThreadAsync(MessageUser);
                   return;
               }
               chara = null;
@@ -172,24 +165,23 @@ namespace Insurance_app.Communications
               {
                   Console.WriteLine("characteristic is null ");
                   isMonitoring = false;
-                  MainThread.BeginInvokeOnMainThread(MessageUser);
+                  await MainThread.InvokeOnMainThreadAsync(MessageUser);
                   return;
               }
-              if (start)
+              if (start && firstTime)
               {
                   isMonitoring = true;
                   await WriteToCharacteristic($"{App.RealmApp.CurrentUser.Id}|{Email}|{Pass}");
-                  await UpdateCustomerSwitch(true);
+                  //await UpdateCustomerSwitch(true);
               }
               else if (!start)
               {
                   isMonitoring = false;
                   await WriteToCharacteristic("Stop");
-                  await UpdateCustomerSwitch(false);
-                  return;
+                  //await UpdateCustomerSwitch(false);
               }
-              Console.WriteLine("Reading data from ble ");
-              await ReadAsync();
+             
+              //await ReadAsync();
                 
             }
             catch (Exception e) //fail to connect
@@ -208,11 +200,13 @@ namespace Insurance_app.Communications
             {
                 try
                 {
+                    Console.WriteLine("sending message"+message);
                     await chara.WriteAsync(Encoding.Default.GetBytes(message));
+                    firstTime = false;
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Console.WriteLine("write to characteristic exception "+e);
                 }
                 
             }
@@ -253,7 +247,7 @@ namespace Insurance_app.Communications
             if (!ble.IsAvailable() || !await ble.GetPremissionsAsync())
             {
                 isMonitoring = false;
-                MainThread.BeginInvokeOnMainThread(Action1);
+                await MainThread.InvokeOnMainThreadAsync(Action1);
             }
             else if (bleState)
             {
@@ -268,7 +262,7 @@ namespace Insurance_app.Communications
                     if (start)
                     {
                         isMonitoring = false;
-                        MainThread.BeginInvokeOnMainThread(MessageUser);
+                        await MainThread.InvokeOnMainThreadAsync(MessageUser);
                         return;
                     }
                     //dont need to see an error message, since this is depends connection loss
@@ -334,7 +328,7 @@ namespace Insurance_app.Communications
 
             if (!bleState)
             {
-                MainThread.BeginInvokeOnMainThread(NoBluetooth);
+                await MainThread.InvokeOnMainThreadAsync(NoBluetooth);
                 isMonitoring = false;
                 return false;
             }

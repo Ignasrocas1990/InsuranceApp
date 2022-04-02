@@ -116,29 +116,25 @@ namespace watch.Sensors
         }
         public  bool isMonitoring() => Accelerometer.IsMonitoring;
 
-        public int sendDataCounter;//TODO remove from here --------------------------------
-
-        public void SendTestData()//TODO remove from here --------------------------------
+        public int SendDataCounter;//TODO remove from here --------------------------------
+        public async Task SendTestData()//TODO remove from here --------------------------------
         {
-            //if (sendDataCounter > 5) return;
-            if (sendDataCounter == -1) return;
-            Task task = Task.Run( async () =>
-            {
-                if (AccEventHandler == null) return;
-                for (int i = 0; i < 5; i++)
-                {
-                    if (AccEventHandler != null)
-                        AccEventHandler.Invoke(this, new SensorArgs()
-                        {
-                            Data = "0000,0000,0000"
-                        });
+            if (SendDataCounter == -1) return; 
+            await Task.Delay(10000);
+           await Task.Run(() =>
+           {
+               if (AccEventHandler == null) return;
+               for (int i = 0; i < 3; i++)
+               {
+                   if (AccEventHandler != null)
+                       AccEventHandler.Invoke(this, new SensorArgs()
+                       {
+                           Data = "0000,0000,0000"
+                       });
                     
-                }
-                await Task.Delay(10000);
-                //sendDataCounter++;
-                //Log.Debug(TAG, "sending test data "+sendDataCounter);
-                SendTestData();
-            });
+               } 
+               SendTestData();
+           });
         }
     }
     public class SensorArgs:EventArgs{

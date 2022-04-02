@@ -20,6 +20,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -41,6 +42,7 @@ namespace Insurance_app.Pages
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+            StaticOpt.IsCurrentPage(nameof(ProfilePage));
             await ((ProfileViewModel) BindingContext).Setup();
         }
         /// <summary>
@@ -93,14 +95,6 @@ namespace Insurance_app.Pages
             {
                 Console.WriteLine(exception);
             }
-        }
-        /// <summary>
-        /// When leaving page release Realm instance
-        /// </summary>
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-            ((ProfileViewModel) BindingContext).Dispose();
         }
     }
 }

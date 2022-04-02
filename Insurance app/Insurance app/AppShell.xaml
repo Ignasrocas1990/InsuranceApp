@@ -19,22 +19,10 @@
             </Grid>            
         </DataTemplate>
     </Shell.FlyoutHeaderTemplate>
-    <!--
-    <ShellItem FlyoutItemIsVisible="False" Route="LogInPage">
-        <ShellContent ContentTemplate="{DataTemplate pages:LogInPage}"/>
-    </ShellItem>
-    
-    <ShellItem FlyoutItemIsVisible="False" Route="QuotePage">
-        <ShellContent ContentTemplate="{DataTemplate pages:QuotePage}"/>
-    </ShellItem>
-    
-    <ShellItem FlyoutItemIsVisible="False" Route="RegistrationPage">
-        <ShellContent ContentTemplate="{DataTemplate pages:RegistrationPage}"/>
-    </ShellItem>
-    -->
+
     
     <!--    side Flyout menu navigation                    -->
-    <FlyoutItem Title="Home" Icon="walkIcon.png" Route="HomePage" >
+    <FlyoutItem Title="Home" Icon="walkIcon.png" Route="HomePage">
         <ShellContent ContentTemplate="{DataTemplate pages:HomePage}"/>
     </FlyoutItem>
     <FlyoutItem Title="Profile" Icon="profileIcon.png" >

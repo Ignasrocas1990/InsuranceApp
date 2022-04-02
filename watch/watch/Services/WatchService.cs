@@ -44,6 +44,7 @@ namespace watch.Services
         private const int MaxTimeAfterSwitchOff = 240;//4 min before dispose;
         private const int MaxRunTime = 14400;// 4 hours max run time
         private const int ElapsedTime = 1000;//1sec
+        private static readonly Timer SaveDataTimer = new Timer {Interval = 5000, AutoReset = true};
         
         private int runCounter = 0;
         private int switchCounter = 0;
@@ -60,7 +61,7 @@ namespace watch.Services
         /// </summary>
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-             StartForegroundNotification();
+            StartForegroundNotification();
              dataToBeSaved = new List<string>();
              localDb = SqlService.GetInstance();
 
@@ -72,10 +73,10 @@ namespace watch.Services
              runTimeTimer.Elapsed += RunTimeCheck;
              runTimeTimer.Start();
              SubscribeToListeners();
+             MainActivity.mWakeLock.Acquire();
              if (intent is null)
              {
                  ReSetService();
-
              }
              return StartCommandResult.Sticky;
         }
@@ -92,23 +93,13 @@ namespace watch.Services
                     await RealmDb.GetInstance().LogIn(user.Email, user.Pass);
                     var saveData = await RealmDb.GetInstance().CheckIfMonitoring();
                     Log.Verbose(Tag, $"RealDb, CheckIfMonitoring = {saveData}");
-                    if (saveData)
+                    if(!saveData)
                     {
-                        savingData = true;
-                        runCounter = 0;
-                        runTimeTimer.Start();
-                        sensorManager.ToggleSensors("Connected");
-                        //sensorManager.sendDataCounter = 0;//TODO remove from here -------------------------------------
-                        //sensorManager.SendTestData(); //TODO remove from here -------------------------------------
-                    }
-                    else
-                    {
-                        
+                        SaveDataTimer.Stop();
                         savingData = false;
-                        sensorManager.sendDataCounter = -1;//TODO remove from here -------------------------------------
-                        Dispose();
+                        sensorManager.SendDataCounter = -1;//TODO remove from here -------------------------------------
+                        OnDestroy();
                     }
-
                     firstTime = false;
                 }
             }
@@ -120,19 +111,17 @@ namespace watch.Services
         /// <summary>
         /// When above 5 steps saves the steps to database
         /// </summary>
-        private async void SaveData()
+        private async Task SaveData()
         {
             try
             {
-                Log.Verbose(Tag,$"are we SavingData ? {savingData}");
-                //if (!savingData) return;
-               Log.Verbose(Tag,$"count SavingData? {dataToBeSaved.Count}");
-               
-                    if (dataToBeSaved.Count >= 5)
+                    Log.Verbose(Tag,$"are we SavingData ? {savingData}");
+                    if (!savingData) return;
+                    if (dataToBeSaved.Count > 0)
                     {
-                    var data = new List<string>(dataToBeSaved);
-                    dataToBeSaved.Clear();
-                    //await RealmDb.GetInstance().AddMovData(data);// TODO uncloment
+                        var data = new List<string>(dataToBeSaved);
+                        dataToBeSaved.Clear();
+                        await RealmDb.GetInstance().AddMovData(data);
                     }
             }
             catch (Exception e)
@@ -151,41 +140,32 @@ namespace watch.Services
             {
                 if (savingData)
                 {
-                    bleServer.SensorData.Enqueue(e.Data);
+                    //bleServer.SensorData.Enqueue(e.Data);
                     dataToBeSaved.Add(e.Data);
-                    if (dataToBeSaved.Count >=5)
-                    { 
-                        SaveData();
-                    }
                 }
-                else
-                {
-                    sensorManager.sendDataCounter = -1;
-                    if (switchCounter==0)
-                    {
-                        switchTimer.Start();
-                    }
-                }
-                
             };
             RealmDb.GetInstance().LoggedInCompleted += (s,e) =>
             {
                 Log.Verbose(Tag,"logged IN Completed =============================");
                 savingData = true;
-                //sensorManager.sendDataCounter = 0;//TODO Remove-----------------
-                //sensorManager.SendTestData();//TODO Remove-----------------
                 sensorManager.ToggleSensors("Connected");
-
+                
+                SaveDataTimer.Start();// Starts saving gathered data
+                
+                
+                sensorManager.SendDataCounter = 0;//TODO remove from here -------------------------------------##################
+                sensorManager.SendTestData(); //TODO remove from here -------------------------------------##################
             };
             RealmDb.GetInstance().StopDataGathering += (s,e) =>//stop gathering data for 4min before shut down
             {
-                //if (switchCounter != 0) return;
                 switchCounter = 0;
                 switchTimer.Start();
+                SaveDataTimer.Stop();
                 savingData = false;
+                Log.Verbose(Tag, "Stopping data gathering");
+                sensorManager.ToggleSensors("Disconnected");
+                sensorManager.SendDataCounter = -1; //TODO remove from here ------------------------------------------------
                 
-                //sensorManager.ToggleSensors("Disconnected");
-                //sensorManager.sendDataCounter = -1; //TODO remove from here ------------------------------------------------
             };
             //Server communications
             if (bleServer.BltCallback == null) return;
@@ -198,20 +178,16 @@ namespace watch.Services
                 {
                     Log.Verbose(Tag, " STOP the data sending =>>>>>"+detailsString); 
                     await RealmDb.GetInstance().UpdateSwitch();
-                    savingData = false;
-                    sensorManager.ToggleSensors("Disconnected");
-                    sensorManager.sendDataCounter = -1; //TODO remove from here ------------------------------------------------
-                    switchCounter = 0;
-                    switchTimer.Start();
+                    RealmDb.GetInstance().StopDataGathering.Invoke(this,EventArgs.Empty);
                 }
                 else
-                { 
+                {
                     await LogIn(detailsString);
                 }
                 Log.Verbose(Tag,$"received write details");
             };
 
-            bleServer.BltCallback.StateHandler += (s, e) =>
+            bleServer.BltCallback.StateHandler += (s, e) =>//Todo Maybe remove=========================
             {
                 switch (e.State)
                 {
@@ -227,12 +203,11 @@ namespace watch.Services
                         runTimeTimer.Stop();
                         runCounter = 0;
                         sensorManager.ToggleSensors("Connected");
-                        sensorManager.sendDataCounter = 0;
-                        sensorManager.SendTestData(); //TODO remove from here -------------------------------------##################
                         Log.Verbose(Tag, $" is monitoring ? : {sensorManager.isMonitoring()}");
                         break;
                 }
             };
+            /*
             //check if reading but not sending.(in-case the android killed the process)
             bleServer.BltCallback.ReadHandler += (s, e) =>
             {
@@ -247,6 +222,11 @@ namespace watch.Services
                    Log.Verbose(Tag,exception.Message);
                 }
             };
+            */
+            SaveDataTimer.Elapsed += async (s, e) =>
+            {
+               await SaveData();
+            };
         }
         /// <summary>
         /// After bluetooth connection made, perform log in to cloud database
@@ -256,14 +236,15 @@ namespace watch.Services
         {
             try
             {
+                Log.Verbose(Tag,"Login in with details: "+detailsString);
                 var splitData = detailsString.Split(new[] {'|'}, StringSplitOptions.RemoveEmptyEntries);
+                Log.Verbose(Tag,"splitData.length : "+splitData.Length);
                 if (firstTime)
                 {
                     var user = localDb.FindUser();
                     if (user is null)
                     {
                         localDb.AddUser(splitData[0], splitData[1], splitData[2]);
-                        user = localDb.FindUser();
                     }
                 }
                 await RealmDb.GetInstance().LogIn(splitData[1], splitData[2]);
@@ -313,7 +294,7 @@ namespace watch.Services
             if (Build.VERSION.SdkInt < BuildVersionCodes.O) {
                 return;
             }
-
+            Log.Verbose(Tag, "Notification created");
             var channel = new NotificationChannel("999", "channelName", NotificationImportance.Default) {
                 Description = "channelDescription"
             };
@@ -334,8 +315,11 @@ namespace watch.Services
             runTimeTimer.Dispose();
             switchTimer.Dispose();
             localDb.Dispose();
+            SaveDataTimer.Dispose();
             StopForeground(true);
             StopSelf();
+            MainActivity.mWakeLock.Release();
+            MainActivity.mWakeLock.Dispose();
             MainActivity.Fin();
         }
         public override IBinder OnBind(Intent intent) =>  null;

@@ -45,20 +45,11 @@ namespace Insurance_app.Pages
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+            StaticOpt.IsCurrentPage(nameof(PaymentPage));
             var vm = (PaymentViewModel)BindingContext;
             HeroImage.Source = ImageService.Instance.CardFront;
             await vm.Setup();
         }
-        /// <summary>
-        /// When leaving page release Realm instance
-        /// </summary>
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-            ((PaymentViewModel)BindingContext).Dispose();
-            
-        }
-
         /// <summary>
         /// When focused on code field use's animation to flip the card
         /// And display different image

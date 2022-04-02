@@ -73,10 +73,10 @@ namespace watch.Ble
         {
             try
             {
-                var data = "send";
+                var data = " ";
                 if (SensorData.Count > 0)
                 {
-                    data =  SensorData.Dequeue();
+                   data =  SensorData.Dequeue();
                 }
                 e.Characteristic.SetValue(data);
                 bltServer.SendResponse(e.Device, e.RequestId, GattStatus.Success, e.Offset, e.Characteristic.GetValue() ?? throw new InvalidOperationException());

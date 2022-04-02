@@ -67,14 +67,6 @@ namespace Insurance_app
                 }
             };
         }
-        protected override void OnSleep()
-        {
-        }
-
-        protected override void OnResume()
-        {
-        }
-
         public static bool NetConnection()
         {
             var profiles = Connectivity.ConnectionProfiles;
@@ -85,9 +77,9 @@ namespace Insurance_app
             }
 
             return false;
-
-
         }
+        protected override void OnSleep() { }
+        protected override void OnResume() { }
        
     }
     

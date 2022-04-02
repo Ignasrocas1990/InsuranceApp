@@ -84,7 +84,7 @@ namespace watch.Services
                         return;
                     }
                 }
-                MainThread.BeginInvokeOnMainThread(() =>
+                await MainThread.InvokeOnMainThreadAsync(() =>
                 {
                     LoggedInCompleted.Invoke(this, EventArgs.Empty);
                 });
@@ -102,12 +102,14 @@ namespace watch.Services
         {
             try
             {
-                Console.WriteLine($"RealmApp.CurrentUser is null ?={RealmApp.CurrentUser is null}");
+                Log.Verbose(Tag,$"RealmApp.CurrentUser is null ?={RealmApp.CurrentUser is null}");
                 var  otherRealm =  await GetRealm();
+                /*
                 if (otherRealm is null)
                 {
                   await LogIn(email,pass);
                 }
+                */
                 otherRealm.Write( ()=>
                 {
                     var movDataList = 
@@ -119,15 +121,18 @@ namespace watch.Services
                                         {X = ToFloat(sd[0]), Y = ToFloat(sd[1]), Z = ToFloat(sd[2])}, 
                                         Type = "step"}).ToList();
                     Log.Verbose(Tag,$"data date stamp is : {movDataList.First().DateTimeStamp}");//TODO Remove ===========
+                    
                     var customer = otherRealm.Find<Customer>(RealmApp.CurrentUser.Id);
                     if (customer is null) throw new Exception("AddMvData ::: Customer is null");
+                    
                      var MinDifference = GetTimeDifference(customer.DataSendSwitch.changeDate);
                      Log.Verbose(Tag, $"the difference is {MinDifference} && switch is {customer.DataSendSwitch.Switch}");
+                     /*
                     if (customer.DataSendSwitch.Switch is false && MinDifference>10)
                     {
                         StopDataGathering.Invoke(this, EventArgs.Empty);
                         return;
-                    }
+                    }*/
                     otherRealm.Add(movDataList);
                     
                     var currentDate = DateTimeOffset.Now;
@@ -162,6 +167,7 @@ namespace watch.Services
                         customer.Reward.Add(reward);
                     }
                     Log.Verbose(Tag, "Saved Data to Realm");
+                    otherRealm.Refresh();
                 });
             }
             catch (Exception e)

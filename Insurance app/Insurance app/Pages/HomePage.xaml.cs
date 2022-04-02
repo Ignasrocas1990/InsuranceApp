@@ -18,6 +18,7 @@
            Purpose : 4th year project
  */
 
+using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
 using Xamarin.Forms.Xaml;
 
@@ -26,7 +27,6 @@ namespace Insurance_app.Pages
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class HomePage : LoadingPage
     {
-
         public HomePage()
         {
             InitializeComponent();
@@ -38,15 +38,9 @@ namespace Insurance_app.Pages
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+            StaticOpt.IsCurrentPage(nameof(HomePage));
             await ((HomeViewModel)BindingContext).Setup();
-        }
-        /// <summary>
-        /// When leaving page release Realm instance
-        /// </summary>
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-            ((HomeViewModel)BindingContext).Dispose();
+            
         }
     }
 }

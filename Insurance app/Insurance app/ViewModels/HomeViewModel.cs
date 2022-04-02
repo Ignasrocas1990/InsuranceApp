@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Insurance_app.Communications;
 using Insurance_app.Logic;
-using Insurance_app.Models;
+using Insurance_app.Service;
 using Insurance_app.SupportClasses;
 using Realms.Sync;
 using Xamarin.CommunityToolkit.ObjectModel;
@@ -49,14 +49,12 @@ namespace Insurance_app.ViewModels
         private bool previousState;
         private int c = 0;
         private double startUpSteps;
-        private Reward reward;
         public ICommand SwitchCommand { get; }
         public ICommand LogoutCommand { get; }
 
         private bool switchState = false;
         private DateTimeOffset switchDate;
         private User user;
-
         public HomeViewModel()
         {
             bleManager = BleManager.GetInstance();
@@ -74,9 +72,8 @@ namespace Insurance_app.ViewModels
             {
                 user = App.RealmApp.CurrentUser;
                 SetUpWaitDisplay = true;
-                reward = await rewardManager.FindReward(user);
-                
-                if (reward is null)
+              var reward = await rewardManager.FindReward(user);
+              if (reward is null)
                 {
                     ProgressBarDisplay = StaticOpt.StepNeeded;
                     MaxRewardIsVisible = true;
@@ -85,15 +82,25 @@ namespace Insurance_app.ViewModels
                 {
                     //Random rand = new Random();
                     //movLen = rand.NextDouble() * 10000; //TODO uncomment to show
+                    WatchService.GetInstance().CurrentRewardId = reward.Id;
                     ResetView();
                     startUpSteps = Convert.ToDouble(reward.MovData.Count);
                     SetUpView(startUpSteps);
-                    
+
                 }
                 await SetUpEarningsDisplay();
                 bleManager.ToggleSwitch += (o, e) =>
                 {
                     ToggleStateDisplay = false;
+                };
+                WatchService.GetInstance().StepCheckedEvent += (o, stepsArgs) =>
+                {
+                    Console.WriteLine("old steps"+ProgressBarDisplay+" new steps: "+stepsArgs.Steps);
+                    while ((StaticOpt.StepNeeded-ProgressBarDisplay) < stepsArgs.Steps)
+                    {
+                        Step();
+                    }
+                    
                 };
             }
             catch (Exception e)
@@ -121,7 +128,8 @@ namespace Insurance_app.ViewModels
                    {
                        await StartDataReceive();
                    }
-               }
+               }else if (WatchService.State)
+                   WatchService.StartListener();
         }
 
 
@@ -132,7 +140,7 @@ namespace Insurance_app.ViewModels
         /// </summary>
         private async void InferredRawData(object s, EventArgs eventArgs)
         {
-            await Step();
+            Step();
         }
 
         /// <summary>
@@ -140,10 +148,11 @@ namespace Insurance_app.ViewModels
         /// </summary>
         private async Task StartDataReceive()
         {
-            c += 1;
-            if (c % 2 == 0) return;
-            
+            //c += 1;
+            //if (c % 2 == 0) return;
+            Console.WriteLine("Start received clicked");
             CircularWaitDisplay = true;
+            WatchService.ToggleListener();
             switchState = await bleManager.ToggleMonitoring(toggleState,previousState);//previousState is DB state
             //ToggleStateDisplay = switchState;
             CircularWaitDisplay = false;
@@ -170,7 +179,8 @@ namespace Insurance_app.ViewModels
         /// <summary>
         /// Increments the progress bar view and the label display
         /// </summary>
-        private async Task Step()
+       // private async Task Step()
+        private void Step()
         {
             ProgressBarDisplay--;
             StepsDisplayLabel=stepsDisplayValue+1;
@@ -179,9 +189,8 @@ namespace Insurance_app.ViewModels
                 CircularWaitDisplay = true;
                 ProgressBarDisplay = StaticOpt.StepNeeded;
                 StepsDisplayLabel = 0;
-                await SetUpEarningsDisplay();
+                //await SetUpEarningsDisplay();
                 CircularWaitDisplay = false;
-
             }
         }
         //--------------------- Bindable Properties below ---------------------------------
@@ -234,6 +243,7 @@ namespace Insurance_app.ViewModels
 
         public string Email
         {
+            get => bleManager.Email;
             set
             {
                 if (bleManager!=null)
@@ -243,6 +253,7 @@ namespace Insurance_app.ViewModels
         
         public string Pass
         {
+            get => bleManager.Pass;
             set
             {
                 if (bleManager!=null)
@@ -258,6 +269,7 @@ namespace Insurance_app.ViewModels
 
         public void Dispose()
         {
+            if (WatchService.State) WatchService.StopListener();
             rewardManager.Dispose();
         }
     }

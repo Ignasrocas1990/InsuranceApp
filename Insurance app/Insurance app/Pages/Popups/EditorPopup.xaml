@@ -8,7 +8,7 @@
            IsLightDismissEnabled="False"
            BackgroundColor="{StaticResource BackColor}"
            x:TypeArguments="local:String"
-           Size="400,450"
+           Size="350,400"
            x:DataType="popups:EditorViewModel"
            x:Class="Insurance_app.Pages.Popups.EditorPopup">
     
@@ -18,7 +18,7 @@
         <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                Style="{StaticResource NormalLabel}" HorizontalOptions="Center" Text="{Binding HeadingDisplay}" FontSize="Subtitle"  />
         <Editor Text="{Binding ExtraInfoDisplay}" Grid.Row="2" Grid.Column="0" 
-             IsReadOnly="{Binding ReadOnlyDisplay}"   Grid.ColumnSpan="2" HeightRequest="200" WidthRequest="300" BackgroundColor="LightGray">
+             IsReadOnly="{Binding ReadOnlyDisplay}" Grid.ColumnSpan="2" HeightRequest="200" WidthRequest="320" BackgroundColor="LightGray">
             <Editor.Behaviors>
                 <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
                                              Flags="ValidateOnValueChanging" x:Name="ExtraInfoValidator"

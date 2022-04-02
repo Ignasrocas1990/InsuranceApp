@@ -53,6 +53,7 @@ namespace Insurance_app.ViewModels
         private string city="";
         private Address address;
         private string customerId="";
+        private string userId = "";
         public ICommand UpdateCommand { get; }
         public ICommand AddressCommand { get; }
         public ICommand ResetPasswordCommand { get; }
@@ -72,21 +73,18 @@ namespace Insurance_app.ViewModels
         {
             try
             {
-                if(customerId.Equals(""))
-                {
-                    customerId = App.RealmApp.CurrentUser.Id;
-                }
-                else
+                if(!customerId.Equals(""))
                 {
                     IsClientDisplay = true;
                 }
-                var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
+                userId = App.RealmApp.CurrentUser.Id;
+                var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, userId);
                 if (customer !=null)
                 {
                     NameDisplay = customer.Name;
                     LastNameDisplay = customer.LastName;
                     PhoneNrDisplay = customer.PhoneNr;
-                    customerId = customer.Id;
+                    userId = customer.Id;
                     email = customer.Email;
                     
                     //address backing fields
@@ -151,7 +149,7 @@ namespace Insurance_app.ViewModels
             try
             {
                 CircularWaitDisplay = true;
-                await userManager.UpdateCustomer(name,lastName,phoneNr,address, App.RealmApp.CurrentUser,customerId);
+                await userManager.UpdateCustomer(name,lastName,phoneNr,address, App.RealmApp.CurrentUser,userId);
             }
             catch (Exception e)
             {

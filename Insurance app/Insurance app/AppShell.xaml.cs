@@ -27,5 +27,6 @@ namespace Insurance_app
         {
             InitializeComponent();
         }
+        
     }
 }
