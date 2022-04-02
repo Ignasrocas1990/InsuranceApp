@@ -172,13 +172,13 @@ namespace Insurance_app.Communications
               {
                   isMonitoring = true;
                   await WriteToCharacteristic($"{App.RealmApp.CurrentUser.Id}|{Email}|{Pass}");
-                  //await UpdateCustomerSwitch(true);
+                  
               }
               else if (!start)
               {
                   isMonitoring = false;
                   await WriteToCharacteristic("Stop");
-                  //await UpdateCustomerSwitch(false);
+                  await UpdateCustomerSwitch(false);
               }
              
               //await ReadAsync();
@@ -203,6 +203,7 @@ namespace Insurance_app.Communications
                     Console.WriteLine("sending message"+message);
                     await chara.WriteAsync(Encoding.Default.GetBytes(message));
                     firstTime = false;
+                    
                 }
                 catch (Exception e)
                 {
@@ -220,7 +221,7 @@ namespace Insurance_app.Communications
         {
             try
             {
-                //await userManager.UpdateCustomerSwitch(App.RealmApp.CurrentUser, state);
+                await userManager.UpdateCustomerSwitch(App.RealmApp.CurrentUser, state);
             }
             catch (Exception e)
             {

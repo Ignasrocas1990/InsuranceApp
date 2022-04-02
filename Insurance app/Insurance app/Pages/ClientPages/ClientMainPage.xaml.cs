@@ -19,6 +19,7 @@
  */
 
 using System;
+using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels.ClientViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -39,18 +40,10 @@ namespace Insurance_app.Pages.ClientPages
         protected  override async void OnAppearing()
         {
             base.OnAppearing();
+            StaticOpt.IsCurrentPage(nameof(ClientMainPage));
             var vm = (ClientMainViewModel)BindingContext;
             await vm.Setup();
         }
-        /// <summary>
-        /// When leaving page release Realm instance
-        /// </summary>
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-            ((ClientMainViewModel)BindingContext).Dispose();
-        }
-
         private void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
             try

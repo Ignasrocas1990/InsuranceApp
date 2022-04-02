@@ -21,6 +21,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels.ClientViewModels;
 using Xamarin.Forms;
 
@@ -32,13 +33,11 @@ namespace Insurance_app.Pages.ClientPages
         {
             InitializeComponent();
         }
-        /// <summary>
-        /// When leaving page release Realm instance
-        /// </summary>
-        protected override void OnDisappearing()
+
+        protected override void OnAppearing()
         {
-            base.OnDisappearing();
-            ((ClientRegViewModel) BindingContext).Dispose();
+            base.OnAppearing();
+            StaticOpt.IsCurrentPage(nameof(ClientRegistration));
         }
 
         /// <summary>

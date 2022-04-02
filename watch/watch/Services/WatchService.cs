@@ -111,7 +111,7 @@ namespace watch.Services
         /// <summary>
         /// When above 5 steps saves the steps to database
         /// </summary>
-        private async Task SaveData()
+        private async void SaveData(object s, EventArgs args)
         {
             try
             {
@@ -140,22 +140,10 @@ namespace watch.Services
             {
                 if (savingData)
                 {
-                    //bleServer.SensorData.Enqueue(e.Data);
                     dataToBeSaved.Add(e.Data);
                 }
             };
-            RealmDb.GetInstance().LoggedInCompleted += (s,e) =>
-            {
-                Log.Verbose(Tag,"logged IN Completed =============================");
-                savingData = true;
-                sensorManager.ToggleSensors("Connected");
-                
-                SaveDataTimer.Start();// Starts saving gathered data
-                
-                
-                sensorManager.SendDataCounter = 0;//TODO remove from here -------------------------------------##################
-                sensorManager.SendTestData(); //TODO remove from here -------------------------------------##################
-            };
+            RealmDb.GetInstance().LoggedInCompleted += OnLoggedInCompleted;
             RealmDb.GetInstance().StopDataGathering += (s,e) =>//stop gathering data for 4min before shut down
             {
                 switchCounter = 0;
@@ -177,7 +165,7 @@ namespace watch.Services
                 if (detailsString.Equals("Stop"))
                 {
                     Log.Verbose(Tag, " STOP the data sending =>>>>>"+detailsString); 
-                    await RealmDb.GetInstance().UpdateSwitch();
+                    await RealmDb.GetInstance().UpdateSwitch(false);
                     RealmDb.GetInstance().StopDataGathering.Invoke(this,EventArgs.Empty);
                 }
                 else
@@ -207,27 +195,25 @@ namespace watch.Services
                         break;
                 }
             };
-            /*
-            //check if reading but not sending.(in-case the android killed the process)
-            bleServer.BltCallback.ReadHandler += (s, e) =>
-            {
-                try
-                {
-                    runTimeTimer.Stop();
-                    runCounter = 0;
-                    if (!sensorManager.isMonitoring()) sensorManager.ToggleSensors("Connected");
-                }
-                catch (Exception exception)
-                {
-                   Log.Verbose(Tag,exception.Message);
-                }
-            };
-            */
-            SaveDataTimer.Elapsed += async (s, e) =>
-            {
-               await SaveData();
-            };
+            SaveDataTimer.Elapsed += SaveData;
         }
+        /// <summary>
+        /// called when the real db completes the log in
+        /// It starts seniors monitoring and updates customers monitoring switch
+        /// </summary>
+        private async void OnLoggedInCompleted(object s, EventArgs e)
+        {
+            Log.Verbose(Tag, "logged IN Completed =============================");
+            savingData = true;
+            sensorManager.ToggleSensors("Connected");
+
+            SaveDataTimer.Start(); // Starts saving gathered data
+            await RealmDb.GetInstance().UpdateSwitch(true);
+
+            sensorManager.SendDataCounter = 0; //TODO remove from here -------------------------------------##################
+            sensorManager.SendTestData(); //TODO remove from here -------------------------------------##################
+        }
+
         /// <summary>
         /// After bluetooth connection made, perform log in to cloud database
         /// </summary>
@@ -303,24 +289,31 @@ namespace watch.Services
         }
         public override async void OnDestroy()
         {
-            Log.Verbose(Tag, "Service Closing ==================[OnDestroy]===========================");
-            savingData = false;
-            await RealmDb.GetInstance().UpdateSwitch();
-            dataToBeSaved = null;
-            
-            bleServer.StopAdvertising();
-            bleServer.Dispose();
-            sensorManager.ToggleSensors("Disconnected");
-            sensorManager.UnsubscribeSensors();
-            runTimeTimer.Dispose();
-            switchTimer.Dispose();
-            localDb.Dispose();
-            SaveDataTimer.Dispose();
-            StopForeground(true);
-            StopSelf();
-            MainActivity.mWakeLock.Release();
-            MainActivity.mWakeLock.Dispose();
-            MainActivity.Fin();
+            try
+            {
+                Log.Verbose(Tag, "Service Closing ==================[OnDestroy]===========================");
+                savingData = false;
+                await RealmDb.GetInstance().UpdateSwitch(false);
+                dataToBeSaved = null;
+
+                bleServer.StopAdvertising();
+                bleServer.Dispose();
+                sensorManager.ToggleSensors("Disconnected");
+                sensorManager.UnsubscribeSensors();
+                runTimeTimer.Dispose();
+                switchTimer.Dispose();
+                localDb.Dispose();
+                SaveDataTimer.Dispose();
+                StopForeground(true);
+                StopSelf();
+                MainActivity.mWakeLock.Release();
+                MainActivity.mWakeLock.Dispose();
+                MainActivity.Fin();
+            }
+            catch (Exception e)
+            {
+               Log.Verbose(Tag,e.Message);
+            }
         }
         public override IBinder OnBind(Intent intent) =>  null;
     }

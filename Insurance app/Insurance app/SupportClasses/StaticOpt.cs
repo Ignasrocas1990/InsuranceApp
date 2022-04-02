@@ -180,7 +180,10 @@ namespace Insurance_app.SupportClasses
                 Console.WriteLine(e);
             }
         }
-
+        /// <summary>
+        /// Disposes real instances in-case of moving between pages 
+        /// </summary>
+        /// <param name="page"> page name stringS</param>
         public static void IsCurrentPage(string page)
         {
             if (page == CurrentPage) return;

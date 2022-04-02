@@ -58,7 +58,6 @@ namespace Insurance_app.ViewModels.ClientViewModels
           
             if (codeIsValid)
             {
-                //TODO need to change the API so takes over the code when used 
                 try
                 {
                     await userManager.Register(email, pass);

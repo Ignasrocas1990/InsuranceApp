@@ -90,6 +90,7 @@ namespace Insurance_app.Logic
                 
                     Dob = dob, Name = fName, LastName = lName, 
                     PhoneNr = phoneNr, Email=email,
+                    DataSendSwitch = new DataSendSwitch(),
                     Address = new Address()
                     {
                         HouseN = address.HouseN,

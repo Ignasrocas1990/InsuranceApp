@@ -221,7 +221,7 @@ namespace watch.Services
         /// <summary>
         /// updates customer monitoring switch
         /// </summary>
-         public async Task UpdateSwitch()
+         public async Task UpdateSwitch(bool state)
          {
              try
              {
@@ -230,7 +230,7 @@ namespace watch.Services
                  otherRealm.Write(() =>
                  {
                     var c = otherRealm.Find<Customer>(RealmApp.CurrentUser.Id);
-                    c.DataSendSwitch.Switch = false;
+                    c.DataSendSwitch.Switch = state;
                     c.DataSendSwitch.changeDate = DateTimeOffset.Now;
                  });
              }

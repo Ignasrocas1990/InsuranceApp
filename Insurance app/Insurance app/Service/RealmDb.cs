@@ -65,7 +65,6 @@ namespace Insurance_app.Service
                 
                 _realm.Write(() =>
                 {
-                    customer.DataSendSwitch = new DataSendSwitch();
                      _realm.Add(customer,true);
                 });
                 Console.WriteLine("customer added");

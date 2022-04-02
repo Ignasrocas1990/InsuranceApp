@@ -18,6 +18,7 @@
            Purpose : 4th year project
  */
 
+using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels.ClientViewModels;
 using Xamarin.Forms.Xaml;
 
@@ -36,17 +37,9 @@ namespace Insurance_app.Pages.ClientPages
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+            StaticOpt.IsCurrentPage(nameof(ClientOpenClaims));
             var vm = (ClientOClaimsViewModel)BindingContext;
             await vm.Setup();
-        }
-        /// <summary>
-        /// When leaving page release Realm instanceS
-        /// </summary>
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-            ((ClientOClaimsViewModel)BindingContext).Dispose();
-
         }
     }
 }
