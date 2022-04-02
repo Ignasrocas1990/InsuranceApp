@@ -19,6 +19,7 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using Insurance_app.Logic;
+using Insurance_app.Service;
 using Insurance_app.SupportClasses;
 using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
@@ -168,10 +169,11 @@ namespace Insurance_app.Communications
                   await MainThread.InvokeOnMainThreadAsync(MessageUser);
                   return;
               }
-              if (start && firstTime)
+              if (start)
               {
                   isMonitoring = true;
                   await WriteToCharacteristic($"{App.RealmApp.CurrentUser.Id}|{Email}|{Pass}");
+                  WatchService.StartListener();
                   
               }
               else if (!start)
@@ -179,6 +181,7 @@ namespace Insurance_app.Communications
                   isMonitoring = false;
                   await WriteToCharacteristic("Stop");
                   await UpdateCustomerSwitch(false);
+                  WatchService.StopListener();
               }
              
               //await ReadAsync();

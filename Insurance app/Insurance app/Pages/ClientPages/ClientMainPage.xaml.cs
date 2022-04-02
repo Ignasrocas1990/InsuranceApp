@@ -41,8 +41,7 @@ namespace Insurance_app.Pages.ClientPages
         {
             base.OnAppearing();
             StaticOpt.IsCurrentPage(nameof(ClientMainPage));
-            var vm = (ClientMainViewModel)BindingContext;
-            await vm.Setup();
+           await ((ClientMainViewModel) BindingContext).Setup();
         }
         private void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {

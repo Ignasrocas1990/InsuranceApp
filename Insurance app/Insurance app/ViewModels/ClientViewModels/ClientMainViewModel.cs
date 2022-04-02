@@ -59,7 +59,8 @@ namespace Insurance_app.ViewModels.ClientViewModels
             try
             {
                 SetUpWaitDisplay = true;
-                Customers.ReplaceRange(await userManager.GetAllCustomer(App.RealmApp.CurrentUser));
+                Customers.Clear();
+                Customers.AddRange(await userManager.GetAllCustomer(App.RealmApp.CurrentUser));
             }
             catch (Exception e)
             {

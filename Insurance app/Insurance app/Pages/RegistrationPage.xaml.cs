@@ -110,7 +110,7 @@ namespace Insurance_app.Pages
                  Console.WriteLine(exception);
              }
         }
-
+        
         private void VisualElement_OnUnfocused(object sender, FocusEventArgs e)
         {
             var vm = (RegistrationViewModel) BindingContext;

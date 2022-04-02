@@ -38,8 +38,7 @@ namespace Insurance_app.Pages.ClientPages
         {
             base.OnAppearing();
             StaticOpt.IsCurrentPage(nameof(ClientOpenClaims));
-            var vm = (ClientOClaimsViewModel)BindingContext;
-            await vm.Setup();
+            await ((ClientOClaimsViewModel) BindingContext).Setup();
         }
     }
 }

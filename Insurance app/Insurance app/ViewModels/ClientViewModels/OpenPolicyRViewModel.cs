@@ -54,13 +54,17 @@ namespace Insurance_app.ViewModels.ClientViewModels
             try
             {
                 SetUpWaitDisplay = true;
-                Policies.ReplaceRange(await policyManager.GetAllUpdatedPolicies(App.RealmApp.CurrentUser));
+                policyManager.PreviousPolicies?.Clear();
+                Policies.Clear();
+                Policies.AddRange(await policyManager.GetAllUpdatedPolicies(App.RealmApp.CurrentUser));
+                
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
             ListVisibleDisplay = Policies.Count>0;
+            PolicyInVisibleDisplay = !ListVisibleDisplay;
             SetUpWaitDisplay = false;
         }
         /// <summary>
@@ -97,6 +101,14 @@ namespace Insurance_app.ViewModels.ClientViewModels
             get => listVisible;
             set => SetProperty(ref listVisible, value);
         }
+
+        private bool policyVisible;
+        public bool PolicyInVisibleDisplay
+        {
+            get => policyVisible;
+            set => SetProperty(ref policyVisible, value);
+        }
+
         public void Dispose()
         {
             policyManager.Dispose();

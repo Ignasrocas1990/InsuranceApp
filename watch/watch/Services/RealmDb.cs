@@ -125,14 +125,12 @@ namespace watch.Services
                     var customer = otherRealm.Find<Customer>(RealmApp.CurrentUser.Id);
                     if (customer is null) throw new Exception("AddMvData ::: Customer is null");
                     
-                     var MinDifference = GetTimeDifference(customer.DataSendSwitch.changeDate);
-                     Log.Verbose(Tag, $"the difference is {MinDifference} && switch is {customer.DataSendSwitch.Switch}");
-                     /*
-                    if (customer.DataSendSwitch.Switch is false && MinDifference>10)
+                     
+                    if (!GetTimeDifference(customer.DataSendSwitch))
                     {
                         StopDataGathering.Invoke(this, EventArgs.Empty);
                         return;
-                    }*/
+                    }
                     otherRealm.Add(movDataList);
                     
                     var currentDate = DateTimeOffset.Now;
@@ -176,11 +174,18 @@ namespace watch.Services
                  Log.Verbose(Tag, $"Data is not saved {e.Message}");
             }
         }
-
-        private int GetTimeDifference(DateTimeOffset changeDate)
+        /// <summary>
+        /// Checks the switch has been updated 10 min ago to false(stop monitoring data)
+        /// </summary>
+        /// <param name="dataSendSwitch">customer DataSendSwitch instance </param>
+        /// <returns>on/off boolean</returns>
+        private bool GetTimeDifference(DataSendSwitch dataSendSwitch)
         {
-            var now = DateTimeOffset.Now;
-            return now.Minute - changeDate.Minute;
+            if (dataSendSwitch.Switch) return true;
+
+            var changeDate = dataSendSwitch.changeDate.ToUnixTimeSeconds();
+            var now = DateTimeOffset.Now.ToUnixTimeSeconds();
+            return now - changeDate >= 600;
         }
 
         /// <summary>

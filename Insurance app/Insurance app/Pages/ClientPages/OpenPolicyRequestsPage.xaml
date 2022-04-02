@@ -51,6 +51,6 @@
     </ListView>
          <Label Style="{StaticResource NormalLabel}" Text="There are no Policy update request's at this moment" HorizontalTextAlignment="Center"
                 VerticalOptions="Center" HorizontalOptions="Center"
-                FontSize="Subtitle" IsVisible="{Binding ListVisibleDisplay,Converter={StaticResource InvertedBoolConverter}}" />
+                FontSize="Subtitle" IsVisible="{Binding PolicyInVisibleDisplay}" />
     </Grid>
 </pages:LoadingPage>

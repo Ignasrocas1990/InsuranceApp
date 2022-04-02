@@ -43,7 +43,11 @@ namespace Insurance_app.Service
         
         private WatchService()
         {
-            _set = true;
+            if (_set)
+            {
+                _set = true;
+                return;
+            }
             Timer.Elapsed += (async (s,e) =>
             {
                 await CheckDatabase();

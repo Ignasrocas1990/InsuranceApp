@@ -38,7 +38,7 @@ namespace Insurance_app.Logic
         /// Class used to connect between Database
         /// and UI, while processing some Claims
         /// </summary>
-        private List<Claim> Claims { get; set; }
+        public List<Claim> Claims { get; set; }
         private readonly RealmDb realmDb;
 
         public ClaimManager()

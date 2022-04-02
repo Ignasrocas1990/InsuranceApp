@@ -45,7 +45,6 @@ namespace Insurance_app.Pages
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            StaticOpt.IsCurrentPage(nameof(PaymentPage));
             var vm = (PaymentViewModel)BindingContext;
             HeroImage.Source = ImageService.Instance.CardFront;
             await vm.Setup();

@@ -52,7 +52,7 @@
              </ListView.Behaviors>
     </ListView>
          <Label Style="{StaticResource NormalLabel}" Text="There are no Claims submitted at this moment"
-                HorizontalOptions="Center" FontSize="Subtitle" IsVisible="{Binding ListVisibleDisplay,Converter={StaticResource InvertedBoolConverter}}" />
+                HorizontalOptions="Center" FontSize="Subtitle" IsVisible="{Binding PolicyInVisibleDisplay}" />
     </Grid>
     
     

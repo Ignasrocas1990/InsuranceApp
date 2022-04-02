@@ -7,7 +7,7 @@
            xmlns:popups1="clr-namespace:Insurance_app.ViewModels.Popups"
            x:DataType="popups1:EcPopUpViewModel"
            Style="{StaticResource Popup}"
-           Size="350,600"
+           Size="350,500"
            x:Class="Insurance_app.Pages.Popups.ExistingClaimsPopup">
     <!--Size = width,height -->
 
@@ -23,7 +23,7 @@
                 <ViewCell>
                     <Grid Padding="10">
                         <Frame Style="{StaticResource ViewModelFrame}">
-                            <Grid VerticalOptions="CenterAndExpand" RowSpacing="10" ColumnSpacing="0" Padding="10"
+                            <Grid VerticalOptions="CenterAndExpand" RowSpacing="10" ColumnSpacing="0" Padding="5"
                                   RowDefinitions="*,Auto,Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="5*,5*" >
                                 
 

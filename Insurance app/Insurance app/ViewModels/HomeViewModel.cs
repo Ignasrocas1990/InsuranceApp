@@ -58,7 +58,6 @@ namespace Insurance_app.ViewModels
         public HomeViewModel()
         {
             bleManager = BleManager.GetInstance();
-            bleManager.InfferEvent +=InferredRawData;
             rewardManager = new RewardManager();
             SwitchCommand = new AsyncCommand(StartDataReceive);
             LogoutCommand = new AsyncCommand(Logout);
@@ -89,19 +88,8 @@ namespace Insurance_app.ViewModels
 
                 }
                 await SetUpEarningsDisplay();
-                bleManager.ToggleSwitch += (o, e) =>
-                {
-                    ToggleStateDisplay = false;
-                };
-                WatchService.GetInstance().StepCheckedEvent += (o, stepsArgs) =>
-                {
-                    Console.WriteLine("old steps"+ProgressBarDisplay+" new steps: "+stepsArgs.Steps);
-                    while ((StaticOpt.StepNeeded-ProgressBarDisplay) < stepsArgs.Steps)
-                    {
-                        Step();
-                    }
-                    
-                };
+                bleManager.ToggleSwitch += (o, e) => ToggleStateDisplay = false;
+                WatchService.GetInstance().StepCheckedEvent += UpdateSteps;
             }
             catch (Exception e)
             {
@@ -110,6 +98,20 @@ namespace Insurance_app.ViewModels
             SetUpWaitDisplay = false;
             firstSetup = false;
         }
+
+        /// <summary>
+        /// loops through number nearly recorded by Cloud Database
+        /// </summary>
+        /// <param name="sender"/>
+        /// <param name="e">number of steps that is recorded by the cloud db </param>
+        private void UpdateSteps(object sender, StepArgs e)
+        {
+            while ((StaticOpt.StepNeeded-ProgressBarDisplay) < e.Steps)
+            {
+                Step();
+            }
+        }
+
         /// <summary>
         /// gets sum of total earned rewards & toggle switch
         /// for theUI elements
@@ -131,18 +133,7 @@ namespace Insurance_app.ViewModels
                }else if (WatchService.State)
                    WatchService.StartListener();
         }
-
-
-        /// <summary>
-        /// This method gets called by EventHandler when received info
-        /// via bluetooth (BleManager).
-        /// It increments Circular progress bar view
-        /// </summary>
-        private async void InferredRawData(object s, EventArgs eventArgs)
-        {
-            Step();
-        }
-
+        
         /// <summary>
         /// Starts/Stops connect/receiving data from the BleManager/Watch
         /// </summary>
