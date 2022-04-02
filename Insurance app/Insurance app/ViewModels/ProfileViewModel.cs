@@ -215,7 +215,7 @@ namespace Insurance_app.ViewModels
             set => SetProperty(ref wait, value);
         }
 
-        private string transferredId;
+        private string transferredId="";
         public string TransferredCustomerId
         {
             get => transferredId;

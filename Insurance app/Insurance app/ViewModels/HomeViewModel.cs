@@ -51,9 +51,7 @@ namespace Insurance_app.ViewModels
         private double startUpSteps;
         public ICommand SwitchCommand { get; }
         public ICommand LogoutCommand { get; }
-
-        private bool switchState = false;
-        private DateTimeOffset switchDate;
+        
         private User user;
         public HomeViewModel()
         {
@@ -79,11 +77,10 @@ namespace Insurance_app.ViewModels
                 }
                 else
                 {
-                    //Random rand = new Random();
-                    //movLen = rand.NextDouble() * 10000; //TODO uncomment to show
                     WatchService.GetInstance().CurrentRewardId = reward.Id;
                     ResetView();
                     startUpSteps = Convert.ToDouble(reward.MovData.Count);
+                    startUpSteps = 6193.0;//TODO uncomment to show#####################################
                     SetUpView(startUpSteps);
 
                 }
@@ -98,7 +95,7 @@ namespace Insurance_app.ViewModels
             SetUpWaitDisplay = false;
             firstSetup = false;
         }
-
+        
         /// <summary>
         /// loops through number nearly recorded by Cloud Database
         /// </summary>
@@ -144,8 +141,7 @@ namespace Insurance_app.ViewModels
             Console.WriteLine("Start received clicked");
             CircularWaitDisplay = true;
             WatchService.ToggleListener();
-            switchState = await bleManager.ToggleMonitoring(toggleState,previousState);//previousState is DB state
-            //ToggleStateDisplay = switchState;
+            await bleManager.ToggleMonitoring(toggleState,previousState);//previousState is DB state
             CircularWaitDisplay = false;
         }
         /// <summary>
@@ -166,6 +162,9 @@ namespace Insurance_app.ViewModels
             ProgressBarDisplay = StaticOpt.StepNeeded - steps;
             StepsDisplayLabel = steps;
             stepsDisplayValue = steps;
+            
+            
+            
         }
         /// <summary>
         /// Increments the progress bar view and the label display

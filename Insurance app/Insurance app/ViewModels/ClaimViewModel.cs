@@ -269,7 +269,7 @@ namespace Insurance_app.ViewModels
             set => SetProperty(ref isClient, value);
         }
 
-        private string transferredId;
+        private string transferredId="";
         public string TransferredCustomerId
         {
             get => transferredId;
