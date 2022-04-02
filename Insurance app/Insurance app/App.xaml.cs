@@ -31,7 +31,7 @@ namespace Insurance_app
         public static Realms.Sync.App RealmApp;
         public static bool Connected;
         private bool disconnected;
-        public static bool onPause;
+        public static bool WasPaused { get; set; }
         
 
         public App()

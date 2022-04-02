@@ -77,7 +77,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
             SetUpWaitDisplay = true;
             if (!customerId.Equals(""))
             {
-                var route = $"//{nameof(ProfilePage)}?CustomerId={customerId}";
+                var route = $"//{nameof(ProfilePage)}?TransferredCustomerId={customerId}";
                 await Shell.Current.GoToAsync(route);
             }
         }
@@ -90,7 +90,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
             SetUpWaitDisplay = true;
             if (!customerId.Equals(""))
             {
-                var route = $"//{nameof(ClaimPage)}?CustomerId={customerId}";
+                var route = $"//{nameof(ClaimPage)}?TransferredCustomerId={customerId}";
                 await Shell.Current.GoToAsync(route);
             }
                
@@ -104,7 +104,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
             SetUpWaitDisplay = true;
             if (customerId == "")
                 return;
-            var route = $"//{nameof(PolicyPage)}?CustomerId={customerId}";
+            var route = $"//{nameof(PolicyPage)}?TransferredCustomerId={customerId}";
             await Shell.Current.GoToAsync(route);
         }
         /// <summary>
@@ -116,7 +116,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
             SetUpWaitDisplay = true;
             if (customerId == "")
                 return;
-            var route = $"//{nameof(Report)}?CustomerId={customerId}";
+            var route = $"//{nameof(Report)}?TransferredCustomerId={customerId}";
             await Shell.Current.GoToAsync(route);
         }
         // -------------- Bindable properties -----------------------

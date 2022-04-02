@@ -42,7 +42,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
         public OpenPolicyRViewModel()
         {
             Policies = new ObservableRangeCollection<Policy>();
-            PolicySelectedCommand = new AsyncCommand<Policy>(SelectedPolicy);
+            PolicySelectedCommand = new AsyncCommand<object>(SelectedPolicy);
             policyManager = new PolicyManager();
         }
         /// <summary>
@@ -67,17 +67,20 @@ namespace Insurance_app.ViewModels.ClientViewModels
             PolicyInVisibleDisplay = !ListVisibleDisplay;
             SetUpWaitDisplay = false;
         }
+
         /// <summary>
         /// Navigates to PolicyPage after item being selected
         /// on the list view
         /// </summary>
-        /// <param name="policy">Select policy instance</param>
-        private async Task SelectedPolicy(Policy policy)
+        /// <param name="args">Select policy instance</param>
+        private async Task SelectedPolicy(object args)
         {
-            if (policy is null) return;
-            Console.WriteLine(policy.Owner);
-            var route = $"//{nameof(PolicyPage)}?CustomerId={policy.Owner}";
+            if (args is not Policy policy) return;
+            
+            var route = $"//{nameof(PolicyPage)}?TransferredCustomerId={policy.Owner}";
+            SelectedItem = null;
             await Shell.Current.GoToAsync(route);
+            
         }
         
         //--------------------- Bindable properties ---------------------------------
@@ -109,6 +112,13 @@ namespace Insurance_app.ViewModels.ClientViewModels
             set => SetProperty(ref policyVisible, value);
         }
 
+        private Policy selectedPolicy;
+        public Policy SelectedItem
+        {
+            get => selectedPolicy;
+            set => SetProperty(ref selectedPolicy, value);
+        }
+        
         public void Dispose()
         {
             policyManager.Dispose();

@@ -36,6 +36,7 @@ namespace Insurance_app.Pages
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+            App.WasPaused = false;
             await ((QuoteViewModel)BindingContext).SetUp();
         }
     }

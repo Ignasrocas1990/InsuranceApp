@@ -33,9 +33,16 @@ namespace Insurance_app.Pages.ClientPages
             InitializeComponent();
         }
 
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            App.WasPaused = false;
+        }
+
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
+            if (App.WasPaused) return;
             ((ClientRegViewModel)BindingContext).Dispose();
         }
 

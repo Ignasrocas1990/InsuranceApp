@@ -120,6 +120,8 @@ namespace Insurance_app.ViewModels
                     await Msg.AlertError(Msg.NetworkConMsg);
                    return;
                 }
+
+                
                 CircularWaitDisplay = true;
 
                 if (!emailIsValid || !passIsValid )

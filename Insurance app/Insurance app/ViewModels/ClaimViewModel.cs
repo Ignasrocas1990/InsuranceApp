@@ -35,7 +35,7 @@ namespace Insurance_app.ViewModels
     /// <summary>
     /// Class used to store and manipulate ClaimPage UI inputs in real time via BindingContext and its properties
     /// </summary>
-    [QueryProperty(nameof(CustomerId),"CustomerId")]
+    [QueryProperty(nameof(TransferredCustomerId),"TransferredCustomerId")]
     public class ClaimViewModel : ObservableObject,IDisposable
     {
         public ICommand CreateClaimCommand { get; }
@@ -73,8 +73,8 @@ namespace Insurance_app.ViewModels
             {
                 UnderReviewDisplay = false;
                 SetUpWaitDisplay = true;
-                if (customerId  == "")
-                    customerId = App.RealmApp.CurrentUser.Id;
+                customerId = TransferredCustomerId == "" 
+                    ? App.RealmApp.CurrentUser.Id : TransferredCustomerId;
             
                 await claimManager.GetClaims(App.RealmApp.CurrentUser,customerId);
                 var claim = claimManager.GetCurrentClaim();
@@ -268,10 +268,12 @@ namespace Insurance_app.ViewModels
             get => isClient;
             set => SetProperty(ref isClient, value);
         }
-        public string CustomerId
+
+        private string transferredId;
+        public string TransferredCustomerId
         {
-            get => customerId;
-            set =>  customerId = Uri.UnescapeDataString(value ?? String.Empty);
+            get => transferredId;
+            set =>  transferredId = Uri.UnescapeDataString(value ?? String.Empty);
 
         }
 

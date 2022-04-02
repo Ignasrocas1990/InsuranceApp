@@ -26,7 +26,7 @@ namespace Insurance_app.Droid
 
         protected override void OnPause()
         {
-            App.onPause = true;
+            App.WasPaused = true;
             base.OnPause();
         }
     }

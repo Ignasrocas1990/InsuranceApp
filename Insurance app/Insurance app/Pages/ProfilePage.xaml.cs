@@ -42,11 +42,13 @@ namespace Insurance_app.Pages
         {
             base.OnAppearing();
             await ((ProfileViewModel) BindingContext).Setup();
+            App.WasPaused = false;
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
+            if (App.WasPaused) return;
             ((ProfileViewModel) BindingContext).Dispose();
         }
 

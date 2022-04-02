@@ -47,11 +47,14 @@ namespace Insurance_app.Pages
             base.OnAppearing();
             HeroImage.Source = ImageService.Instance.CardFront;
             await ((PaymentViewModel)BindingContext).Setup();
+            App.WasPaused = false;
+
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
+            if (App.WasPaused) return;
             ((PaymentViewModel)BindingContext).Dispose();
         }
 

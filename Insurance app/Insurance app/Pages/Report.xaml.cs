@@ -40,11 +40,13 @@ namespace Insurance_app.Pages
             await vm.SetUp();
             vm.SetUpWaitDisplay = false;
             base.OnAppearing();
+            App.WasPaused = false;
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
+            if (App.WasPaused) return;
             ((ReportViewModel) BindingContext).Dispose();
         }
     }

@@ -51,7 +51,6 @@ namespace Insurance_app.SupportClasses
         public const int MaxResponseTime = 120;
         private static string CurrentPage = "";
 
-
         public static Func<string, bool> HasNumbers => s => s.Any(char.IsDigit);
 
         public static readonly SKColor White = c.WhiteSmoke;

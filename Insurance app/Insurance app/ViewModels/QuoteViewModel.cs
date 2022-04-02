@@ -90,7 +90,7 @@ namespace Insurance_app.ViewModels
             SetUpWaitDisplay = true;
             try
             {
-                customerId = App.RealmApp.CurrentUser.Id;
+               customerId = App.RealmApp.CurrentUser.Id;
                var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
                if (customer.Dob != null) SelectedDate = customer.Dob.Value.UtcDateTime;
                email = customer.Email;

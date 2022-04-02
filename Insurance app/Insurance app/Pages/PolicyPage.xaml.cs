@@ -36,12 +36,14 @@ namespace Insurance_app.Pages
         protected override async void OnAppearing()
         {
             await ((PolicyViewModel)BindingContext).Setup();
+            App.WasPaused = false;
             base.OnAppearing();
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
+            if (App.WasPaused) return;
             ((PolicyViewModel)BindingContext).Dispose();
         }
     }

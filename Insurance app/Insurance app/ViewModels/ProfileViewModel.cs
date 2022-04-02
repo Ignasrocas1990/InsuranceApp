@@ -33,7 +33,7 @@ namespace Insurance_app.ViewModels
     /// <summary>
     /// Class used to store and manipulate ProfilePage UI components in real time via BindingContext and its properties
     /// </summary>
-    [QueryProperty(nameof(CustomerId), "CustomerId")]
+    [QueryProperty(nameof(TransferredCustomerId), "TransferredCustomerId")]
     public class ProfileViewModel:ObservableObject,IDisposable
     {
         private readonly UserManager userManager;
@@ -53,7 +53,6 @@ namespace Insurance_app.ViewModels
         private string city="";
         private Address address;
         private string customerId="";
-        private string userId = "";
         public ICommand UpdateCommand { get; }
         public ICommand AddressCommand { get; }
         public ICommand ResetPasswordCommand { get; }
@@ -73,18 +72,22 @@ namespace Insurance_app.ViewModels
         {
             try
             {
-                if(!customerId.Equals(""))
+                if(TransferredCustomerId.Equals(""))
                 {
+                    customerId = App.RealmApp.CurrentUser.Id;
+                }
+                else
+                {
+                    customerId = TransferredCustomerId;
                     IsClientDisplay = true;
                 }
-                userId = App.RealmApp.CurrentUser.Id;
-                var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, userId);
+                var customer = await userManager.GetCustomer(App.RealmApp.CurrentUser, customerId);
                 if (customer !=null)
                 {
                     NameDisplay = customer.Name;
                     LastNameDisplay = customer.LastName;
                     PhoneNrDisplay = customer.PhoneNr;
-                    userId = customer.Id;
+                    //customerId = customer.Id;
                     email = customer.Email;
                     
                     //address backing fields
@@ -149,7 +152,7 @@ namespace Insurance_app.ViewModels
             try
             {
                 CircularWaitDisplay = true;
-                await userManager.UpdateCustomer(name,lastName,phoneNr,address, App.RealmApp.CurrentUser,userId);
+                await userManager.UpdateCustomer(name,lastName,phoneNr,address, App.RealmApp.CurrentUser,customerId);
             }
             catch (Exception e)
             {
@@ -211,10 +214,12 @@ namespace Insurance_app.ViewModels
             get => wait;
             set => SetProperty(ref wait, value);
         }
-        public string CustomerId
+
+        private string transferredId;
+        public string TransferredCustomerId
         {
-            get => customerId;
-            set => customerId = value;
+            get => transferredId;
+            set => transferredId = value;
 
         }
 

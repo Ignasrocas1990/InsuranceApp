@@ -17,7 +17,6 @@
            Purpose : 4th year project
  */
 
-using System;
 using Insurance_app.ViewModels;
 using Xamarin.Forms.Xaml;
 
@@ -38,17 +37,21 @@ namespace Insurance_app.Pages
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            Console.WriteLine($"Was it paused? {App.onPause}");
             var vm = (LogInViewModel)BindingContext;
             vm.SetUpWaitDisplay = true;
             await vm.ExistUser();
             vm.SetUpWaitDisplay = false;
+            App.WasPaused = false;
+
         }
 
         protected override void OnDisappearing()
         {
+            //check if it was paused
             base.OnDisappearing();
+            if (App.WasPaused) return;
             ((LogInViewModel)BindingContext).Dispose();
+
         }
     }
 }

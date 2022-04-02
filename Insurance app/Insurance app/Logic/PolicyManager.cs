@@ -120,7 +120,6 @@ namespace Insurance_app.Logic
         /// <param name="user">current user</param>
         public async Task GetPreviousPolicies(string customerId, User user)
         {
-           PreviousPolicies.Clear();
            PreviousPolicies = await realmDb.GetPreviousPolicies(customerId, user);
         }
         /// <summary>

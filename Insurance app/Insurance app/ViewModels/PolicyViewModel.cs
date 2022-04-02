@@ -38,7 +38,7 @@ namespace Insurance_app.ViewModels
     /// <summary>
     /// Class used to store and manipulate PolicyPage UI components in real time via BindingContext and its properties
     /// </summary>
-    [QueryProperty(nameof(CustomerId), "CustomerId")]
+    [QueryProperty(nameof(TransferredCustomerId), "TransferredCustomerId")]
     public class PolicyViewModel : ObservableObject,IDisposable
     {
         private bool wait;
@@ -96,11 +96,13 @@ namespace Insurance_app.ViewModels
                 SetUpWaitDisplay = true;
                 UnderReviewDisplay = false;
                 InfoIsVisible = false;
-                if (customerId=="")
-                    customerId=App.RealmApp.CurrentUser.Id;
-                
-                if(customerId != App.RealmApp.CurrentUser.Id)
+                if (TransferredCustomerId == "")
                 {
+                    customerId = App.RealmApp.CurrentUser.Id;
+                }
+                else if(TransferredCustomerId != App.RealmApp.CurrentUser.Id)
+                {
+                    customerId = TransferredCustomerId;
                     await policyManager.GetPreviousPolicies(customerId,App.RealmApp.CurrentUser);
                 }
                 var policy = await FindPolicy();
@@ -297,14 +299,7 @@ namespace Insurance_app.ViewModels
                 Console.WriteLine(e);
             }
         }
-
-        /// <summary>
-        /// Gets previous policies via policyManager class
-        /// </summary>
-        private async Task GetPreviousPolicies()
-        {
-            await policyManager.GetPreviousPolicies(customerId,App.RealmApp.CurrentUser);
-        }
+        
         /// <summary>
         /// Gets current user via UserManager class
         /// </summary>
@@ -391,10 +386,12 @@ namespace Insurance_app.ViewModels
             get => priceString;
             set => SetProperty(ref priceString, value);
         }
-        public string CustomerId
+
+        private string transferredId;
+        public string TransferredCustomerId
         {
-            get => customerId;
-            set =>  customerId = Uri.UnescapeDataString(value ?? string.Empty);
+            get => transferredId;
+            set =>  transferredId = Uri.UnescapeDataString(value ?? string.Empty);
 
         }
         private bool infoIsVisible;

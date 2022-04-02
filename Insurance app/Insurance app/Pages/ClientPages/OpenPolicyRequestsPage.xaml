@@ -16,6 +16,7 @@
     <Grid>
         <ListView Style="{StaticResource ListView}" CachingStrategy="RecycleElement"
                   IsVisible="{Binding ListVisibleDisplay}"
+                  SelectedItem="{Binding SelectedItem,Mode=TwoWay}"
                   ItemsSource="{Binding Policies}">
              <ListView.ItemTemplate>
             <DataTemplate x:DataType="models:Policy">
