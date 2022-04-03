@@ -49,10 +49,7 @@ namespace Insurance_app.SupportClasses
         public static readonly string MyRealmAppId = "application-1-luybv";
         public const double StepNeeded = 10000;
         public const int MaxResponseTime = 120;
-        private static string CurrentPage = "";
-
-        public static Func<string, bool> HasNumbers => s => s.Any(char.IsDigit);
-
+        
         public static readonly SKColor White = c.WhiteSmoke;
         
         public static readonly SKColor[] ChartColors=

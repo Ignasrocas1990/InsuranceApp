@@ -6,7 +6,7 @@
                    xmlns:model="clr-namespace:Insurance_app.Models"
                    xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
                    BackgroundColor="{StaticResource BackColor}"
-                   Title="Customers page"
+                   Title="Manage Customers"
                    x:DataType="viewModels:ClientMainViewModel"
                    RootViewModel="{Binding .}"
                    ControlTemplate="{StaticResource LoaderViewTemplate}"

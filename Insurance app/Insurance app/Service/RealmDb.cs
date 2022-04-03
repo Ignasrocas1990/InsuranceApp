@@ -143,7 +143,7 @@ namespace Insurance_app.Service
         /// <returns>Date of birth DateTimeOffset</returns>
         public async Task<DateTimeOffset> GetCustomersDob(string customerId,User user)
         {
-            DateTimeOffset dob;
+            DateTimeOffset dob=DateTimeOffset.Now;
             try
             {
                 await GetRealm(user);

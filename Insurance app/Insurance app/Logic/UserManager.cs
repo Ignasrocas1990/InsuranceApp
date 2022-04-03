@@ -131,8 +131,7 @@ namespace Insurance_app.Logic
         public async Task UpdateCustomer(string name, string lastName, 
             string phoneNr,Address address, User user,string customerId)
         {
-           await realmDb.UpdateCustomer(name, lastName,
-                phoneNr,  address, user,customerId);
+           await realmDb.UpdateCustomer(name, lastName, phoneNr,  address, user,customerId);
         }
 
         /// <summary>

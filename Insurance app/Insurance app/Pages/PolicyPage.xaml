@@ -6,6 +6,7 @@
                    xmlns:converters="http://xamarin.com/schemas/2020/toolkit"
                    xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
                    x:DataType="viewModels:PolicyViewModel"
+                   Title="Policy page"
                    BackgroundColor="{StaticResource BackColor}"
                    RootViewModel="{Binding .}"
                    ControlTemplate="{StaticResource LoaderViewTemplate}"
