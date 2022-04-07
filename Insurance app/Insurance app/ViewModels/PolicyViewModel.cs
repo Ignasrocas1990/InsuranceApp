@@ -408,7 +408,6 @@ namespace Insurance_app.ViewModels
             get => isClient;
             set => SetProperty(ref isClient, value);
         }
-
         private bool prevPolicies = false;
         public bool PrevPoliciesIsVisible
         {
