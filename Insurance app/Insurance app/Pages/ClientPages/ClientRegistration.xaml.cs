@@ -26,6 +26,10 @@ using Xamarin.Forms;
 
 namespace Insurance_app.Pages.ClientPages
 {
+    /// <summary>
+    /// The class InitializeComponents GUI components and
+    /// the sets up the view as it appears/disappears
+    /// </summary>
     public partial class ClientRegistration : LoadingPage
     {
         public ClientRegistration()

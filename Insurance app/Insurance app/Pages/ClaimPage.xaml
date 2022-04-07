@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
+<!--Summary 
+    The GUI displays a page with its input fields
+    That is validated by xamarin toolkit feature
+    with the ClaimViewModel help
+    which contains back up properties/ commands
+-->
 <pages:LoadingPage xmlns="http://xamarin.com/schemas/2014/forms"
                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                    xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"
@@ -11,65 +17,84 @@
                    RootViewModel="{Binding .}"
                    ControlTemplate="{StaticResource LoaderViewTemplate}"
                    x:Class="Insurance_app.Pages.ClaimPage">
-       
-    
-       <Grid VerticalOptions="Center"  RowSpacing="20" ColumnSpacing="5" Padding="40"
-             RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="5*,5*" >
-              
-              <Label Text="Currently under review" Style="{StaticResource NormalLabel}" FontAttributes="Italic"
-                     IsVisible="{Binding UnderReviewDisplay}" HorizontalTextAlignment="Center"
-                     Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" TextColor="{StaticResource StrongColor}" />
-              
-              <Label Text="{Binding DateDisplay}" Style="{StaticResource NormalLabel}" HorizontalTextAlignment="Center"
-                     Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}" />
-            
-            <Label Text="Hospital Code :" Style="{StaticResource EndLabel}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
-                   Grid.Column="0" Grid.Row="2" />
-            <Entry  Keyboard="Email" IsReadOnly="{Binding IsReadOnly}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
-                    Text="{Binding  HospitalPostCodeDisplay}" Placeholder="R93 V1N6" Style="{StaticResource NormalEntry}"
-                    Grid.Column="1" Grid.Row="2">
-                   <Entry.Behaviors>
-                          <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" InvalidStyle="{StaticResource InvalidEntry}" Flags="ValidateOnValueChanging" x:Name="HospitalCodeValidator">
-                                 <xct:TextValidationBehavior MinimumLength="4" MaximumLength="200" xct:MultiValidationBehavior.Error="Hospital Code must have 4 char's" />
-                                 <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Hospital Code has Special char" />
-                                 <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Hospital Code has spaces" />
-                          </xct:MultiValidationBehavior>
-                   </Entry.Behaviors>
-            </Entry>
-                
-            <Label Text="Patient Nr :" Style="{StaticResource EndLabel}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
-                   Grid.Column="0" Grid.Row="3" />
-             <Entry  Text="{Binding PatientNrDisplay}" IsReadOnly="{Binding IsReadOnly}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
-                    Placeholder="123S3DG23S" Style="{StaticResource NormalEntry}"
-                    Grid.Column="1" Grid.Row="3">
-                    <Entry.Behaviors>
-                           <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}" InvalidStyle="{StaticResource InvalidEntry}"
-                                                        Flags="ValidateOnValueChanging" x:Name="PatientNrValidator">
-                                  <xct:TextValidationBehavior MinimumLength="4" MaximumLength="200" xct:MultiValidationBehavior.Error="Patient Nr  must have 4 char's" />
-                                  <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Patient Nr cant have Special char" />
-                                  <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0" xct:MultiValidationBehavior.Error="Patient Nr has spaces" />
-                           </xct:MultiValidationBehavior>
-                    </Entry.Behaviors>
-             </Entry>
-              
-              <Button Text="{Binding ExtraBtnText}" Command="{Binding AddInfoCommand}"
-                      IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
-                      IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
-                      Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Style="{StaticResource WhiteBtn}" />
 
-            <Button Text="Create" Padding="10,0,0,0" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
-                    Style="{StaticResource PrimaryBtn}" Clicked="Button_OnClicked"
-                    Grid.Column="1" Grid.Row="5" IsEnabled="{Binding IsReadOnly,Converter={StaticResource InvertedBoolConverter}}"
-                    HorizontalOptions="Fill" />
 
-            <Button Text="All Claims" Command="{Binding ViewPreviousClaimsCommand}" IsEnabled="{Binding PreviousBtnIsEnabled}"
-                    Style="{StaticResource SecondaryBtn}" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
-                    Grid.Column="0" Grid.Row="5"  HorizontalOptions="Fill" Padding="0,0,10,0" />
-            
-            <Button Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" HorizontalOptions="Center" 
-                    Text="Resolve Claim" Command="{Binding ResolveClaimCommand}"
-                    IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
-                    IsVisible="{Binding CanBeResolved}" BackgroundColor="{StaticResource ClientBtnColor}" Style="{StaticResource SecondaryBtn}"/>
-       </Grid>           
-    
+    <Grid VerticalOptions="Center" RowSpacing="20" ColumnSpacing="5" Padding="40"
+          RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="5*,5*">
+
+        <Label Text="Currently under review" Style="{StaticResource NormalLabel}" FontAttributes="Italic"
+               IsVisible="{Binding UnderReviewDisplay}" HorizontalTextAlignment="Center"
+               Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" TextColor="{StaticResource StrongColor}" />
+
+        <Label Text="{Binding DateDisplay}" Style="{StaticResource NormalLabel}" HorizontalTextAlignment="Center"
+               Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
+               IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}" />
+
+        <Label Text="Hospital Code :" Style="{StaticResource EndLabel}"
+               IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
+               Grid.Column="0" Grid.Row="2" />
+        <Entry Keyboard="Email" IsReadOnly="{Binding IsReadOnly}"
+               IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
+               Text="{Binding  HospitalPostCodeDisplay}" Placeholder="R93 V1N6" Style="{StaticResource NormalEntry}"
+               Grid.Column="1" Grid.Row="2">
+            <Entry.Behaviors>
+                <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
+                                             InvalidStyle="{StaticResource InvalidEntry}"
+                                             Flags="ValidateOnValueChanging" x:Name="HospitalCodeValidator">
+                    <xct:TextValidationBehavior MinimumLength="4" MaximumLength="200"
+                                                xct:MultiValidationBehavior.Error="Hospital Code must have 4 char's" />
+                    <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0"
+                                                      xct:MultiValidationBehavior.Error="Hospital Code has Special char" />
+                    <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0"
+                                                      xct:MultiValidationBehavior.Error="Hospital Code has spaces" />
+                </xct:MultiValidationBehavior>
+            </Entry.Behaviors>
+        </Entry>
+
+        <Label Text="Patient Nr :" Style="{StaticResource EndLabel}"
+               IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
+               Grid.Column="0" Grid.Row="3" />
+        <Entry Text="{Binding PatientNrDisplay}" IsReadOnly="{Binding IsReadOnly}"
+               IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
+               Placeholder="123S3DG23S" Style="{StaticResource NormalEntry}"
+               Grid.Column="1" Grid.Row="3">
+            <Entry.Behaviors>
+                <xct:MultiValidationBehavior ValidStyle="{StaticResource NormalEntry}"
+                                             InvalidStyle="{StaticResource InvalidEntry}"
+                                             Flags="ValidateOnValueChanging" x:Name="PatientNrValidator">
+                    <xct:TextValidationBehavior MinimumLength="4" MaximumLength="200"
+                                                xct:MultiValidationBehavior.Error="Patient Nr  must have 4 char's" />
+                    <xct:CharactersValidationBehavior CharacterType="NonAlphanumericSymbol" MaximumCharacterCount="0"
+                                                      xct:MultiValidationBehavior.Error="Patient Nr cant have Special char" />
+                    <xct:CharactersValidationBehavior CharacterType="Whitespace" MaximumCharacterCount="0"
+                                                      xct:MultiValidationBehavior.Error="Patient Nr has spaces" />
+                </xct:MultiValidationBehavior>
+            </Entry.Behaviors>
+        </Entry>
+
+        <Button Text="{Binding ExtraBtnText}" Command="{Binding AddInfoCommand}"
+                IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
+                IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Style="{StaticResource WhiteBtn}" />
+
+        <Button Text="Create" Padding="10,0,0,0"
+                IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
+                Style="{StaticResource PrimaryBtn}" Clicked="Button_OnClicked"
+                Grid.Column="1" Grid.Row="5"
+                IsEnabled="{Binding IsReadOnly,Converter={StaticResource InvertedBoolConverter}}"
+                HorizontalOptions="Fill" />
+
+        <Button Text="All Claims" Command="{Binding ViewPreviousClaimsCommand}"
+                IsEnabled="{Binding PreviousBtnIsEnabled}"
+                Style="{StaticResource SecondaryBtn}"
+                IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
+                Grid.Column="0" Grid.Row="5" HorizontalOptions="Fill" Padding="0,0,10,0" />
+
+        <Button Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" HorizontalOptions="Center"
+                Text="Resolve Claim" Command="{Binding ResolveClaimCommand}"
+                IsEnabled="{Binding CircularWaitDisplay,Converter={StaticResource InvertedBoolConverter}}"
+                IsVisible="{Binding CanBeResolved}" BackgroundColor="{StaticResource ClientBtnColor}"
+                Style="{StaticResource SecondaryBtn}" />
+    </Grid>
+
 </pages:LoadingPage>

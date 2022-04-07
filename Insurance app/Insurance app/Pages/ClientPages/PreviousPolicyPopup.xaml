@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
+<!--Summary 
+    The GUI displays previous policies as a pop up in a list view
+    with the PPolicyPopupViewModel help
+    which contains ListView data
+-->
 <views:Popup xmlns="http://xamarin.com/schemas/2014/forms"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             xmlns:views="http://xamarin.com/schemas/2020/toolkit"

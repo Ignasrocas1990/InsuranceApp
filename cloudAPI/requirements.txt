@@ -2,7 +2,4 @@ joblib
 smtplib
 email
 Flask
-gunicorn
-certifi
 scikit-learn
-itsdangerous

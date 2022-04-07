@@ -29,7 +29,7 @@ namespace Insurance_app.ViewModels
     /// <summary>
     /// Class used to store and manipulate Report Page UI components in real time via BindingContext and its properties
     /// </summary>
-    [QueryProperty(nameof(CustomerId), "CustomerId")]
+    [QueryProperty(nameof(TransferredCustomerId), "TransferredCustomerId")]
     public class ReportViewModel : ObservableObject,IDisposable
     {
         private readonly ReportManager reportManager;
@@ -45,9 +45,13 @@ namespace Insurance_app.ViewModels
         /// </summary>
         public async Task SetUp()
         {
-            if (CustomerId.Equals(""))
+            if (TransferredCustomerId.Equals(""))
             {
                 customerId = App.RealmApp.CurrentUser.Id;
+            }
+            else
+            {
+                customerId = TransferredCustomerId;
             }
             var allMovData = await reportManager.GetAllMovData(customerId, App.RealmApp.CurrentUser);
             if (customerId == App.RealmApp.CurrentUser.Id)
@@ -68,12 +72,12 @@ namespace Insurance_app.ViewModels
                 WeekChartIsVisible = true;
             }
 
-            if ((WeekChartIsVisible && CustomerId == App.RealmApp.CurrentUser.Id) || CustomerId != App.RealmApp.CurrentUser.Id)
+            if ((WeekChartIsVisible && TransferredCustomerId == App.RealmApp.CurrentUser.Id) || TransferredCustomerId != App.RealmApp.CurrentUser.Id)
             {
                 var weeklyMovData =reportManager.CountWeeklyMovData(allMovData);
                 var (emptyWeekCount, weeklyEntries) = reportManager.CreateWeeklyLineChart(weeklyMovData);
             
-                if (emptyWeekCount>2)
+                if (emptyWeekCount==4)
                 {
                     WeekChartLabel = "No steps has been taken this month"; 
                     WeekChartIsVisible = false;
@@ -142,10 +146,12 @@ namespace Insurance_app.ViewModels
             get => wait;
             set => SetProperty(ref wait, value);
         }
-        public string CustomerId
+        private string transferredId="";
+        public string TransferredCustomerId
         {
-            get => customerId;
-            set =>  customerId = Uri.UnescapeDataString(value ?? string.Empty);
+            get => transferredId;
+            set =>  transferredId = Uri.UnescapeDataString(value ?? string.Empty);
+
         }
 
         public void Dispose()

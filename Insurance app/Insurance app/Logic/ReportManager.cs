@@ -127,7 +127,7 @@ namespace Insurance_app.Logic
                 {
                     var label = keyValuePair.Key;
                     float value = keyValuePair.Value;
-                    value = r.Next(0, 20000);//TODO To show that it works this can be uncommented
+                    //value = r.Next(0, 20000);//TODO To show that it works this can be uncommented
                     var color = StaticOpt.ChartColors[r.Next(0, StaticOpt.ChartColors.Length - 1)];
                     if (today)
                     {
@@ -169,7 +169,7 @@ namespace Insurance_app.Logic
                 {
                     var label = i.Key;
                     float value = i.Value;
-                    value = r.Next(0, 20000);//TODO To show that it works this can be uncommented
+                    //value = r.Next(0, 20000);//TODO To show that it works this can be uncommented
                     var color = StaticOpt.ChartColors[r.Next(0, StaticOpt.ChartColors.Length - 1)];
                     if (thisWeek)
                     {

@@ -231,12 +231,17 @@ namespace watch.Services
              try
              {
                  var  otherRealm =  await GetRealm();
-                 if (otherRealm is null) throw new Exception("AddMvData ::: Realm is null");
+                 if (otherRealm is null) throw new Exception("UpdateSwitch ::: Realm is null");
                  otherRealm.Write(() =>
                  {
                     var c = otherRealm.Find<Customer>(RealmApp.CurrentUser.Id);
-                    c.DataSendSwitch.Switch = state;
-                    c.DataSendSwitch.changeDate = DateTimeOffset.Now;
+                    
+                    if (c is null) throw new Exception("UpdateSwitch ::: Customer is null");
+                    var mySwitch = c.DataSendSwitch;
+                    if (mySwitch is null) throw new Exception("UpdateSwitch ::: mySwitch is null");
+                    
+                    mySwitch.Switch = state;
+                     mySwitch.changeDate = DateTimeOffset.Now;
                  });
              }
              catch (Exception e)
@@ -259,14 +264,37 @@ namespace watch.Services
             {
                 Log.Verbose(Tag,$"GetRealm,realm error : {e.Message}");
                 Log.Verbose(Tag,$"GetRealm, inner exception : {e.InnerException}");
+                if (!NetConnection() || RealmApp.CurrentUser == null) return null;
+                Log.Verbose(Tag,$"Internet connection available/resting the user...");
+                return await ResetLog();
             }
-            return null;
         }
         /// <summary>
-        /// checks for internet connection
+        /// Fixing a Error: Websocket: Expected HTTP response 101 Switching Protocols
+        /// Which logs out the user, logins the user and gets a new instance of realm
         /// </summary>
-        /// <returns></returns>
-        private static bool NetConnection()
+        /// <returns>Realm instance or Null</returns>
+        private async Task<Realm> ResetLog()
+        {
+            try
+            {
+                 await RealmApp.CurrentUser.LogOutAsync();
+                 await RealmApp.LogInAsync(Credentials.EmailPassword(email, pass));
+                 return await Realm.GetInstanceAsync(
+                     new PartitionSyncConfiguration(Partition,RealmApp.CurrentUser));
+            }
+            catch (Exception e)
+            {
+                Log.Verbose(Tag,$"ResetLog Failed with error ={e.Message}");
+                Log.Verbose(Tag,$"ResetLog Failed with error ={e.InnerException}");
+                return null;
+            }
+        }
+        /// <summary>
+        /// Checks if device has wifi/cellular internet connection
+        /// </summary>
+        /// <returns>boolean value true when internet connection found</returns>
+        public static bool NetConnection()
         {
             var profiles = Connectivity.ConnectionProfiles;
             var connectionProfiles = profiles as ConnectionProfile[] ?? profiles.ToArray();

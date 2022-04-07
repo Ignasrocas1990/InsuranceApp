@@ -37,8 +37,7 @@ namespace Insurance_app.SupportClasses
     /// </summary>
     public static class StaticOpt
     {
-        //public const string Url = "http://ec2-34-251-148-246.eu-west-1.compute.amazonaws.com/predict";
-        
+        //Note these Urls are going to be changed to AWS when submitted
         public const string PredictUrl = "https://testRESTapi.pythonanywhere.com/predict";
         public const string EmailUrl = "https://testRESTapi.pythonanywhere.com/notifyCustomer";
         public const string PassResetEmailUrl = "https://testRESTapi.pythonanywhere.com/resetPass";

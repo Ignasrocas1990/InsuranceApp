@@ -29,6 +29,10 @@ using Xamarin.Forms.Xaml;
 
 namespace Insurance_app.Pages.Popups
 {
+    /// <summary>
+    /// The class InitializeComponents GUI components and
+    /// the sets up the view as it appears/disappears
+    /// </summary>
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AddressPopup : Popup<Address>
     {
@@ -38,7 +42,7 @@ namespace Insurance_app.Pages.Popups
             BindingContext = new AddressViewModel(this,address);
         }
         /// <summary>
-        /// Address validation
+        /// Address validation and error string combining
         /// </summary>
         private async void Button_OnClicked(object sender, EventArgs e)
         {

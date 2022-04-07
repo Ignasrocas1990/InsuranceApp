@@ -46,8 +46,8 @@ namespace Insurance_app.Communications
         private static BleManager _bleManager;
         private readonly UserManager userManager;
         private bool start=true;
-        public string Email;
-        public string Pass;
+        public string Email="";
+        public string Pass="";
         private bool firstTime = true;
         private bool previousState;
         private bool currentState;
@@ -203,7 +203,7 @@ namespace Insurance_app.Communications
             {
                 try
                 {
-                    Console.WriteLine("sending message"+message);
+                    Console.WriteLine("sending message : "+message);
                     await chara.WriteAsync(Encoding.Default.GetBytes(message));
                     firstTime = false;
                     
@@ -310,14 +310,20 @@ namespace Insurance_app.Communications
             }
             return false;
         }
-        
+
         /// <summary>
         /// Turn on/off try to connect to bluetooth
         /// </summary>
         /// <param name="currentState">on/off ble state</param>
-        /// <returns>if turning on successful</returns>
-        public async Task<bool> ToggleMonitoring(bool currentState,bool previousState)
+        /// <param name="email">customer email string input</param>
+        /// <param name="password">customers password string input</param>
+        public async Task ToggleMonitoring(bool currentState,bool previousState,string email,string password)
         {
+            if (Email=="" || Pass=="")
+            {
+                Email = email;
+                Pass = password;
+            }
             isMonitoring = false;
             this.previousState = previousState;
             this.currentState = currentState;
@@ -334,11 +340,8 @@ namespace Insurance_app.Communications
             {
                 await MainThread.InvokeOnMainThreadAsync(NoBluetooth);
                 isMonitoring = false;
-                return false;
             }
             await ConnectToDevice();
-            return isMonitoring;
-            
         }
     }
 }

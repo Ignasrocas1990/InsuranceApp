@@ -45,7 +45,6 @@ namespace watch.Services
                 Log.Verbose(Tag,$"SQL Service dataPath : {databasePath}");
                 connection = new SQLiteConnection(databasePath);
                 connection.CreateTable<User>();
-                Log.Verbose(Tag, $"SQL AddUser, Is Connection closed?: {connection.Handle.IsClosed}");
             }
             catch (Exception e)
             {

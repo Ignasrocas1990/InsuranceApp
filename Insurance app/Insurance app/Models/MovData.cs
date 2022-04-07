@@ -33,14 +33,9 @@ namespace Insurance_app.Models
         [MapTo("_partition")] public string Partition { get; set; } = "CustomerPartition";
         public DateTimeOffset? DateTimeStamp { get; set; } = DateTimeOffset.Now;
         public bool? DelFlag { get; set; } = false;
-
-        [Indexed]
-        public string Owner { get; set; } = App.RealmApp.CurrentUser.Id;
-
+        [Indexed] public string Owner { get; set; } = App.RealmApp.CurrentUser.Id;
         public Acc AccData { get; set; }
         public string Type { get; set; }
-
-
     }
 
     public class Acc : EmbeddedObject

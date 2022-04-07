@@ -26,6 +26,10 @@ using Xamarin.Forms;
 
 namespace Insurance_app
 {
+    /// <summary>
+    /// checks the network connection
+    /// & passes the the main page to Log in page
+    /// </summary>
     public partial class App : Application
     {
         public static Realms.Sync.App RealmApp;
@@ -69,6 +73,10 @@ namespace Insurance_app
                 }
             };
         }
+        /// <summary>
+        /// Checks if device has wifi/cellular internet connection
+        /// </summary>
+        /// <returns>boolean value true when internet connection found</returns>
         public static bool NetConnection()
         {
             var profiles = Connectivity.ConnectionProfiles;

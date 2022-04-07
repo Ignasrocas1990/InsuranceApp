@@ -131,7 +131,9 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\icon.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Resources\mipmap-ldpi" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Insurance app\Insurance app.csproj">
       <Project>{A7CC88E7-0F34-4ACE-AF7C-B5DB8962AD42}</Project>

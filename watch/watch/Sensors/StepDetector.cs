@@ -76,8 +76,6 @@ namespace watch.Sensors
             velRing[velRingCounter % VelRingSize] = currentZ;
 
             var velocityEstimate = SensorFilter.Sum(velRing);
-           // Log.Verbose(TAG,$"{velocityEstimate} > {STEP_THRESHOLD} and {oldVelocityEstimate}<= {STEP_THRESHOLD} " +
-    //                        $"and {timeMSec - lastStepTimeNs} > {STEP_DELAY_MS}");
             if (velocityEstimate > StepThreshold && oldVelocityEstimate <= StepThreshold && (timeMSec - lastStepTimeNs > StepDelayMs))
             {
                 lastStepTimeNs = timeMSec;

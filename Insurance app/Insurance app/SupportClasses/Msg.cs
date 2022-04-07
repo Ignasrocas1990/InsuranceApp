@@ -50,8 +50,5 @@ namespace Insurance_app.SupportClasses
         /// <param name="msg">message string</param>
         public static async Task AlertError(string msg)=>
             await Application.Current.MainPage.DisplayAlert(Error, msg, Close);
-        
-        
-        
     }
 }

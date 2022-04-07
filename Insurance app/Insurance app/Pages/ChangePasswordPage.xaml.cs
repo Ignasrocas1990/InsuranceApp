@@ -27,6 +27,10 @@ using Xamarin.Forms.Xaml;
 
 namespace Insurance_app.Pages
 {
+    /// <summary>
+    /// The class InitializeComponents GUI components and
+    /// the sets up the view as it appears/disappears
+    /// </summary>
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ChangePasswordPage : LoadingPage
     {
@@ -35,7 +39,7 @@ namespace Insurance_app.Pages
             InitializeComponent();
             BindingContext = new ChangePassViewModel();
         }
-
+        
         protected override void OnAppearing()
         {
             base.OnAppearing();
@@ -52,7 +56,7 @@ namespace Insurance_app.Pages
             ((ChangePassViewModel)BindingContext).Dispose();
         }
         /// <summary>
-        /// user password validation
+        /// user password validation & error message combination
         /// </summary>
         private async void Button_OnClicked(object sender, EventArgs e)
         {

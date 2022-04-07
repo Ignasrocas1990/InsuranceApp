@@ -39,8 +39,6 @@ namespace watch.Ble
         public event EventHandler<BleEventArgs> DataWriteHandler;
         
 
-        public BleServerCallback() { }
-
         public override void OnCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset,
             BluetoothGattCharacteristic chara)
         {

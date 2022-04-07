@@ -138,9 +138,9 @@ namespace Insurance_app.ViewModels
                     var answer = await Application.Current.MainPage
                         .DisplayAlert("Email code", 
                             "Email Code is invalid", "Try again later", "Resend new Code");
+                    code = "";
                     if (!answer)
                     {
-                        code = "";
                         ConfirmEmailCommand.Execute(null);
                     }
                 }
@@ -156,6 +156,7 @@ namespace Insurance_app.ViewModels
                 Console.WriteLine(e);
             }
         }
+        
         /// <summary>
         /// get customers date of birth from transferred quote (from QuoteViewModel)
         /// </summary>

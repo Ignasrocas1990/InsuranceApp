@@ -110,7 +110,6 @@
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Plugin.BLE" Version="2.2.0-pre2" />
     <PackageReference Include="Realm" Version="10.9.0" />
     <PackageReference Include="Realm.Fody" Version="10.9.0">
       <PrivateAssets>all</PrivateAssets>

@@ -32,6 +32,10 @@ using Xamarin.Forms;
 
 namespace Insurance_app.Logic
 {
+    /// <summary>
+    /// Class used to connect between Database
+    /// and UI, while processing Claims
+    /// </summary>
     public class ClaimManager : IDisposable
     {
         /// <summary>

@@ -36,10 +36,7 @@ namespace Insurance_app.Models
         public bool? DelFlag { get; set; } = false;
         public DateTimeOffset? FinDate { get; set; } = null;
         public DateTimeOffset? StartDate { get; set; } = DateTimeOffset.Now.DateTime;
-
         public string Owner { get; set; } = App.RealmApp.CurrentUser.Id;
-
         [MapTo("_partition")] public string Partition { get; set; } = "CustomerPartition";
-        
     }
 }

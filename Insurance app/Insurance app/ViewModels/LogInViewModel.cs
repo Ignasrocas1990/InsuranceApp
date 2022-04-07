@@ -137,7 +137,8 @@ namespace Insurance_app.ViewModels
                 if (typeUser.Equals($"{UserType.Customer}"))
                 {
                     Application.Current.MainPage = new AppShell();
-                    await Shell.Current.GoToAsync($"//{nameof(HomePage)}?Email={email}&Pass={password}",true);
+                    string route = $"//{nameof(HomePage)}?Email={email}&Pass={password}";
+                    await Shell.Current.GoToAsync(route,true);
                 }
                 else if (typeUser.Equals($"{UserType.Client}"))
                 {
@@ -223,7 +224,7 @@ namespace Insurance_app.ViewModels
         }
         private async Task CleanDatabase()//TODO Remove when submitting
         {
-            //await userManager.CleanDatabase(App.RealmApp.CurrentUser);
+           // await userManager.CleanDatabase(App.RealmApp.CurrentUser);
         }
         
 

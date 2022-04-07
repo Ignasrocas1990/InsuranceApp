@@ -27,6 +27,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Util;
+using Realms.Sync;
 using watch.Ble;
 using watch.Sensors;
 
@@ -56,6 +57,8 @@ namespace watch.Services
         private List<string> dataToBeSaved;
         private bool savingData;
         private bool firstTime = true;
+        private User user;
+        
         /// <summary>
         /// Initialize the service, and if null re-log in (restart of monitoring)
         /// </summary>
@@ -76,6 +79,7 @@ namespace watch.Services
              MainActivity.mWakeLock.Acquire();
              if (intent is null)
              {
+                 Log.Verbose(Tag, "intent is null");
                  ReSetService();
              }
              return StartCommandResult.Sticky;
@@ -117,11 +121,12 @@ namespace watch.Services
             {
                     Log.Verbose(Tag,$"are we SavingData ? {savingData}");
                     if (!savingData) return;
-                    if (dataToBeSaved.Count > 0)
+                    if (dataToBeSaved.Count > 0 && RealmDb.RealmApp.CurrentUser != null )
                     {
                         var data = new List<string>(dataToBeSaved);
                         dataToBeSaved.Clear();
                         await RealmDb.GetInstance().AddMovData(data);
+                        Log.Verbose(Tag, "Saved Mov Data");
                     }
             }
             catch (Exception e)
@@ -152,7 +157,7 @@ namespace watch.Services
                 savingData = false;
                 Log.Verbose(Tag, "Stopping data gathering");
                 sensorManager.ToggleSensors("Disconnected");
-                sensorManager.SendDataCounter = -1; //TODO remove from here ------------------------------------------------
+                //sensorManager.SendDataCounter = -1; //TODO remove from here ------------------------------------------------
                 
             };
             //Server communications
@@ -206,12 +211,11 @@ namespace watch.Services
             Log.Verbose(Tag, "logged IN Completed =============================");
             savingData = true;
             sensorManager.ToggleSensors("Connected");
-
             SaveDataTimer.Start(); // Starts saving gathered data
             await RealmDb.GetInstance().UpdateSwitch(true);
 
-            sensorManager.SendDataCounter = 0; //TODO remove from here -------------------------------------##################
-            sensorManager.SendTestData(); //TODO remove from here -------------------------------------##################
+            //sensorManager.SendDataCounter = 0; //TODO remove from here -------------------------------------##################
+            //sensorManager.SendTestData(); //TODO remove from here -------------------------------------##################
         }
 
         /// <summary>

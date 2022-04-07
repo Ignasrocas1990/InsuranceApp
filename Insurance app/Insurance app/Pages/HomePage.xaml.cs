@@ -23,6 +23,10 @@ using Xamarin.Forms.Xaml;
 
 namespace Insurance_app.Pages
 {
+    /// <summary>
+    /// The class InitializeComponents GUI components and
+    /// the sets up the view as it appears/disappears
+    /// </summary>
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class HomePage : LoadingPage
     {

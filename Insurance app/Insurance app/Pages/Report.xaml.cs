@@ -22,6 +22,10 @@ using Xamarin.Forms.Xaml;
 
 namespace Insurance_app.Pages
 {
+    /// <summary>
+    /// The class InitializeComponents GUI components and
+    /// the sets up the view as it appears/disappears
+    /// </summary>
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Report : LoadingPage
     {
@@ -42,7 +46,10 @@ namespace Insurance_app.Pages
             base.OnAppearing();
             App.WasPaused = false;
         }
-
+        /// <summary>
+        /// When page disappearing checks if it was
+        /// paused and disposes the realm instance. 
+        /// </summary>
         protected override void OnDisappearing()
         {
             base.OnDisappearing();

@@ -1,5 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
+<!--Summary 
+    The GUI displays a Page with its input fields
+    That is validated by xamarin toolkit features
+    with the LogInViewModel help
+    which contains back up properties/ commands
+-->
 <pages:LoadingPage xmlns="http://xamarin.com/schemas/2014/forms"
                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                    xmlns:viewModels1="clr-namespace:Insurance_app.ViewModels"

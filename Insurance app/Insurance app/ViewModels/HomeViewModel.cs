@@ -80,7 +80,7 @@ namespace Insurance_app.ViewModels
                     WatchService.GetInstance().CurrentRewardId = reward.Id;
                     ResetView();
                     startUpSteps = Convert.ToDouble(reward.MovData.Count);
-                    startUpSteps = 6193.0;//TODO uncomment to show#####################################
+                    //startUpSteps = 6193.0;//TODO uncomment to show#####################################
                     SetUpView(startUpSteps);
 
                 }
@@ -95,7 +95,7 @@ namespace Insurance_app.ViewModels
             SetUpWaitDisplay = false;
             firstSetup = false;
         }
-        
+
         /// <summary>
         /// loops through number nearly recorded by Cloud Database
         /// </summary>
@@ -139,9 +139,10 @@ namespace Insurance_app.ViewModels
             //c += 1;
             //if (c % 2 == 0) return;
             Console.WriteLine("Start received clicked");
+            Console.WriteLine($" email is: {email}, password is: {password}");
             CircularWaitDisplay = true;
             WatchService.ToggleListener();
-            await bleManager.ToggleMonitoring(toggleState,previousState);//previousState is DB state
+            await bleManager.ToggleMonitoring(toggleState,previousState,email,password);//previousState is DB state
             CircularWaitDisplay = false;
         }
         /// <summary>
@@ -231,24 +232,18 @@ namespace Insurance_app.ViewModels
             set => SetProperty(ref maxReward, value);
         }
 
+        private string email;
         public string Email
         {
-            get => bleManager.Email;
-            set
-            {
-                if (bleManager!=null)
-                    bleManager.Email = Uri.UnescapeDataString(value ?? "");
-            }
+            get => email;
+            set => email = Uri.UnescapeDataString(value ?? "");
         }
-        
+
+        private string password;
         public string Pass
         {
-            get => bleManager.Pass;
-            set
-            {
-                if (bleManager!=null)
-                    bleManager.Pass = Uri.UnescapeDataString(value ?? "");
-            }
+            get => password;
+            set => password = Uri.UnescapeDataString(value ?? "");
         }
         private async Task Logout()
         {
