@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['acc_0',['Acc',['../class_insurance__app_1_1_models_1_1_acc.html',1,'Insurance_app.Models.Acc'],['../classwatch_1_1_models_1_1_acc.html',1,'watch.Models.Acc']]],
+  ['addclaim_1',['AddClaim',['../class_insurance__app_1_1_service_1_1_realm_db.html#a198c08f5ea3a14592315e74acaf7c969',1,'Insurance_app::Service::RealmDb']]],
+  ['addcustomer_2',['AddCustomer',['../class_insurance__app_1_1_logic_1_1_user_manager.html#ab680c1e51b3ecb47412725f793d34b76',1,'Insurance_app.Logic.UserManager.AddCustomer()'],['../class_insurance__app_1_1_service_1_1_realm_db.html#a721c2368e17e2e1c8af2dc6e4b25aacc',1,'Insurance_app.Service.RealmDb.AddCustomer()']]],
+  ['addmovdata_3',['AddMovData',['../classwatch_1_1_services_1_1_realm_db.html#a499d4bad96461cda0bfc1a00dc3b4f04',1,'watch::Services::RealmDb']]],
+  ['addpolicy_4',['AddPolicy',['../class_insurance__app_1_1_logic_1_1_policy_manager.html#afe151f609fe1424e8674c7cc4b66afea',1,'Insurance_app::Logic::PolicyManager']]],
+  ['address_5',['Address',['../class_insurance__app_1_1_models_1_1_address.html',1,'Insurance_app.Models.Address'],['../classwatch_1_1_models_1_1_address.html',1,'watch.Models.Address']]],
+  ['addresspopup_6',['AddressPopup',['../class_insurance__app_1_1_pages_1_1_popups_1_1_address_popup.html',1,'Insurance_app::Pages::Popups']]],
+  ['addressviewmodel_7',['AddressViewModel',['../class_insurance__app_1_1_view_models_1_1_popups_1_1_address_view_model.html',1,'Insurance_app::ViewModels::Popups']]],
+  ['adduser_8',['AddUser',['../classwatch_1_1_services_1_1_sql_service.html#a35f11919a3606373cfba850fc356b151',1,'watch::Services::SqlService']]],
+  ['allowupdate_9',['AllowUpdate',['../class_insurance__app_1_1_logic_1_1_policy_manager.html#ac2f20cc55ba95dc17a35f644aa109e9a',1,'Insurance_app::Logic::PolicyManager']]],
+  ['animation_10',['Animation',['../class_insurance__app_1_1_droid_1_1_resource_1_1_animation.html',1,'Insurance_app::Droid::Resource']]],
+  ['animator_11',['Animator',['../class_insurance__app_1_1_droid_1_1_resource_1_1_animator.html',1,'Insurance_app::Droid::Resource']]],
+  ['app_12',['App',['../class_insurance__app_1_1_app.html',1,'Insurance_app']]],
+  ['appdelegate_13',['AppDelegate',['../class_insurance__app_1_1i_o_s_1_1_app_delegate.html',1,'Insurance_app::iOS']]],
+  ['application_14',['Application',['../class_insurance__app_1_1i_o_s_1_1_application.html',1,'Insurance_app::iOS']]],
+  ['appshell_15',['AppShell',['../class_insurance__app_1_1_app_shell.html',1,'Insurance_app']]],
+  ['attribute_16',['Attribute',['../class_insurance__app_1_1_droid_1_1_resource_1_1_attribute.html',1,'Insurance_app::Droid::Resource']]]
+];

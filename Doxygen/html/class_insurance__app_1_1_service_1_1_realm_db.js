@@ -1,0 +1,26 @@
+var class_insurance__app_1_1_service_1_1_realm_db =
+[
+    [ "AddClaim", "class_insurance__app_1_1_service_1_1_realm_db.html#a198c08f5ea3a14592315e74acaf7c969", null ],
+    [ "AddCustomer", "class_insurance__app_1_1_service_1_1_realm_db.html#a721c2368e17e2e1c8af2dc6e4b25aacc", null ],
+    [ "CreateClient", "class_insurance__app_1_1_service_1_1_realm_db.html#ac22b00cc2275d544912f7c47f418cd88", null ],
+    [ "FindCustomer", "class_insurance__app_1_1_service_1_1_realm_db.html#a7e0c564135e28b7829b088bfcd88eca2", null ],
+    [ "FindPolicy", "class_insurance__app_1_1_service_1_1_realm_db.html#ad7210acccddefa0f4f99c1123562e96c", null ],
+    [ "FindReward", "class_insurance__app_1_1_service_1_1_realm_db.html#a63b7b0a7528e6c3c4dda30d8148663ad", null ],
+    [ "GetAllCustomer", "class_insurance__app_1_1_service_1_1_realm_db.html#a1c82c201c1dde61dd1574877b30b6c1b", null ],
+    [ "GetAllMovData", "class_insurance__app_1_1_service_1_1_realm_db.html#a83706fe326b0bee0c30318d643a85e0d", null ],
+    [ "GetAllOpenClaims", "class_insurance__app_1_1_service_1_1_realm_db.html#a996cbc9061c047ef657d83093ce9565c", null ],
+    [ "GetAllUpdatedPolicies", "class_insurance__app_1_1_service_1_1_realm_db.html#a663880b446f65b4b0716004ac04cb3ff", null ],
+    [ "GetClaims", "class_insurance__app_1_1_service_1_1_realm_db.html#a1c4b7873a4e6367198a643c63ae4e93a", null ],
+    [ "GetCustomersDob", "class_insurance__app_1_1_service_1_1_realm_db.html#ab4f00c3610b91f4b3d1fa96f46d3be02", null ],
+    [ "GetPreviousPolicies", "class_insurance__app_1_1_service_1_1_realm_db.html#acaab69d335f7a9bf3b46498b28feed6a", null ],
+    [ "GetTotalRewards", "class_insurance__app_1_1_service_1_1_realm_db.html#a178012f5c84039a52fe60c0ff3fa9d42", null ],
+    [ "IsClient", "class_insurance__app_1_1_service_1_1_realm_db.html#a23e3e7d2969d796792918a37c2e22f5c", null ],
+    [ "ResolveClaim", "class_insurance__app_1_1_service_1_1_realm_db.html#ab9b21326ffd602ac28bb9964a0e6fbf4", null ],
+    [ "ResolvePolicyUpdate", "class_insurance__app_1_1_service_1_1_realm_db.html#a450bef8f4a42e81a61bdc0aae86a691c", null ],
+    [ "UpdateCustomer", "class_insurance__app_1_1_service_1_1_realm_db.html#a470027d4928045037a7741525989d76d", null ],
+    [ "UpdateCustomerSwitch", "class_insurance__app_1_1_service_1_1_realm_db.html#a4ed1a286fec5a7b5bfed25f10002e51c", null ],
+    [ "UpdatePolicy", "class_insurance__app_1_1_service_1_1_realm_db.html#a26432166129e921f32f20d9c3f3f1963", null ],
+    [ "UpdatePolicyPrice", "class_insurance__app_1_1_service_1_1_realm_db.html#add1a5d05e647e6ae97a8ddef8c01dde9", null ],
+    [ "UpdateRewardsWithOverdraft", "class_insurance__app_1_1_service_1_1_realm_db.html#a5d58cb2cb73dc40a0bc1fcbdbcfadb37", null ],
+    [ "UseRewards", "class_insurance__app_1_1_service_1_1_realm_db.html#a39469efd06ef08e022fcf62d665a3d54", null ]
+];

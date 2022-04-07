@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['changepassviewmodel_0',['ChangePassViewModel',['../class_insurance__app_1_1_view_models_1_1_change_pass_view_model.html',1,'Insurance_app::ViewModels']]],
+  ['changepasswordpage_1',['ChangePasswordPage',['../class_insurance__app_1_1_pages_1_1_change_password_page.html',1,'Insurance_app::Pages']]],
+  ['claim_2',['Claim',['../class_insurance__app_1_1_models_1_1_claim.html',1,'Insurance_app.Models.Claim'],['../classwatch_1_1_models_1_1_claim.html',1,'watch.Models.Claim']]],
+  ['claimmanager_3',['ClaimManager',['../class_insurance__app_1_1_logic_1_1_claim_manager.html',1,'Insurance_app::Logic']]],
+  ['claimpage_4',['ClaimPage',['../class_insurance__app_1_1_pages_1_1_claim_page.html',1,'Insurance_app::Pages']]],
+  ['claimviewmodel_5',['ClaimViewModel',['../class_insurance__app_1_1_view_models_1_1_claim_view_model.html',1,'Insurance_app::ViewModels']]],
+  ['client_6',['Client',['../class_insurance__app_1_1_models_1_1_client.html',1,'Insurance_app::Models']]],
+  ['clientmainpage_7',['ClientMainPage',['../class_insurance__app_1_1_pages_1_1_client_pages_1_1_client_main_page.html',1,'Insurance_app::Pages::ClientPages']]],
+  ['clientmainviewmodel_8',['ClientMainViewModel',['../class_insurance__app_1_1_view_models_1_1_client_view_models_1_1_client_main_view_model.html',1,'Insurance_app::ViewModels::ClientViewModels']]],
+  ['clientoclaimsviewmodel_9',['ClientOClaimsViewModel',['../class_insurance__app_1_1_view_models_1_1_client_view_models_1_1_client_o_claims_view_model.html',1,'Insurance_app::ViewModels::ClientViewModels']]],
+  ['clientopenclaims_10',['ClientOpenClaims',['../class_insurance__app_1_1_pages_1_1_client_pages_1_1_client_open_claims.html',1,'Insurance_app::Pages::ClientPages']]],
+  ['clientregistration_11',['ClientRegistration',['../class_insurance__app_1_1_pages_1_1_client_pages_1_1_client_registration.html',1,'Insurance_app::Pages::ClientPages']]],
+  ['clientregviewmodel_12',['ClientRegViewModel',['../class_insurance__app_1_1_view_models_1_1_client_view_models_1_1_client_reg_view_model.html',1,'Insurance_app::ViewModels::ClientViewModels']]],
+  ['clientshell_13',['ClientShell',['../class_insurance__app_1_1_client_shell.html',1,'Insurance_app']]],
+  ['color_14',['Color',['../class_insurance__app_1_1_droid_1_1_resource_1_1_color.html',1,'Insurance_app::Droid::Resource']]],
+  ['connecteventargs_15',['ConnectEventArgs',['../classwatch_1_1_ble_1_1_connect_event_args.html',1,'watch::Ble']]],
+  ['customer_16',['Customer',['../class_insurance__app_1_1_models_1_1_customer.html',1,'Insurance_app.Models.Customer'],['../classwatch_1_1_models_1_1_customer.html',1,'watch.Models.Customer']]]
+];
