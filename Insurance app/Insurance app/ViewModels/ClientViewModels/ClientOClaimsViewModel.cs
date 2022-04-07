@@ -42,7 +42,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
         {
             claimManager = new ClaimManager();
             Claims = new ObservableRangeCollection<Claim>();
-            ClaimSelectedCommand = new AsyncCommand<Claim>(SelectedClaim);
+            ClaimSelectedCommand = new AsyncCommand<object>(SelectedClaim);
         }
         /// <summary>
         /// Loads in data using manager classes via database
@@ -64,16 +64,17 @@ namespace Insurance_app.ViewModels.ClientViewModels
             PolicyInVisibleDisplay = !ListVisibleDisplay;
             SetUpWaitDisplay = false;
         }
+
         /// <summary>
         /// Navigates to Claims page after client clicks on list view claim
         /// with parameter
         /// </summary>
-        /// <param name="claim">Selected Claim Instance</param>
-        private async Task SelectedClaim(Claim claim)
+        /// <param name="args">Selected Claim Instance as object</param>
+        private async Task SelectedClaim(object args)
         {
-            if (claim is null) return;
-            Console.WriteLine(claim.Owner);
-            var route = $"//{nameof(ClaimPage)}?CustomerId={claim.Owner}";
+            if (args is not Claim claim) return;
+            var route = $"//{nameof(ClaimPage)}?TransferredCustomerId={claim.Owner}";
+            SelectedItem = null;
             await Shell.Current.GoToAsync(route);
         }
         //------------------------   Bindable properties ----------------------
@@ -103,6 +104,13 @@ namespace Insurance_app.ViewModels.ClientViewModels
         {
             get => policyVisible;
             set => SetProperty(ref policyVisible, value);
+        }
+        
+        private Claim selectedClaim;
+        public Claim SelectedItem
+        {
+            get => selectedClaim;
+            set => SetProperty(ref selectedClaim, value);
         }
 
         public void Dispose()

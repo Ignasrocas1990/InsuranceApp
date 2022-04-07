@@ -697,13 +697,14 @@ namespace Insurance_app.Service
                         CompanyCode = code
                     });
                 });
+                _realm.Dispose();
                 return true;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
-
+            _realm.Dispose();
             return false;
         }
         /// <summary>

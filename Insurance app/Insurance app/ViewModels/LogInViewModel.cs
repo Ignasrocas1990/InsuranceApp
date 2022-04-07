@@ -224,7 +224,7 @@ namespace Insurance_app.ViewModels
         }
         private async Task CleanDatabase()//TODO Remove when submitting
         {
-           // await userManager.CleanDatabase(App.RealmApp.CurrentUser);
+            //await userManager.CleanDatabase(App.RealmApp.CurrentUser);
         }
         
 

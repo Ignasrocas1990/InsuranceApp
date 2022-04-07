@@ -24,6 +24,7 @@
 
         <ListView Style="{StaticResource ListView}" CachingStrategy="RecycleElement"
                   IsVisible="{Binding ListVisibleDisplay}"
+                  SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                   ItemsSource="{Binding Claims}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Claim">

@@ -68,13 +68,7 @@ namespace Insurance_app.ViewModels.ClientViewModels
                     {
                         throw new Exception("Registration failed");
                     }
-                    await App.RealmApp.RemoveUserAsync(App.RealmApp.CurrentUser);
-                    if (App.RealmApp.CurrentUser !=null)
-                    {
-                        await App.RealmApp.CurrentUser.LogOutAsync();
-                    }
-                    userManager.Dispose();
-                    
+                    await StaticOpt.Logout();
                     await Msg.Alert("Successfully registered");
                     
                     await Application.Current.MainPage.Navigation.PopToRootAsync();

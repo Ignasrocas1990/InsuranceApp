@@ -89,18 +89,19 @@ namespace Insurance_app.ViewModels
         /// </summary>
         public async Task Setup()
         {
-            PrevPoliciesIsVisible = false;
-            var tempUpdate = false;
+            var tempUpdate =
+                ClientActionNeeded=
+                    PrevPoliciesIsVisible= false;
             try
             {
                 SetUpWaitDisplay = true;
                 UnderReviewDisplay = false;
                 InfoIsVisible = false;
-                if (TransferredCustomerId == "")
+                if (TransferredCustomerId == "")//customer
                 {
                     customerId = App.RealmApp.CurrentUser.Id;
                 }
-                else if(TransferredCustomerId != App.RealmApp.CurrentUser.Id)
+                else if(TransferredCustomerId != App.RealmApp.CurrentUser.Id)//client
                 {
                     customerId = TransferredCustomerId;
                     await policyManager.GetPreviousPolicies(customerId,App.RealmApp.CurrentUser);
@@ -117,9 +118,9 @@ namespace Insurance_app.ViewModels
             UnderReviewDisplay = tempUpdate;
             InfoIsVisible = !tempUpdate;
             PrevPoliciesIsVisible = policyManager.PreviousPolicies.Count>0 ;
-            if (customerId != App.RealmApp.CurrentUser.Id && UnderReviewDisplay)
+            if (customerId != App.RealmApp.CurrentUser.Id)//if not customer 
             {
-                ClientActionNeeded = true;
+                ClientActionNeeded = tempUpdate;
             }
         }
         /// <summary>
@@ -401,7 +402,7 @@ namespace Insurance_app.ViewModels
             set => SetProperty(ref infoIsVisible, value);
         }
 
-        private bool isClient;
+        private bool isClient=false;
         public bool ClientActionNeeded
         {
             get => isClient;
