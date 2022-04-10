@@ -37,6 +37,16 @@ namespace Insurance_app.SupportClasses
     /// </summary>
     public static class StaticOpt
     {
+        //TODO BEFORE SUBMITTING, START AWS INSTANCE AND REPLACE THE LINKS
+        /*
+        public const string PredictUrl = "http://#######/predict"
+        public const string EmailUrl = "http://########/notifyCustomer";
+        public const string PassResetEmailUrl = "http://#######/resetPass";
+        public const string ClaimEmailUrl = "http://##########/ClaimNotifyCustomer";
+        public const string CompanyCodeUrl = "http://#########/CompanyCode";
+        public const string EmailConfirm = "http://###########/confirmationEmail";
+        */
+        
         //Note these Urls are going to be changed to AWS when submitted
         public const string PredictUrl = "https://testRESTapi.pythonanywhere.com/predict";
         public const string EmailUrl = "https://testRESTapi.pythonanywhere.com/notifyCustomer";
