@@ -97,7 +97,6 @@ namespace Insurance_app.Service
             {
                 Console.WriteLine(exception);
             }
-            Console.WriteLine("steps invoked");
             StepCheckedEvent.Invoke(this,new StepArgs(){Steps=steps});
         }
         private static async Task<string> GetPartition() => (await App.RealmApp.CurrentUser.Functions.CallAsync("getPartition")).AsString;

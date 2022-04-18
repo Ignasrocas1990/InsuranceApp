@@ -39,6 +39,7 @@ namespace watch.Services
     {
         private const string MyRealmAppId = "application-1-luybv";
         private static RealmDb _db = null;
+        private int stepsNeeded = 5;
         private const string Partition = "CustomerPartition";
         public static App RealmApp;
         private const string Tag = "mono-stdout";
@@ -141,11 +142,11 @@ namespace watch.Services
                     var currentReward = customer.Reward.FirstOrDefault(r => r.FinDate == null && 
                                                                             r.DelFlag == false);
                     
-                    if (currentReward != null && currentReward.MovData.Count <= 10000)
+                    if (currentReward != null && currentReward.MovData.Count <= stepsNeeded)
                     {
                         foreach (var d in movDataList)
                             currentReward.MovData.Add(d);
-                        if (currentReward.MovData.Count >= 10000)
+                        if (currentReward.MovData.Count >= stepsNeeded)
                         {
                             currentReward.FinDate = currentDate;
                         }
@@ -264,7 +265,11 @@ namespace watch.Services
             {
                 Log.Verbose(Tag,$"GetRealm,realm error : {e.Message}");
                 Log.Verbose(Tag,$"GetRealm, inner exception : {e.InnerException}");
-                if (!NetConnection() || RealmApp.CurrentUser == null) return null;
+                if (!NetConnection() || RealmApp.CurrentUser == null)
+                {
+                    Log.Verbose(Tag, $"network connection is not on{!NetConnection()}");
+                    Log.Verbose(Tag, $"Realm is null ? {RealmApp.CurrentUser == null}");
+                }
                 Log.Verbose(Tag,$"Internet connection available/resting the user...");
                 return await ResetLog();
             }

@@ -49,6 +49,8 @@ namespace Insurance_app.ViewModels
         private bool previousState;
         private int c = 0;
         private double startUpSteps;
+        private float rewardCost=0;
+        private float totalRewardCount = 0;
         public ICommand SwitchCommand { get; }
         public ICommand LogoutCommand { get; }
         
@@ -78,11 +80,11 @@ namespace Insurance_app.ViewModels
                 else
                 {
                     WatchService.GetInstance().CurrentRewardId = reward.Id;
+                    if (reward.Cost != null) rewardCost = reward.Cost.Value;
                     ResetView();
                     startUpSteps = Convert.ToDouble(reward.MovData.Count);
-                    //startUpSteps = 6193.0;//TODO uncomment to show#####################################
+                    //startUpSteps = 6193.0;//TODO uncomment to show##################################### REMOVE when submitting
                     SetUpView(startUpSteps);
-
                 }
                 await SetUpEarningsDisplay();
                 bleManager.ToggleSwitch += (o, e) => ToggleStateDisplay = false;
@@ -103,7 +105,8 @@ namespace Insurance_app.ViewModels
         /// <param name="e">number of steps that is recorded by the cloud db </param>
         private void UpdateSteps(object sender, StepArgs e)
         {
-            while ((StaticOpt.StepNeeded-ProgressBarDisplay) < e.Steps)
+            Console.WriteLine($" current setups:{StaticOpt.StepNeeded-ProgressBarDisplay}, old steps:{e.Steps}");
+            while (StaticOpt.StepNeeded-ProgressBarDisplay < e.Steps)
             {
                 Step();
             }
@@ -115,10 +118,9 @@ namespace Insurance_app.ViewModels
         /// </summary>
         private async Task SetUpEarningsDisplay()
         {
-               var (toggle, totalSum) = await rewardManager
+            (var toggle, totalRewardCount) = await rewardManager
                    .GetTotalRewards(user,user.Id);
-               
-               TotalEarnedDisplay = totalSum.ToString("F");
+               TotalEarnedDisplay = totalRewardCount.ToString("F");
                if (firstSetup)
                {
                    onTime = DateTimeOffset.Now;
@@ -180,7 +182,7 @@ namespace Insurance_app.ViewModels
                 CircularWaitDisplay = true;
                 ProgressBarDisplay = StaticOpt.StepNeeded;
                 StepsDisplayLabel = 0;
-                //await SetUpEarningsDisplay();
+                TotalEarnedDisplay = (totalRewardCount+rewardCost).ToString("F");
                 CircularWaitDisplay = false;
             }
         }
@@ -240,6 +242,7 @@ namespace Insurance_app.ViewModels
         }
 
         private string password;
+
         public string Pass
         {
             get => password;
