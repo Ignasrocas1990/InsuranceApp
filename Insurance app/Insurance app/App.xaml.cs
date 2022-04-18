@@ -58,15 +58,6 @@ namespace Insurance_app
 
             Connectivity.ConnectivityChanged += (s, e) =>
             {
-                if (!NetConnection())
-                {
-                    if (RealmApp.CurrentUser != null)
-                    {
-                        RealmApp.RemoveUserAsync(RealmApp.CurrentUser);
-                        disconnected = true;
-                        MainPage = new NavigationPage(new LogInPage());
-                    }
-                }
                 if (disconnected && NetConnection())
                 {
                     disconnected = false;

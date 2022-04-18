@@ -551,6 +551,7 @@ namespace Insurance_app.Service
                 _realm.Write(() =>
                 {
                     policy.PayedPrice = price;
+                    policy.ExpiryDate = DateTimeOffset.Now.AddMonths(1);
                 });
             }
             catch (Exception e)

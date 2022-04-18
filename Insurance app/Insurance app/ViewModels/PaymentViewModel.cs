@@ -143,6 +143,7 @@ namespace Insurance_app.ViewModels {
         if (!await PaymentService.PaymentAsync(number, 
               int.Parse(year), int.Parse(month), verificationCode, zip, payPrice, name, email))
             throw new Exception("payment failed");
+        
         var user = App.RealmApp.CurrentUser;
         switch (IsCheckedDisplay)
         {
@@ -156,7 +157,6 @@ namespace Insurance_app.ViewModels {
 
         var currentPolicy = policyManager.FindUnpayedPolicy(customer);
         if (currentPolicy is null) throw new Exception("Current policy is null");
-          
         await policyManager.UpdatePolicyPrice(currentPolicy,user,payPrice);
         
         // can send an invoice also here... (use customer email etc...s)

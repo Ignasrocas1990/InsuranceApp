@@ -149,35 +149,36 @@ namespace Insurance_app.Logic
         }
 
         /// <summary>
-        /// Finds type of user that is trying to log in
+        /// Finds type of user that is trying to log in.
+        /// If customer is expired updates their policy
         /// </summary>
         /// <param name="user">Realm user instance</param>
-        /// <returns>Customer or UnpaidCustomer or Current policy id string</returns>
+        /// <returns>Client/Customer/UnpaidCustomer/OldCustomer/ExpiredCustomer string</returns>
         public async Task<string> FindTypeUser(User user)
         {
             try
             {
-                var now = DateTimeOffset.Now;
                 var customer = await realmDb.FindCustomer(user,user.Id);
 
                 if (customer!=null)
                 {
-                    // expired
                     var currentPolicy= FindLatestPolicy(customer);
-                    if (currentPolicy != null && (Convert.ToDouble(currentPolicy.PayedPrice) < 1) 
-                        || currentPolicy.ExpiryDate.Value.AddMonths(1) <= now )
+                    if (currentPolicy is null)
                     {
-                        return "UnpaidCustomer";
+                        return "";
                     }
-                    if (currentPolicy != null && currentPolicy.ExpiryDate.Value.AddMonths(2) < now)
+                    Console.WriteLine(currentPolicy.PayedPrice.ToString());
+                    var typeCustomer = TypeOfCustomer(currentPolicy);
+                    /*
+                    if (typeCustomer.Equals($"{UserType.ExpiredCustomer}"))
                     {
-                        return UserType.OldCustomer.ToString();
-                    }
-                    return "Customer";
+                        await realmDb.ChangePolicy(user,currentPolicy);
+                    }*/
+                    return typeCustomer;
                 }
                 if (await realmDb.IsClient(user))
                 {
-                    return "Client";
+                    return  $"{UserType.Client}";
                 }
             }
             catch (Exception e)
@@ -185,6 +186,21 @@ namespace Insurance_app.Logic
                 Console.WriteLine(e);
             }
             return "";
+        }
+        
+        /// <summary>
+        /// Checks current customer Policy and returns
+        /// if customer is expired/unpaid/old/normal
+        /// </summary>
+        /// <param name="currentPolicy">Latest found customer policy</param>
+        /// <returns> Type of customer</returns>
+        private string TypeOfCustomer(Policy currentPolicy)
+        {
+            var now = DateTimeOffset.Now;
+            var expiredDate = currentPolicy.ExpiryDate.Value;
+            if (Convert.ToDouble(currentPolicy.PayedPrice) < 1) return $"{UserType.UnpaidCustomer}";
+            if (expiredDate < now.AddMonths(-2)) return $"{UserType.OldCustomer}";
+            return expiredDate < now ? $"{UserType.ExpiredCustomer}" : $"{UserType.Customer}";
         }
 
         /// <summary>

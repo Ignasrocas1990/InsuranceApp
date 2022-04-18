@@ -144,9 +144,15 @@ namespace Insurance_app.ViewModels
                 {
                     Application.Current.MainPage = new ClientShell();
                     await Shell.Current.GoToAsync($"//{nameof(ClientMainPage)}",true);
-                }else if (typeUser.Equals($"{UserType.UnpaidCustomer}"))
+                }
+                else if (typeUser.Equals($"{UserType.UnpaidCustomer}"))
                 {
                     await Msg.Alert( "Seems like you haven't payed yet.\nDirecting to payment page...");
+                    await Application.Current.MainPage.Navigation.PushAsync(new PaymentPage(null));
+                }
+                else if (typeUser.Equals($"{UserType.ExpiredCustomer}"))
+                {
+                    await Msg.Alert( "Seems like your policy has expired.\nDirecting to payment page...");
                     await Application.Current.MainPage.Navigation.PushAsync(new PaymentPage(null));
                 }
                 else if(typeUser.Equals(""))

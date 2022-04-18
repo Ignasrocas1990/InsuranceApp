@@ -202,11 +202,19 @@ namespace Insurance_app.Logic
         /// <summary>
         /// Finds policy that is unpaved
         /// </summary>
-        /// <param name="customer">Current customer</param>
-        /// <returns>Un-payed policy instance</returns>
+        /// <param name="customer">Current customer instance</param>
+        /// <returns>Un-payed or expired policy instance</returns>
         public Policy FindUnpayedPolicy(Customer customer)
         {
-            return customer.Policy.FirstOrDefault(p => p.PayedPrice == 0 && p.DelFlag == false);
+            var policy = customer.Policy.FirstOrDefault(p => p.PayedPrice == 0 && p.DelFlag == false);
+            if (policy is null)
+            {
+                return customer.Policy
+                    .Where(p => p.DelFlag == false)
+                    .OrderByDescending(p => p.ExpiryDate)
+                    .FirstOrDefault();
+            }
+            return policy;
         }
     }
 }
