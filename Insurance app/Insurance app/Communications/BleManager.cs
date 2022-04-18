@@ -46,8 +46,8 @@ namespace Insurance_app.Communications
         private static BleManager _bleManager;
         private readonly UserManager userManager;
         private bool start=true;
-        public string Email="";
-        public string Pass="";
+        private string email="";
+        private string pass="";
         private bool firstTime = true;
         private bool previousState;
         private bool currentState;
@@ -172,7 +172,7 @@ namespace Insurance_app.Communications
               if (start)
               {
                   isMonitoring = true;
-                  await WriteToCharacteristic($"{App.RealmApp.CurrentUser.Id}|{Email}|{Pass}");
+                  await WriteToCharacteristic($"{App.RealmApp.CurrentUser.Id}|{email}|{pass}");
                   WatchService.StartListener();
                   
               }
@@ -315,14 +315,14 @@ namespace Insurance_app.Communications
         /// Turn on/off try to connect to bluetooth
         /// </summary>
         /// <param name="currentState">on/off ble state</param>
-        /// <param name="email">customer email string input</param>
+        /// <param name="sentEmail">customer email string input</param>
         /// <param name="password">customers password string input</param>
-        public async Task ToggleMonitoring(bool currentState,bool previousState,string email,string password)
+        public async Task ToggleMonitoring(bool currentState,bool previousState,string sentEmail,string password)
         {
-            if (Email=="" || Pass=="")
+            if (email.Length<5 || pass.Length<5)
             {
-                Email = email;
-                Pass = password;
+                email = sentEmail;
+                pass = password;
             }
             isMonitoring = false;
             this.previousState = previousState;

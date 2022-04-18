@@ -63,6 +63,7 @@ namespace Insurance_app
                     disconnected = false;
                 }
             };
+            
         }
         /// <summary>
         /// Checks if device has wifi/cellular internet connection
@@ -81,7 +82,6 @@ namespace Insurance_app
         }
         protected override void OnSleep() { }
         protected override void OnResume() { }
-       
     }
     
 }

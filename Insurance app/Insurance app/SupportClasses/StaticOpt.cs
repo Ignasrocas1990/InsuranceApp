@@ -57,6 +57,7 @@ namespace Insurance_app.SupportClasses
         
         public static readonly string MyRealmAppId = "application-1-luybv";
         public const double StepNeeded = 10;
+        public static readonly double PercentPerStep = Math.Round(1 / (StepNeeded / 100),2);
         public const int MaxResponseTime = 120;
         
         public static readonly SKColor White = c.WhiteSmoke;

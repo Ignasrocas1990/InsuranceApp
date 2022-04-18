@@ -18,6 +18,8 @@
            Purpose : 4th year project
  */
 
+using System;
+using Insurance_app.SupportClasses;
 using Insurance_app.ViewModels;
 using Xamarin.Forms.Xaml;
 

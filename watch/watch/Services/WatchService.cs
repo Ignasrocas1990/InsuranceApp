@@ -232,7 +232,7 @@ namespace watch.Services
                 if (firstTime)
                 {
                     var user = localDb.FindUser();
-                    if (user is null)
+                    if (user is null && splitData.Length > 1)
                     {
                         localDb.AddUser(splitData[0], splitData[1], splitData[2]);
                     }

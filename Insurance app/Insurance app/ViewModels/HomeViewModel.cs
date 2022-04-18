@@ -41,16 +41,12 @@ namespace Insurance_app.ViewModels
 
         private readonly BleManager bleManager;
         private readonly RewardManager rewardManager;
-        private DateTimeOffset onTime;
-        private double stepsDisplayValue = 0;
-        private double currentProgressBars = 0.0;
-        private const double Max = 0;
+        private double currentProgressBars;
         private bool firstSetup = true;
         private bool previousState;
-        private int c = 0;
         private double startUpSteps;
-        private float rewardCost=0;
-        private float totalRewardCount = 0;
+        private float rewardCost;
+        private float totalRewardCount;
         public ICommand SwitchCommand { get; }
         public ICommand LogoutCommand { get; }
         
@@ -81,10 +77,12 @@ namespace Insurance_app.ViewModels
                 {
                     WatchService.GetInstance().CurrentRewardId = reward.Id;
                     if (reward.Cost != null) rewardCost = reward.Cost.Value;
-                    ResetView();
+                    ProgressBarDisplay = 0;
                     startUpSteps = Convert.ToDouble(reward.MovData.Count);
+                    
                     //startUpSteps = 6193.0;//TODO uncomment to show##################################### REMOVE when submitting
-                    SetUpView(startUpSteps);
+                    
+                    ProgressBarDisplay = StaticOpt.PercentPerStep*startUpSteps;
                 }
                 await SetUpEarningsDisplay();
                 bleManager.ToggleSwitch += (o, e) => ToggleStateDisplay = false;
@@ -105,11 +103,21 @@ namespace Insurance_app.ViewModels
         /// <param name="e">number of steps that is recorded by the cloud db </param>
         private void UpdateSteps(object sender, StepArgs e)
         {
-            Console.WriteLine($" current setups:{StaticOpt.StepNeeded-ProgressBarDisplay}, old steps:{e.Steps}");
-            while (StaticOpt.StepNeeded-ProgressBarDisplay < e.Steps)
+            Console.WriteLine($" old setups:{ProgressBarDisplay}, new steps:{StaticOpt.PercentPerStep*e.Steps}");
+            if (e.Steps == -1)
             {
-                Step();
+                ProgressBarDisplay = 0;
+                totalRewardCount +=rewardCost;
+                TotalEarnedDisplay = totalRewardCount.ToString("F");
             }
+            else
+            {
+                while (ProgressBarDisplay < StaticOpt.PercentPerStep*e.Steps)
+                {
+                    Step();
+                }
+            }
+            
         }
 
         /// <summary>
@@ -123,7 +131,6 @@ namespace Insurance_app.ViewModels
                TotalEarnedDisplay = totalRewardCount.ToString("F");
                if (firstSetup)
                {
-                   onTime = DateTimeOffset.Now;
                    previousState = toggle.Switch;
                    if (toggle.Switch)
                    {
@@ -138,8 +145,6 @@ namespace Insurance_app.ViewModels
         /// </summary>
         private async Task StartDataReceive()
         {
-            //c += 1;
-            //if (c % 2 == 0) return;
             Console.WriteLine("Start received clicked");
             Console.WriteLine($" email is: {email}, password is: {password}");
             CircularWaitDisplay = true;
@@ -147,43 +152,19 @@ namespace Insurance_app.ViewModels
             await bleManager.ToggleMonitoring(toggleState,previousState,email,password);//previousState is DB state
             CircularWaitDisplay = false;
         }
-        /// <summary>
-        /// Resets circular progress bar view
-        /// </summary>
-        private void ResetView()
-        {
-            ProgressBarDisplay = StaticOpt.StepNeeded;
-            StepsDisplayLabel = 0;
-            stepsDisplayValue = 0;
-        }
-        /// <summary>
-        /// initializes the circular progress bar view
-        /// </summary>
-        /// <param name="steps">number of steps double</param>
-        private void SetUpView(double steps)
-        {
-            ProgressBarDisplay = StaticOpt.StepNeeded - steps;
-            StepsDisplayLabel = steps;
-            stepsDisplayValue = steps;
-            
-            
-            
-        }
+
         /// <summary>
         /// Increments the progress bar view and the label display
         /// </summary>
        // private async Task Step()
         private void Step()
         {
-            ProgressBarDisplay--;
-            StepsDisplayLabel=stepsDisplayValue+1;
-            if (ProgressBarDisplay <= Max)
+            ProgressBarDisplay+=StaticOpt.PercentPerStep;
+            if (ProgressBarDisplay == 100)
             {
-                CircularWaitDisplay = true;
-                ProgressBarDisplay = StaticOpt.StepNeeded;
-                StepsDisplayLabel = 0;
-                TotalEarnedDisplay = (totalRewardCount+rewardCost).ToString("F");
-                CircularWaitDisplay = false;
+                ProgressBarDisplay = 0;
+                totalRewardCount +=rewardCost;
+                TotalEarnedDisplay = totalRewardCount.ToString("F");
             }
         }
         //--------------------- Bindable Properties below ---------------------------------
@@ -198,11 +179,6 @@ namespace Insurance_app.ViewModels
         {
             get => currentProgressBars;
             set =>  SetProperty(ref currentProgressBars, value);
-        }
-        public double StepsDisplayLabel //the percentages label in the middle
-        {
-            get => stepsDisplayValue / StaticOpt.StepNeeded * 100;
-            set => SetProperty(ref  stepsDisplayValue, value);
         }
 
         private bool circularWait;
@@ -233,7 +209,6 @@ namespace Insurance_app.ViewModels
             get => maxReward;
             set => SetProperty(ref maxReward, value);
         }
-
         private string email;
         public string Email
         {
@@ -248,11 +223,15 @@ namespace Insurance_app.ViewModels
             get => password;
             set => password = Uri.UnescapeDataString(value ?? "");
         }
+        /// <summary>
+        /// Log's out the current user
+        /// </summary>
         private async Task Logout()
         {
-          CircularWaitDisplay = true;
-          await StaticOpt.Logout();
-          CircularWaitDisplay = false;
+            CircularWaitDisplay = true;
+            rewardManager.Dispose();
+            await StaticOpt.Logout();
+            CircularWaitDisplay = false;
         }
 
         public void Dispose()

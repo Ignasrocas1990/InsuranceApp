@@ -12,6 +12,7 @@
                    xmlns:supportClasses1="clr-namespace:Insurance_app.SupportClasses"
                    xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
                    xmlns:pages="clr-namespace:Insurance_app.Pages;assembly=Insurance app"
+                   xmlns:controls="clr-namespace:Xamarin.Forms.Controls;assembly=CircularProgressBar"
                    Title="Home Page"
                    BackgroundColor="{StaticResource BackColor}"
                    RootViewModel="{Binding .}"
@@ -19,12 +20,6 @@
                    x:DataType="viewModels:HomeViewModel"
                    Shell.PresentationMode="Modal"
                    x:Class="Insurance_app.Pages.HomePage">
-    
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <supportClasses1:ValueProgressBarConverter x:Key="ValueProgressBar" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
     
     <pages:LoadingPage.ToolbarItems>
         <ToolbarItem Text="LogOut" Command="{Binding LogoutCommand}"/>
@@ -43,21 +38,16 @@
         <Grid  VerticalOptions="CenterAndExpand">
             <StackLayout VerticalOptions="Center" HorizontalOptions="Center" IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}">
                 <Label Style="{StaticResource NormalLabel}"
-                       Text="{Binding StepsDisplayLabel, StringFormat='{0}% Completed'}"  />
+                       Text="{Binding ProgressBarDisplay, StringFormat='{0}% Completed'}"  />
             </StackLayout>
 
 
             <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-                <plugin:ProgressRing HeightRequest="150" RingBaseColor="{StaticResource StrongColor}" RingProgressColor="LightGray" 
-                                      Scale="2" WidthRequest="150"  RingThickness="10"
-                                      IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"
-                                      Progress="{Binding ProgressBarDisplay 
-                                      , Converter={StaticResource ValueProgressBar},Mode=TwoWay}"/>
+                <controls:CircularProgressBar WidthRequest="400" HeightRequest="400" Progress="{Binding ProgressBarDisplay}" 
+                                              Color="{StaticResource StrongColor}" Stroke="70"
+                                              IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}"/>
             </StackLayout>
-            
-
         </Grid>
-
         <StackLayout HorizontalOptions="Center" Padding=" 0,10,0,10">
             <Label Text="Rewards have been maxed out this month. Good Job!" IsVisible="{Binding MaxRewardIsVisible}"/>
             <Label Text="{Binding TotalEarnedDisplay}" Style="{StaticResource NormalLabel}"

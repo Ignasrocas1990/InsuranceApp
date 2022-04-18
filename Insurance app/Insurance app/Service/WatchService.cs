@@ -19,6 +19,7 @@
  */
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using Insurance_app.Models;
@@ -37,10 +38,12 @@ namespace Insurance_app.Service
         private static bool _set;
         private static readonly Timer Timer = new Timer {Interval = 7000, AutoReset = true};
         public ObjectId CurrentRewardId { get; set; }
+        public ObjectId PreviousRewardId { get; set; }
+
         public static bool State;
         public event EventHandler<StepArgs> StepCheckedEvent = delegate {  };
         private static WatchService _service;
-        
+
         private WatchService()
         {
             if (_set)
@@ -90,7 +93,20 @@ namespace Insurance_app.Service
                 if (realm is null) throw new Exception("Realm is null in WatchService");
                 realm.Write(() =>
                 {
-                    steps = realm.Find<Reward>(CurrentRewardId).MovData.Count;
+                    
+                    var reward = realm.Find<Reward>(CurrentRewardId);
+                    steps = reward.MovData.Count;
+                    if (reward.FinDate !=null && CurrentRewardId != PreviousRewardId)
+                    {
+                        var currentReward = realm
+                            .All<Reward>()
+                            .FirstOrDefault(r => r.FinDate == null && r.DelFlag == false);
+                        if (currentReward == null) return;
+                        PreviousRewardId = CurrentRewardId;
+                        CurrentRewardId = currentReward.Id;
+                        steps = -1;
+                    }
+                    reward = null;
                 });
             }
             catch (Exception exception)
