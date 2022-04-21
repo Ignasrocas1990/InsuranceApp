@@ -265,12 +265,6 @@ namespace watch.Services
             {
                 Log.Verbose(Tag,$"GetRealm,realm error : {e.Message}");
                 Log.Verbose(Tag,$"GetRealm, inner exception : {e.InnerException}");
-                if (!NetConnection() || RealmApp.CurrentUser == null)
-                {
-                    Log.Verbose(Tag, $"network connection is not on{!NetConnection()}");
-                    Log.Verbose(Tag, $"Realm is null ? {RealmApp.CurrentUser == null}");
-                }
-                Log.Verbose(Tag,$"Internet connection available/resting the user...");
                 return await ResetLog();
             }
         }
@@ -283,6 +277,13 @@ namespace watch.Services
         {
             try
             {
+                if (!NetConnection() || RealmApp.CurrentUser == null)
+                {
+                    Log.Verbose(Tag, $"network connection is not on{!NetConnection()}");
+                    Log.Verbose(Tag, $"Realm is null ? {RealmApp.CurrentUser == null}");
+                    
+                }
+                Log.Verbose(Tag,$"Internet connection available/resting the user...");
                  await RealmApp.CurrentUser.LogOutAsync();
                  await RealmApp.LogInAsync(Credentials.EmailPassword(email, pass));
                  return await Realm.GetInstanceAsync(
