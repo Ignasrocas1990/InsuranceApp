@@ -34,8 +34,6 @@ namespace Insurance_app.ViewModels
     /// Class used to store and manipulate HomePage UI components
     /// in real time via BindingContext and its properties
     /// </summary>
-    [QueryProperty(nameof(Email),"Email")]
-    [QueryProperty(nameof(Pass),"Pass")]
     public class HomeViewModel : ObservableObject,IDisposable
     {
 
@@ -145,11 +143,9 @@ namespace Insurance_app.ViewModels
         /// </summary>
         private async Task StartDataReceive()
         {
-            Console.WriteLine("Start received clicked");
-            Console.WriteLine($" email is: {email}, password is: {password}");
             CircularWaitDisplay = true;
             WatchService.ToggleListener();
-            await bleManager.ToggleMonitoring(toggleState,previousState,email,password);//previousState is DB state
+            await bleManager.ToggleMonitoring(toggleState,previousState);//previousState is DB state
             CircularWaitDisplay = false;
         }
 
@@ -208,20 +204,6 @@ namespace Insurance_app.ViewModels
         {
             get => maxReward;
             set => SetProperty(ref maxReward, value);
-        }
-        private string email;
-        public string Email
-        {
-            get => email;
-            set => email = Uri.UnescapeDataString(value ?? "");
-        }
-
-        private string password;
-
-        public string Pass
-        {
-            get => password;
-            set => password = Uri.UnescapeDataString(value ?? "");
         }
         /// <summary>
         /// Log's out the current user

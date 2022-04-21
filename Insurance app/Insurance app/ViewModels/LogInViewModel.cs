@@ -20,6 +20,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Insurance_app.Communications;
 using Insurance_app.Logic;
 using Insurance_app.Pages;
 using Insurance_app.Pages.ClientPages;
@@ -137,7 +138,10 @@ namespace Insurance_app.ViewModels
                 if (typeUser.Equals($"{UserType.Customer}"))
                 {
                     Application.Current.MainPage = new AppShell();
-                    string route = $"//{nameof(HomePage)}?Email={email}&Pass={password}";
+                    var bleManager = BleManager.GetInstance();
+                    bleManager.email = email;
+                    bleManager.pass = password;
+                    var route = $"//{nameof(HomePage)}";
                     await Shell.Current.GoToAsync(route,true);
                 }
                 else if (typeUser.Equals($"{UserType.Client}"))

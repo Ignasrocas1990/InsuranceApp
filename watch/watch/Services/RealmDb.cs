@@ -39,7 +39,7 @@ namespace watch.Services
     {
         private const string MyRealmAppId = "application-1-luybv";
         private static RealmDb _db = null;
-        private int stepsNeeded = 5;
+        private int stepsNeeded = 10000;
         private const string Partition = "CustomerPartition";
         public static App RealmApp;
         private const string Tag = "mono-stdout";
@@ -231,6 +231,7 @@ namespace watch.Services
          {
              try
              {
+                 Log.Verbose(Tag, "Updating Switch");
                  var  otherRealm =  await GetRealm();
                  if (otherRealm is null) throw new Exception("UpdateSwitch ::: Realm is null");
                  otherRealm.Write(() =>
@@ -277,17 +278,23 @@ namespace watch.Services
         {
             try
             {
-                if (!NetConnection() || RealmApp.CurrentUser == null)
+                Log.Verbose(Tag, "ResetLog");
+                if (!NetConnection())
                 {
                     Log.Verbose(Tag, $"network connection is not on{!NetConnection()}");
-                    Log.Verbose(Tag, $"Realm is null ? {RealmApp.CurrentUser == null}");
-                    
                 }
-                Log.Verbose(Tag,$"Internet connection available/resting the user...");
-                 await RealmApp.CurrentUser.LogOutAsync();
+
+                if (RealmApp.CurrentUser != null)
+                {
+                    await RealmApp.CurrentUser.LogOutAsync();
+                    Log.Verbose(Tag,"User login out...");
+
+                }
+                Log.Verbose(Tag,"User is null loginAsync again & getting realm again...");
+                 
                  await RealmApp.LogInAsync(Credentials.EmailPassword(email, pass));
                  return await Realm.GetInstanceAsync(
-                     new PartitionSyncConfiguration(Partition,RealmApp.CurrentUser));
+                     new SyncConfiguration(Partition,RealmApp.CurrentUser));
             }
             catch (Exception e)
             {

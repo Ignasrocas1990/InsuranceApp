@@ -56,7 +56,7 @@ namespace Insurance_app.SupportClasses
         public const string EmailConfirm = "https://testRESTapi.pythonanywhere.com/confirmationEmail";
         
         public static readonly string MyRealmAppId = "application-1-luybv";
-        public const double StepNeeded = 10;
+        public const double StepNeeded = 10000;
         public static readonly double PercentPerStep = Math.Round(1 / (StepNeeded / 100),2);
         public const int MaxResponseTime = 120;
         
