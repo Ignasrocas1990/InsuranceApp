@@ -429,7 +429,6 @@ namespace Insurance_app.ViewModels
 
         public void Dispose()
         {
-            timer?.Dispose();
             policyManager?.Dispose();
             userManager?.Dispose();
         }

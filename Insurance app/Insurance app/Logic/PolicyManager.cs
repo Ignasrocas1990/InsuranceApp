@@ -175,7 +175,7 @@ namespace Insurance_app.Logic
         public void Dispose()
         {
             RealmDb.Dispose();
-            PreviousPolicies = null;
+            PreviousPolicies = new List<Policy>();
         }
 
         /// <summary>
