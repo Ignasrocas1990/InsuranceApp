@@ -17,9 +17,9 @@
 
     <ScrollView Padding="5">
         <StackLayout VerticalOptions="Center" HorizontalOptions="Center"   IsVisible="{Binding SetUpWaitDisplay ,Converter={StaticResource InvertedBoolConverter}}" >
-            <Label  Text="{Binding WeekChartLabel}" HorizontalTextAlignment="Center" Style="{StaticResource NormalLabel}"/>
+            <Label  Text="{Binding DailyChartLabel}" HorizontalTextAlignment="Center" Style="{StaticResource NormalLabel}"/>
             <microcharts:ChartView Chart="{Binding LineChart}" WidthRequest="400" HeightRequest="500"
-                                   IsVisible="{Binding WeekChartIsVisible}"/>
+                                   IsVisible="{Binding DailyChartIsVisible}"/>
             
             <Label Padding="0,10,0,0" Text="{Binding WeeklyChartLabel}" HorizontalTextAlignment="Center" Style="{StaticResource NormalLabel}"/>
             <microcharts:ChartView Chart="{Binding WeeklyLineChart}" WidthRequest="400" HeightRequest="500"

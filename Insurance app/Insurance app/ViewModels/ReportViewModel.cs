@@ -45,6 +45,9 @@ namespace Insurance_app.ViewModels
         /// </summary>
         public async Task SetUp()
         {
+            DailyChartIsVisible = false;
+            WeeklyChartIsVisible = false;
+
             if (TransferredCustomerId.Equals(""))
             {
                 customerId = App.RealmApp.CurrentUser.Id;
@@ -61,26 +64,24 @@ namespace Insurance_app.ViewModels
 
                 if (emptyDaysCount==7)
                 {
-                    WeekChartLabel = "No step has been taken yet this week";
-                    WeekChartIsVisible = false;
+                    DailyChartLabel = "No step has been taken yet this week";
                     return;
                 }
                 LineChart = new LineChart()
                     {Entries = entries, LabelTextSize = 30f,ValueLabelTextSize = 30f};
                 
-                WeekChartLabel = "Step done last 7 days";
-                WeekChartIsVisible = true;
+                DailyChartLabel = "Step done last 7 days";
+                DailyChartIsVisible = true;
             }
 
-            if ((WeekChartIsVisible && TransferredCustomerId == App.RealmApp.CurrentUser.Id) || TransferredCustomerId != App.RealmApp.CurrentUser.Id)
+            if ((DailyChartIsVisible && TransferredCustomerId == App.RealmApp.CurrentUser.Id) || TransferredCustomerId != App.RealmApp.CurrentUser.Id)
             {
                 var weeklyMovData =reportManager.CountWeeklyMovData(allMovData);
                 var (emptyWeekCount, weeklyEntries) = reportManager.CreateWeeklyLineChart(weeklyMovData);
             
                 if (emptyWeekCount==4)
                 {
-                    WeekChartLabel = "No steps has been taken this month"; 
-                    WeekChartIsVisible = false;
+                    WeeklyChartLabel = "No steps has been taken this month"; 
                     return;
                 }
                 WeeklyLineChart = new LineChart()
@@ -126,19 +127,19 @@ namespace Insurance_app.ViewModels
             set => SetProperty(ref setUpWait, value);
         }
 
-        private string weekChartLabel;
-        public string WeekChartLabel
+        private string dailyChartLabel;
+        public string DailyChartLabel
         {
-            get => weekChartLabel;
-            set => SetProperty(ref weekChartLabel, value);
+            get => dailyChartLabel;
+            set => SetProperty(ref dailyChartLabel, value);
 
         }
 
-        private bool weekChartIsVisible;
-        public bool WeekChartIsVisible
+        private bool dailyChartIsVisible;
+        public bool DailyChartIsVisible
         {
-            get => weekChartIsVisible;
-            set => SetProperty(ref weekChartIsVisible, value);
+            get => dailyChartIsVisible;
+            set => SetProperty(ref dailyChartIsVisible, value);
         }
         private bool wait;
         public bool CircularWaitDisplay
