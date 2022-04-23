@@ -12,7 +12,7 @@
              x:Class="Insurance_app.AppShell">
     <Shell.FlyoutHeaderTemplate>
         <DataTemplate>
-            <Grid BackgroundColor="Gray"
+            <Grid BackgroundColor="white"
                   HeightRequest="250">
                 <Image Aspect="AspectFill"
                        BackgroundColor="White"

@@ -37,14 +37,14 @@ namespace Insurance_app.SupportClasses
     /// </summary>
     public static class StaticOpt
     {
-        private static string _awsDns="";
-        public static readonly string PredictUrl = $"{GetAWSdns()}/predict";
-        public static readonly string PassResetEmailUrl = $"{GetAWSdns()}/resetPass";
-        public static readonly string EmailUrl = $"{GetAWSdns()}/notifyCustomer";
-        public static readonly string ClaimEmailUrl = $"{GetAWSdns()}/ClaimNotifyCustomer";
-        public static readonly string CompanyCodeUrl = $"{GetAWSdns()}/CompanyCode";
-        public static readonly string EmailConfirm = $"{GetAWSdns()}/confirmationEmail";
-        
+        private const string AwsDns = "http://ec2-54-216-17-229.eu-west-1.compute.amazonaws.com";
+        public const string PredictUrl = $"{AwsDns}/predict";
+        public const string PassResetEmailUrl = $"{AwsDns}/resetPass";
+        public const string EmailUrl = $"{AwsDns}/notifyCustomer";
+        public const string ClaimEmailUrl = $"{AwsDns}/ClaimNotifyCustomer";
+        public const string CompanyCodeUrl = $"{AwsDns}/CompanyCode";
+        public const string EmailConfirm = $"{AwsDns}/confirmationEmail";
+
         public static readonly string MyRealmAppId = "application-1-luybv";
         public const double StepNeeded = 10000;
         public static readonly double PercentPerStep = Math.Round(1 / (StepNeeded / 100),2);
@@ -68,21 +68,7 @@ namespace Insurance_app.SupportClasses
         {
             return new List<int>() {300, 150, 0};
         }
-        /// <summary>
-        /// gets a aws public dns from realm could app
-        /// (since aws dns key's may change & we can changing dns without changing the code)
-        /// </summary>
-        /// <returns>public api key</returns>
-        private static string GetAWSdns()
-        {
-            if (_awsDns is "")
-            {
-                _awsDns = App.RealmApp.CurrentUser.Functions.CallAsync("getAWSpublicDNS").ToString();
-            }
-            return _awsDns;
-        }
-            
-
+        
         /// <summary>
         /// Return's information in regards to Policy
         /// </summary>
