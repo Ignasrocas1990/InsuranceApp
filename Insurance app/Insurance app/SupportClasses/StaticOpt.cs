@@ -37,23 +37,13 @@ namespace Insurance_app.SupportClasses
     /// </summary>
     public static class StaticOpt
     {
-        //TODO BEFORE SUBMITTING, START AWS INSTANCE AND REPLACE THE LINKS
-        /*
-        public const string PredictUrl = "http://#######/predict"
-        public const string EmailUrl = "http://########/notifyCustomer";
-        public const string PassResetEmailUrl = "http://#######/resetPass";
-        public const string ClaimEmailUrl = "http://##########/ClaimNotifyCustomer";
-        public const string CompanyCodeUrl = "http://#########/CompanyCode";
-        public const string EmailConfirm = "http://###########/confirmationEmail";
-        */
-        
-        //Note these Urls are going to be changed to AWS when submitted
-        public const string PredictUrl = "https://testRESTapi.pythonanywhere.com/predict";
-        public const string EmailUrl = "https://testRESTapi.pythonanywhere.com/notifyCustomer";
-        public const string PassResetEmailUrl = "https://testRESTapi.pythonanywhere.com/resetPass";
-        public const string ClaimEmailUrl = "https://testRESTapi.pythonanywhere.com/ClaimNotifyCustomer";
-        public const string CompanyCodeUrl = "https://testRESTapi.pythonanywhere.com/CompanyCode";
-        public const string EmailConfirm = "https://testRESTapi.pythonanywhere.com/confirmationEmail";
+        private static string _awsDns="";
+        public static readonly string PredictUrl = $"{GetAWSdns()}/predict";
+        public static readonly string PassResetEmailUrl = $"{GetAWSdns()}/resetPass";
+        public static readonly string EmailUrl = $"{GetAWSdns()}/notifyCustomer";
+        public static readonly string ClaimEmailUrl = $"{GetAWSdns()}/ClaimNotifyCustomer";
+        public static readonly string CompanyCodeUrl = $"{GetAWSdns()}/CompanyCode";
+        public static readonly string EmailConfirm = $"{GetAWSdns()}/confirmationEmail";
         
         public static readonly string MyRealmAppId = "application-1-luybv";
         public const double StepNeeded = 10000;
@@ -78,7 +68,21 @@ namespace Insurance_app.SupportClasses
         {
             return new List<int>() {300, 150, 0};
         }
-        
+        /// <summary>
+        /// gets a aws public dns from realm could app
+        /// (since aws dns key's may change & we can changing dns without changing the code)
+        /// </summary>
+        /// <returns>public api key</returns>
+        private static string GetAWSdns()
+        {
+            if (_awsDns is "")
+            {
+                _awsDns = App.RealmApp.CurrentUser.Functions.CallAsync("getAWSpublicDNS").ToString();
+            }
+            return _awsDns;
+        }
+            
+
         /// <summary>
         /// Return's information in regards to Policy
         /// </summary>
