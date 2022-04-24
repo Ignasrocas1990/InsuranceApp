@@ -122,22 +122,7 @@ namespace watch.Services
 
             return null;
         }
-
-        public void ClearDatabase()//TODO ---------------- REMOVE when submitting
-        {
-            try
-            {
-                connection.DeleteAll<User>();
-                Log.Verbose(Tag,"Database Cleared successfully");
-
-            }
-            catch (Exception e)
-            {
-                Log.Verbose(Tag,e.Message);
-            }
-        }
-
-            public void Dispose()
+        public void Dispose()
         {
             connection?.Dispose();
         }

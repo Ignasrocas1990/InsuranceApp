@@ -39,7 +39,7 @@ namespace Insurance_app.Communications
         public EventHandler InfferEvent = delegate {  };
         public event EventHandler ToggleSwitch =delegate {  };
 
-        private readonly int readingDelay = 5000; // reading delay every 5 sec (incase empty read.)
+        private readonly int readingDelay = 5000; // reading delay every 5 sec (in-case empty read.)
         private int conErrDelay;
         private bool bleState;
         private bool isMonitoring;
@@ -224,7 +224,7 @@ namespace Insurance_app.Communications
         {
             try
             {
-                await userManager.UpdateCustomerSwitch(App.RealmApp.CurrentUser, state);
+                await userManager.UpdateCustomerSwitch(App.RealmApp.CurrentUser,state);
             }
             catch (Exception e)
             {

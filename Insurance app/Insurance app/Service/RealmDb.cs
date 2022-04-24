@@ -832,26 +832,5 @@ namespace Insurance_app.Service
                 Console.WriteLine(e);
             }
         }
-        public async Task CleanDatabase(User user)//TODO remove this when submitting
-        {
-            try
-            {
-                await GetRealm(user);
-                if (_realm is null)
-                    throw new Exception(" CleanDatabase >>>>>>>>>>>>>>>>>>; realm null");
-
-                _realm.Write(() =>
-                {
-                    _realm.RemoveAll();
-                });
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-
-
-
     }
 }

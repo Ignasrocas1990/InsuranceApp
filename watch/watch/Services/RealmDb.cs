@@ -121,7 +121,6 @@ namespace watch.Services
                                     {AccData = new Acc() 
                                         {X = ToFloat(sd[0]), Y = ToFloat(sd[1]), Z = ToFloat(sd[2])}, 
                                         Type = "step"}).ToList();
-                    Log.Verbose(Tag,$"data date stamp is : {movDataList.First().DateTimeStamp}");//TODO Remove ===========
                     
                     var customer = otherRealm.Find<Customer>(RealmApp.CurrentUser.Id);
                     if (customer is null) throw new Exception("AddMvData ::: Customer is null");

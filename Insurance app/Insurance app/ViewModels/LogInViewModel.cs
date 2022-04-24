@@ -131,9 +131,6 @@ namespace Insurance_app.ViewModels
                 }
 
                 var user = await App.RealmApp.LogInAsync(Credentials.EmailPassword(email, password));
-                    
-                await CleanDatabase();//TODO remove when submitting -------------------------------------------------##############
-                    
                 var typeUser = await userManager.FindTypeUser(user);
                 if (typeUser.Equals($"{UserType.Customer}"))
                 {
@@ -232,11 +229,5 @@ namespace Insurance_app.ViewModels
         {
             userManager.Dispose();
         }
-        private async Task CleanDatabase()//TODO Remove when submitting
-        {
-            //await userManager.CleanDatabase(App.RealmApp.CurrentUser);
-        }
-        
-
     }
 }

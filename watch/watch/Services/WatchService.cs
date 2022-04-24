@@ -101,7 +101,6 @@ namespace watch.Services
                     {
                         SaveDataTimer.Stop();
                         savingData = false;
-                        sensorManager.SendDataCounter = -1;//TODO remove from here -------------------------------------
                         OnDestroy();
                     }
                     firstTime = false;
@@ -157,7 +156,6 @@ namespace watch.Services
                 savingData = false;
                 Log.Verbose(Tag, "Stopping data gathering");
                 sensorManager.ToggleSensors("Disconnected");
-                //sensorManager.SendDataCounter = -1; //TODO remove from here ------------------------------------------------
                 
             };
             //Server communications
@@ -180,7 +178,7 @@ namespace watch.Services
                 Log.Verbose(Tag,$"received write details");
             };
 
-            bleServer.BltCallback.StateHandler += (s, e) =>//Todo Maybe remove=========================
+            bleServer.BltCallback.StateHandler += (s, e) =>
             {
                 switch (e.State)
                 {
@@ -213,9 +211,7 @@ namespace watch.Services
             sensorManager.ToggleSensors("Connected");
             SaveDataTimer.Start(); // Starts saving gathered data
             await RealmDb.GetInstance().UpdateSwitch(true);
-
-            //sensorManager.SendDataCounter = 0; //TODO remove from here -------------------------------------##################
-            //sensorManager.SendTestData(); //TODO remove from here -------------------------------------##################
+            
         }
 
         /// <summary>

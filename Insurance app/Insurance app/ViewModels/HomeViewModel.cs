@@ -77,9 +77,6 @@ namespace Insurance_app.ViewModels
                     if (reward.Cost != null) rewardCost = reward.Cost.Value;
                     ProgressBarDisplay = 0;
                     startUpSteps = Convert.ToDouble(reward.MovData.Count);
-                    
-                    //startUpSteps = 6193.0;//TODO uncomment to show##################################### REMOVE when submitting
-                    
                     ProgressBarDisplay = StaticOpt.PercentPerStep*startUpSteps;
                 }
                 await SetUpEarningsDisplay();
