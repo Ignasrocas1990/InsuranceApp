@@ -420,7 +420,7 @@ namespace Insurance_app.Service
                         .FirstOrDefault(c => c.CloseDate == null && c.DelFlag == false);
                     if (claim == null) throw new Exception(" ResolveClaim >>>>>>>>>>>>>>>>>>; claim null");
                     
-                    claim.CloseDate = DateTimeOffset.Now.Date;
+                    claim.CloseDate = DateTimeOffset.Now.DateTime;
                     claim.Accepted = action;
                     claim.ExtraInfo = reason;
                 });
